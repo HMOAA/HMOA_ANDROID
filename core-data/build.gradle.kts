@@ -9,6 +9,8 @@ java {
 }
 
 dependencies {
+    implementation(project(":core-model"))
+    implementation(project(":core-repository"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
 }

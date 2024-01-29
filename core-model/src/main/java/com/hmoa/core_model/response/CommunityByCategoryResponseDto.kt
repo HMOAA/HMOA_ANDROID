@@ -1,6 +1,6 @@
 package com.hmoa.core_model.response
 
-import com.hmoa.core_data.Category
+import com.hmoa.core_model.Category
 
 data class CommunityByCategoryResponseDto(
     var category: String,

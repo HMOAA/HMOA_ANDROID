@@ -1,6 +1,6 @@
 package com.hmoa.core_model.response
 
-import com.hmoa.core_data.Provider
+import com.hmoa.core_model.Provider
 
 data class MemberResponseDto(
     val age: Int,

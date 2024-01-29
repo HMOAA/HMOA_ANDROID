@@ -16,7 +16,6 @@ dependencyResolutionManagement {
 rootProject.name = "Hmoa"
 include(":app")
 include(":core-model")
-include(":core-data")
 include(":core-network")
 include(":core-datastore")
 include(":core-designsystem")

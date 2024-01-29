@@ -1,5 +1,5 @@
 package com.hmoa.core_model.response
 
-data class DataResponseDto(
-    val data: Any
+data class DataResponseDto<T>(
+    val data: T
 )

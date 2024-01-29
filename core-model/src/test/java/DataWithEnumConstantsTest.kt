@@ -1,10 +1,10 @@
-import com.hmoa.core_data.Category
-import com.hmoa.core_data.Provider
-import com.hmoa.core_data.response.CommunityByCategoryResponseDto
-import com.hmoa.core_data.response.CommunityDefaultResponseDto
-import com.hmoa.core_data.response.CommunityPhotoDefaultResponseDto
-import com.hmoa.core_data.response.MemberResponseDto
-import org.junit.jupiter.api.Assertions.assertEquals
+import com.hmoa.core_model.Category
+import com.hmoa.core_model.Provider
+import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import com.hmoa.core_model.response.CommunityDefaultResponseDto
+import com.hmoa.core_model.response.CommunityPhotoDefaultResponseDto
+import com.hmoa.core_model.response.MemberResponseDto
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -30,9 +30,9 @@ class DataWithEnumConstantsTest {
             true
         )
 
-        assertEquals("시향기", communityByCategoryResponseDto.category)
-        assertEquals("추천", communityByCategoryResponseDto2.category)
-        assertEquals("자유", communityDefaultResponseDto.category)
+        Assertions.assertEquals("시향기", communityByCategoryResponseDto.category)
+        Assertions.assertEquals("추천", communityByCategoryResponseDto2.category)
+        Assertions.assertEquals("자유", communityDefaultResponseDto.category)
 
     }
 
@@ -43,9 +43,9 @@ class DataWithEnumConstantsTest {
         val memberResponseDto2 = MemberResponseDto(22, 1, "memberImageUrl", "사용자2", Provider.GOOGLE.name, true)
         val memberResponseDto3 = MemberResponseDto(22, 1, "memberImageUrl", "사용자3", Provider.KAKAO.name, true)
 
-        assertEquals("APPLE", memberResponseDto1.provider)
-        assertEquals("GOOGLE", memberResponseDto2.provider)
-        assertEquals("KAKAO", memberResponseDto3.provider)
+        Assertions.assertEquals("APPLE", memberResponseDto1.provider)
+        Assertions.assertEquals("GOOGLE", memberResponseDto2.provider)
+        Assertions.assertEquals("KAKAO", memberResponseDto3.provider)
 
     }
 }

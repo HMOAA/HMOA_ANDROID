@@ -161,7 +161,7 @@ fun Comment(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun TestComment(){
     Column(

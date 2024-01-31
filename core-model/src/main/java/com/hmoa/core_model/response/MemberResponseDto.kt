@@ -1,7 +1,9 @@
 package com.hmoa.core_model.response
 
 import com.hmoa.core_model.Provider
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MemberResponseDto(
     val age: Int,
     val memberId: Int,

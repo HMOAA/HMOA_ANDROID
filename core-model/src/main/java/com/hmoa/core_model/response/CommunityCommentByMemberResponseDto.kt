@@ -1,5 +1,8 @@
 package com.hmoa.core_model.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CommunityCommentByMemberResponseDto(
     val author: String,
     val commentId: Int,

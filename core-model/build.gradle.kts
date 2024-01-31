@@ -9,6 +9,7 @@ java {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-client-serialization:2.3.7")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
 }

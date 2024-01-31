@@ -22,12 +22,13 @@ class ServiceModule {
     @Singleton
     @Provides
     fun provideKtorHttpClient(): HttpClient {
+
         return HttpClient(Android) {
             install(Logging) {
                 level = LogLevel.ALL
             }
             install(DefaultRequest) {
-                url(Util.BASE_URL)
+                url(TODO("util모듈 함수로 core-network-secret.json에서 값 추출해서 붙이기"))
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 header("X-AUTH-TOKEN", TODO("authentication 모듈에서 토큰을 주입해야 함"))
             }

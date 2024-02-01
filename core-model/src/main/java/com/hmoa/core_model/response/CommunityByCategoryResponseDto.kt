@@ -1,7 +1,9 @@
 package com.hmoa.core_model.response
 
 import com.hmoa.core_model.Category
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CommunityByCategoryResponseDto(
     var category: String,
     val communityId: Int,

@@ -1,5 +1,8 @@
 package com.hmoa.core_model.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class PerfumeDetailResponseDto(
     val baseNote: String,
     val brandEnglishName: String,

@@ -35,6 +35,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    kotlin {
+        sourceSets {
+            all {
+                languageSettings.optIn("io.ktor.util.InternalAPI")
+            }
+        }
+    }
 }
 
 dependencies {

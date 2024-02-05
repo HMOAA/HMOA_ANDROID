@@ -1,5 +1,7 @@
 package com.hmoa.core_network
 
+import com.hmoa.core_network.Perfume.PerfumeService
+import com.hmoa.core_network.Perfume.PerfumeServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

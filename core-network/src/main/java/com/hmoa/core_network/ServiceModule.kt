@@ -18,17 +18,17 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class ServiceModule {
-
     @Singleton
     @Provides
     fun provideKtorHttpClient(): HttpClient {
+        val baseUrl = BuildConfig.BASE_URL
 
         return HttpClient(Android) {
             install(Logging) {
                 level = LogLevel.ALL
             }
             install(DefaultRequest) {
-                //url(TODO("BuildConfig로 붙이기"))
+                url(baseUrl)
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 //header("X-AUTH-TOKEN", TODO("authentication 모듈에서 토큰을 주입해야 함"))
             }

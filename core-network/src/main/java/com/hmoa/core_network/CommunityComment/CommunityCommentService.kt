@@ -5,7 +5,7 @@ import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 
-interface CommunityComment {
+interface CommunityCommentService {
     suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto

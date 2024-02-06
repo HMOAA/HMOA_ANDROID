@@ -9,7 +9,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import javax.inject.Inject
 
-class CommunityCommentImpl @Inject constructor(private val httpClient: HttpClient) : CommunityComment {
+class CommunityCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) : CommunityCommentService {
     override suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto

@@ -32,6 +32,7 @@ class ServiceModule {
             install(DefaultRequest) {
                 url(baseUrl)
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
+                header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
                 //header("X-AUTH-TOKEN", TODO("authentication 모듈에서 토큰을 주입해야 함"))
             }
             install(ContentNegotiation) {
@@ -39,6 +40,26 @@ class ServiceModule {
             }
             install(HttpCache) {
                 //TODO("캐쉬 추가 설정 필요")
+            }
+        }
+    }
+
+    @Singleton
+    @Provides
+    fun provideFormDataKtorHttpClient(): HttpClient {
+        val baseUrl = BuildConfig.BASE_URL
+
+        return HttpClient(Android) {
+            install(Logging) {
+                level = LogLevel.ALL
+            }
+            install(DefaultRequest) {
+                url(baseUrl)
+                header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+                //header("X-AUTH-TOKEN", TODO("authentication 모듈에서 토큰을 주입해야 함"))
+            }
+            install(ContentNegotiation) {
+                json()
             }
         }
     }

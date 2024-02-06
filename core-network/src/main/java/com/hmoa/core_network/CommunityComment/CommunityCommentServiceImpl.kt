@@ -7,9 +7,12 @@ import com.hmoa.core_model.response.DataResponseDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.util.*
 import javax.inject.Inject
 
-class CommunityCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) : CommunityCommentService {
+internal class CommunityCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) :
+    CommunityCommentService {
+    @OptIn(InternalAPI::class)
     override suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
@@ -33,6 +36,7 @@ class CommunityCommentServiceImpl @Inject constructor(private val httpClient: Ht
         }.body()
     }
 
+    @OptIn(InternalAPI::class)
     override suspend fun postCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto

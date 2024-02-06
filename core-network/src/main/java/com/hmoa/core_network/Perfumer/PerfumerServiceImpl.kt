@@ -6,7 +6,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import javax.inject.Inject
 
-class PerfumerServiceImpl @Inject constructor(private val httpClient: HttpClient) : PerfumerService {
+internal class PerfumerServiceImpl @Inject constructor(private val httpClient: HttpClient) : PerfumerService {
     override suspend fun getPerfumers(pageNum: String): DataResponseDto<Any> {
         return httpClient.get("/perfumer") {
             url {

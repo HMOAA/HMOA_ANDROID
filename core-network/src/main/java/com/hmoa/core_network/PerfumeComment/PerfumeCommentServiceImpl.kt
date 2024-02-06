@@ -7,9 +7,11 @@ import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.util.*
 import javax.inject.Inject
 
-class PerfumeCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) : PerfumeCommentService {
+internal class PerfumeCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) :
+    PerfumeCommentService {
     override suspend fun getPerfumeCommentsLatest(page: String, perfumeId: Int): PerfumeCommentGetResponseDto {
         return httpClient.get("/perfume/${perfumeId}/comments") {
             url {
@@ -18,6 +20,7 @@ class PerfumeCommentServiceImpl @Inject constructor(private val httpClient: Http
         }.body()
     }
 
+    @OptIn(InternalAPI::class)
     override suspend fun postPerfumeComment(perfumeId: Int, dto: PerfumeCommentRequestDto): PerfumeCommentResponseDto {
         return httpClient.post("/perfume/${perfumeId}/comments") {
             url {
@@ -46,6 +49,7 @@ class PerfumeCommentServiceImpl @Inject constructor(private val httpClient: Http
         return httpClient.delete("/perfume/comments/${commentId}/like").body()
     }
 
+    @OptIn(InternalAPI::class)
     override suspend fun putPerfumeCommentModify(
         commentId: Int,
         dto: PerfumeCommentRequestDto

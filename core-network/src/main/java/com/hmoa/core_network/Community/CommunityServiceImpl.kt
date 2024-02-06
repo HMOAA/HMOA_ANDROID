@@ -13,7 +13,7 @@ import io.ktor.http.*
 import java.io.File
 import javax.inject.Inject
 
-class CommunityServiceImpl @Inject constructor(
+internal class CommunityServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
 ) : CommunityService {
     override suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto {

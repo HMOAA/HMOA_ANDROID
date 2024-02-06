@@ -16,7 +16,6 @@
             <option value="$PROJECT_DIR$/core-network" />
             <option value="$PROJECT_DIR$/core-repository" />
             <option value="$PROJECT_DIR$/sample-app" />
-            <option value="$PROJECT_DIR$/util" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

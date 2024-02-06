@@ -8,6 +8,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import java.io.File
 import javax.inject.Inject
@@ -40,7 +41,9 @@ class CommunityServiceImpl @Inject constructor(
         }
 
         return httpClient.post("/community/${communityId}") {
-            formData
+            formData {
+                formData
+            }
         }.body()
     }
 
@@ -74,15 +77,11 @@ class CommunityServiceImpl @Inject constructor(
             "content" to content
         )
 
-        httpClient.config {
-            install(DefaultRequest) {
-                header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-            }
-        }
-
         return httpClient.post("/community/save") {
-            formData
+            formData {
+                formData
+            }
+
         }.body()
     }
-
 }

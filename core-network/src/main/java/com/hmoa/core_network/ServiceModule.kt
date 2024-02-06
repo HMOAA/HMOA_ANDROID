@@ -32,7 +32,6 @@ class ServiceModule {
             install(DefaultRequest) {
                 url(baseUrl)
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
-                header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
                 //header("X-AUTH-TOKEN", TODO("authentication 모듈에서 토큰을 주입해야 함"))
             }
             install(ContentNegotiation) {

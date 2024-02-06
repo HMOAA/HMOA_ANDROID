@@ -9,8 +9,8 @@ import java.io.File
 interface CommunityService {
     suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto
     suspend fun postCommunityUpdate(
-        image: Array<File>,
-        deleteCoummnityPhotoIds: Array<Int>,
+        images: Array<File>,
+        deleteCommunityPhotoIds: Array<Int>,
         title: String,
         content: String,
         communityId: Int
@@ -20,7 +20,7 @@ interface CommunityService {
     suspend fun getCommunityByCategory(category: Category, page: String): CommunityByCategoryResponseDto
     suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto>
     suspend fun postCommunitySave(
-        image: Array<File>,
+        images: Array<File>,
         category: Category,
         title: String,
         content: String

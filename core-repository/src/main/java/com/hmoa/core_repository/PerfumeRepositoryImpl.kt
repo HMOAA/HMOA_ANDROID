@@ -1,6 +1,6 @@
 package com.hmoa.core_repository
 
-import com.hmoa.core_datastore.PerfumeDataStore
+import com.hmoa.core_datastore.Perfume.PerfumeDataStore
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto

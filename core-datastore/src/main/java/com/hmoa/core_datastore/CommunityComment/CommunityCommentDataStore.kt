@@ -12,7 +12,7 @@ interface CommunityCommentDataStore {
     ): CommunityCommentDefaultResponseDto
 
     suspend fun deleteCommunityComment(commentId: Int): DataResponseDto<Any>
-    suspend fun postCommunityComment(commentId: Int, page: String): CommunityCommentAllResponseDto
+    suspend fun getCommunityComments(commentId: Int, page: String): CommunityCommentAllResponseDto
     suspend fun postCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto

@@ -22,4 +22,6 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     testImplementation("junit:junit:4.13.2")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:2.44")
+    testImplementation("org.mockito:mockito-core:4.8.0")
+    testImplementation("org.mockito:mockito-inline:4.8.0")
 }

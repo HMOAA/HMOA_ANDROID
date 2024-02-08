@@ -52,6 +52,6 @@ private class PerfumeRepositoryImpl(private val perfumeDataStore: PerfumeDataSto
     }
 
     override fun getLikePerfumeList(): DataResponseDto<Any> {
-        return perfumeDataStore.getLikePerfumeList()
+        return perfumeDataStore.getLikePerfumes()
     }
 }

@@ -2,6 +2,7 @@ package com.hmoa.core_network.Perfume
 
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
+import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
 
 interface PerfumeService {
@@ -13,7 +14,7 @@ interface PerfumeService {
     suspend fun deletePerfumeGender(perfumeId: String): PerfumeGenderResponseDto
     suspend fun putPerfumeLike(perfumeId: String): DataResponseDto<Any>
     suspend fun deletePerfumeLike(perfumeId: String): DataResponseDto<Any>
-    suspend fun postPerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto
+    suspend fun postPerfumeWeather(perfumeId: String, dto: PerfumeWeatherRequestDto): PerfumeWeatherResponseDto
     suspend fun deletePerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto
-    suspend fun getPerfumeLike(): DataResponseDto<Any>
+    suspend fun getLikePerfumes(): DataResponseDto<Any>
 }

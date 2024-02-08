@@ -6,16 +6,16 @@ import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
 
 interface PerfumeDataStore {
-    fun getPerfumeTopDetail(perfumeId: Int): PerfumeDetailResponseDto
-    fun getPerfumeBottomDetail(perfumeId: Int): PerfumeDetailSecondResponseDto
-    fun postPerfumeMainPhoto(imageUrl: String): DataResponseDto<Any>
-    fun postPerfumeAge(dto: AgeRequestDto, perfumeId: Int): PerfumeAgeResponseDto
-    fun deletePerfumeAge(perfumeId: Int): PerfumeAgeResponseDto
-    fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: Int): PerfumeGenderResponseDto
-    fun deletePerfumeGender(perfumeId: Int): PerfumeGenderResponseDto
-    fun putPerfumeLike(perfumeId: Int): DataResponseDto<Any>
-    fun deletePerfumeLike(perfumeId: Int): DataResponseDto<Any>
-    fun postPerfumeWeather(dto: PerfumeWeatherRequestDto): PerfumeWeatherResponseDto
-    fun deletePerfumeWeather(perfumeId: Int): PerfumeWeatherResponseDto
-    fun getLikePerfumeList(): DataResponseDto<Any>
+    suspend fun getPerfumeTopDetail(perfumeId: String): PerfumeDetailResponseDto
+    suspend fun getPerfumeBottomDetail(perfumeId: String): PerfumeDetailSecondResponseDto
+    suspend fun postPerfumeMainPhoto(imageUrl: String): DataResponseDto<Any>
+    suspend fun postPerfumeAge(dto: AgeRequestDto, perfumeId: String): PerfumeAgeResponseDto
+    suspend fun deletePerfumeAge(perfumeId: String): PerfumeAgeResponseDto
+    suspend fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: String): PerfumeGenderResponseDto
+    suspend fun deletePerfumeGender(perfumeId: String): PerfumeGenderResponseDto
+    suspend fun putPerfumeLike(perfumeId: String): DataResponseDto<Any>
+    suspend fun deletePerfumeLike(perfumeId: String): DataResponseDto<Any>
+    suspend fun postPerfumeWeather(dto: PerfumeWeatherRequestDto): PerfumeWeatherResponseDto
+    suspend fun deletePerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto
+    suspend fun getLikePerfumeList(): DataResponseDto<Any>
 }

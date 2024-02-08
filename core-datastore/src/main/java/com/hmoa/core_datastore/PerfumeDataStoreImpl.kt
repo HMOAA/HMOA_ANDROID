@@ -4,53 +4,54 @@ import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
+import com.hmoa.core_network.Perfume.PerfumeService
 
-private class PerfumeDataStoreImpl : PerfumeDataStore {
-    override fun getPerfumeTopDetail(perfumeId: Int): PerfumeDetailResponseDto {
+private class PerfumeDataStoreImpl constructor(private val perfumeService: PerfumeService) : PerfumeDataStore {
+    override suspend fun getPerfumeTopDetail(perfumeId: String): PerfumeDetailResponseDto {
+        return perfumeService.getPerfumeTopDetail(perfumeId)
+    }
+
+    override suspend fun getPerfumeBottomDetail(perfumeId: String): PerfumeDetailSecondResponseDto {
+        perfumeService.getPerfumeBottomDetail(perfumeId)
+    }
+
+    override suspend fun postPerfumeMainPhoto(imageUrl: String): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }
 
-    override fun getPerfumeBottomDetail(perfumeId: Int): PerfumeDetailSecondResponseDto {
+    override suspend fun postPerfumeAge(dto: AgeRequestDto, perfumeId: String): PerfumeAgeResponseDto {
         TODO("Not yet implemented")
     }
 
-    override fun postPerfumeMainPhoto(imageUrl: String): DataResponseDto<Any> {
+    override suspend fun deletePerfumeAge(perfumeId: String): PerfumeAgeResponseDto {
         TODO("Not yet implemented")
     }
 
-    override fun postPerfumeAge(dto: AgeRequestDto, perfumeId: Int): PerfumeAgeResponseDto {
+    override suspend fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: String): PerfumeGenderResponseDto {
         TODO("Not yet implemented")
     }
 
-    override fun deletePerfumeAge(perfumeId: Int): PerfumeAgeResponseDto {
+    override suspend fun deletePerfumeGender(perfumeId: String): PerfumeGenderResponseDto {
         TODO("Not yet implemented")
     }
 
-    override fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: Int): PerfumeGenderResponseDto {
+    override suspend fun putPerfumeLike(perfumeId: String): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }
 
-    override fun deletePerfumeGender(perfumeId: Int): PerfumeGenderResponseDto {
+    override suspend fun deletePerfumeLike(perfumeId: String): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }
 
-    override fun putPerfumeLike(perfumeId: Int): DataResponseDto<Any> {
+    override suspend fun postPerfumeWeather(dto: PerfumeWeatherRequestDto): PerfumeWeatherResponseDto {
         TODO("Not yet implemented")
     }
 
-    override fun deletePerfumeLike(perfumeId: Int): DataResponseDto<Any> {
+    override suspend fun deletePerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto {
         TODO("Not yet implemented")
     }
 
-    override fun postPerfumeWeather(dto: PerfumeWeatherRequestDto): PerfumeWeatherResponseDto {
-        TODO("Not yet implemented")
-    }
-
-    override fun deletePerfumeWeather(perfumeId: Int): PerfumeWeatherResponseDto {
-        TODO("Not yet implemented")
-    }
-
-    override fun getLikePerfumeList(): DataResponseDto<Any> {
+    override suspend fun getLikePerfumeList(): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }
 

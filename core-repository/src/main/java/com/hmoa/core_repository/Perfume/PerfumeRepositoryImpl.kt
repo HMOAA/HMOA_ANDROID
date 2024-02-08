@@ -6,52 +6,51 @@ import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
 
-private class PerfumeRepositoryImpl(private val perfumeDataStore: PerfumeDataStore) : PerfumeRepository {
-    override fun getPerfumeTopDetail(perfumeId: Int): PerfumeDetailResponseDto {
+internal class PerfumeRepositoryImpl(private val perfumeDataStore: PerfumeDataStore) : PerfumeRepository {
+    override suspend fun getPerfumeTopDetail(perfumeId: String): PerfumeDetailResponseDto {
         return perfumeDataStore.getPerfumeTopDetail(perfumeId)
     }
 
-    override fun getPerfumeBottomDetail(perfumeId: Int): PerfumeDetailSecondResponseDto {
+    override suspend fun getPerfumeBottomDetail(perfumeId: String): PerfumeDetailSecondResponseDto {
         return perfumeDataStore.getPerfumeBottomDetail(perfumeId)
     }
 
-    override fun postPerfumeMainPhoto(imageUrl: String): DataResponseDto<Any> {
-        return perfumeDataStore.postPerfumeMainPhoto(imageUrl)
-    }
-
-    override fun postPerfumeAge(dto: AgeRequestDto, perfumeId: Int): PerfumeAgeResponseDto {
+    override suspend fun postPerfumeAge(dto: AgeRequestDto, perfumeId: String): PerfumeAgeResponseDto {
         return perfumeDataStore.postPerfumeAge(dto, perfumeId)
     }
 
-    override fun deletePerfumeAge(perfumeId: Int): PerfumeAgeResponseDto {
+    override suspend fun deletePerfumeAge(perfumeId: String): PerfumeAgeResponseDto {
         return perfumeDataStore.deletePerfumeAge(perfumeId)
     }
 
-    override fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: Int): PerfumeGenderResponseDto {
+    override suspend fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: String): PerfumeGenderResponseDto {
         return perfumeDataStore.postPerfumeGender(dto, perfumeId)
     }
 
-    override fun deletePerfumeGender(perfumeId: Int): PerfumeGenderResponseDto {
+    override suspend fun deletePerfumeGender(perfumeId: String): PerfumeGenderResponseDto {
         return perfumeDataStore.deletePerfumeGender(perfumeId)
     }
 
-    override fun putPerfumeLike(perfumeId: Int): DataResponseDto<Any> {
+    override suspend fun putPerfumeLike(perfumeId: String): DataResponseDto<Any> {
         return perfumeDataStore.putPerfumeLike(perfumeId)
     }
 
-    override fun deletePerfumeLike(perfumeId: Int): DataResponseDto<Any> {
+    override suspend fun deletePerfumeLike(perfumeId: String): DataResponseDto<Any> {
         return perfumeDataStore.deletePerfumeLike(perfumeId)
     }
 
-    override fun postPerfumeWeather(dto: PerfumeWeatherRequestDto): PerfumeWeatherResponseDto {
-        return perfumeDataStore.postPerfumeWeather(dto)
+    override suspend fun postPerfumeWeather(
+        dto: PerfumeWeatherRequestDto,
+        perfumeId: String
+    ): PerfumeWeatherResponseDto {
+        return perfumeDataStore.postPerfumeWeather(perfumeId, dto)
     }
 
-    override fun deletePerfumeWeather(perfumeId: Int): PerfumeWeatherResponseDto {
+    override suspend fun deletePerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto {
         return perfumeDataStore.deletePerfumeWeather(perfumeId)
     }
 
-    override fun getLikePerfumeList(): DataResponseDto<Any> {
+    override suspend fun getLikePerfumes(): DataResponseDto<Any> {
         return perfumeDataStore.getLikePerfumes()
     }
 }

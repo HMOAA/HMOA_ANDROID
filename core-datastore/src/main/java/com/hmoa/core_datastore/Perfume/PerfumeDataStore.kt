@@ -1,11 +1,11 @@
-package com.hmoa.core_network.Perfume
+package com.hmoa.core_datastore.Perfume
 
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
 
-interface PerfumeService {
+interface PerfumeDataStore {
     suspend fun getPerfumeTopDetail(perfumeId: String): PerfumeDetailResponseDto
     suspend fun getPerfumeBottomDetail(perfumeId: String): PerfumeDetailSecondResponseDto
     suspend fun postPerfumeAge(dto: AgeRequestDto, perfumeId: String): PerfumeAgeResponseDto

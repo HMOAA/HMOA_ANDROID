@@ -24,6 +24,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.github.cdimascio.dotenv.dotenv
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
@@ -35,13 +36,14 @@ import io.ktor.serialization.kotlinx.json.*
 import javax.inject.Singleton
 import io.ktor.client.engine.okhttp.*
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 class ServiceModule {
     @Singleton
     @Provides
     fun provideKtorHttpClient(): HttpClient {
-        val baseUrl = ""
+        val baseUrl = dotenv().get("BASE_URL")
 
         return HttpClient(OkHttp) {
             install(Logging) {
@@ -64,7 +66,7 @@ class ServiceModule {
     @Singleton
     @Provides
     fun provideFormDataKtorHttpClient(): HttpClient {
-        val baseUrl = ""
+        val baseUrl = dotenv().get("BASE_URL")
 
         return HttpClient(OkHttp) {
             install(Logging) {

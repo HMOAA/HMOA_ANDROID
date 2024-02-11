@@ -2,10 +2,12 @@ package com.hmoa.core_network.Perfume
 
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
+import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.util.*
 import javax.inject.Inject
 
 internal class PerfumeServiceImpl @Inject constructor(
@@ -20,6 +22,7 @@ internal class PerfumeServiceImpl @Inject constructor(
         return httpClient.get("/perfume/${perfumeId}/2").body()
     }
 
+    @OptIn(InternalAPI::class)
     override suspend fun postPerfumeAge(dto: AgeRequestDto, perfumeId: String): PerfumeAgeResponseDto {
         val response = httpClient.post("/perfume/${perfumeId}/age") {
             url {
@@ -33,6 +36,7 @@ internal class PerfumeServiceImpl @Inject constructor(
         return httpClient.delete("/perfume/${perfumeId}/age").body()
     }
 
+    @OptIn(InternalAPI::class)
     override suspend fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: String): PerfumeGenderResponseDto {
         val response = httpClient.post("/perfume/${perfumeId}/gender") {
             url {
@@ -54,15 +58,21 @@ internal class PerfumeServiceImpl @Inject constructor(
         return httpClient.delete("/perfume/${perfumeId}/like").body()
     }
 
-    override suspend fun postPerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto {
-        return httpClient.post("/perfume/${perfumeId}/weather").body()
+    @OptIn(InternalAPI::class)
+    override suspend fun postPerfumeWeather(
+        perfumeId: String,
+        dto: PerfumeWeatherRequestDto
+    ): PerfumeWeatherResponseDto {
+        return httpClient.post("/perfume/${perfumeId}/weather") {
+            body = dto
+        }.body()
     }
 
     override suspend fun deletePerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto {
         return httpClient.delete("/perfume/${perfumeId}/weather").body()
     }
 
-    override suspend fun getPerfumeLike(): DataResponseDto<Any> {
+    override suspend fun getLikePerfumes(): DataResponseDto<Any> {
         return httpClient.get("/perfume/like").body()
     }
 }

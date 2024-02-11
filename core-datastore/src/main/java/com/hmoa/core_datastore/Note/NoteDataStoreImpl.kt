@@ -2,7 +2,7 @@ package com.hmoa.core_datastore.Note
 
 import com.hmoa.core_model.response.DataResponseDto
 
-class NoteDataStoreImpl : NoteDataStore {
+private class NoteDataStoreImpl : NoteDataStore {
     override fun getNoteAll(pageNum: Int): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }

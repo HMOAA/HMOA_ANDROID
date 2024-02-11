@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
 
-class AdminDataStoreImpl : AdminDataStore {
+private class AdminDataStoreImpl : AdminDataStore {
     override fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }

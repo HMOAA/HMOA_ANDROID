@@ -10,7 +10,7 @@ import com.hmoa.core_model.response.PerfumeSearchResponseDto
 import com.hmoa.core_model.response.PerfumerDefaultResponseDto
 import com.hmoa.core_model.response.TermDefaultResponseDto
 
-class SearchDataStoreImpl : SearchDataStore {
+private class SearchDataStoreImpl : SearchDataStore {
     override fun getBrand(searchWord: String): BrandSearchResponseDto {
         TODO("Not yet implemented")
     }

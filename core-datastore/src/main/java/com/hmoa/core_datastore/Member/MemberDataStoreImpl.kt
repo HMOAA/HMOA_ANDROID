@@ -12,7 +12,7 @@ import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import java.io.File
 
-class MemberDataStoreImpl : MemberDataStore {
+private class MemberDataStoreImpl : MemberDataStore {
     override fun getMember(): MemberResponseDto {
         TODO("Not yet implemented")
     }

@@ -4,7 +4,7 @@ import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
 
-class MainDataStoreImpl : MainDataStore {
+private class MainDataStoreImpl : MainDataStore {
     override fun getFirst(): HomeMenuFirstResponseDto {
         TODO("Not yet implemented")
     }

@@ -3,7 +3,7 @@ package com.hmoa.core_datastore.Brand
 import com.hmoa.core_model.response.DataResponseDto
 import java.io.File
 
-class BrandDataStoreImpl : BrandDataStore {
+private class BrandDataStoreImpl : BrandDataStore {
     override fun getBrand(brandId: Int): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }

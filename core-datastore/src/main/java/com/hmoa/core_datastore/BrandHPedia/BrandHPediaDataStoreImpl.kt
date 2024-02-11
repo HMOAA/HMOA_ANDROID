@@ -2,8 +2,8 @@ package com.hmoa.core_datastore.BrandHPedia
 
 import com.hmoa.core_model.response.DataResponseDto
 
-class BrandHPediaDataStoreImpl : BrandHPediaDataStore {
-    override fun getBrandStoryALl(pageNum: Int): DataResponseDto<Any> {
+private class BrandHPediaDataStoreImpl : BrandHPediaDataStore {
+    override fun getBrandStoryAll(pageNum: Int): DataResponseDto<Any> {
         TODO("Not yet implemented")
     }
 

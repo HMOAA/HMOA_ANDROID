@@ -10,58 +10,61 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
+import com.hmoa.core_network.Member.MemberService
 import java.io.File
 
-private class MemberDataStoreImpl : MemberDataStore {
-    override fun getMember(): MemberResponseDto {
-        TODO("Not yet implemented")
+private class MemberDataStoreImpl constructor(
+    private val memberService : MemberService
+) : MemberDataStore {
+    override suspend fun getMember(): MemberResponseDto {
+        return memberService.getMember()
     }
 
-    override fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {
+        return memberService.updateAge(request)
     }
 
-    override fun getCommunities(page: Int): List<CommunityByCategoryResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getCommunities(page: Int): List<CommunityByCategoryResponseDto> {
+        return memberService.getCommunities(page)
     }
 
-    override fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto> {
+        return memberService.getCommunityComments(page)
     }
 
-    override fun deleteMember(): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun deleteMember(): DataResponseDto<Any> {
+        return memberService.deleteMember()
     }
 
-    override fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Any> {
+        return memberService.postExistsNickname(request)
     }
 
-    override fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto> {
+        return memberService.getHearts(page)
     }
 
-    override fun updateJoin(request: JoinUpdateRequestDto): MemberResponseDto {
-        TODO("Not yet implemented")
+    override suspend fun updateJoin(request: JoinUpdateRequestDto): MemberResponseDto {
+        return memberService.updateJoin(request)
     }
 
-    override fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any> {
+        return memberService.updateNickname(request)
     }
 
-    override fun getPerfumeComments(page: Int): List<PerfumeCommentResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getPerfumeComments(page: Int): List<PerfumeCommentResponseDto> {
+        return memberService.getPerfumeComments(page)
     }
 
-    override fun postProfilePhoto(image: File): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun postProfilePhoto(image: File): DataResponseDto<Any> {
+        return memberService.postProfilePhoto(image)
     }
 
-    override fun deleteProfilePhoto(): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun deleteProfilePhoto(): DataResponseDto<Any> {
+        return memberService.deleteProfilePhoto()
     }
 
-    override fun updateSex(request: SexRequestDto): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun updateSex(request: SexRequestDto): DataResponseDto<Any> {
+        return memberService.updateSex(request)
     }
 }

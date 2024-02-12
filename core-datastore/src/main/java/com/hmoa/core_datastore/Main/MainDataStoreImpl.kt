@@ -3,25 +3,29 @@ package com.hmoa.core_datastore.Main
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
+import com.hmoa.core_network.Login.LoginService
+import com.hmoa.core_network.Main.MainService
 
-private class MainDataStoreImpl : MainDataStore {
-    override fun getFirst(): HomeMenuFirstResponseDto {
-        TODO("Not yet implemented")
+private class MainDataStoreImpl constructor(
+    private val mainService: MainService
+): MainDataStore {
+    override suspend fun getFirst(): HomeMenuFirstResponseDto {
+        return mainService.getFirst()
     }
 
-    override fun getFirstMenu(): HomeMenuAllResponseDto {
-        TODO("Not yet implemented")
+    override suspend fun getFirstMenu(): HomeMenuAllResponseDto {
+        return mainService.getFirstMenu()
     }
 
-    override fun getSecond(): HomeMenuDefaultResponseDto {
-        TODO("Not yet implemented")
+    override suspend fun getSecond(): HomeMenuDefaultResponseDto {
+        return mainService.getSecond()
     }
 
-    override fun getSecondMenu(): List<HomeMenuAllResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getSecondMenu(): List<HomeMenuAllResponseDto> {
+        return mainService.getSecondMenu()
     }
 
-    override fun getThirdMenu(): List<HomeMenuAllResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getThirdMenu(): List<HomeMenuAllResponseDto> {
+        return mainService.getThirdMenu()
     }
 }

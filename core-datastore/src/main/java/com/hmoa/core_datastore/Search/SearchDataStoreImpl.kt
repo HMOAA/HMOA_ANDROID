@@ -9,49 +9,64 @@ import com.hmoa.core_model.response.PerfumeNameSearchResponseDto
 import com.hmoa.core_model.response.PerfumeSearchResponseDto
 import com.hmoa.core_model.response.PerfumerDefaultResponseDto
 import com.hmoa.core_model.response.TermDefaultResponseDto
+import com.hmoa.core_network.Search.SearchService
 
-private class SearchDataStoreImpl : SearchDataStore {
-    override fun getBrand(searchWord: String): BrandSearchResponseDto {
-        TODO("Not yet implemented")
+private class SearchDataStoreImpl constructor(
+    private val searchService : SearchService
+): SearchDataStore {
+    override suspend fun getBrand(searchWord: String): BrandSearchResponseDto {
+        return searchService.getBrand(searchWord)
     }
 
-    override fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
+        return searchService.getBrandAll(consonant)
     }
 
-    override fun getBrandStory(page: Int, searchWord: String): List<BrandStoryDefaultResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getBrandStory(
+        page: Int,
+        searchWord: String
+    ): List<BrandStoryDefaultResponseDto> {
+        return searchService.getBrandStory(page, searchWord)
     }
 
-    override fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getCommunity(
+        page: Int,
+        searchWord: String
+    ): List<CommunityByCategoryResponseDto> {
+        return searchService.getCommunity(page, searchWord)
     }
 
-    override fun getCommunityCategory(
+    override suspend fun getCommunityCategory(
         category: String,
         page: Int,
         searchWord: String
     ): List<CommunityByCategoryResponseDto> {
-        TODO("Not yet implemented")
+        return getCommunityCategory(category, page, searchWord)
     }
 
-    override fun getNote(page: Int, searchWord: String): List<NoteDefaultResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getNote(page: Int, searchWord: String): List<NoteDefaultResponseDto> {
+        return searchService.getNote(page, searchWord)
     }
 
-    override fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto> {
+        return searchService.getPerfume(page, searchWord)
     }
 
-    override fun getPerfumeName(page: Int, searchWord: String): List<PerfumeNameSearchResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getPerfumeName(
+        page: Int,
+        searchWord: String
+    ): List<PerfumeNameSearchResponseDto> {
+        return searchService.getPerfumeName(page, searchWord)
     }
 
-    override fun getPerfumer(page: Int, searchWord: String): List<PerfumerDefaultResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getPerfumer(
+        page: Int,
+        searchWord: String
+    ): List<PerfumerDefaultResponseDto> {
+        return searchService.getPerfumer(page, searchWord)
     }
 
-    override fun getTerm(page: Int, searchWord: String): List<TermDefaultResponseDto> {
-        TODO("Not yet implemented")
+    override suspend fun getTerm(page: Int, searchWord: String): List<TermDefaultResponseDto> {
+        return searchService.getTerm(page, searchWord)
     }
 }

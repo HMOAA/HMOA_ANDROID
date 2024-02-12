@@ -3,24 +3,27 @@ package com.hmoa.core_datastore.Admin
 import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
+import com.hmoa.core_network.Admin.AdminService
 
-private class AdminDataStoreImpl : AdminDataStore {
-    override fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+private class AdminDataStoreImpl constructor(
+    private val adminService : AdminService
+): AdminDataStore {
+    override suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
+        return adminService.deleteHomeMenu(homeMenuId)
     }
 
-    override fun postHomeMenu(
+    override suspend fun postHomeMenu(
         homeMenuId: Int,
         homeMenuSaveRequestDto: HomeMenuSaveRequestDto
     ): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+        return adminService.postHomeMenu(homeMenuId, homeMenuSaveRequestDto)
     }
 
-    override fun postHomePerfume(dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun postHomePerfume(dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any> {
+        return adminService.postHomePerfume(dto)
     }
 
-    override fun postHomePerfumeAdd(homeId: Int, perfumeId: Int): DataResponseDto<Any> {
-        TODO("Not yet implemented")
+    override suspend fun postHomePerfumeAdd(homeId: Int, perfumeId: Int): DataResponseDto<Any> {
+        return adminService.postHomePerfumeAdd(homeId, perfumeId)
     }
 }

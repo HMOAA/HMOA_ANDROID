@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-<<<<<<< HEAD
-=======
     <annotationProcessing>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
@@ -37,10 +35,6 @@
         <module name="Hmoa.core-network.test" />
       </profile>
     </annotationProcessing>
->>>>>>> 7d5a979c144fc3a35a57d30a65036e9c5f7915c5
-    <bytecodeTargetLevel target="17">
-      <module name="Hmoa.core-data.main" target="17" />
-      <module name="Hmoa.core-data.test" target="17" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17" />
   </component>
 </project>

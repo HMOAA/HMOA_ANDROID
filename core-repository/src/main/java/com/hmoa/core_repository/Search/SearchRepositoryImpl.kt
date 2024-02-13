@@ -15,23 +15,23 @@ class SearchRepositoryImpl(
     private val searchDataStore: SearchDataStore
 ) : SearchRepository {
 
-    override fun getBrand(searchWord: String): BrandSearchResponseDto {
+    override suspend fun getBrand(searchWord: String): BrandSearchResponseDto {
         return searchDataStore.getBrand(searchWord)
     }
 
-    override fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
+    override suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
         return searchDataStore.getBrandAll(consonant)
     }
 
-    override fun getBrandStory(page: Int, searchWord: String): List<BrandStoryDefaultResponseDto> {
+    override suspend fun getBrandStory(page: Int, searchWord: String): List<BrandStoryDefaultResponseDto> {
         return searchDataStore.getBrandStory(page, searchWord)
     }
 
-    override fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto> {
+    override suspend fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto> {
         return searchDataStore.getCommunity(page, searchWord)
     }
 
-    override fun getCommunityCategory(
+    override suspend fun getCommunityCategory(
         category: String,
         page: Int,
         searchWord: String
@@ -39,23 +39,23 @@ class SearchRepositoryImpl(
         return searchDataStore.getCommunityCategory(category, page, searchWord)
     }
 
-    override fun getNote(page: Int, searchWord: String): List<NoteDefaultResponseDto> {
+    override suspend fun getNote(page: Int, searchWord: String): List<NoteDefaultResponseDto> {
         return searchDataStore.getNote(page, searchWord)
     }
 
-    override fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto> {
+    override suspend fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto> {
         return searchDataStore.getPerfume(page, searchWord)
     }
 
-    override fun getPerfumeName(page: Int, searchWord: String): List<PerfumeNameSearchResponseDto> {
+    override suspend fun getPerfumeName(page: Int, searchWord: String): List<PerfumeNameSearchResponseDto> {
         return searchDataStore.getPerfumeName(page, searchWord)
     }
 
-    override fun getPerfumer(page: Int, searchWord: String): List<PerfumerDefaultResponseDto> {
+    override suspend fun getPerfumer(page: Int, searchWord: String): List<PerfumerDefaultResponseDto> {
         return searchDataStore.getPerfumer(page, searchWord)
     }
 
-    override fun getTerm(page: Int, searchWord: String): List<TermDefaultResponseDto> {
+    override suspend fun getTerm(page: Int, searchWord: String): List<TermDefaultResponseDto> {
         return searchDataStore.getTerm(page, searchWord)
     }
 }

@@ -8,23 +8,23 @@ class BrandRepositoryImpl(
     private val brandDataStore: BrandDataStore
 ) : BrandRepository {
 
-    override fun getBrand(brandId: Int): DataResponseDto<Any> {
+    override suspend fun getBrand(brandId: Int): DataResponseDto<Any> {
         return brandDataStore.getBrand(brandId)
     }
 
-    override fun putBrandLike(brandId: Int): DataResponseDto<Any> {
+    override suspend fun putBrandLike(brandId: Int): DataResponseDto<Any> {
         return brandDataStore.putBrandLike(brandId)
     }
 
-    override fun deleteBrandLike(brandId: Int): DataResponseDto<Any> {
+    override suspend fun deleteBrandLike(brandId: Int): DataResponseDto<Any> {
         return brandDataStore.deleteBrandLike(brandId)
     }
 
-    override fun postBrandTestSave(image: File, brandId: Int): DataResponseDto<Any> {
+    override suspend fun postBrandTestSave(image: File, brandId: Int): DataResponseDto<Any> {
         return brandDataStore.postBrandTestSave(image, brandId)
     }
 
-    override fun postBrand(
+    override suspend fun postBrand(
         image: File,
         brandName: String,
         englishName: String
@@ -32,15 +32,15 @@ class BrandRepositoryImpl(
         return brandDataStore.postBrand(image, brandName, englishName)
     }
 
-    override fun getPerfumesSortedChar(brandId: Int, pageNum: Int): DataResponseDto<Any> {
+    override suspend fun getPerfumesSortedChar(brandId: Int, pageNum: Int): DataResponseDto<Any> {
         return brandDataStore.getPerfumesSortedChar(brandId, pageNum)
     }
 
-    override fun getPerfumesSortedTop(brandId: Int, pageNum: Int): DataResponseDto<Any> {
+    override suspend fun getPerfumesSortedTop(brandId: Int, pageNum: Int): DataResponseDto<Any> {
         return brandDataStore.getPerfumesSortedTop(brandId, pageNum)
     }
 
-    override fun getPerfumesSortedUpdate(brandId: Int, pageNum: Int): DataResponseDto<Any> {
+    override suspend fun getPerfumesSortedUpdate(brandId: Int, pageNum: Int): DataResponseDto<Any> {
         return brandDataStore.getPerfumesSortedUpdate(brandId, pageNum)
     }
 }

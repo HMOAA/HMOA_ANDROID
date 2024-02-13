@@ -6,6 +6,6 @@ import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
 
 interface LoginRepository {
-    fun postOAuth(accessToken : OauthLoginRequestDto, provider : String) : MemberLoginResponseDto
-    fun postRemembered(dto : RememberedLoginRequestDto) : TokenResponseDto
+    suspend fun postOAuth(accessToken : OauthLoginRequestDto, provider : String) : MemberLoginResponseDto
+    suspend fun postRemembered(dto : RememberedLoginRequestDto) : TokenResponseDto
 }

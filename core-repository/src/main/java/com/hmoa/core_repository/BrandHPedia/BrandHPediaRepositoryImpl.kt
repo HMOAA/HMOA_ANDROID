@@ -7,23 +7,23 @@ class BrandHPediaRepositoryImpl(
     private val brandHPediaDataStore: BrandHPediaDataStore
 ) : BrandHPediaRepository {
 
-    override fun getBrandStoryAll(pageNum: Int): DataResponseDto<Any> {
+    override suspend fun getBrandStoryAll(pageNum: Int): DataResponseDto<Any> {
         return brandHPediaDataStore.getBrandStoryAll(pageNum)
     }
 
-    override fun getBrandStory(brandStoryId: Int): DataResponseDto<Any> {
+    override suspend fun getBrandStory(brandStoryId: Int): DataResponseDto<Any> {
         return brandHPediaDataStore.getBrandStory(brandStoryId)
     }
 
-    override fun deleteBrandStory(brandStoryId: Int): DataResponseDto<Any> {
+    override suspend fun deleteBrandStory(brandStoryId: Int): DataResponseDto<Any> {
         return brandHPediaDataStore.deleteBrandStory(brandStoryId)
     }
 
-    override fun updateBrandStory(brandStoryId: Int, content: String): DataResponseDto<Any> {
+    override suspend fun updateBrandStory(brandStoryId: Int, content: String): DataResponseDto<Any> {
         return brandHPediaDataStore.updateBrandStory(brandStoryId, content)
     }
 
-    override fun postBrandStory(
+    override suspend fun postBrandStory(
         brandStorySubtitle: String,
         brandStoryTitle: String,
         content: String
@@ -31,7 +31,7 @@ class BrandHPediaRepositoryImpl(
         return brandHPediaDataStore.postBrandStory(brandStorySubtitle, brandStoryTitle, content)
     }
 
-    override fun postTestSave(): DataResponseDto<Any> {
+    override suspend fun postTestSave(): DataResponseDto<Any> {
         return brandHPediaDataStore.postTestSave()
     }
 }

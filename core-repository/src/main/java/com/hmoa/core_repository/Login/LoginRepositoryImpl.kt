@@ -10,14 +10,14 @@ class LoginRepositoryImpl(
     private val loginDataStore: LoginDataStore
 ) : LoginRepository {
 
-    override fun postOAuth(
+    override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
         provider: String
     ): MemberLoginResponseDto {
         return loginDataStore.postOAuth(accessToken, provider)
     }
 
-    override fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto {
+    override suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto {
         return loginDataStore.postRemembered(dto)
     }
 }

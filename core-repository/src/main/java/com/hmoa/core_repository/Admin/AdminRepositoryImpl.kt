@@ -8,22 +8,22 @@ import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
 class AdminRepositoryImpl(
     private val adminDataStore : AdminDataStore
 ) : AdminRepository {
-    override fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
+    override suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
         return adminDataStore.deleteHomeMenu(homeMenuId)
     }
 
-    override fun postHomeMenu(
+    override suspend fun postHomeMenu(
         homeMenuId: Int,
         homeMenuSaveRequestDto: HomeMenuSaveRequestDto
     ): DataResponseDto<Any> {
         return adminDataStore.postHomeMenu(homeMenuId, homeMenuSaveRequestDto)
     }
 
-    override fun postHomePerfume(dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any> {
+    override suspend fun postHomePerfume(dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any> {
         return adminDataStore.postHomePerfume(dto)
     }
 
-    override fun postHomePerfumeAdd(homeId: Int, perfumeId: Int): DataResponseDto<Any> {
+    override suspend fun postHomePerfumeAdd(homeId: Int, perfumeId: Int): DataResponseDto<Any> {
         return adminDataStore.postHomePerfumeAdd(homeId, perfumeId)
     }
 }

@@ -1,12 +1,12 @@
 package com.hmoa.component
 
-import android.content.res.Resources
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,11 +32,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.core_designsystem.R
 import kotlin.math.roundToInt
 
 @Composable
-fun Slider(){
+fun Slider(
+    onSlideEnd : () -> Unit,
+){
 
     var offsetX by remember{mutableStateOf(0f)}
 
@@ -46,13 +46,18 @@ fun Slider(){
             .width(296.dp)
             .height(52.dp)
             .background(color = Color(0xFFF4F4F4), shape = RoundedCornerShape(size = 5.dp))
-            .pointerInput(Unit){
+            .pointerInput(Unit) {
                 detectTransformGestures { centroid, pan, zoom, rotation ->
                     offsetX += pan.x
 
-                    val limitOffset = (296-52).dp.toPx()
+                    val limitOffset = (296 - 52).dp.toPx()
 
                     offsetX = offsetX.coerceIn(0f, limitOffset)
+
+                    if (offsetX >= limitOffset) {
+                        // slide가 끝에 도달했을 때 이벤트
+                        onSlideEnd()
+                    }
                 }
             },
         verticalAlignment = Alignment.CenterVertically
@@ -60,7 +65,7 @@ fun Slider(){
         Box(
             modifier = Modifier
                 .size(52.dp)
-                .offset{ IntOffset(offsetX.roundToInt(), 0) }
+                .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .background(color = Color(0xFFBBBBBB), shape = RoundedCornerShape(size = 5.dp)),
             contentAlignment = Alignment.Center
         ){
@@ -88,10 +93,25 @@ fun Slider(){
 @Preview(showBackground = true)
 @Composable
 fun TestSlider(){
+
+    var test by remember{mutableStateOf("init")}
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ){
-        Slider()
+        Slider(
+            onSlideEnd = {
+                test = "reach the end"
+            }
+        )
+
+        Column {
+            Spacer(Modifier.height(90.dp))
+            Text(
+                text = test,
+                fontSize = 30.sp
+            )
+        }
     }
 }

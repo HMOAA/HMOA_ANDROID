@@ -1,10 +1,12 @@
 package com.hmoa.component
 
+import android.content.res.Resources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -37,21 +39,29 @@ import kotlin.math.roundToInt
 @Composable
 fun Slider(){
 
-    val offsetX by remember{mutableStateOf(0f)}
-    val offsetY by remember{mutableStateOf(0f)}
+    var offsetX by remember{mutableStateOf(0f)}
 
     Row(
         modifier = Modifier
             .width(296.dp)
             .height(52.dp)
-            .background(color = Color(0xFFF4F4F4), shape = RoundedCornerShape(size = 5.dp)),
+            .background(color = Color(0xFFF4F4F4), shape = RoundedCornerShape(size = 5.dp))
+            .pointerInput(Unit){
+                detectTransformGestures { centroid, pan, zoom, rotation ->
+                    offsetX += pan.x
+
+                    val limitOffset = (296-52).dp.toPx()
+
+                    offsetX = offsetX.coerceIn(0f, limitOffset)
+                }
+            },
         verticalAlignment = Alignment.CenterVertically
     ){
         Box(
             modifier = Modifier
                 .size(52.dp)
-                .background(color = Color(0xFFBBBBBB), shape = RoundedCornerShape(size = 5.dp))
-                .offset{ IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) },
+                .offset{ IntOffset(offsetX.roundToInt(), 0) }
+                .background(color = Color(0xFFBBBBBB), shape = RoundedCornerShape(size = 5.dp)),
             contentAlignment = Alignment.Center
         ){
             Icon(

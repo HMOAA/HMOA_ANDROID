@@ -1,15 +1,16 @@
-import com.hmoa.core_model.Category
-import com.hmoa.core_model.Provider
+package com.hmoa.core_model
+
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityPhotoDefaultResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
+import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+
 
 @DisplayName("enum class 상수이름이 String타입으로 속성으로 들어가는 모델 테스트")
-class DataWithEnumConstantsTest {
+class TestDataWithEnumConstants {
     @DisplayName("Category enum class 상수 이름이 String타입으로 category 속성에 들어가는 모델 테스트")
     @Test
     fun isAvailableData_includeCategoryPropertyAsEnumConstants() {

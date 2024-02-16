@@ -8,9 +8,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-
 dependencies {
     implementation(project(":core-model"))
+
+    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
+
+    implementation("io.ktor:ktor-client-android:2.3.7")
+
     implementation("com.google.dagger:hilt-android:2.44")
     implementation("com.google.dagger:hilt-compiler:2.44")
     implementation("io.ktor:ktor-client-serialization:2.3.7")

@@ -21,11 +21,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     composeOptions{
         kotlinCompilerExtensionVersion = "1.5.0"
@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+<<<<<<< HEAD
 
     //material3
     implementation("androidx.compose.material3:material3:1.1.0")
@@ -48,6 +49,8 @@ dependencies {
     //bottom navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
 
+=======
+>>>>>>> 9370c45fccf25470acf1883d928f0185f945f2d6
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     testImplementation("junit:junit:4.13.2")

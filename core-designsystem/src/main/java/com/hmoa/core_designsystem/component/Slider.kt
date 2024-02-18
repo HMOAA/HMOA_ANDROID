@@ -1,4 +1,4 @@
-package com.hmoa.component
+package com.hmoa.core_designsystem.component
 
 import android.util.Log
 import androidx.compose.foundation.background

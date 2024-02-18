@@ -1,4 +1,4 @@
-package com.hmoa.component
+package com.hmoa.core_designsystem.component
 
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.background

@@ -9,8 +9,6 @@ java {
 }
 
 dependencies {
-    implementation(kotlin("test-common"))
-    implementation(kotlin("test-annotations-common"))
     implementation("io.ktor:ktor-client-serialization:2.3.7")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")

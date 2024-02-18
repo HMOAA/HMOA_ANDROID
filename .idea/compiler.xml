@@ -35,9 +35,6 @@
         <module name="Hmoa.core-network.test" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17">
-      <module name="Hmoa.core-data.main" target="17" />
-      <module name="Hmoa.core-data.test" target="17" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17" />
   </component>
 </project>

@@ -3,18 +3,7 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
-<<<<<<< HEAD
-<<<<<<< HEAD
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
-=======
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="temurin-17" project-jdk-type="JavaSDK">
->>>>>>> 050a6b15b0b29781e171a1c6ec241ea13e9ef479
-=======
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
-=======
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="temurin-17" project-jdk-type="JavaSDK">
->>>>>>> 7d5a979c144fc3a35a57d30a65036e9c5f7915c5
->>>>>>> 9370c45fccf25470acf1883d928f0185f945f2d6
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

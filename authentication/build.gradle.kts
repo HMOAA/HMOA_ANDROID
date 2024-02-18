@@ -1,20 +1,17 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.hmoa.sample_app"
+    namespace = "com.hmoa.authentication"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.hmoa.sample_app"
         minSdk = 24
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -30,18 +27,13 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    packaging {
-        resources {
-            excludes += "META-INF/gradle/incremental.annotation.processors"
-        }
-    }
 }
 
 dependencies {
-
-    implementation(project(":core-repository"))
-    implementation(project(":core-model"))
-
+    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.ui:ui:1.1.0")
+    implementation("androidx.navigation:navigation-compose:2.7.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")

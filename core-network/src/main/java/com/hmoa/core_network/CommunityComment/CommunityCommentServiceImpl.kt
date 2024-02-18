@@ -28,8 +28,8 @@ internal class CommunityCommentServiceImpl @Inject constructor(private val httpC
         return httpClient.delete("/community/comment/${commentId}").body()
     }
 
-    override suspend fun postCommunityComment(commentId: Int, page: String): CommunityCommentAllResponseDto {
-        return httpClient.post("/community/comment/${commentId}/findAll") {
+    override suspend fun getCommunityComments(commentId: Int, page: String): CommunityCommentAllResponseDto {
+        return httpClient.get("/community/comment/${commentId}/findAll") {
             url {
                 parameters.append("page", page)
             }

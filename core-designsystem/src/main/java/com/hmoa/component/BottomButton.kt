@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun BottomButton(
-    isEnabled : Boolean,
-    btnText : String,
-    onClick : () -> Unit,
+    isEnabled : Boolean, //버튼 활성화 여부
+    btnText : String, //버튼 메세지
+    onClick : () -> Unit, //버튼 이벤트
 ){
     Row(
         modifier = Modifier.fillMaxWidth()

@@ -2,28 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-<<<<<<< HEAD
       <entry key="TestSlider">
         <State />
       </entry>
-      <entry key="app">
-=======
-      <entry key="ExampleServiceTest">
->>>>>>> 9370c45fccf25470acf1883d928f0185f945f2d6
-        <State />
-      </entry>
-      <entry key="sample-app">
-        <State />
-      </entry>
-<<<<<<< HEAD
-=======
-      <entry key="testService()">
-        <State />
-      </entry>
-      <entry key="testService() (1)">
-        <State />
-      </entry>
->>>>>>> 9370c45fccf25470acf1883d928f0185f945f2d6
     </value>
   </component>
 </project>

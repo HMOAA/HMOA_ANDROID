@@ -1,11 +1,11 @@
 package com.hmoa.core_designsystem.component
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,9 +21,9 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @SuppressLint("ModifierFactoryUnreferencedReceiver")
-fun Modifier.addButtonModifier(buttonModifier: Modifier?):Modifier{
-    if(buttonModifier != null){
-        return this.then(buttonModifier)
+fun Modifier.addModifier(modifier: Modifier?):Modifier{
+    if(modifier != null){
+        return this.then(modifier)
     }
     else{
         return this
@@ -35,6 +35,7 @@ fun OAuthLoginButton(
     buttonModifier: Modifier? = null,
     iconId: Int,
     iconSize:Int,
+    iconModifier: Modifier? = null,
     buttonText: String,
     textColor: Color,
     textSize:Int,
@@ -50,13 +51,13 @@ fun OAuthLoginButton(
             .background(color = backgroundColor, shape = RoundedCornerShape(size = 5.dp))
             .clickable {
                 onPress()
-            }.addButtonModifier(buttonModifier),
+            }.addModifier(buttonModifier),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(modifier = Modifier.padding(start = screenWidth / 5))
-        Icon(
-            modifier = Modifier.size(iconSize.dp),
+        Spacer(modifier = Modifier.padding(start = screenWidth / 6))
+        Image(
+            modifier = Modifier.size(iconSize.dp).addModifier(iconModifier),
             painter = painterResource(iconId),
             contentDescription = "OAuth Type Icon",
         )

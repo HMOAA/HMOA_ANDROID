@@ -19,8 +19,8 @@ internal class CommunityCommentDataStoreImpl constructor(private val communityCo
         return communityCommentService.deleteCommunityComment(commentId)
     }
 
-    override suspend fun postCommunityComment(commentId: Int, page: String): CommunityCommentAllResponseDto {
-        return communityCommentService.postCommunityComment(commentId, page)
+    override suspend fun getCommunityComments(commentId: Int, page: String): CommunityCommentAllResponseDto {
+        return communityCommentService.getCommunityComments(commentId, page)
     }
 
     override suspend fun postCommunityComment(

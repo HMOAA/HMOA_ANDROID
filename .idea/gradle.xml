@@ -17,9 +17,8 @@
             <option value="$PROJECT_DIR$/core-model" />
             <option value="$PROJECT_DIR$/core-network" />
             <option value="$PROJECT_DIR$/core-repository" />
-            <option value="$PROJECT_DIR$/feature-userinfo" />
+            <option value="$PROJECT_DIR$/feature-userInfo" />
             <option value="$PROJECT_DIR$/sample-app" />
-            <option value="$PROJECT_DIR$/userInfo" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

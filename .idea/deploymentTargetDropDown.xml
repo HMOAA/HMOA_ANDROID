@@ -11,6 +11,12 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="feature-userInfo">
+        <State />
+      </entry>
+      <entry key="test">
+        <State />
+      </entry>
       <entry key="userinfo">
         <State />
       </entry>

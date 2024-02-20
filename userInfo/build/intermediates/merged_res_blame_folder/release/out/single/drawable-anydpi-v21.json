@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/drawable-anydpi-v21/ic_call_answer_video_low.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/drawable-anydpi-v21/ic_call_answer_video_low.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/drawable-anydpi-v21/ic_call_answer_low.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/drawable-anydpi-v21/ic_call_answer_low.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/drawable-anydpi-v21/ic_call_decline_low.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/drawable-anydpi-v21/ic_call_decline_low.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/drawable-anydpi-v21/ic_call_decline.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/drawable-anydpi-v21/ic_call_decline.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/drawable-anydpi-v21/ic_call_answer.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/drawable-anydpi-v21/ic_call_answer.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/drawable-anydpi-v21/ic_call_answer_video.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/drawable-anydpi-v21/ic_call_answer_video.xml"
+    }
+]

@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/layout-v21/notification_template_icon_group.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/layout-v21/notification_action.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/layout-v21/notification_action_tombstone.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "com.hmoa.userinfo.userInfo-merged_res-58:/layout-v21/notification_template_custom_big.xml",
+        "source": "com.hmoa.userinfo.userInfo-core-1.10.0-50:/layout-v21/notification_template_custom_big.xml"
+    }
+]

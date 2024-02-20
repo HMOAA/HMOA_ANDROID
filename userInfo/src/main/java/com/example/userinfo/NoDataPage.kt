@@ -36,37 +36,6 @@ fun NoDataPage(
             .background(color = Color.White)
             .padding(horizontal = 16.dp)
     ){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ){
-            /** 이전 화면 navigation */
-            IconButton(
-                modifier = Modifier.size(20.dp),
-                onClick = {}
-            ){
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.KeyboardArrowLeft,
-                    contentDescription = "Back Button"
-                )
-            }
-
-            Spacer(Modifier.weight(1f))
-
-            Text(
-                text = "내 활동",
-                fontSize = 20.sp
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Spacer(Modifier.width(20.dp))
-        }
-
         Spacer(Modifier.height(66.dp))
 
         Text(

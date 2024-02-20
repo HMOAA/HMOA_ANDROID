@@ -1,4 +1,4 @@
-package com.hmoa.authentication
+package com.hmoa.feature_authentication
 
 import org.junit.Test
 

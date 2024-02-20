@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_1.xml",
+        "source": "com.hmoa.authentication-appcompat-1.6.1-7:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_1.xml"
+    },
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/btn_radio_to_on_mtrl_animation_interpolator_0.xml",
+        "source": "com.hmoa.authentication-appcompat-1.6.1-7:/interpolator/btn_radio_to_on_mtrl_animation_interpolator_0.xml"
+    },
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/fast_out_slow_in.xml",
+        "source": "com.hmoa.authentication-appcompat-1.6.1-7:/interpolator/fast_out_slow_in.xml"
+    },
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_0.xml",
+        "source": "com.hmoa.authentication-appcompat-1.6.1-7:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_0.xml"
+    },
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_1.xml",
+        "source": "com.hmoa.authentication-appcompat-1.6.1-7:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_1.xml"
+    },
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/btn_radio_to_off_mtrl_animation_interpolator_0.xml",
+        "source": "com.hmoa.authentication-appcompat-1.6.1-7:/interpolator/btn_radio_to_off_mtrl_animation_interpolator_0.xml"
+    },
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/mtrl_linear.xml",
+        "source": "com.hmoa.authentication-material-1.8.0-54:/interpolator/mtrl_linear.xml"
+    },
+    {
+        "merged": "com.hmoa.authentication-merged_res-58:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_0.xml",
+        "source": "com.hmoa.authentication-appcompat-1.6.1-7:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_0.xml"
+    }
+]

@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.hmoa.core_designsystem"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         minSdk = 24

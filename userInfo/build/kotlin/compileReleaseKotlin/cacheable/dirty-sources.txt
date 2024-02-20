@@ -1,0 +1,2 @@
+C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\userInfo\src\main\java\com\example\userinfo\GlobalFunction.kt
+C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\userInfo\src\main\java\com\example\userinfo\MyPage.kt

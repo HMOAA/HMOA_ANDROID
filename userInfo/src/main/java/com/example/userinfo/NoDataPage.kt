@@ -34,7 +34,6 @@ fun NoDataPage(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-            .padding(horizontal = 16.dp)
     ){
         Spacer(Modifier.height(66.dp))
 

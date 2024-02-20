@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+//인증이 안되어 있는 My Page
 @Composable
 fun NoAuthMyPage(){
     Column(

@@ -1,2 +1,0 @@
-C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\authentication\src\main\java\com\hmoa\authentication\LoginScreen.kt
-C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\authentication\src\main\java\TestFile.kt

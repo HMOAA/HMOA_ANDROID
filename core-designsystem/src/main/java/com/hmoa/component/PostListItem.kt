@@ -75,6 +75,7 @@ fun PostListItem(
                 modifier = Modifier.size(16.dp),
                 onClick = onMenuClick
             ) {
+                /** icon 추가되는 대로 resoruce 추가해서 변경하기 */
                 Icon(
                     modifier = Modifier.fillMaxSize(),
                     imageVector = Icons.Filled.MoreVert,

@@ -43,6 +43,8 @@ fun MyFavoriteCommentPage(){
         if (commentList.isNotEmpty()){
             LazyColumn{
                 items(commentList){ comment ->
+                    /** Comment에 데이터 매칭 */
+                    /** Comment Click >> Community로 이동 */
 //                Comment(
 //                    profile = ,
 //                    nickname = ,

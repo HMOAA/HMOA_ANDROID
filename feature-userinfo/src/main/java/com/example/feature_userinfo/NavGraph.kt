@@ -9,14 +9,16 @@ import com.example.userinfo.MyActivityPage
 import com.example.userinfo.MyCommentPage
 import com.example.userinfo.MyFavoriteCommentPage
 import com.example.userinfo.MyPage
+import com.example.userinfo.NoAuthMyPage
 
 @Composable
 fun NavGraph(
-    navController : NavHostController
+    navController : NavHostController,
+    isAuthenticated : Boolean
 ){
     NavHost(
         navController = navController,
-        startDestination = Screens.MyPage.name
+        startDestination = if (isAuthenticated) Screens.MyPage.name else Screens.NoAuthMyPage.name
     ){
         composable(Screens.MyPage.name) {
             MyPage()
@@ -41,6 +43,9 @@ fun NavGraph(
         }
         composable(Screens.MyGenderPage.name) {
             MyGenderPage()
+        }
+        composable(Screens.NoAuthMyPage.name) {
+            NoAuthMyPage()
         }
     }
 }

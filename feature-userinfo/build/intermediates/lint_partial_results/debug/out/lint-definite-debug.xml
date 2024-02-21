@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.1.0" type="incidents">
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.compose.material3:material3 than 1.1.0 is available: 1.2.0">
+        <fix-replace
+            description="Change to 1.2.0"
+            family="Update versions"
+            oldString="1.1.0"
+            replacement="1.2.0"/>
+        <location
+            file="${:feature-userInfo*projectDir}/build.gradle.kts"
+            line="45"
+            column="21"
+            startOffset="938"
+            endLine="45"
+            endColumn="63"
+            endOffset="980"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.compose.ui:ui than 1.1.0 is available: 1.6.1">
+        <fix-replace
+            description="Change to 1.6.1"
+            family="Update versions"
+            oldString="1.1.0"
+            replacement="1.6.1"/>
+        <location
+            file="${:feature-userInfo*projectDir}/build.gradle.kts"
+            line="50"
+            column="21"
+            startOffset="1080"
+            endLine="50"
+            endColumn="49"
+            endOffset="1108"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.navigation:navigation-compose than 2.7.0 is available: 2.7.7">
+        <fix-replace
+            description="Change to 2.7.7"
+            family="Update versions"
+            oldString="2.7.0"
+            replacement="2.7.7"/>
+        <location
+            file="${:feature-userInfo*projectDir}/build.gradle.kts"
+            line="53"
+            column="21"
+            startOffset="1156"
+            endLine="53"
+            endColumn="65"
+            endOffset="1200"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.9.0 is available: 1.12.0">
+        <fix-replace
+            description="Change to 1.12.0"
+            family="Update versions"
+            oldString="1.9.0"
+            replacement="1.12.0"/>
+        <location
+            file="${:feature-userInfo*projectDir}/build.gradle.kts"
+            line="55"
+            column="21"
+            startOffset="1224"
+            endLine="55"
+            endColumn="49"
+            endOffset="1252"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.compose.ui:ui-tooling than 1.6.0 is available: 1.6.1">
+        <fix-replace
+            description="Change to 1.6.1"
+            family="Update versions"
+            oldString="1.6.0"
+            replacement="1.6.1"/>
+        <location
+            file="${:feature-userInfo*projectDir}/build.gradle.kts"
+            line="60"
+            column="26"
+            startOffset="1521"
+            endLine="60"
+            endColumn="62"
+            endOffset="1557"/>
+    </incident>
+
+</incidents>

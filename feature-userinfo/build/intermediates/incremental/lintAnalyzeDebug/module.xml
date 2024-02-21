@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\feature-userInfo"
+    name=":feature-userInfo"
+    type="APP"
+    maven="Hmoa:feature-userInfo:"
+    agpVersion="8.1.0"
+    buildFolder="build"
+    bootClassPath="C:\Users\User\AppData\Local\Android\Sdk\platforms\android-34\android.jar;C:\Users\User\AppData\Local\Android\Sdk\build-tools\33.0.1\core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-34"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>

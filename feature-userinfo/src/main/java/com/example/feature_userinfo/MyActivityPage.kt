@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MyActivity(){
+fun MyActivityPage(){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -166,5 +166,5 @@ fun MyActivity(){
 @Preview
 @Composable
 fun TestMyActivity(){
-    MyActivity()
+    MyActivityPage()
 }

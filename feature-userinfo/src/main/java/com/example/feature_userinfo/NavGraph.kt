@@ -13,6 +13,6 @@ fun NavGraph(
         navController = navController,
         startDestination = Screens.MyPage.name
     ){
-        
+
     }
 }

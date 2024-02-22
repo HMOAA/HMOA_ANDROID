@@ -52,7 +52,7 @@ fun EditProfilePage(
     navController : NavController
 ){
 
-    //nick name 초반 값을 viewModel로 collectAsState()로 받아오고 그것을 변경
+    /** nick name 초반 값을 viewModel로 collectAsState()로 받아오고 그것을 변경 */
     //test 값
     var nickname by remember{mutableStateOf("test")}
 
@@ -67,7 +67,7 @@ fun EditProfilePage(
         TopBar(
             navIcon = Icons.Filled.KeyboardArrowLeft,
             onNavClick = {
-                /** 뒤로가기 nvaigation */
+                navController.navigateUp()
             },
             title = "프로필 수정"
         )
@@ -111,7 +111,6 @@ fun EditProfilePage(
                             tint = Color(0xFFBBBBBB)
                         )
                     }
-
                 }
             }
         }

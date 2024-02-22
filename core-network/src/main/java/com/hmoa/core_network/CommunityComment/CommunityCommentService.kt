@@ -1,4 +1,4 @@
-package com.hmoa.core_network.CommunityComment
+package corenetwork.CommunityComment
 
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto

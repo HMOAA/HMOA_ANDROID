@@ -1,18 +1,14 @@
-package com.hmoa.core_network.Brand
+package corenetwork.Brand
 
 import com.hmoa.core_model.response.DataResponseDto
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.put
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
 import java.io.File
-import javax.inject.Inject
 
-class BrandServiceImpl @Inject constructor(
+class BrandServiceImpl constructor(
     private val httpClient: HttpClient
-) : BrandService {
+) : corenetwork.Brand.BrandService {
 
     override suspend fun getBrand(brandId: Int): DataResponseDto<Any> {
         return httpClient.get("/brand/${brandId}").body()
@@ -43,21 +39,21 @@ class BrandServiceImpl @Inject constructor(
     }
 
     override suspend fun getPerfumesSortedChar(brandId: Int, pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/brand/perfumes/${brandId}"){
+        val response = httpClient.get("/brand/perfumes/${brandId}") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()
     }
 
     override suspend fun getPerfumesSortedTop(brandId: Int, pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/brand/perfumes/${brandId}/top"){
+        val response = httpClient.get("/brand/perfumes/${brandId}/top") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()
     }
 
     override suspend fun getPerfumesSortedUpdate(brandId: Int, pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/brand/perfumes/${brandId}/update"){
+        val response = httpClient.get("/brand/perfumes/${brandId}/update") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()

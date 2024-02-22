@@ -1,16 +1,15 @@
-package com.hmoa.core_network.Main
+package corenetwork.Main
 
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import javax.inject.Inject
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
 
-class MainServiceImpl @Inject constructor(
-    private val httpClient : HttpClient
-): MainService {
+class MainServiceImpl constructor(
+    private val httpClient: HttpClient
+) : MainService {
 
     override suspend fun getFirst(): HomeMenuFirstResponseDto {
         return httpClient.get("/main/first").body()

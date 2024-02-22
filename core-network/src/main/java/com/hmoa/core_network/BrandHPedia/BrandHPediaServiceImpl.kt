@@ -1,21 +1,17 @@
-package com.hmoa.core_network.BrandHPedia
+package corenetwork.BrandHPedia
 
 import com.hmoa.core_model.response.DataResponseDto
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.put
-import io.ktor.http.Parameters
-import javax.inject.Inject
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 
-class BrandHPediaServiceImpl @Inject constructor(
+class BrandHPediaServiceImpl constructor(
     private val httpClient: HttpClient
-) : BrandHPediaService {
+) : corenetwork.BrandHPedia.BrandHPediaService {
 
     override suspend fun getBrandStoryAll(pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/brandstory"){
+        val response = httpClient.get("/brandstory") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()
@@ -33,7 +29,7 @@ class BrandHPediaServiceImpl @Inject constructor(
         brandStoryId: Int,
         content: String
     ): DataResponseDto<Any> {
-        val response = httpClient.put("/brandstory/${brandStoryId}/update"){
+        val response = httpClient.put("/brandstory/${brandStoryId}/update") {
             url.parameters.append("content", content)
         }
         return response.body()
@@ -44,12 +40,12 @@ class BrandHPediaServiceImpl @Inject constructor(
         brandStoryTitle: String,
         content: String
     ): DataResponseDto<Any> {
-        val parameter = Parameters.build{
+        val parameter = Parameters.build {
             append("brandStorySubtitle", brandStorySubtitle)
             append("brandStoryTitle", brandStoryTitle)
             append("content", content)
         }
-        val response = httpClient.post("/brandstory/new"){
+        val response = httpClient.post("/brandstory/new") {
             url.parameters.appendAll(parameter)
         }
         return response.body()

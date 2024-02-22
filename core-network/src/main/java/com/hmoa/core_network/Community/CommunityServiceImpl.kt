@@ -1,4 +1,4 @@
-package com.hmoa.core_network.Community
+package corenetwork.Community
 
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
@@ -11,11 +11,10 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import java.io.File
-import javax.inject.Inject
 
-internal class CommunityServiceImpl @Inject constructor(
+internal class CommunityServiceImpl constructor(
     private val httpClient: HttpClient,
-) : CommunityService {
+) : corenetwork.Community.CommunityService {
     override suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto {
         return httpClient.get("/community/${communityId}").body()
     }

@@ -1,4 +1,4 @@
-package com.hmoa.core_network.Perfume
+package corenetwork.Perfume
 
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
@@ -8,9 +8,8 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
-import javax.inject.Inject
 
-internal class PerfumeServiceImpl @Inject constructor(
+internal class PerfumeServiceImpl constructor(
     private val httpClient: HttpClient
 ) : PerfumeService {
 

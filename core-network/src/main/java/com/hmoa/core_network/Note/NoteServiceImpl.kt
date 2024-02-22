@@ -1,21 +1,17 @@
-package com.hmoa.core_network.Note
+package corenetwork.Note
 
 import com.hmoa.core_model.response.DataResponseDto
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.put
-import io.ktor.http.Parameters
-import javax.inject.Inject
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 
-class NoteServiceImpl @Inject constructor(
-    private val httpClient : HttpClient
+class NoteServiceImpl constructor(
+    private val httpClient: HttpClient
 ) : NoteService {
 
     override suspend fun getNoteAll(pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/note"){
+        val response = httpClient.get("/note") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()
@@ -30,7 +26,7 @@ class NoteServiceImpl @Inject constructor(
     }
 
     override suspend fun putNote(content: String, noteId: Int): DataResponseDto<Any> {
-        val response = httpClient.put("/note/${noteId}/update"){
+        val response = httpClient.put("/note/${noteId}/update") {
             url.parameters.append("content", content)
         }
         return response.body()
@@ -41,12 +37,12 @@ class NoteServiceImpl @Inject constructor(
         noteSubtitle: String,
         noteTitle: String
     ): DataResponseDto<Any> {
-        val parameter = Parameters.build{
+        val parameter = Parameters.build {
             append("content", content)
             append("noteSubtitle", noteSubtitle)
             append("noteTitle", noteTitle)
         }
-        val response = httpClient.post("/note/new"){
+        val response = httpClient.post("/note/new") {
             url.parameters.appendAll(parameter)
         }
         return response.body()

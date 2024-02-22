@@ -18,6 +18,7 @@ fun userInfo(){
     UserInfoNavGraph(
         navController,
         isAuthenticated,
-        navLoginPage = {}
+        navLoginPage = {},
+        navCommunityPage = {},
     )
 }

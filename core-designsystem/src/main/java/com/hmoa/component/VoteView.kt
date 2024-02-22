@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun VoteView(
     percentage : Int,
-    icon : ImageVector
+    icon : Painter
 ){
     val percent = percentage * 0.01
 
@@ -54,7 +55,7 @@ fun VoteView(
         }
         Icon(
             modifier = Modifier.size(16.dp),
-            imageVector = icon,
+            painter = icon,
             contentDescription = "Main Image",
             tint = Color(0xFFBBBBBB)
         )
@@ -71,21 +72,5 @@ fun VoteView(
                 fontSize = 10.sp
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun testVoteView(){
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White),
-        contentAlignment = Alignment.Center
-    ){
-        VoteView(
-            percentage = 50,
-            icon = Icons.Filled.Build
-        )
     }
 }

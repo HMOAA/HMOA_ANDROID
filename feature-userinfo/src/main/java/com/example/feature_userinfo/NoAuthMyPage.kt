@@ -22,10 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 //인증이 안되어 있는 My Page
 @Composable
-fun NoAuthMyPage(){
+fun NoAuthMyPage(
+    navLoginPage : () -> Unit,
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,10 +64,9 @@ fun NoAuthMyPage(){
                 fontSize = 16.sp
             )
 
-            /** login화면으로 navigation */
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {}
+                onClick = navLoginPage
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -79,5 +82,7 @@ fun NoAuthMyPage(){
 @Preview
 @Composable
 fun TestNoAuthMyPage(){
-    NoAuthMyPage()
+    NoAuthMyPage(
+        navLoginPage = {}
+    )
 }

@@ -42,11 +42,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
-fun EditProfilePage(){
+fun EditProfilePage(
+    navController : NavController
+){
 
     //nick name 초반 값을 viewModel로 collectAsState()로 받아오고 그것을 변경
     //test 값
@@ -193,5 +197,7 @@ fun EditProfilePage(){
 @Preview(showBackground = true)
 @Composable
 fun TestEditProfilePage(){
-    EditProfilePage()
+    EditProfilePage(
+        navController = rememberNavController()
+    )
 }

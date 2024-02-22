@@ -28,13 +28,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.Screens
+import com.hmoa.feature_userinfo.R
 
 //인증이 되어 있는 My Page
 @Composable
-fun MyPage(){
+fun MyPage(
+    navController : NavController,
+    navLoginPage : () -> Unit,
+){
 
     var test by remember { mutableStateOf("") }
 
@@ -95,7 +103,8 @@ fun MyPage(){
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
-                    /** 수정 버튼 이벤트 */
+                    // 프로필 수정 화면으로 이동
+                    navController.navigate(Screens.EditProfilePage.name)
                 }
             ) {
                 Icon(
@@ -126,15 +135,22 @@ fun MyPage(){
                 fontSize = 16.sp
             )
 
-            Icon(
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    // 내 활동 화면으로 이동
+                    navController.navigate(Screens.MyActivityPage.name)
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
-        /** 내 정보로 navigation */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -147,12 +163,21 @@ fun MyPage(){
                 text = "내 정보관리",
                 fontSize = 16.sp
             )
-            Icon(
+
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    // 내 정보 화면으로 이동
+                    navController.navigate(Screens.MyInfoPage.name)
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
         Divider(
@@ -160,7 +185,6 @@ fun MyPage(){
                 .fillMaxWidth()
                 .height(1.dp))
 
-        /** 오픈소스라이센스로 navigation */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -173,15 +197,22 @@ fun MyPage(){
                 text = "오픈소스라이센스",
                 fontSize = 16.sp
             )
-            Icon(
+
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    /** 오픈소스 라이센스 화면으로 이동 */
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
-        /** 개인정보 처림방침으로 navigation */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -194,15 +225,22 @@ fun MyPage(){
                 text = "개인정보 처리방침",
                 fontSize = 16.sp
             )
-            Icon(
+
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    /** 개인정보 처리방침 화면으로 이동 */
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
-        /** 버전 정보로 navigation */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -216,12 +254,20 @@ fun MyPage(){
                 text = "버전정보 1.00 (128)",
                 fontSize = 16.sp
             )
-            Icon(
+
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    /** 버전 정보 화면으로 이동? */
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
         Divider(
@@ -229,7 +275,6 @@ fun MyPage(){
                 .fillMaxWidth()
                 .height(1.dp))
 
-        /** 1대1 문의로 navigation */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -242,15 +287,22 @@ fun MyPage(){
                 text = "1대1 문의",
                 fontSize = 16.sp
             )
-            Icon(
+
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    /** 1대1 문의에 맞는 화면으로 이동 */
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
-        /** 로그아웃 >> Login 화면으로 navigation? */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -263,12 +315,23 @@ fun MyPage(){
                 text = "로그아웃",
                 fontSize = 16.sp
             )
-            Icon(
+
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    /** logout 로직 */
+
+                    // 로그인 화면으로 이동
+                    navLoginPage()
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
         Row(
@@ -283,12 +346,22 @@ fun MyPage(){
                 text = "계정삭제",
                 fontSize = 16.sp
             )
-            Icon(
+
+            IconButton(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Nav Button",
-                tint = Color(0xFFBBBBBB)
-            )
+                onClick = {
+                    /** 계정 삭제 로직 후 로그인 화면으로 이동? */
+
+                    navLoginPage()
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Navigation Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
         }
 
         Divider(
@@ -307,6 +380,9 @@ fun TestMyPage(){
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        MyPage()
+        MyPage(
+            navController = rememberNavController(),
+            navLoginPage = {}
+        )
     }
 }

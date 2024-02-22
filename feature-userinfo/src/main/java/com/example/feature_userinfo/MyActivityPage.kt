@@ -22,12 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.Screens
+import com.hmoa.feature_userinfo.R
 
 @Composable
-fun MyActivityPage(){
+fun MyActivityPage(
+    navController : NavController
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,11 +48,10 @@ fun MyActivityPage(){
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ){
-            /** 뒤로 가기 navigation */
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
-
+                    navController.navigateUp()
                 }
             ) {
                 Icon(
@@ -80,24 +86,26 @@ fun MyActivityPage(){
                 text = "좋아요 누른 댓글",
                 fontSize = 16.sp
             )
-            
-            /** 좋아요 누른 댓글 화면으로 navigation */
+
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
-
+                    navController.navigate(Screens.MyFavoriteCommentPage.name)
                 }
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.KeyboardArrowRight,
+                    painter = painterResource(R.drawable.next_btn),
                     contentDescription = "Nav Button",
                     tint = Color(0xFFBBBBBB)
                 )
             }
         }
 
-        Divider(Modifier.fillMaxWidth().height(1.dp))
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp))
 
         Row(
             modifier = Modifier
@@ -116,19 +124,22 @@ fun MyActivityPage(){
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
-
+                    navController.navigate(Screens.MyCommentPage.name)
                 }
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.KeyboardArrowRight,
+                    painter = painterResource(R.drawable.next_btn),
                     contentDescription = "Nav Button",
                     tint = Color(0xFFBBBBBB)
                 )
             }
         }
 
-        Divider(Modifier.fillMaxWidth().height(1.dp))
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp))
 
         Row(
             modifier = Modifier
@@ -143,28 +154,32 @@ fun MyActivityPage(){
                 fontSize = 16.sp
             )
 
-            /** 작성한 게시글 navigation */
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
-
+                    navController.navigate(Screens.MyPostPage.name)
                 }
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.KeyboardArrowRight,
+                    painter = painterResource(R.drawable.next_btn),
                     contentDescription = "Nav Button",
                     tint = Color(0xFFBBBBBB)
                 )
             }
         }
 
-        Divider(Modifier.fillMaxWidth().height(1.dp))
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp))
     }
 }
 
 @Preview
 @Composable
 fun TestMyActivity(){
-    MyActivityPage()
+    MyActivityPage(
+        navController = rememberNavController()
+    )
 }

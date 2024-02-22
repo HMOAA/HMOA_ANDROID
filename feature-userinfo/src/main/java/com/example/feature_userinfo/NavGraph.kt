@@ -12,40 +12,51 @@ import com.example.userinfo.MyPage
 import com.example.userinfo.NoAuthMyPage
 
 @Composable
-fun NavGraph(
+fun UserInfoNavGraph(
     navController : NavHostController,
-    isAuthenticated : Boolean
+    isAuthenticated : Boolean,
+    navLoginPage : () -> Unit,
+    navCommunityPage : () -> Unit
 ){
     NavHost(
         navController = navController,
         startDestination = if (isAuthenticated) Screens.MyPage.name else Screens.NoAuthMyPage.name
     ){
         composable(Screens.MyPage.name) {
-            MyPage()
+            MyPage(
+                navController = navController,
+                navLoginPage = navLoginPage
+            )
         }
         composable(Screens.MyActivityPage.name) {
-            MyActivityPage()
+            MyActivityPage(navController)
         }
         composable(Screens.MyCommentPage.name) {
-            MyCommentPage()
+            MyCommentPage(navController)
         }
         composable(Screens.MyFavoriteCommentPage.name) {
-            MyFavoriteCommentPage()
+            MyFavoriteCommentPage(
+                navController = navController,
+                navCommunityPage = navCommunityPage
+            )
         }
         composable(Screens.EditProfilePage.name){
-            EditProfilePage()
+            EditProfilePage(navController)
         }
         composable(Screens.MyInfoPage.name){
-            MyInfoPage()
+            MyInfoPage(navController)
         }
         composable(Screens.MyBirthPage.name) {
-            MyBirthPage()
+            MyBirthPage(navController)
         }
         composable(Screens.MyGenderPage.name) {
-            MyGenderPage()
+            MyGenderPage(navController)
         }
         composable(Screens.NoAuthMyPage.name) {
-            NoAuthMyPage()
+            NoAuthMyPage(navLoginPage)
+        }
+        composable(Screens.MyPostPage.name) {
+            MyPostPage(navController)
         }
     }
 }

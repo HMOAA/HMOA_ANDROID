@@ -15,11 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.Comment
 import com.hmoa.component.TopBar
 
 @Composable
-fun MyFavoriteCommentPage(){
+fun MyFavoriteCommentPage(
+    navController : NavController,
+    navCommunityPage : () -> Unit,
+){
 
     //좋아요를 누른 comment 리스트
     val commentList = listOf<Any>()
@@ -33,7 +38,7 @@ fun MyFavoriteCommentPage(){
             navIcon = Icons.Filled.KeyboardArrowLeft,
             title = "좋아요 누른 댓글",
             onNavClick = {
-                /** 뒤로가기 navigation */
+                navController.navigateUp()
             }
         )
 
@@ -67,5 +72,8 @@ fun MyFavoriteCommentPage(){
 @Preview(showBackground = true)
 @Composable
 fun TestMyFavoriteCommentPage(){
-    MyFavoriteCommentPage()
+    MyFavoriteCommentPage(
+        navController = rememberNavController(),
+        navCommunityPage = {}
+    )
 }

@@ -25,11 +25,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.hmoa.component.TopBar
 
 @Composable
-fun MyCommentPage(){
+fun MyCommentPage(
+    navController : NavController
+){
 
-    //view model에서 받아온 댓글 데이터
+    /** view model에서 받아온 댓글 데이터 */
     val commentList = listOf<Any>()
 
     Column(
@@ -39,36 +44,13 @@ fun MyCommentPage(){
             .padding(16.dp)
     ){
         //Toolbar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ){
-            /** 이전 화면 navigation */
-            IconButton(
-                modifier = Modifier.size(20.dp),
-                onClick = {}
-            ){
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.KeyboardArrowLeft,
-                    contentDescription = "Back Button"
-                )
+        TopBar(
+            navIcon = Icons.Filled.KeyboardArrowLeft,
+            title = "작성한 댓글",
+            onNavClick = {
+                navController.navigateUp()
             }
-
-            Spacer(Modifier.weight(1f))
-
-            Text(
-                text = "내 활동",
-                fontSize = 20.sp
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Spacer(Modifier.width(20.dp))
-        }
+        )
 
         //data가 있으면 comment list, 없으면 no data page
         if (commentList.isNotEmpty()){
@@ -98,5 +80,7 @@ fun MyCommentPage(){
 @Preview
 @Composable
 fun TestMyCommentPage(){
-    MyCommentPage()
+    MyCommentPage(
+        navController = rememberNavController()
+    )
 }

@@ -21,11 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.BottomButton
 import com.hmoa.component.TopBar
 
 @Composable
-fun MyBirthPage(){
+fun MyBirthPage(
+    navController : NavController
+){
 
     //view model에서 출생연도를 가져와야 함
     //test
@@ -45,7 +49,7 @@ fun MyBirthPage(){
         TopBar(
             navIcon = Icons.Filled.KeyboardArrowLeft,
             onNavClick = {
-                /** 뒤로가기 navigation */
+                navController.navigateUp()
             },
             title = "출생연도"
         )
@@ -82,5 +86,7 @@ fun MyBirthPage(){
 @Preview(showBackground = true)
 @Composable
 fun TestMyBirthPage(){
-    MyBirthPage()
+    MyBirthPage(
+        navController = rememberNavController()
+    )
 }

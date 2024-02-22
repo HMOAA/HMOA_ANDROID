@@ -28,12 +28,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.BottomButton
 import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
-fun MyGenderPage(){
+fun MyGenderPage(
+    navController : NavController
+){
 
     //성별 선택 여부
     var checkedGender by remember{mutableStateOf("")}
@@ -125,5 +129,7 @@ fun MyGenderPage(){
 @Preview
 @Composable
 fun TestMyGenderPage(){
-    MyGenderPage()
+    MyGenderPage(
+        navController = rememberNavController()
+    )
 }

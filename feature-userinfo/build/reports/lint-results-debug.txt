@@ -1,0 +1,66 @@
+C:\Users\User\.gradle\caches\transforms-3\d849b8b8e10e652a8dcaf21d4b3f03d6\transformed\runtime-release\jars\lint.jar: Warning: Library lint checks reference invalid APIs; these checks will be skipped!
+
+Lint found an issue registry (androidx.compose.runtime.lint.RuntimeIssueRegistry)
+which contains some references to invalid API:
+org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider: org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory getTokenFactory()
+(Referenced from androidx/compose/runtime/lint/AutoboxingStateCreationDetector.class)
+
+Therefore, this lint check library is not included
+in analysis. This affects the following lint checks:
+AutoboxingStateValueProperty
+AutoboxingStateCreation
+CoroutineCreationDuringComposition
+FlowOperatorInvokedInComposition
+ComposableLambdaParameterNaming
+ComposableLambdaParameterPosition
+ComposableNaming
+StateFlowValueCalledInComposition
+CompositionLocalNaming
+MutableCollectionMutableState
+ProduceStateDoesNotAssignValue
+RememberReturnType
+OpaqueUnitKey
+UnrememberedMutableState
+
+To use this lint check, upgrade to a more recent version
+of the library. [ObsoleteLintCustomCheck]
+
+   Explanation for issues of type "ObsoleteLintCustomCheck":
+   Lint can be extended with "custom checks": additional checks implemented by
+   developers and libraries to for example enforce specific API usages
+   required by a library or a company coding style guideline.
+
+   The Lint APIs are not yet stable, so these checks may either cause a
+   performance degradation, or stop working, or provide wrong results.
+
+   This warning flags custom lint checks that are found to be using obsolete
+   APIs and will need to be updated to run in the current lint environment.
+
+   It may also flag issues found to be using a newer version of the API,
+   meaning that you need to use a newer version of lint (or Android Studio or
+   Gradle plugin etc) to work with these checks.
+
+C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\feature-userInfo\build.gradle.kts:45: Warning: A newer version of androidx.compose.material3:material3 than 1.1.0 is available: 1.2.0 [GradleDependency]
+    implementation("androidx.compose.material3:material3:1.1.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\feature-userInfo\build.gradle.kts:50: Warning: A newer version of androidx.compose.ui:ui than 1.1.0 is available: 1.6.1 [GradleDependency]
+    implementation("androidx.compose.ui:ui:1.1.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\feature-userInfo\build.gradle.kts:53: Warning: A newer version of androidx.navigation:navigation-compose than 2.7.0 is available: 2.7.7 [GradleDependency]
+    implementation("androidx.navigation:navigation-compose:2.7.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\feature-userInfo\build.gradle.kts:55: Warning: A newer version of androidx.core:core-ktx than 1.9.0 is available: 1.12.0 [GradleDependency]
+    implementation("androidx.core:core-ktx:1.9.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\User\AndroidStudioProjects\HProject\HMOA_ANDROID\feature-userInfo\build.gradle.kts:60: Warning: A newer version of androidx.compose.ui:ui-tooling than 1.6.0 is available: 1.6.1 [GradleDependency]
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+0 errors, 6 warnings

@@ -2,6 +2,7 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun Comment(
+    onCommentClick : () -> Unit,
     profile : ImageVector,
     nickname : String,
     dateDiff : String,
@@ -53,6 +55,9 @@ fun Comment(
                 color = Color(0xFFBBBBBB),
                 shape = RoundedCornerShape(size = 10.dp)
             )
+            .clickable{
+                onCommentClick()
+            }
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
     ){
@@ -170,6 +175,7 @@ fun TestComment(){
             .background(color = Color.White),
     ){
         Comment(
+            onCommentClick = {},
             profile = Icons.Filled.Lock,
             nickname = "닉네임입니다",
             dateDiff = "2일전",
@@ -181,6 +187,7 @@ fun TestComment(){
         Spacer(Modifier.height(8.dp))
 
         Comment(
+            onCommentClick = {},
             profile = Icons.Filled.Menu,
             nickname = "닉네임입니다2",
             dateDiff = "5일전",
@@ -192,6 +199,7 @@ fun TestComment(){
         Spacer(Modifier.height(8.dp))
 
         Comment(
+            onCommentClick = {},
             profile = Icons.Filled.Menu,
             nickname = "닉네임입니다2",
             dateDiff = "5일전",
@@ -203,6 +211,7 @@ fun TestComment(){
         Spacer(Modifier.height(8.dp))
 
         Comment(
+            onCommentClick = {},
             profile = Icons.Filled.Menu,
             nickname = "닉네임입니다2",
             dateDiff = "5일전",

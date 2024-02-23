@@ -5,6 +5,12 @@
       <entry key="TestSlider">
         <State />
       </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="feature-userInfo">
+        <State />
+      </entry>
     </value>
   </component>
 </project>

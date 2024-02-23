@@ -8,7 +8,6 @@ import io.github.cdimascio.dotenv.dotenv
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
-import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
@@ -34,9 +33,6 @@ class HttpClientModule {
             install(ContentNegotiation) {
                 json()
             }
-            install(HttpCache) {
-                //TODO("캐쉬 추가 설정 가능")
-            }
             defaultRequest {
                 headers {
                     append("X-AUTH-TOKEN", "${authToken}")
@@ -45,15 +41,6 @@ class HttpClientModule {
                     protocol = URLProtocol.HTTPS
                     host = baseUrl
                 }
-            }
-        }
-    }
-
-
-    fun addUrlEncodedHeader(httpClient: HttpClient) {
-        httpClient.config {
-            defaultRequest {
-                header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
             }
         }
     }

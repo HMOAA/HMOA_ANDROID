@@ -24,7 +24,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.*
 import javax.inject.Singleton
 
 @Module
@@ -32,41 +31,48 @@ import javax.inject.Singleton
 class ServiceModule {
     @Singleton
     @Provides
-    fun providePerfumeService(httpClient: HttpClient): PerfumeService = PerfumeServiceImpl(httpClient)
+    fun providePerfumeService(httpClientProvider: HttpClientProvider): PerfumeService =
+        PerfumeServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerFcmService(httpClient: HttpClient): FcmService = FcmServiceImpl(httpClient)
+    fun providerFcmService(httpClientProvider: HttpClientProvider): FcmService = FcmServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerAdminService(httpClient: HttpClient): AdminService = AdminServiceImpl(httpClient)
+    fun providerAdminService(httpClientProvider: HttpClientProvider): AdminService =
+        AdminServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerBrandService(httpClient: HttpClient): BrandService = BrandServiceImpl(httpClient)
+    fun providerBrandService(httpClientProvider: HttpClientProvider): BrandService =
+        BrandServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerBrandHPediaService(httpClient: HttpClient): BrandHPediaService = BrandHPediaServiceImpl(httpClient)
+    fun providerBrandHPediaService(httpClientProvider: HttpClientProvider): BrandHPediaService =
+        BrandHPediaServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerLoginService(httpClient: HttpClient): LoginService = LoginServiceImpl(httpClient)
+    fun providerLoginService(httpClientProvider: HttpClientProvider): LoginService =
+        LoginServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerMainService(httpClient: HttpClient): MainService = MainServiceImpl(httpClient)
+    fun providerMainService(httpClientProvider: HttpClientProvider): MainService = MainServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerMemberService(httpClient: HttpClient): MemberService = MemberServiceImpl(httpClient)
+    fun providerMemberService(httpClientProvider: HttpClientProvider): MemberService =
+        MemberServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerNoteService(httpClient: HttpClient): NoteService = NoteServiceImpl(httpClient)
+    fun providerNoteService(httpClientProvider: HttpClientProvider): NoteService = NoteServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerSearchService(httpClient: HttpClient): SearchService = SearchServiceImpl(httpClient)
+    fun providerSearchService(httpClientProvider: HttpClientProvider): SearchService =
+        SearchServiceImpl(httpClientProvider)
 }

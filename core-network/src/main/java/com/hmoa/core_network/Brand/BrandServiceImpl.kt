@@ -1,31 +1,33 @@
 package corenetwork.Brand
 
 import com.hmoa.core_model.response.DataResponseDto
-import io.ktor.client.*
+import com.hmoa.core_network.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import java.io.File
 import javax.inject.Inject
 
 class BrandServiceImpl @Inject constructor(
-    private val httpClient: HttpClient
+    private val httpClientProvider: HttpClientProvider
 ) : corenetwork.Brand.BrandService {
+    val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
+    val formUrlEncodedContentHttpClient = httpClientProvider.getHttpClientWithFormUrlEncodedHeader()
 
     override suspend fun getBrand(brandId: Int): DataResponseDto<Any> {
-        return httpClient.get("/brand/${brandId}").body()
+        return jsonContentHttpClient.get("/brand/${brandId}").body()
     }
 
     override suspend fun putBrandLike(brandId: Int): DataResponseDto<Any> {
-        return httpClient.put("/brand/${brandId}/like").body()
+        return jsonContentHttpClient.put("/brand/${brandId}/like").body()
     }
 
     override suspend fun deleteBrandLike(brandId: Int): DataResponseDto<Any> {
-        return httpClient.delete("/brand/${brandId}/like").body()
+        return jsonContentHttpClient.delete("/brand/${brandId}/like").body()
     }
 
     /** 미해결 */
     override suspend fun postBrandTestSave(image: File, brandId: Int): DataResponseDto<Any> {
-        val response = httpClient.post("/brand/${brandId}/testSave")
+        val response = formUrlEncodedContentHttpClient.post("/brand/${brandId}/testSave")
         return response.body()
     }
 
@@ -35,26 +37,26 @@ class BrandServiceImpl @Inject constructor(
         brandName: String,
         englishName: String
     ): DataResponseDto<Any> {
-        val response = httpClient.post("/brand/new")
+        val response = formUrlEncodedContentHttpClient.post("/brand/new")
         return response.body()
     }
 
     override suspend fun getPerfumesSortedChar(brandId: Int, pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/brand/perfumes/${brandId}") {
+        val response = jsonContentHttpClient.get("/brand/perfumes/${brandId}") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()
     }
 
     override suspend fun getPerfumesSortedTop(brandId: Int, pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/brand/perfumes/${brandId}/top") {
+        val response = jsonContentHttpClient.get("/brand/perfumes/${brandId}/top") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()
     }
 
     override suspend fun getPerfumesSortedUpdate(brandId: Int, pageNum: Int): DataResponseDto<Any> {
-        val response = httpClient.get("/brand/perfumes/${brandId}/update") {
+        val response = jsonContentHttpClient.get("/brand/perfumes/${brandId}/update") {
             url.parameters.append("pageNum", pageNum.toString())
         }
         return response.body()

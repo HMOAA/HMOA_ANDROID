@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://devrepo.kakao.com/nexus/content/groups/public/")
     }
 }
 
@@ -21,5 +22,4 @@ include(":core-datastore")
 include(":core-designsystem")
 include(":sample-app")
 include(":core-repository")
-include(":core-network")
-include(":authentication")
+include(":feature-authentication")

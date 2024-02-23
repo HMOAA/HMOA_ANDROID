@@ -1,4 +1,4 @@
-package com.hmoa.core_network.Community
+package corenetwork.Community
 
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto

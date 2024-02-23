@@ -1,4 +1,4 @@
-package com.hmoa.core_network.CommunityComment
+package corenetwork.CommunityComment
 
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
@@ -8,9 +8,8 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
-import javax.inject.Inject
 
-internal class CommunityCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) :
+internal class CommunityCommentServiceImpl constructor(private val httpClient: HttpClient) :
     CommunityCommentService {
     @OptIn(InternalAPI::class)
     override suspend fun putCommunityComment(

@@ -1,4 +1,4 @@
-package com.hmoa.core_network.Perfume
+package corenetwork.Perfume
 
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto

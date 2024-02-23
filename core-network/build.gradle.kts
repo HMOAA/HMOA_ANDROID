@@ -1,33 +1,38 @@
 plugins {
-    kotlin("kapt")
     id("java-library")
+    id("org.jetbrains.kotlin.jvm")
 }
-
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+}
+
+
 dependencies {
+    val ktor_version = "2.3.7"
+    val mockito_version = "4.8.0"
+
     implementation(project(":core-model"))
-
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
-
-    implementation("io.ktor:ktor-client-android:2.3.7")
-
-    implementation("com.google.dagger:hilt-android:2.44")
-    implementation("com.google.dagger:hilt-compiler:2.44")
-    implementation("io.ktor:ktor-client-serialization:2.3.7")
-    implementation("io.ktor:ktor-client-logging-jvm:2.3.7")
-    implementation("io.ktor:ktor-client-core:2.3.7")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
-    implementation("io.ktor:ktor-client-okhttp-jvm:2.3.7")
+    implementation("io.ktor:ktor-client-android:$ktor_version")
+    implementation("io.ktor:ktor-client-serialization:$ktor_version")
+    implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-client-okhttp-jvm:$ktor_version")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     testImplementation("junit:junit:4.13.2")
-    testAnnotationProcessor("com.google.dagger:hilt-compiler:2.44")
-    testImplementation("org.mockito:mockito-core:4.8.0")
-    testImplementation("org.mockito:mockito-inline:4.8.0")
+    testImplementation("org.mockito:mockito-core:$mockito_version")
+    testImplementation("org.mockito:mockito-inline:$mockito_version")
+    implementation(kotlin("stdlib"))
 }

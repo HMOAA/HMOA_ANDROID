@@ -6,9 +6,10 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
+import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
-class FcmServiceImpl constructor(
+class FcmServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : FcmService {
 

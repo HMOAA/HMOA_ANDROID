@@ -8,9 +8,10 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
+import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
-class LoginServiceImpl constructor(
+class LoginServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : LoginService {
 

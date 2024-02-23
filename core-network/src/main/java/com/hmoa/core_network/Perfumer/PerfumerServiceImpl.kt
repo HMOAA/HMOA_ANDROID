@@ -4,8 +4,9 @@ import com.hmoa.core_model.response.DataResponseDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import javax.inject.Inject
 
-internal class PerfumerServiceImpl constructor(private val httpClient: HttpClient) : PerfumerService {
+internal class PerfumerServiceImpl @Inject constructor(private val httpClient: HttpClient) : PerfumerService {
     override suspend fun getPerfumers(pageNum: String): DataResponseDto<Any> {
         return httpClient.get("/perfumer") {
             url {

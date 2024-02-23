@@ -8,8 +8,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
+import javax.inject.Inject
 
-internal class PerfumeServiceImpl constructor(
+internal class PerfumeServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : PerfumeService {
 

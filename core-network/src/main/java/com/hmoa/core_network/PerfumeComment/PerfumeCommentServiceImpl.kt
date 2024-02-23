@@ -8,8 +8,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
+import javax.inject.Inject
 
-internal class PerfumeCommentServiceImpl constructor(private val httpClient: HttpClient) :
+internal class PerfumeCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) :
     PerfumeCommentService {
     override suspend fun getPerfumeCommentsLatest(page: String, perfumeId: Int): PerfumeCommentGetResponseDto {
         return httpClient.get("/perfume/${perfumeId}/comments") {

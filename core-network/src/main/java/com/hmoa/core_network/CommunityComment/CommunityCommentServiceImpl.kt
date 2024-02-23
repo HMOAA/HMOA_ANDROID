@@ -8,8 +8,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
+import javax.inject.Inject
 
-internal class CommunityCommentServiceImpl constructor(private val httpClient: HttpClient) :
+internal class CommunityCommentServiceImpl @Inject constructor(private val httpClient: HttpClient) :
     CommunityCommentService {
     @OptIn(InternalAPI::class)
     override suspend fun putCommunityComment(

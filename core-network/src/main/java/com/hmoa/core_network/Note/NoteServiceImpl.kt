@@ -5,8 +5,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import javax.inject.Inject
 
-class NoteServiceImpl constructor(
+class NoteServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : NoteService {
 

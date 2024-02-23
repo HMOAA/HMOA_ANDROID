@@ -11,8 +11,9 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import java.io.File
+import javax.inject.Inject
 
-internal class CommunityServiceImpl constructor(
+internal class CommunityServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
 ) : corenetwork.Community.CommunityService {
     override suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto {

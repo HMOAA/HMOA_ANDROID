@@ -6,8 +6,9 @@ import com.hmoa.core_model.response.HomeMenuFirstResponseDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import javax.inject.Inject
 
-class MainServiceImpl constructor(
+class MainServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : MainService {
 

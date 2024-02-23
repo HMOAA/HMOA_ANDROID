@@ -5,8 +5,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import java.io.File
+import javax.inject.Inject
 
-class BrandServiceImpl constructor(
+class BrandServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : corenetwork.Brand.BrandService {
 

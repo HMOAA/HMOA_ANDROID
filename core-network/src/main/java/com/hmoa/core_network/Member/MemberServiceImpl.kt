@@ -10,9 +10,10 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
 import java.io.File
+import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
-class MemberServiceImpl constructor(
+class MemberServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : MemberService {
 

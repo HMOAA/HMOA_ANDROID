@@ -8,9 +8,10 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.util.*
+import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
-class AdminServiceImpl constructor(
+class AdminServiceImpl @Inject constructor(
     private val httpClient: HttpClient
 ) : corenetwork.Admin.AdminService {
     override suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {

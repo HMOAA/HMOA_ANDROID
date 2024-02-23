@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
-import com.hmoa.core_network.Perfume.PerfumeService
+import corenetwork.Perfume.PerfumeService
 
 internal class PerfumeDataStoreImpl constructor(private val perfumeService: PerfumeService) : PerfumeDataStore {
     override suspend fun getPerfumeTopDetail(perfumeId: String): PerfumeDetailResponseDto {

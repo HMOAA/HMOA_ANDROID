@@ -2,10 +2,10 @@ package com.hmoa.core_datastore.Fcm
 
 import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_network.Fcm.FcmService
+import corenetwork.Fcm.FcmService
 
 private class FcmDataStoreImpl constructor(
-    private val fcmDataService : FcmService
+    private val fcmDataService: FcmService
 ) : FcmDataStore {
 
     override suspend fun deleteFcmToken(): DataResponseDto<Any> {

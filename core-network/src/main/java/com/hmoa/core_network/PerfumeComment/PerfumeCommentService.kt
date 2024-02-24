@@ -1,4 +1,4 @@
-package com.hmoa.core_network.PerfumeComment
+package corenetwork.PerfumeComment
 
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.DataResponseDto

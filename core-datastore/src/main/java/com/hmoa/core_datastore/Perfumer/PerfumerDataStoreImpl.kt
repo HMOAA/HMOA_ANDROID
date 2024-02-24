@@ -1,7 +1,7 @@
 package com.hmoa.core_datastore.Perfumer
 
 import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_network.Perfumer.PerfumerService
+import corenetwork.Perfumer.PerfumerService
 
 internal class PerfumerDataStoreImpl constructor(private val perfumerService: PerfumerService) : PerfumerDataStore {
     override suspend fun getPerfumers(pageNum: String): DataResponseDto<Any> {

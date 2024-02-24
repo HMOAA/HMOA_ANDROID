@@ -1,10 +1,10 @@
 package com.hmoa.core_datastore.Note
 
 import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_network.Note.NoteService
+import corenetwork.Note.NoteService
 
 private class NoteDataStoreImpl constructor(
-    private val noteService : NoteService
+    private val noteService: NoteService
 ) : NoteDataStore {
     override suspend fun getNoteAll(pageNum: Int): DataResponseDto<Any> {
         return noteService.getNoteAll(pageNum)

@@ -1,129 +1,78 @@
 package com.hmoa.core_network
 
-import com.hmoa.core_network.Admin.AdminService
-import com.hmoa.core_network.Admin.AdminServiceImpl
-import com.hmoa.core_network.Brand.BrandService
-import com.hmoa.core_network.Brand.BrandServiceImpl
-import com.hmoa.core_network.BrandHPedia.BrandHPediaService
-import com.hmoa.core_network.BrandHPedia.BrandHPediaServiceImpl
-import com.hmoa.core_network.Fcm.FcmService
-import com.hmoa.core_network.Fcm.FcmServiceImpl
-import com.hmoa.core_network.Login.LoginService
-import com.hmoa.core_network.Login.LoginServiceImpl
-import com.hmoa.core_network.Main.MainService
-import com.hmoa.core_network.Main.MainServiceImpl
-import com.hmoa.core_network.Member.MemberService
-import com.hmoa.core_network.Member.MemberServiceImpl
-import com.hmoa.core_network.Note.NoteService
-import com.hmoa.core_network.Note.NoteServiceImpl
-import com.hmoa.core_network.Perfume.PerfumeService
-import com.hmoa.core_network.Perfume.PerfumeServiceImpl
-import com.hmoa.core_network.Search.SearchService
-import com.hmoa.core_network.Search.SearchServiceImpl
+import corenetwork.Admin.AdminService
+import corenetwork.Admin.AdminServiceImpl
+import corenetwork.Brand.BrandService
+import corenetwork.Brand.BrandServiceImpl
+import corenetwork.BrandHPedia.BrandHPediaService
+import corenetwork.BrandHPedia.BrandHPediaServiceImpl
+import corenetwork.Fcm.FcmService
+import corenetwork.Fcm.FcmServiceImpl
+import corenetwork.Login.LoginService
+import corenetwork.Login.LoginServiceImpl
+import corenetwork.Main.MainService
+import corenetwork.Main.MainServiceImpl
+import corenetwork.Member.MemberService
+import corenetwork.Member.MemberServiceImpl
+import corenetwork.Note.NoteService
+import corenetwork.Note.NoteServiceImpl
+import corenetwork.Perfume.PerfumeService
+import corenetwork.Perfume.PerfumeServiceImpl
+import corenetwork.Search.SearchService
+import corenetwork.Search.SearchServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.github.cdimascio.dotenv.dotenv
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import javax.inject.Singleton
-import io.ktor.client.engine.okhttp.*
-
 
 @Module
 @InstallIn(SingletonComponent::class)
 class ServiceModule {
     @Singleton
     @Provides
-    fun provideKtorHttpClient(): HttpClient {
-        val baseUrl = dotenv().get("BASE_URL")
-
-        return HttpClient(OkHttp) {
-            install(Logging) {
-                level = LogLevel.ALL
-            }
-            install(ContentNegotiation) {
-                json()
-            }
-            install(HttpCache) {
-                //TODO("캐쉬 추가 설정 필요")
-            }
-            defaultRequest {
-                url.set { path(baseUrl) }
-                header(HttpHeaders.ContentType, ContentType.Application.Json)
-                //header("X-AUTH-TOKEN", TODO("authentication 모듈에서 토큰을 주입해야 함"))
-            }
-        }
-    }
+    fun providePerfumeService(httpClientProvider: HttpClientProvider): PerfumeService =
+        PerfumeServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun provideFormDataKtorHttpClient(): HttpClient {
-        val baseUrl = dotenv().get("BASE_URL")
-
-        return HttpClient(OkHttp) {
-            install(Logging) {
-                level = LogLevel.ALL
-            }
-            install(ContentNegotiation) {
-                json()
-            }
-            install(HttpCache) {
-                //TODO("캐쉬 추가 설정 필요")
-            }
-            defaultRequest {
-                url.set { path(baseUrl) }
-                header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-                //header("X-AUTH-TOKEN", TODO("authentication 모듈에서 토큰을 주입해야 함"))
-            }
-        }
-
-    }
+    fun providerFcmService(httpClientProvider: HttpClientProvider): FcmService = FcmServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providePerfumeService(httpClient: HttpClient): PerfumeService = PerfumeServiceImpl(httpClient)
+    fun providerAdminService(httpClientProvider: HttpClientProvider): AdminService =
+        AdminServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerFcmService(httpClient : HttpClient) : FcmService = FcmServiceImpl(httpClient)
+    fun providerBrandService(httpClientProvider: HttpClientProvider): BrandService =
+        BrandServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerAdminService(httpClient: HttpClient) : AdminService = AdminServiceImpl(httpClient)
+    fun providerBrandHPediaService(httpClientProvider: HttpClientProvider): BrandHPediaService =
+        BrandHPediaServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerBrandService(httpClient : HttpClient) : BrandService = BrandServiceImpl(httpClient)
+    fun providerLoginService(httpClientProvider: HttpClientProvider): LoginService =
+        LoginServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerBrandHPediaService(httpClient : HttpClient) : BrandHPediaService = BrandHPediaServiceImpl(httpClient)
+    fun providerMainService(httpClientProvider: HttpClientProvider): MainService = MainServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerLoginService(httpClient : HttpClient) : LoginService = LoginServiceImpl(httpClient)
+    fun providerMemberService(httpClientProvider: HttpClientProvider): MemberService =
+        MemberServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerMainService(httpClient : HttpClient) : MainService = MainServiceImpl(httpClient)
+    fun providerNoteService(httpClientProvider: HttpClientProvider): NoteService = NoteServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerMemberService(httpClient : HttpClient) : MemberService = MemberServiceImpl(httpClient)
-
-    @Singleton
-    @Provides
-    fun providerNoteService(httpClient : HttpClient) : NoteService = NoteServiceImpl(httpClient)
-
-    @Singleton
-    @Provides
-    fun providerSearchService(httpClient : HttpClient) : SearchService = SearchServiceImpl(httpClient)
+    fun providerSearchService(httpClientProvider: HttpClientProvider): SearchService =
+        SearchServiceImpl(httpClientProvider)
 }

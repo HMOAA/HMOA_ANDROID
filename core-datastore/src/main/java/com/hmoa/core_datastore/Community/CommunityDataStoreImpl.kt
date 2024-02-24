@@ -4,7 +4,7 @@ import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_network.Community.CommunityService
+import corenetwork.Community.CommunityService
 import java.io.File
 
 internal class CommunityDataStoreImpl constructor(private val communityService: CommunityService) : CommunityDataStore {

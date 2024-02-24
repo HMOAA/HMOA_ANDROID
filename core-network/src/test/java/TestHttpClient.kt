@@ -1,42 +1,33 @@
-import com.hmoa.core_model.response.CommunityCommentAllResponseDto
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.core_network.CommunityComment.CommunityCommentService
-import io.ktor.client.*
-import org.junit.Test
-import org.mockito.Mock
-
 class TestHttpClient {
+//    @Inject
+//    val httpClient = HttpClient()
+//
+//    @Test
+//    suspend fun TestAddApplicationJsonHeader() {
+//        //TODO("header(HttpHeaders.ContentType, ContentType.Application.Json) 라는 헤더를 HttpClient에 삽입해야함")
+//        val httpClientWithHeader = httpClient.config {
+//            headers {
+//                append(HttpHeaders.ContentType, ContentType.Application.Json)
+//            }
+//        }
+//        //어떻게 입증할지 모름
+//    }
+//
+//    suspend fun TestAddFormUrlEncodedHeader() {
+//        //TODO("header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())")
+//        httpClient.config {
+//            headers {
+//                append(HttpHeaders.ContentType, ContentType.Application.Json)
+//            }
+//        }
+//        //어떻게 입증할지 모름
+//    }
 
-    @Mock
-    private lateinit var httpClient: HttpClient
-
-    @Mock
-    private lateinit var communityCommentService: CommunityCommentService
-
-    @Test
-    suspend fun `getPerfumeTopDetail 요청`() {
-        val communityId = 1
-        val page = 1
-        val response = CommunityCommentAllResponseDto(
-            commentCount = 2,
-            comments = listOf(
-                CommunityCommentDefaultResponseDto(
-                    author = "이용인",
-                    commentId = 1,
-                    content = "플로리스 향수는 없나요",
-                    profileImg = "ewoie9e8.jpeg",
-                    time = "20:20:20",
-                    writed = true
-                ),
-                CommunityCommentDefaultResponseDto("서호준", 2, "조말론 향수 추천 좀", "43k4u3hu4.jpeg", "20:30:40", true)
-            )
-        )
-        //given
-//        Mockito.`when`(communityCommentService.getCommunityComments()).then(
-//            return@when
-//        )
-
+    suspend fun TestSendApplicationJsonService() {
+        //TODO("ContentType.Application.Json로 보내진 api는 요청에 대한 응답을 받아야 함")
     }
 
-
+    suspend fun TestSendApplicationFormUrlEncodedService() {
+        //TODO("ContentType.Application.FormUrlEncoded로 보내진 api는 요청에 대한 응답을 받아야 함")
+    }
 }

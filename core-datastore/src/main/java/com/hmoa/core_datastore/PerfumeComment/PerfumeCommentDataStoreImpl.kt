@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
-import com.hmoa.core_network.PerfumeComment.PerfumeCommentService
+import corenetwork.PerfumeComment.PerfumeCommentService
 
 internal class PerfumeCommentDataStoreImpl constructor(private val perfumeCommentService: PerfumeCommentService) :
     PerfumeCommentDataStore {

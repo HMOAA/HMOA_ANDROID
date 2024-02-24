@@ -1,17 +1,19 @@
 package corenetwork.Search
 
 import com.hmoa.core_model.response.*
-import io.ktor.client.*
+import com.hmoa.core_network.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import javax.inject.Inject
 
-class SearchServiceImpl constructor(
-    private val httpClient: HttpClient
+class SearchServiceImpl @Inject constructor(
+    private val httpClientProvider: HttpClientProvider
 ) : SearchService {
+    val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
 
     override suspend fun getBrand(searchWord: String): BrandSearchResponseDto {
-        val response = httpClient.get("/search/brand") {
+        val response = jsonContentHttpClient.get("/search/brand") {
             url {
                 parameters.append("searchWord", searchWord)
             }
@@ -20,7 +22,7 @@ class SearchServiceImpl constructor(
     }
 
     override suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
-        val response = httpClient.get("/search/brandAll") {
+        val response = jsonContentHttpClient.get("/search/brandAll") {
             url {
                 parameters.append("consonant", consonant.toString())
             }
@@ -36,7 +38,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/brandStory") {
+        val response = jsonContentHttpClient.get("/search/brandStory") {
             url {
                 parameters.appendAll(parameter)
             }
@@ -52,7 +54,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/community") {
+        val response = jsonContentHttpClient.get("/search/community") {
             url {
                 parameters.appendAll(parameter)
             }
@@ -70,7 +72,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/community/category") {
+        val response = jsonContentHttpClient.get("/search/community/category") {
             url {
                 parameters.appendAll(parameter)
             }
@@ -83,7 +85,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/note") {
+        val response = jsonContentHttpClient.get("/search/note") {
             url {
                 parameters.appendAll(parameter)
             }
@@ -96,7 +98,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/perfume") {
+        val response = jsonContentHttpClient.get("/search/perfume") {
             url {
                 parameters.appendAll(parameter)
             }
@@ -112,7 +114,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/perfumeName") {
+        val response = jsonContentHttpClient.get("/search/perfumeName") {
             url {
                 parameters.appendAll(parameter)
             }
@@ -128,7 +130,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/perfumer") {
+        val response = jsonContentHttpClient.get("/search/perfumer") {
             url {
                 parameters.appendAll(parameter)
             }
@@ -141,7 +143,7 @@ class SearchServiceImpl constructor(
             append("page", page.toString())
             append("searchWord", searchWord)
         }
-        val response = httpClient.get("/search/term") {
+        val response = jsonContentHttpClient.get("/search/term") {
             url {
                 parameters.appendAll(parameter)
             }

@@ -4,19 +4,20 @@ import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
-import io.ktor.client.*
+import com.hmoa.core_network.HttpClientProvider
 import io.ktor.client.call.*
-import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
-import io.ktor.http.*
 import java.io.File
+import javax.inject.Inject
 
-internal class CommunityServiceImpl constructor(
-    private val httpClient: HttpClient,
+internal class CommunityServiceImpl @Inject constructor(
+    private val httpClientProvider: HttpClientProvider
 ) : corenetwork.Community.CommunityService {
+    val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
+    val formUrlEncodedContentHttpClient = httpClientProvider.getHttpClientWithFormUrlEncodedHeader()
     override suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto {
-        return httpClient.get("/community/${communityId}").body()
+        return jsonContentHttpClient.get("/community/${communityId}").body()
     }
 
     override suspend fun postCommunityUpdate(
@@ -33,13 +34,7 @@ internal class CommunityServiceImpl constructor(
             "content" to content
         )
 
-        httpClient.config {
-            install(DefaultRequest) {
-                header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-            }
-        }
-
-        return httpClient.post("/community/${communityId}") {
+        return formUrlEncodedContentHttpClient.post("/community/${communityId}") {
             formData {
                 formData
             }
@@ -47,11 +42,11 @@ internal class CommunityServiceImpl constructor(
     }
 
     override suspend fun deleteCommunity(communityId: Int): DataResponseDto<Any> {
-        return httpClient.delete("/community/${communityId}").body()
+        return jsonContentHttpClient.delete("/community/${communityId}").body()
     }
 
     override suspend fun getCommunityByCategory(category: Category, page: String): CommunityByCategoryResponseDto {
-        return httpClient.get("/community/category") {
+        return jsonContentHttpClient.get("/community/category") {
             url {
                 parameters.append("category", category.name)
                 parameters.append("page", page)
@@ -60,7 +55,7 @@ internal class CommunityServiceImpl constructor(
     }
 
     override suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto> {
-        return httpClient.get("/community/home").body()
+        return jsonContentHttpClient.get("/community/home").body()
     }
 
     override suspend fun postCommunitySave(
@@ -76,7 +71,7 @@ internal class CommunityServiceImpl constructor(
             "content" to content
         )
 
-        return httpClient.post("/community/save") {
+        return formUrlEncodedContentHttpClient.post("/community/save") {
             formData {
                 formData
             }

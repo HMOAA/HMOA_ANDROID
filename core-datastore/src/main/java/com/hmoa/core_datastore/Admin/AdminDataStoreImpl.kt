@@ -3,11 +3,11 @@ package com.hmoa.core_datastore.Admin
 import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
-import com.hmoa.core_network.Admin.AdminService
+import corenetwork.Admin.AdminService
 
 private class AdminDataStoreImpl constructor(
-    private val adminService : AdminService
-): AdminDataStore {
+    private val adminService: AdminService
+) : AdminDataStore {
     override suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
         return adminService.deleteHomeMenu(homeMenuId)
     }

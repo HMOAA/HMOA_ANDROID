@@ -1,13 +1,16 @@
 package corenetwork.Perfumer
 
 import com.hmoa.core_model.response.DataResponseDto
-import io.ktor.client.*
+import com.hmoa.core_network.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import javax.inject.Inject
 
-internal class PerfumerServiceImpl constructor(private val httpClient: HttpClient) : PerfumerService {
+internal class PerfumerServiceImpl @Inject constructor(private val httpClientProvider: HttpClientProvider) :
+    PerfumerService {
+    val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
     override suspend fun getPerfumers(pageNum: String): DataResponseDto<Any> {
-        return httpClient.get("/perfumer") {
+        return jsonContentHttpClient.get("/perfumer") {
             url {
                 parameters.append("pageNum", pageNum)
             }
@@ -15,6 +18,6 @@ internal class PerfumerServiceImpl constructor(private val httpClient: HttpClien
     }
 
     override suspend fun getPerfumer(perfumerId: Int): DataResponseDto<Any> {
-        return httpClient.get("/perfumer/${perfumerId}").body()
+        return jsonContentHttpClient.get("/perfumer/${perfumerId}").body()
     }
 }

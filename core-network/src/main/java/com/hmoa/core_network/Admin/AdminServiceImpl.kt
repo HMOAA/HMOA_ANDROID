@@ -3,22 +3,21 @@ package corenetwork.Admin
 import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
-import io.ktor.client.*
+import com.hmoa.core_network.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.util.*
+import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
-class AdminServiceImpl constructor(
-    private val httpClient: HttpClient
+class AdminServiceImpl @Inject constructor(
+    private val httpClientProvider: HttpClientProvider
 ) : corenetwork.Admin.AdminService {
+    val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
+
     override suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
-        val response = httpClient.delete("/admin/{homeMenuId}/delete") {
-            url {
-                parameters.append("homeMenuId", homeMenuId.toString())
-            }
-        }
+        val response = jsonContentHttpClient.delete("/admin/${homeMenuId}/delete")
         return response.body()
     }
 
@@ -26,14 +25,14 @@ class AdminServiceImpl constructor(
         homeMenuId: Int,
         homeMenuSaveRequestDto: HomeMenuSaveRequestDto
     ): DataResponseDto<Any> {
-        val response = httpClient.get("/admin/${homeMenuId}/modify") {
+        val response = jsonContentHttpClient.get("/admin/${homeMenuId}/modify") {
             body = homeMenuSaveRequestDto
         }
         return response.body()
     }
 
     override suspend fun postHomePerfume(dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any> {
-        val response = httpClient.get("/admin/homePerfume") {
+        val response = jsonContentHttpClient.get("/admin/homePerfume") {
             body = dto
         }
         return response.body()
@@ -44,7 +43,7 @@ class AdminServiceImpl constructor(
             append("homeId", homeId.toString())
             append("perfumeId", perfumeId.toString())
         }
-        val response = httpClient.get("/admin/homePerfume/add") {
+        val response = jsonContentHttpClient.get("/admin/homePerfume/add") {
             url.parameters.appendAll(parameter)
         }
         return response.body()

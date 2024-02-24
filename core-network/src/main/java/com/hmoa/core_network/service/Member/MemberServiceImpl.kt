@@ -5,7 +5,7 @@ import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
-import com.hmoa.core_network.HttpClientProvider
+import com.hmoa.core_network.service.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*

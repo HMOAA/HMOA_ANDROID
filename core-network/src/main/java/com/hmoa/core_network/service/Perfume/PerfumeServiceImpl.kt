@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
-import com.hmoa.core_network.HttpClientProvider
+import com.hmoa.core_network.service.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*

@@ -3,7 +3,7 @@ package corenetwork.Main
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
-import com.hmoa.core_network.HttpClientProvider
+import com.hmoa.core_network.service.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import javax.inject.Inject

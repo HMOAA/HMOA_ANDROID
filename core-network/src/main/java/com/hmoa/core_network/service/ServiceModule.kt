@@ -1,4 +1,4 @@
-package com.hmoa.core_network
+package com.hmoa.core_network.service
 
 import corenetwork.Admin.AdminService
 import corenetwork.Admin.AdminServiceImpl

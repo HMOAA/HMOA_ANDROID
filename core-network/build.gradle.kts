@@ -36,6 +36,7 @@ dependencies {
 
 
     implementation(project(":core-model"))
+    implementation(project(":core-database"))
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")

@@ -1,4 +1,4 @@
-package com.hmoa.core_network.service
+package com.hmoa.core_network
 
 import dagger.Module
 import dagger.Provides

@@ -37,7 +37,6 @@ dependencies {
     val mockito_version = "4.8.0"
     val hilt_version = "2.44"
 
-
     implementation(project(":core-model"))
     implementation(project(":core-database"))
     implementation(project(":core-repository"))

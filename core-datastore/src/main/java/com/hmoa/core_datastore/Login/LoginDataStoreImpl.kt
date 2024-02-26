@@ -1,6 +1,7 @@
 package com.hmoa.core_datastore.Login
 
 import com.hmoa.core_database.TokenManager
+import com.hmoa.core_model.Provider
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
@@ -31,7 +32,7 @@ private class LoginDataStoreImpl constructor(
 
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
-        provider: String
+        provider: Provider
     ): MemberLoginResponseDto {
         return loginService.postOAuth(accessToken, provider).apply {
             tokenManager.saveAccessToken(this.authToken)

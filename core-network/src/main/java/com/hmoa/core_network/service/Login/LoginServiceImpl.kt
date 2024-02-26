@@ -1,5 +1,6 @@
 package corenetwork.Login
 
+import com.hmoa.core_model.Provider
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
@@ -18,7 +19,7 @@ class LoginServiceImpl @Inject constructor(
 
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
-        provider: String
+        provider: Provider
     ): MemberLoginResponseDto {
         val response = jsonContentHttpClient.post("/login/oauth2/${provider}") {
             body = accessToken

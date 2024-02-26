@@ -1,8 +1,5 @@
 package com.hmoa.core_network
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import com.hmoa.core_database.TokenManager
 import com.hmoa.core_repository.Login.LoginRepository
 import dagger.Module
 import dagger.Provides
@@ -19,19 +16,12 @@ import io.ktor.serialization.kotlinx.json.*
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class HttpClientModule {
     @Provides
     private fun provideBaseUrl(): String = dotenv().get("BASE_URL")
-
-    @Provides
-    @Singleton
-    fun provideTokenManager(dataStore: DataStore<Preferences>): TokenManager {
-        return TokenManager(dataStore)
-    }
 
     @Provides
     private fun provideInterceptor(loginRepository: LoginRepository): AuthInterceptor =

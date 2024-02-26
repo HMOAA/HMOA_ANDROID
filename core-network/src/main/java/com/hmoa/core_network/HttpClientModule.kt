@@ -34,8 +34,8 @@ class HttpClientModule {
     }
 
     @Provides
-    private fun provideInterceptor(tokenManager: TokenManager, loginRepository: LoginRepository): AuthInterceptor =
-        AuthInterceptor(tokenManager, loginRepository)
+    private fun provideInterceptor(loginRepository: LoginRepository): AuthInterceptor =
+        AuthInterceptor(loginRepository)
 
     @Provides
     private fun provideOkHttp(interceptor: Interceptor): OkHttpClient {

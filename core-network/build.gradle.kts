@@ -38,7 +38,6 @@ dependencies {
     val hilt_version = "2.44"
 
     implementation(project(":core-model"))
-    implementation(project(":core-database"))
     implementation(project(":core-repository"))
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")

@@ -3,12 +3,11 @@ package com.hmoa.core_datastore.Main
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
-import com.hmoa.core_network.Login.LoginService
-import com.hmoa.core_network.Main.MainService
+import corenetwork.Main.MainService
 
 private class MainDataStoreImpl constructor(
     private val mainService: MainService
-): MainDataStore {
+) : MainDataStore {
     override suspend fun getFirst(): HomeMenuFirstResponseDto {
         return mainService.getFirst()
     }

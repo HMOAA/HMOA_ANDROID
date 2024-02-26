@@ -4,17 +4,12 @@ import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
-import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.core_model.response.CommunityCommentByMemberResponseDto
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.MemberResponseDto
-import com.hmoa.core_model.response.PerfumeCommentResponseDto
-import com.hmoa.core_network.Member.MemberService
+import com.hmoa.core_model.response.*
+import corenetwork.Member.MemberService
 import java.io.File
 
 private class MemberDataStoreImpl constructor(
-    private val memberService : MemberService
+    private val memberService: MemberService
 ) : MemberDataStore {
     override suspend fun getMember(): MemberResponseDto {
         return memberService.getMember()

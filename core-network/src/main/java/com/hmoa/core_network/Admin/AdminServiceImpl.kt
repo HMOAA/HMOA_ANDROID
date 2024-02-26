@@ -1,28 +1,23 @@
-package com.hmoa.core_network.Admin
+package corenetwork.Admin
 
 import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.http.ContentType
-import io.ktor.http.Parameters
-import io.ktor.http.contentType
-import io.ktor.util.InternalAPI
+import com.hmoa.core_network.HttpClientProvider
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.util.*
 import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
 class AdminServiceImpl @Inject constructor(
-    private val httpClient : HttpClient
-): AdminService {
+    private val httpClientProvider: HttpClientProvider
+) : corenetwork.Admin.AdminService {
+    val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
+
     override suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {
-        val response = httpClient.delete("/admin/{homeMenuId}/delete"){
-            url {
-                parameters.append("homeMenuId", homeMenuId.toString())
-            }
-        }
+        val response = jsonContentHttpClient.delete("/admin/${homeMenuId}/delete")
         return response.body()
     }
 
@@ -30,25 +25,25 @@ class AdminServiceImpl @Inject constructor(
         homeMenuId: Int,
         homeMenuSaveRequestDto: HomeMenuSaveRequestDto
     ): DataResponseDto<Any> {
-        val response = httpClient.get("/admin/${homeMenuId}/modify"){
+        val response = jsonContentHttpClient.get("/admin/${homeMenuId}/modify") {
             body = homeMenuSaveRequestDto
         }
         return response.body()
     }
 
     override suspend fun postHomePerfume(dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any> {
-        val response = httpClient.get("/admin/homePerfume"){
+        val response = jsonContentHttpClient.get("/admin/homePerfume") {
             body = dto
         }
         return response.body()
     }
 
     override suspend fun postHomePerfumeAdd(homeId: Int, perfumeId: Int): DataResponseDto<Any> {
-        val parameter = Parameters.build{
+        val parameter = Parameters.build {
             append("homeId", homeId.toString())
             append("perfumeId", perfumeId.toString())
         }
-        val response = httpClient.get("/admin/homePerfume/add"){
+        val response = jsonContentHttpClient.get("/admin/homePerfume/add") {
             url.parameters.appendAll(parameter)
         }
         return response.body()

@@ -1,11 +1,11 @@
 package com.hmoa.core_datastore.BrandHPedia
 
 import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_network.BrandHPedia.BrandHPediaService
+import corenetwork.BrandHPedia.BrandHPediaService
 
 private class BrandHPediaDataStoreImpl constructor(
-    private val brandHPediaService : BrandHPediaService
-): BrandHPediaDataStore {
+    private val brandHPediaService: BrandHPediaService
+) : BrandHPediaDataStore {
     override suspend fun getBrandStoryAll(pageNum: Int): DataResponseDto<Any> {
         return brandHPediaService.getBrandStoryAll(pageNum)
     }

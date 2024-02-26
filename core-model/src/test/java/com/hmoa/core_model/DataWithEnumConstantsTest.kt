@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName
 
 
 @DisplayName("enum class 상수이름이 String타입으로 속성으로 들어가는 모델 테스트")
-class TestDataWithEnumConstants {
+class testDataWithEnumConstants {
     @DisplayName("Category enum class 상수 이름이 String타입으로 category 속성에 들어가는 모델 테스트")
     @Test
     fun isAvailableData_includeCategoryPropertyAsEnumConstants() {

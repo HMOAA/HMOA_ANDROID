@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3ec92a1a-0ee4-4afa-871c-33f4bce5eb6a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../core-datastore/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../core-datastore/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../core-datastore/src/main/java/com/hmoa/core_datastore/Login/LoginDataStoreImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../core-datastore/src/main/java/com/hmoa/core_datastore/Login/LoginDataStoreImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Admin/AdminServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Admin/AdminServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Brand/BrandServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Brand/BrandServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/BrandHPedia/BrandHPediaServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/BrandHPedia/BrandHPediaServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Community/CommunityServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Community/CommunityServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/CommunityComment/CommunityCommentServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/CommunityComment/CommunityCommentServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Fcm/FcmServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Fcm/FcmServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Login/LoginServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Login/LoginServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Main/MainServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Main/MainServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Member/MemberServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Member/MemberServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Note/NoteServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Note/NoteServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Perfume/PerfumeServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Perfume/PerfumeServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/PerfumeComment/PerfumeCommentServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/PerfumeComment/PerfumeCommentServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Perfumer/PerfumerServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Perfumer/PerfumerServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Search/SearchServiceImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/core_network/Search/SearchServiceImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../core-repository/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../core-repository/build.gradle.kts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="2cl12YcFMpiEKdrE1zs8pCkw7Rg" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "android.gradle.sync.needed": "true",
+    "git-widget-placeholder": "master",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3ec92a1a-0ee4-4afa-871c-33f4bce5eb6a" name="Changes" comment="" />
+      <created>1708671144704</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1708671144704</updated>
+      <workItem from="1708671145923" duration="5000" />
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,4 +1,4 @@
-package com.hmoa.core_network.Perfumer
+package corenetwork.Perfumer
 
 import com.hmoa.core_model.response.DataResponseDto
 

@@ -4,11 +4,11 @@ import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
-import com.hmoa.core_network.Login.LoginService
+import corenetwork.Login.LoginService
 
 private class LoginDataStoreImpl constructor(
     private val loginService: LoginService
-): LoginDataStore {
+) : LoginDataStore {
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
         provider: String

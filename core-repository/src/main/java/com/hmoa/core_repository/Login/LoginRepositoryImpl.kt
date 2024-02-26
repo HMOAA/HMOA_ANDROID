@@ -9,6 +9,13 @@ import com.hmoa.core_model.response.TokenResponseDto
 class LoginRepositoryImpl(
     private val loginDataStore: LoginDataStore
 ) : LoginRepository {
+    override suspend fun getAuthToken(): String? {
+        return loginDataStore.getAuthToken()
+    }
+
+    override suspend fun getRememberedToken(): String? {
+        return loginDataStore.getRememberedToken()
+    }
 
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,

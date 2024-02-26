@@ -24,7 +24,11 @@ class AuthInterceptor @Inject constructor(
             }
             val newAuthToken = suspend { loginRepository.getAuthToken() }
             val newRequest = getRequestWithAuthToken(chain, newAuthToken)
-            return chain.proceed(newRequest)
+            val newResponse = chain.proceed(newRequest)
+
+            if (newResponse.code == 401) {
+                //TODO("로그인 화면으로 이동필요")
+            }
         }
 
         return response

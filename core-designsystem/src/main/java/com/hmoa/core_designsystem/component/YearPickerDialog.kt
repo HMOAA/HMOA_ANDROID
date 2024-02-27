@@ -1,11 +1,7 @@
 package com.hmoa.component
 
-import android.util.TimeFormatException
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,31 +14,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerColors
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberDateRangePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -50,7 +34,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,32 +47,31 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.hmoa.core_designsystem.R
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
+import com.hmoa.core_designsystem.theme.CustomColor
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
-import java.time.Duration
 import kotlin.math.abs
 
 @Composable
 fun YearPickerDialog(
-    width : Dp,
-    height : Dp,
-    onDismiss : () -> Unit,
-    onDoneClick : () -> Unit,
+    yearList : List<Int>, //출생연도 리스트
+    value : Int, //초기 값
+    width : Dp, //넓이
+    height : Dp, //높이
+    onDismiss : () -> Unit, //dismiss event
+    onDoneClick : (Int) -> Unit, //확인 클릭 event
 ){
-    val testData = (1950..2024).toList()
+    var selectedValue by remember{mutableIntStateOf(value)}
 
-    var data by remember{mutableIntStateOf(2000)}
-
-    val scrollState = rememberLazyListState()
-
+    //offset을 통해 위치 조절
     val density = LocalDensity.current
+    val offset = with(density) {70.dp.toPx().toInt()}
 
     val coroutineScope = rememberCoroutineScope()
+
+    val scrollState = rememberLazyListState(
+        initialFirstVisibleItemIndex = yearList.indexOf(value),
+        initialFirstVisibleItemScrollOffset = -offset
+    )
 
     var preventEvent by remember{mutableStateOf(false)}
 
@@ -159,65 +141,57 @@ fun YearPickerDialog(
                         .height(168.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(
-                        space = 5.dp,
+                        space = 4.dp,
                         alignment = Alignment.CenterVertically
                     ),
                     state = scrollState
                 ){
-                    itemsIndexed(testData){ index, year ->
 
-                        when (index) {
-                            testData.indexOf(data)-2 -> {
-                                Text(
-                                    modifier = Modifier.clickable{
-                                        data = year
-                                    },
-                                    text = "${year}",
-                                    fontSize = 14.sp
-                                )
-                            }
-                            testData.indexOf(data)-1 -> {
-                                Text(
-                                    modifier = Modifier.clickable{
-                                        data = year
-                                    },
-                                    text = "${year}",
-                                    fontSize = 16.sp
-                                )
-                            }
-                            testData.indexOf(data) -> {
-                                Text(
-                                    text = "${data}",
-                                    fontSize = 18.sp
-                                )
-                            }
-                            testData.indexOf(data)+1 -> {
-                                Text(
-                                    modifier = Modifier.clickable{
-                                        data = year
-                                    },
-                                    text = "${year}",
-                                    fontSize = 16.sp
-                                )
-                            }
-                            testData.indexOf(data)+2 -> {
-                                Text(
-                                    modifier = Modifier.clickable{
-                                        data = year
-                                    },
-                                    text = "${year}",
-                                    fontSize = 14.sp
-                                )
-                            }
-                            else -> {
-                                Text(
-                                    text = "",
-                                    fontSize = 14.sp
-                                )
-                            }
+                    val selectedIndex = yearList.indexOf(selectedValue)
+
+                    itemsIndexed(yearList) {index, year ->
+
+                        //글씨 크기
+                        val fontSize = when (index) {
+                            selectedIndex -> 22.sp
+                            selectedIndex - 1 -> 21.sp
+                            selectedIndex + 1 -> 21.sp
+                            selectedIndex - 2 -> 18.sp
+                            selectedIndex + 2 -> 18.sp
+                            else -> 12.sp
                         }
+                        //font color
+                        val color = when (index) {
+                            selectedIndex -> Color.Black
+                            selectedIndex - 1 -> CustomColor.gray3
+                            selectedIndex + 1 -> CustomColor.gray3
+                            selectedIndex - 2 -> CustomColor.gray2
+                            selectedIndex + 2 -> CustomColor.gray2
+                            else -> CustomColor.gray1
+                        }
+
+                        Text(
+                            modifier = Modifier
+                                .wrapContentHeight()
+                                .clickable {
+                                    coroutineScope.launch {
+                                        preventEvent = true
+                                        selectedValue = year
+                                        scrollState.animateScrollToItem(
+                                            yearList.indexOf(
+                                                selectedValue
+                                            ), scrollOffset = -offset
+                                        )
+                                    }
+                                },
+                            text = "${year}",
+                            fontSize = fontSize,
+                            color = color
+                        )
                     }
                 }
+
+                Spacer(Modifier.height(20.dp))
 
                 Row(
                     modifier = Modifier
@@ -229,7 +203,10 @@ fun YearPickerDialog(
                         modifier = Modifier
                             .width(200.dp)
                             .fillMaxHeight(),
-                        onClick = onDoneClick,
+                        onClick = {
+                            onDoneClick(selectedValue)
+                            onDismiss()
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
                         )
@@ -243,35 +220,18 @@ fun YearPickerDialog(
                 }
 
                 Spacer(Modifier.height(24.dp))
-
-                //test
-                Text(
-                    text = "${data}"
-                )
             }
-
         }
-        LaunchedEffect(data, scrollState){
-
-//            val centerIndex = scrollState.layoutInfo.visibleItemsInfo
-//                .minByOrNull { abs(it.offset - scrollState.layoutInfo.viewportEndOffset) }?.index ?: 0
-            val selectedIndex = testData.indexOf(data)
-            val currentIndex = scrollState.layoutInfo.viewportStartOffset
-
+        LaunchedEffect(scrollState.firstVisibleItemIndex){
             if (!preventEvent){
-                // data 값이 변경되었을 때 스크롤 조정 및 data 업데이트
-                if (currentIndex != selectedIndex) {
-                    val centerScrollOffset = with(density) { 60.dp.toPx() }.toInt()
+                if (scrollState.isScrollInProgress){
+                    val centerIndex = scrollState.layoutInfo.visibleItemsInfo
+                        .minByOrNull { (scrollState.layoutInfo.viewportEndOffset - scrollState.layoutInfo.viewportStartOffset) }?.index ?: 0
 
-                    if (scrollState.isScrollInProgress){
-                        return@LaunchedEffect
-                    }
-
-                    scrollState.animateScrollToItem(selectedIndex) //, scrollOffset = -centerScrollOffset
+                    selectedValue = yearList[centerIndex+2]
                 }
             }
             preventEvent = false
-            data = testData[selectedIndex]
         }
     }
 }
@@ -283,6 +243,9 @@ fun TestPickerDialog(){
     val width = LocalConfiguration.current.screenWidthDp.dp
 
     var showDialog by remember{mutableStateOf(true)}
+
+    var value by remember{mutableStateOf(2000)}
+    val yearList = (1950..2024).toList()
 
     Box(
         modifier = Modifier
@@ -298,8 +261,10 @@ fun TestPickerDialog(){
                     showDialog = !showDialog
                 },
                 onDoneClick = {
-
-                }
+                    value = it
+                },
+                value = value,
+                yearList = yearList
             )
         }
 
@@ -316,6 +281,12 @@ fun TestPickerDialog(){
                 text = "show dialog"
             )
         }
+
+        Spacer(Modifier.height(10.dp))
+
+        Text(
+            text = "${value}"
+        )
     }
 
 }

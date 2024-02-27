@@ -1,28 +1,28 @@
 package com.hmoa.core_network
 
 import com.hmoa.core_model.request.RememberedLoginRequestDto
-import com.hmoa.core_repository.Login.LoginRepository
+import com.hmoa.core_network.authentication.Authenticator
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
-    private val loginRepository: LoginRepository
+    private val authenticator: Authenticator
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val authToken = suspend { loginRepository.getAuthToken() }
+        val authToken = suspend { authenticator.getAuthToken() }
         val request = getRequestWithAuthToken(chain, authToken)
         val response = chain.proceed(request)
 
         if (response.code == 401) {
             //TODO("자동로그인 시도까지 실패한경우(rememberedToken이 만료된 경우) 처리는 보류")
-            val rememberedToken = suspend { loginRepository.getRememberedToken() }
+            val rememberedToken = suspend { authenticator.getRememberedToken() }
             suspend {
-                loginRepository.postRemembered(RememberedLoginRequestDto { rememberedToken })
+                authenticator.postRemembered(RememberedLoginRequestDto { rememberedToken })
             }
-            val newAuthToken = suspend { loginRepository.getAuthToken() }
+            val newAuthToken = suspend { authenticator.getAuthToken() }
             val newRequest = getRequestWithAuthToken(chain, newAuthToken)
             val newResponse = chain.proceed(newRequest)
 

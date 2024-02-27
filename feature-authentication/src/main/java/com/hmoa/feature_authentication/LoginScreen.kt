@@ -1,8 +1,5 @@
 package com.hmoa.feature_authentication
 
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Icon
@@ -17,23 +14,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.hmoa.core_designsystem.component.OAuthLoginButton
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.kakao.sdk.user.UserApiClient
 
 @Composable
-fun LoginScreen(navController: NavController, context: Context){
-    Column (
+fun LoginScreen(
+    navController: NavController,
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    onSignupScreen: () -> Unit
+) {
+    Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(vertical = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
-    ){
-        Column(horizontalAlignment = Alignment.CenterHorizontally,) {
-            Icon(modifier = Modifier.fillMaxWidth().padding(top = 160.dp),
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                modifier = Modifier.fillMaxWidth().padding(top = 160.dp),
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_hmoa_logo),
-                contentDescription = "OAuth Type Icon",)
-            Spacer(modifier = Modifier.padding(top=100.dp))
+                contentDescription = "OAuth Type Icon",
+            )
+            Spacer(modifier = Modifier.padding(top = 100.dp))
             OAuthLoginButton(
                 backgroundColor = Color.White,
                 iconId = com.hmoa.core_designsystem.R.mipmap.ic_google_foreground,
@@ -45,7 +48,7 @@ fun LoginScreen(navController: NavController, context: Context){
 
                 },
             )
-            Spacer(modifier = Modifier.padding(top=15.dp))
+            Spacer(modifier = Modifier.padding(top = 15.dp))
             OAuthLoginButton(
                 backgroundColor = CustomColor.kakao,
                 iconId = com.hmoa.core_designsystem.R.drawable.ic_kakao,
@@ -55,20 +58,14 @@ fun LoginScreen(navController: NavController, context: Context){
                 textColor = Color.Black,
                 textSize = 16,
                 onPress = {
-                    UserApiClient.instance.loginWithKakaoAccount(context = context ){ token,error ->
-                        if (error != null) {
-                            Log.e(TAG, "로그인 실패", error)
-                        }
-                        else if (token != null) {
-                            Log.i(TAG, "로그인 성공 ${token.accessToken}")
-                        }
-                    }
+                    loginViewModel.handleKakaoLogin(onLoginSuccess = { onSignupScreen })
                 },
             )
         }
-        ClickableText(text = AnnotatedString("로그인없이 사용하기"),
+        ClickableText(
+            text = AnnotatedString("로그인없이 사용하기"),
             onClick = {},
-            style = TextStyle(textAlign = TextAlign.Center, fontSize = 12.sp, color= CustomColor.gray4)
+            style = TextStyle(textAlign = TextAlign.Center, fontSize = 12.sp, color = CustomColor.gray4)
         )
 
     }
@@ -76,5 +73,5 @@ fun LoginScreen(navController: NavController, context: Context){
 
 @Preview
 @Composable
-fun PreviewLoginScreen(){
+fun PreviewLoginScreen() {
 }

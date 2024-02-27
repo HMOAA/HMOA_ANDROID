@@ -3,8 +3,7 @@ package com.hmoa.feature_authentication
 import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import com.hmoa.core_repository.Login.LoginRepository
+import androidx.lifecycle.ViewModel
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -15,12 +14,12 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val application: Application,
-    private val loginRepository: LoginRepository
-) : AndroidViewModel(application) {
+    //private val loginRepository: LoginRepository,
+) : ViewModel() {
     private val context = application.applicationContext
 
     fun saveKakoAccessToken(token: String) {
-        suspend { loginRepository.saveKakaoAccessToken(token) }
+        //suspend { loginRepository.saveKakaoAccessToken(token) }
     }
 
     fun handleKakaoLogin(onLoginSuccess: () -> Unit) {

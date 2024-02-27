@@ -18,6 +18,10 @@ class LoginRepositoryImpl(
         return loginDataStore.getRememberedToken()
     }
 
+    override suspend fun getKakaoAccessToken(): String? {
+        return loginDataStore.getKakaoAccessToken()
+    }
+
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
         provider: Provider
@@ -27,5 +31,13 @@ class LoginRepositoryImpl(
 
     override suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto {
         return loginDataStore.postRemembered(dto)
+    }
+
+    override suspend fun saveKakaoAccessToken(token: String) {
+        loginDataStore.saveKakaoAccessToken(token)
+    }
+
+    override suspend fun deleteKakaoAccessToken() {
+        loginDataStore.deleteKakaoAccessToken()
     }
 }

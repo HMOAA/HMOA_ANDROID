@@ -30,6 +30,13 @@ private class LoginDataStoreImpl constructor(
         return token
     }
 
+    override suspend fun getKakaoAccessToken(): String? {
+        val token = CoroutineScope(Dispatchers.IO).async {
+            tokenManager.getKakaoAccessToken().first()
+        }.await()
+        return token
+    }
+
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
         provider: Provider
@@ -48,5 +55,13 @@ private class LoginDataStoreImpl constructor(
             tokenManager.saveAccessToken(this.authToken)
             tokenManager.saveRememberedToken(this.rememberedToken)
         }
+    }
+
+    override suspend fun saveKakaoAccessToken(token: String) {
+        tokenManager.saveKakaoAccessToken(token)
+    }
+
+    override suspend fun deleteKakaoAccessToken() {
+        tokenManager.deleteKakaoAccessToken()
     }
 }

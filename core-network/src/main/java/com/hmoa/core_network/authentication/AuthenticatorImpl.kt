@@ -1,6 +1,6 @@
 package com.hmoa.core_network.authentication
 
-import com.hmoa.core_database.TokenManagerImpl
+import com.hmoa.core_database.TokenManager
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.TokenResponseDto
 import corenetwork.Login.LoginService
@@ -10,7 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 
 private class AuthenticatorImpl constructor(
-    private val tokenManager: TokenManagerImpl,
+    private val tokenManager: TokenManager,
     private val loginService: LoginService
 ) : Authenticator {
     override suspend fun getAuthToken(): String? {

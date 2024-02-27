@@ -1,6 +1,15 @@
+import java.util.*
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
+}
+
+val localProperties = Properties().apply {
+    load(project.rootProject.file("./app/local.properties").inputStream())
 }
 
 android {
@@ -15,6 +24,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["NATIVE_APP_KEY"] = localProperties.getProperty("NATIVE_APP_KEY")
+        buildConfigField("String", "NATIVE_APP_KEY", localProperties.getProperty("NATIVE_APP_KEY"))
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -36,10 +50,32 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.0"
     }
+    packaging {
+        resources {
+            excludes += "META-INF/gradle/incremental.annotation.processors"
+        }
+    }
 }
 
 dependencies {
+    val hilt_version = "2.44"
+    val hilt_viewmodel_version = "1.0.0-alpha03"
+    val hilt_nav_compose_version = "1.0.0"
+
     implementation(project(":feature-authentication"))
+    implementation(project(":core-designsystem"))
+    implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원
+    implementation("com.kakao.sdk:v2-user:2.19.0") // 카카오 로그인 API 모듈
+    implementation("com.kakao.sdk:v2-talk:2.19.0") // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
+    implementation("com.kakao.sdk:v2-share:2.19.0") // 카카오톡 공유 API 모듈
+    implementation("com.kakao.sdk:v2-friend:2.19.0") // 피커 API 모듈
+    implementation("com.kakao.sdk:v2-cert:2.19.0") // 카카오 인증서비스 API 모듈
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    implementation("com.google.dagger:hilt-compiler:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
+    implementation("androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version")
+    kapt("androidx.hilt:hilt-compiler:$hilt_viewmodel_version")
     implementation("androidx.compose.material3:material3:1.1.0")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui:1.1.0")

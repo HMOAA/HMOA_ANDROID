@@ -6,8 +6,10 @@ import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import corenetwork.Community.CommunityService
 import java.io.File
+import javax.inject.Inject
 
-internal class CommunityDataStoreImpl constructor(private val communityService: CommunityService) : CommunityDataStore {
+class CommunityDataStoreImpl @Inject constructor(private val communityService: CommunityService) :
+    CommunityDataStore {
     override suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto {
         return communityService.getCommunity(communityId)
     }

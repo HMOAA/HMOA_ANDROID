@@ -1,17 +1,10 @@
 package com.hmoa.core_repository.Search
 
 import com.hmoa.core_datastore.Search.SearchDataStore
-import com.hmoa.core_model.response.BrandDefaultResponseDto
-import com.hmoa.core_model.response.BrandSearchResponseDto
-import com.hmoa.core_model.response.BrandStoryDefaultResponseDto
-import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.core_model.response.NoteDefaultResponseDto
-import com.hmoa.core_model.response.PerfumeNameSearchResponseDto
-import com.hmoa.core_model.response.PerfumeSearchResponseDto
-import com.hmoa.core_model.response.PerfumerDefaultResponseDto
-import com.hmoa.core_model.response.TermDefaultResponseDto
+import com.hmoa.core_model.response.*
+import javax.inject.Inject
 
-class SearchRepositoryImpl(
+class SearchRepositoryImpl @Inject constructor(
     private val searchDataStore: SearchDataStore
 ) : SearchRepository {
 

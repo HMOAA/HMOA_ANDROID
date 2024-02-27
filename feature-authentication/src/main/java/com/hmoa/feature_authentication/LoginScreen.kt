@@ -15,14 +15,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.hmoa.core_designsystem.component.OAuthLoginButton
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
+internal fun LoginRoute(
+    onSignup: () -> Unit,
+    //loginViewModel: LoginViewModel = hiltViewModel()
+) {
+    LoginScreen(onSignup)
+}
+
+@Composable
 fun LoginScreen(
-    navController: NavController,
-    loginViewModel: LoginViewModel = hiltViewModel(),
     onSignupScreen: () -> Unit
 ) {
     Column(
@@ -58,7 +63,8 @@ fun LoginScreen(
                 textColor = Color.Black,
                 textSize = 16,
                 onPress = {
-                    loginViewModel.handleKakaoLogin(onLoginSuccess = { onSignupScreen })
+                    //loginViewModel.handleKakaoLogin(onLoginSuccess = { onSignupScreen })
+                    onSignupScreen()
                 },
             )
         }

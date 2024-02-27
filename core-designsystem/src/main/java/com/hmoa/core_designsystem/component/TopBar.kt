@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -25,9 +27,11 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun TopBar(
-    navSize : Dp = 20.dp,
-    navIcon : ImageVector?, //navigation 버튼
-    onNavClick : () -> Unit = {}, //click 이벤트
+    iconSize : Dp = 20.dp, //icon 크기
+    navIcon : Painter ?= null, //navigation 버튼
+    onNavClick : () -> Unit = {}, //navigation click 이벤트
+    menuIcon : Painter ?= null, //menu 버튼
+    onMenuClick : () -> Unit = {}, //menu click 이벤트
     title : String //메인 타이틀
 ){
     Row(
@@ -40,15 +44,17 @@ fun TopBar(
     ){
         if (navIcon != null){
             IconButton(
-                modifier = Modifier.size(navSize),
+                modifier = Modifier.size(iconSize),
                 onClick = onNavClick
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    imageVector = navIcon,
+                    painter = navIcon,
                     contentDescription = "Navigation Button"
                 )
             }
+        } else {
+            Spacer(Modifier.size(iconSize))
         }
 
         Spacer(Modifier.weight(1f))
@@ -60,17 +66,19 @@ fun TopBar(
 
         Spacer(Modifier.weight(1f))
 
-        if (navIcon != null) {
-            Spacer(Modifier.width(navSize))
+        if (menuIcon != null) {
+            IconButton(
+                modifier = Modifier.size(iconSize),
+                onClick = onMenuClick
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = menuIcon,
+                    contentDescription = "Menu Button"
+                )
+            }
+        } else {
+            Spacer(Modifier.size(iconSize))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TestTopBar(){
-    TopBar(
-        navIcon = Icons.Filled.KeyboardArrowLeft,
-        title = "마이페이지"
-    )
 }

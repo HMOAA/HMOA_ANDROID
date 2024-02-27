@@ -2,8 +2,9 @@ package com.hmoa.core_repository.Perfumer
 
 import com.hmoa.core_datastore.Perfumer.PerfumerDataStore
 import com.hmoa.core_model.response.DataResponseDto
+import javax.inject.Inject
 
-internal class PerfumerRepositoryImpl constructor(private val perfumerDataStore: PerfumerDataStore) :
+internal class PerfumerRepositoryImpl @Inject constructor(private val perfumerDataStore: PerfumerDataStore) :
     PerfumerRepository {
     override suspend fun getPerfumers(pageNum: String): DataResponseDto<Any> {
         return perfumerDataStore.getPerfumers(pageNum)

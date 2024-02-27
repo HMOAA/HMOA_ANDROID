@@ -30,8 +30,13 @@ android {
 }
 
 dependencies {
+    val hilt_version = "2.44"
     implementation(project(":core-model"))
     implementation(project(":core-network"))
     implementation(project(":core-database"))
+
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    implementation("com.google.dagger:hilt-compiler:$hilt_version")
+    testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

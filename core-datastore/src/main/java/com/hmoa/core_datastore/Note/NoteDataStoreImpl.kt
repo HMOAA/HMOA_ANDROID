@@ -2,8 +2,9 @@ package com.hmoa.core_datastore.Note
 
 import com.hmoa.core_model.response.DataResponseDto
 import corenetwork.Note.NoteService
+import javax.inject.Inject
 
-private class NoteDataStoreImpl constructor(
+class NoteDataStoreImpl @Inject constructor(
     private val noteService: NoteService
 ) : NoteDataStore {
     override suspend fun getNoteAll(pageNum: Int): DataResponseDto<Any> {

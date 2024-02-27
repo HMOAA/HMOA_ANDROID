@@ -3,8 +3,9 @@ package com.hmoa.core_repository.Brand
 import com.hmoa.core_datastore.Brand.BrandDataStore
 import com.hmoa.core_model.response.DataResponseDto
 import java.io.File
+import javax.inject.Inject
 
-class BrandRepositoryImpl(
+class BrandRepositoryImpl @Inject constructor(
     private val brandDataStore: BrandDataStore
 ) : BrandRepository {
 

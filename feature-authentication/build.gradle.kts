@@ -6,6 +6,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
+    kotlin("plugin.serialization") version "1.5.0"
 }
 
 val localProperties = Properties().apply {
@@ -61,6 +62,8 @@ dependencies {
     val hilt_nav_compose_version = "1.0.0"
 
     implementation(project(":core-designsystem"))
+    implementation(project(":core-network"))
+    implementation(project(":core-datastore"))
     implementation(project(":core-repository"))
 
     implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원

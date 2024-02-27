@@ -4,18 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application>
-        <activity
-                android:name=".AuthCodeHandlerActivity"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data
-                        android:host="oauth"
-                        android:scheme="kakao${NATIVE_APP_KEY}"/>
-            </intent-filter>
-        </activity>
+
     </application>
 
 </manifest>

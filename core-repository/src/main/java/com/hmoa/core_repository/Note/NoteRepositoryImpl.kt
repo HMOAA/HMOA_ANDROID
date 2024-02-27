@@ -2,8 +2,9 @@ package com.hmoa.core_repository.Note
 
 import com.hmoa.core_datastore.Note.NoteDataStore
 import com.hmoa.core_model.response.DataResponseDto
+import javax.inject.Inject
 
-class NoteRepositoryImpl(
+class NoteRepositoryImpl @Inject constructor(
     private val noteDataStore: NoteDataStore
 ) : NoteRepository {
 

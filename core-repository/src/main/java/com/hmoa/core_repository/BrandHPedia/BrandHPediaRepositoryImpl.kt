@@ -2,8 +2,9 @@ package com.hmoa.core_repository.BrandHPedia
 
 import com.hmoa.core_datastore.BrandHPedia.BrandHPediaDataStore
 import com.hmoa.core_model.response.DataResponseDto
+import javax.inject.Inject
 
-class BrandHPediaRepositoryImpl(
+class BrandHPediaRepositoryImpl @Inject constructor(
     private val brandHPediaDataStore: BrandHPediaDataStore
 ) : BrandHPediaRepository {
 

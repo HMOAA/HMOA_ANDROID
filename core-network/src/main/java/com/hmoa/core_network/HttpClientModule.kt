@@ -16,18 +16,22 @@ import io.ktor.serialization.kotlinx.json.*
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class HttpClientModule {
+object HttpClientModule {
     @Provides
+    @Singleton
     private fun provideBaseUrl(): String = dotenv().get("BASE_URL")
 
     @Provides
+    @Singleton
     private fun provideInterceptor(authenticator: Authenticator): AuthInterceptor =
         AuthInterceptor(authenticator)
 
     @Provides
+    @Singleton
     private fun provideOkHttp(interceptor: Interceptor): OkHttpClient {
         val httpBuilder = OkHttpClient.Builder()
             .addInterceptor(interceptor)
@@ -39,6 +43,7 @@ class HttpClientModule {
     }
 
     @Provides
+    @Singleton
     private fun provideHttpClient(
         baseUrl: String,
         okHttpClient: OkHttpClient

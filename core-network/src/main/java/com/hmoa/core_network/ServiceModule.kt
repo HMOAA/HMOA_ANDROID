@@ -28,7 +28,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ServiceModule {
+object ServiceModule {
     @Singleton
     @Provides
     fun providePerfumeService(httpClientProvider: HttpClientProvider): PerfumeService =

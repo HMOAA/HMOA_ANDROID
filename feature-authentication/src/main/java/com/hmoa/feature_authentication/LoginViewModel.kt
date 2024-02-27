@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import com.hmoa.core_repository.Login.LoginRepository
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -12,15 +13,23 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val application: Application) : AndroidViewModel(application) {
+class LoginViewModel @Inject constructor(
+    private val application: Application,
+    private val loginRepository: LoginRepository
+) : AndroidViewModel(application) {
     private val context = application.applicationContext
-    
+
+    fun saveKakoAccessToken(token: String) {
+        suspend { loginRepository.saveKakaoAccessToken(token) }
+    }
+
     fun handleKakaoLogin(onLoginSuccess: () -> Unit) {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
+                saveKakoAccessToken(token.accessToken)
                 onLoginSuccess
             }
         }
@@ -41,6 +50,7 @@ class LoginViewModel @Inject constructor(private val application: Application) :
                     UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    saveKakoAccessToken(token.accessToken)
                 }
             }
         } else {

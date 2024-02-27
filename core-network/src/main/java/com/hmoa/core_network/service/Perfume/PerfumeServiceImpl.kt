@@ -10,7 +10,7 @@ import io.ktor.client.request.*
 import io.ktor.util.*
 import javax.inject.Inject
 
-internal class PerfumeServiceImpl @Inject constructor(
+class PerfumeServiceImpl @Inject constructor(
     private val httpClientProvider: HttpClientProvider
 ) : PerfumeService {
     val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()

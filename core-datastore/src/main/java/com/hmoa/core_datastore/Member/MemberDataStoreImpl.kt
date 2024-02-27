@@ -7,8 +7,9 @@ import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
 import corenetwork.Member.MemberService
 import java.io.File
+import javax.inject.Inject
 
-private class MemberDataStoreImpl constructor(
+class MemberDataStoreImpl @Inject constructor(
     private val memberService: MemberService
 ) : MemberDataStore {
     override suspend fun getMember(): MemberResponseDto {

@@ -3,8 +3,9 @@ package com.hmoa.core_datastore.Brand
 import com.hmoa.core_model.response.DataResponseDto
 import corenetwork.Brand.BrandService
 import java.io.File
+import javax.inject.Inject
 
-private class BrandDataStoreImpl constructor(
+class BrandDataStoreImpl @Inject constructor(
     private val brandService: BrandService
 ) : BrandDataStore {
     override suspend fun getBrand(brandId: Int): DataResponseDto<Any> {

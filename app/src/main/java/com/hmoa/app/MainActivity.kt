@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
-import com.hmoa.app.navigation.Screen
 import com.hmoa.app.navigation.SetUpNavGraph
+import com.hmoa.feature_authentication.navigation.LOGIN_ROUTE
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navHostController = rememberNavController()
-            SetUpNavGraph(navHostController, startDestination = Screen.LoginScreen.route)
+            SetUpNavGraph(navHostController)
         }
     }
 }

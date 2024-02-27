@@ -4,8 +4,9 @@ import com.hmoa.core_datastore.Main.MainDataStore
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
+import javax.inject.Inject
 
-class MainRepositoryImpl(
+class MainRepositoryImpl @Inject constructor(
     private val mainDataStore: MainDataStore
 ) : MainRepository {
 

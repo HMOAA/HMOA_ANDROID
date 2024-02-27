@@ -2,8 +2,9 @@ package com.hmoa.core_datastore.Search
 
 import com.hmoa.core_model.response.*
 import corenetwork.Search.SearchService
+import javax.inject.Inject
 
-private class SearchDataStoreImpl constructor(
+class SearchDataStoreImpl @Inject constructor(
     private val searchService: SearchService
 ) : SearchDataStore {
     override suspend fun getBrand(searchWord: String): BrandSearchResponseDto {

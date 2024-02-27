@@ -5,8 +5,9 @@ import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import corenetwork.CommunityComment.CommunityCommentService
+import javax.inject.Inject
 
-internal class CommunityCommentDataStoreImpl constructor(private val communityCommentService: CommunityCommentService) :
+class CommunityCommentDataStoreImpl @Inject constructor(private val communityCommentService: CommunityCommentService) :
     CommunityCommentDataStore {
     override suspend fun putCommunityComment(
         commentId: Int,

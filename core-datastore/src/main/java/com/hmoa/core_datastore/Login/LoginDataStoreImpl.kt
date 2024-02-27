@@ -11,8 +11,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
-private class LoginDataStoreImpl constructor(
+class LoginDataStoreImpl @Inject constructor(
     private val loginService: LoginService,
     private val tokenManager: TokenManager
 ) : LoginDataStore {

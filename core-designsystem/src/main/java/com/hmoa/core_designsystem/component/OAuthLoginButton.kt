@@ -20,15 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 
-@SuppressLint("ModifierFactoryUnreferencedReceiver")
-fun Modifier.addModifier(modifier: Modifier?):Modifier{
-    if(modifier != null){
-        return this.then(modifier)
-    }
-    else{
-        return this
-    }
-}
 @Composable
 fun OAuthLoginButton(
     backgroundColor: Color,

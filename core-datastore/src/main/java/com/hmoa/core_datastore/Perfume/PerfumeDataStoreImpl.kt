@@ -5,8 +5,9 @@ import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
 import corenetwork.Perfume.PerfumeService
+import javax.inject.Inject
 
-internal class PerfumeDataStoreImpl constructor(private val perfumeService: PerfumeService) : PerfumeDataStore {
+class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: PerfumeService) : PerfumeDataStore {
     override suspend fun getPerfumeTopDetail(perfumeId: String): PerfumeDetailResponseDto {
         return perfumeService.getPerfumeTopDetail(perfumeId)
     }

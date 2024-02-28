@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -39,7 +42,13 @@ android {
 
 dependencies {
 
+    val hilt_version = "2.44"
+    val hilt_viewmodel_version = "1.0.0-alpha03"
+    val hilt_nav_compose_version = "1.0.0"
+
     implementation(project(":core-designsystem"))
+    implementation(project(":core-repository"))
+    implementation(project(":core-model"))
 
     //material3
     implementation("androidx.compose.material3:material3:1.1.0")
@@ -51,6 +60,13 @@ dependencies {
 
     //bottom navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
+
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    implementation("com.google.dagger:hilt-compiler:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
+    implementation("androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version")
+    kapt("androidx.hilt:hilt-compiler:$hilt_viewmodel_version")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

@@ -2,6 +2,8 @@ package com.hmoa.core_repository
 
 import com.hmoa.core_repository.Login.LoginRepository
 import com.hmoa.core_repository.Login.LoginRepositoryImpl
+import com.hmoa.core_repository.Member.MemberRepository
+import com.hmoa.core_repository.Member.MemberRepositoryImpl
 import com.hmoa.core_repository.Perfume.PerfumeRepository
 import com.hmoa.core_repository.Perfume.PerfumeRepositoryImpl
 import dagger.Binds
@@ -22,4 +24,7 @@ interface RepositoryModule {
     @Singleton
     fun bindPerfumeRepositoryImpl(repositoryImpl: PerfumeRepositoryImpl): PerfumeRepository
 
+    @Binds
+    @Singleton
+    fun bindMemberRepositoryImpl(repositoryImpl : MemberRepositoryImpl) : MemberRepository
 }

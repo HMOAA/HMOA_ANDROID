@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RememberedLoginRequestDto(
-    val rememberedToken: String
+    val rememberedToken: () -> suspend () -> String?
 )

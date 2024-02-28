@@ -4,8 +4,9 @@ import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
 import corenetwork.Admin.AdminService
+import javax.inject.Inject
 
-private class AdminDataStoreImpl constructor(
+class AdminDataStoreImpl @Inject constructor(
     private val adminService: AdminService
 ) : AdminDataStore {
     override suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any> {

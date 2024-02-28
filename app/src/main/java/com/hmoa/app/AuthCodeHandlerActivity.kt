@@ -1,12 +1,12 @@
-package com.hmoa.feature_authentication
+package com.hmoa.app
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.kakao.sdk.common.KakaoSdk
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AuthCodeHandlerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        KakaoSdk.init(this, "{NATIVE_APP_KEY}")
     }
 }

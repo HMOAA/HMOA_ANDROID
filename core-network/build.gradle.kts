@@ -12,8 +12,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "LIBRARY_PACKAGE_NAME", "\"com.hmoa.core_network\"")
     }
-
+    buildFeatures {
+        buildConfig = true
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -34,8 +37,8 @@ dependencies {
     val mockito_version = "4.8.0"
     val hilt_version = "2.44"
 
-
     implementation(project(":core-model"))
+    implementation(project(":core-database"))
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
@@ -48,6 +51,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:$mockito_version")
     testImplementation("org.mockito:mockito-inline:$mockito_version")

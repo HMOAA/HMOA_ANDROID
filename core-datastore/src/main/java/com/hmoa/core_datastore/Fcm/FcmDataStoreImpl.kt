@@ -3,8 +3,9 @@ package com.hmoa.core_datastore.Fcm
 import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import corenetwork.Fcm.FcmService
+import javax.inject.Inject
 
-private class FcmDataStoreImpl constructor(
+class FcmDataStoreImpl @Inject constructor(
     private val fcmDataService: FcmService
 ) : FcmDataStore {
 

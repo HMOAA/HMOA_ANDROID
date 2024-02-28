@@ -4,8 +4,9 @@ import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
 import corenetwork.Main.MainService
+import javax.inject.Inject
 
-private class MainDataStoreImpl constructor(
+class MainDataStoreImpl @Inject constructor(
     private val mainService: MainService
 ) : MainDataStore {
     override suspend fun getFirst(): HomeMenuFirstResponseDto {

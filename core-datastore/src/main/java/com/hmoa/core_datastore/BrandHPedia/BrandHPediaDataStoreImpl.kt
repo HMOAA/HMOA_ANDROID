@@ -2,8 +2,9 @@ package com.hmoa.core_datastore.BrandHPedia
 
 import com.hmoa.core_model.response.DataResponseDto
 import corenetwork.BrandHPedia.BrandHPediaService
+import javax.inject.Inject
 
-private class BrandHPediaDataStoreImpl constructor(
+class BrandHPediaDataStoreImpl @Inject constructor(
     private val brandHPediaService: BrandHPediaService
 ) : BrandHPediaDataStore {
     override suspend fun getBrandStoryAll(pageNum: Int): DataResponseDto<Any> {

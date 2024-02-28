@@ -17,6 +17,17 @@ import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
+fun MyFavoriteCommentRoute(
+    onNavBack: () -> Unit,
+    onNavCommunity: () -> Unit
+){
+    MyFavoriteCommentPage(
+        onNavBack = onNavBack,
+        onNavCommunity = onNavCommunity
+    )
+}
+
+@Composable
 fun MyFavoriteCommentPage(
     onNavBack : () -> Unit,
     onNavCommunity : () -> Unit //Community로 이동?

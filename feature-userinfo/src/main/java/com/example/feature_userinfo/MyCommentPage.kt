@@ -32,6 +32,17 @@ import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
+fun MyCommentRoute(
+    onNavBack : () -> Unit,
+    onNavCommunity : () -> Unit
+){
+    MyCommentPage(
+        onNavBack = onNavBack,
+        onNavCommunity = onNavCommunity
+    )
+}
+
+@Composable
 fun MyCommentPage(
     onNavBack : () -> Unit,
     onNavCommunity : () -> Unit, //Community로 이동 (Comment에서 사용)

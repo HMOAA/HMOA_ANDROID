@@ -23,6 +23,16 @@ import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
+fun MyPostRoute(
+    onNavBack : () -> Unit,
+    onNavEditPost: () -> Unit
+){
+    MyPostPage(
+        onNavBack = onNavBack,
+        onNavEditPost = onNavEditPost
+    )
+}
+@Composable
 fun MyPostPage(
     onNavBack : () -> Unit,
     onNavEditPost : () -> Unit, //누르면 게시글 수정 화면으로?

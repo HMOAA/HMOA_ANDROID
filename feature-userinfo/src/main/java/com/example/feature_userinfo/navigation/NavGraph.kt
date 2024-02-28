@@ -1,31 +1,25 @@
 package com.example.feature_userinfo
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.userinfo.MyActivityPage
 import com.example.userinfo.MyCommentPage
 import com.example.userinfo.MyFavoriteCommentPage
 import com.example.userinfo.MyPage
 import com.example.userinfo.NoAuthMyPage
 
-const val MY_PAGE_ROUTE = "my_page_route"
-
 //마이페이지로 이동
-fun NavController.navigateToMyPage() = navigate(Screens.MyPage.name)
+fun NavController.navigateToMyPage() = navigate(Screens.MyPageRoute.name)
 
 //내 활동 페이지
 fun NavController.navigateToMyActivity() = navigate(Screens.MyActivityPage.name)
 
 //내 댓글 페이지
-fun NavController.navigateToMyCommentPage() = navigate(Screens.MyCommentPage.name)
+fun NavController.navigateToMyCommentPage() = navigate(Screens.MyCommentRoute.name)
 
 //좋아요한 댓글 페이지
-fun NavController.navigateToMyFavoriteCommentPage() = navigate(Screens.MyFavoriteCommentPage.name)
+fun NavController.navigateToMyFavoriteCommentPage() = navigate(Screens.MyFavoriteCommentRoute.name)
 
 //프로필 수정 화면
 fun NavController.navigateToEditProfilePage() = navigate(Screens.EditProfilePage.name)
@@ -40,7 +34,7 @@ fun NavController.navigateToMyGenderPage() = navigate(Screens.MyGenderPage.name)
 fun NavController.navigateToMyBirth() = navigate(Screens.MyBirthPage.name)
 
 //내 게시글 페이지
-fun NavController.navigateToMyPostPage() = navigate(Screens.MyPostPage.name)
+fun NavController.navigateToMyPostPage() = navigate(Screens.MyPostRoute.name)
 
 //로그인 되지 않았을 경우 화면
 fun NavController.navigateToNoAuthPage() = navigate(Screens.NoAuthMyPage.name)
@@ -54,7 +48,7 @@ fun NavGraphBuilder.myPage(
     onNavManageMyInfo : () -> Unit,
     onNavLogin : () -> Unit
 ) {
-    composable(route = MY_PAGE_ROUTE){
+    composable(route = Screens.MyPageRoute.name){
         MyPage(
             onNavEditProfile = onNavEditProfile,
             onNavMyActivity = onNavMyActivity,
@@ -78,7 +72,7 @@ fun NavGraphBuilder.myPost(
     onNavBack : () -> Unit,
     onNavEditPost : () -> Unit,
 ){
-    composable(route = Screens.MyPostPage.name){
+    composable(route = Screens.MyPostRoute.name){
         MyPostPage(
             onNavBack = onNavBack,
             onNavEditPost = onNavEditPost
@@ -106,7 +100,7 @@ fun NavGraphBuilder.myComment(
     onNavBack : () -> Unit,
     onNavCommunity : () -> Unit,
 ){
-    composable(route = Screens.MyCommentPage.name){
+    composable(route = Screens.MyCommentRoute.name){
         MyCommentPage(
             onNavBack = onNavBack,
             onNavCommunity = onNavCommunity
@@ -118,7 +112,7 @@ fun NavGraphBuilder.myFavoriteComment(
     onNavBack : () -> Unit,
     onNavCommunity : () -> Unit, // 이것도 Community로?
 ){
-    composable(route = Screens.MyFavoriteCommentPage.name){
+    composable(route = Screens.MyFavoriteCommentRoute.name){
         MyFavoriteCommentPage(
             onNavBack = onNavBack,
             onNavCommunity = onNavCommunity

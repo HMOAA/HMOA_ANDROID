@@ -19,16 +19,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.hmoa.feature_userinfo.R
 
 //인증이 안되어 있는 My Page
 @Composable
 fun NoAuthMyPage(
-    navLoginPage : () -> Unit,
+    onNavLogin : () -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -66,11 +68,11 @@ fun NoAuthMyPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = navLoginPage
+                onClick = onNavLogin //로그인 화면으로 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.KeyboardArrowRight,
+                    painter = painterResource(R.drawable.next_btn),
                     contentDescription = "Nav Button",
                     tint = Color(0xFFBBBBBB)
                 )
@@ -83,6 +85,6 @@ fun NoAuthMyPage(
 @Composable
 fun TestNoAuthMyPage(){
     NoAuthMyPage(
-        navLoginPage = {}
+        onNavLogin = {}
     )
 }

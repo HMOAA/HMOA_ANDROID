@@ -1,7 +1,6 @@
 package com.example.userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -32,16 +30,39 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.feature_userinfo.Screens
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.feature_userinfo.viewModel.UserViewModel
+import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
+
+@Composable
+internal fun MyPageRoute(
+    onNavEditProfile : () -> Unit,
+    onNavMyActivity : () -> Unit,
+    onNavManageMyInfo : () -> Unit,
+    onNavLogin : () -> Unit
+) {
+
+    //로그인 분기 처리 (토큰 확인)
+    MyPage(
+        onNavEditProfile = onNavEditProfile,
+        onNavMyActivity = onNavMyActivity,
+        onNavManageMyInfo = onNavManageMyInfo,
+        onNavLogin = onNavLogin
+    )
+//    //로그인 안 되어 있으면
+//    NoAuthMyPage (
+//        onNavLogin = onNavLogin
+//    )
+}
 
 //인증이 되어 있는 My Page
 @Composable
 fun MyPage(
-    navController : NavController,
-    navLoginPage : () -> Unit,
+    onNavEditProfile : () -> Unit,
+    onNavMyActivity : () -> Unit,
+    onNavManageMyInfo : () -> Unit,
+    onNavLogin : () -> Unit
 ){
 
     var test by remember { mutableStateOf("") }
@@ -51,18 +72,9 @@ fun MyPage(
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text = "마이페이지",
-                fontSize = 20.sp,
-            )
-        }
+        TopBar(
+            title = "마이페이지"
+        )
 
         Row(
             modifier = Modifier
@@ -102,10 +114,7 @@ fun MyPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    // 프로필 수정 화면으로 이동
-                    navController.navigate(Screens.EditProfilePage.name)
-                }
+                onClick = onNavEditProfile // 프로필 수정 화면으로 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -121,7 +130,6 @@ fun MyPage(
                 .fillMaxWidth()
                 .height(1.dp))
 
-        /** 내 활동으로 navigation */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,10 +145,7 @@ fun MyPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    // 내 활동 화면으로 이동
-                    navController.navigate(Screens.MyActivityPage.name)
-                }
+                onClick = onNavMyActivity// 내 활동 화면으로 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -166,10 +171,7 @@ fun MyPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    // 내 정보 화면으로 이동
-                    navController.navigate(Screens.MyInfoPage.name)
-                }
+                onClick = onNavManageMyInfo// 내 정보 화면으로 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -322,7 +324,7 @@ fun MyPage(
                     /** logout 로직 */
 
                     // 로그인 화면으로 이동
-                    navLoginPage()
+                    onNavLogin()
                 }
             ) {
                 Icon(
@@ -352,7 +354,7 @@ fun MyPage(
                 onClick = {
                     /** 계정 삭제 로직 후 로그인 화면으로 이동? */
 
-                    navLoginPage()
+                    onNavLogin()
                 }
             ) {
                 Icon(
@@ -381,8 +383,10 @@ fun TestMyPage(){
             .background(color = Color.White)
     ) {
         MyPage(
-            navController = rememberNavController(),
-            navLoginPage = {}
+            onNavEditProfile = {},
+            onNavLogin = {},
+            onNavManageMyInfo = {},
+            onNavMyActivity = {}
         )
     }
 }

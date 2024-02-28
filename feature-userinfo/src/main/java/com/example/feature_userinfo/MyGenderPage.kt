@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -30,13 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.hmoa.component.BottomButton
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.Button
 import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyGenderPage(
-    navController : NavController
+    onNavBack : () -> Unit,
 ){
 
     //성별 선택 여부
@@ -51,10 +49,8 @@ fun MyGenderPage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = Icons.Filled.KeyboardArrowLeft,
-            onNavClick = {
-                /** 뒤로가기 navigation */
-            },
+            navIcon = painterResource(R.drawable.back_btn),
+            onNavClick = onNavBack, //뒤로 가기
             title = "성별"
         )
 
@@ -114,7 +110,7 @@ fun MyGenderPage(
 
         Spacer(Modifier.weight(1f))
 
-        BottomButton(
+        Button(
             isEnabled = isEnabled,
             btnText = "변경",
             onClick = {
@@ -130,6 +126,6 @@ fun MyGenderPage(
 @Composable
 fun TestMyGenderPage(){
     MyGenderPage(
-        navController = rememberNavController()
+        onNavBack = {}
     )
 }

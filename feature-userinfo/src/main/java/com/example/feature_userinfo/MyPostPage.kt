@@ -13,16 +13,19 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
+import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyPostPage(
-    navController: NavController
+    onNavBack : () -> Unit,
+    onNavEditPost : () -> Unit, //누르면 게시글 수정 화면으로?
 ){
 
     /** view model에서 작성한 게시글 데이터를 받아옴 */
@@ -34,11 +37,9 @@ fun MyPostPage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = Icons.Filled.KeyboardArrowLeft,
+            navIcon = painterResource(R.drawable.back_btn),
             title = "작성한 게시글",
-            onNavClick = {
-                navController.navigateUp()
-            }
+            onNavClick = onNavBack
         )
 
         Spacer(Modifier.height(23.dp))
@@ -65,6 +66,7 @@ fun MyPostPage(
 @Composable
 fun TestMyPostPage(){
     MyPostPage(
-        navController = rememberNavController()
+        onNavBack = {},
+        onNavEditPost = {}
     )
 }

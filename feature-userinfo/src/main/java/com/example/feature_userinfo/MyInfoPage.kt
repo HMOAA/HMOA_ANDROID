@@ -31,7 +31,9 @@ import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyInfoPage(
-    navController : NavController
+    onNavBack : () -> Unit,
+    onNavMyBirth : () -> Unit,
+    onNavMyGender : () -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -39,10 +41,8 @@ fun MyInfoPage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = Icons.Filled.KeyboardArrowLeft,
-            onNavClick = {
-                /** 뒤로가기 navigation */
-            },
+            navIcon = painterResource(R.drawable.back_btn),
+            onNavClick = onNavBack, //뒤오 가기
             title = "내 정보"
         )
 
@@ -61,9 +61,7 @@ fun MyInfoPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    /** 출생연도 navigation */
-                }
+                onClick = onNavMyBirth //출생연도 수정 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -91,9 +89,7 @@ fun MyInfoPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    /** 출생연도 navigation */
-                }
+                onClick = onNavMyGender // 내 성별
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -112,6 +108,8 @@ fun MyInfoPage(
 @Composable
 fun TestMyInfoPage(){
     MyInfoPage(
-        navController = rememberNavController()
+        onNavBack = {},
+        onNavMyBirth = {},
+        onNavMyGender = {}
     )
 }

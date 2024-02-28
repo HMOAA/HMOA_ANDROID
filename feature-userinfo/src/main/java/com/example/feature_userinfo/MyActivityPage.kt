@@ -29,50 +29,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.Screens
+import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyActivityPage(
-    navController : NavController
+    onNavMyFavoriteComment : () -> Unit,
+    onNavMyComment : () -> Unit,
+    onNavMyPost : () -> Unit,
+    onNavBack : () -> Unit
 ){
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
     ){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ){
-            IconButton(
-                modifier = Modifier.size(20.dp),
-                onClick = {
-                    navController.navigateUp()
-                }
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.KeyboardArrowLeft,
-                    contentDescription = "Back Button",
-                    tint = Color.Black
-                )
-            }
-
-            Spacer(Modifier.weight(1f))
-
-            Text(
-                text = "내 활동",
-                fontSize = 20.sp
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Spacer(Modifier.width(20.dp))
-        }
+        TopBar(
+            title = "내 활동",
+            navIcon = painterResource(R.drawable.back_btn),
+            onNavClick = onNavBack //뒤로 가기
+        )
 
         Row(
             modifier = Modifier
@@ -89,9 +65,7 @@ fun MyActivityPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    navController.navigate(Screens.MyFavoriteCommentPage.name)
-                }
+                onClick = onNavMyFavoriteComment // 좋아요 누른 댓글
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -120,12 +94,9 @@ fun MyActivityPage(
                 fontSize = 16.sp
             )
 
-            /** 작성한 댓글로 navigation */
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    navController.navigate(Screens.MyCommentPage.name)
-                }
+                onClick = onNavMyComment // 작성한 댓글로 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -156,9 +127,7 @@ fun MyActivityPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = {
-                    navController.navigate(Screens.MyPostPage.name)
-                }
+                onClick = onNavMyPost //작성한 게시글로 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -180,6 +149,9 @@ fun MyActivityPage(
 @Composable
 fun TestMyActivity(){
     MyActivityPage(
-        navController = rememberNavController()
+        onNavMyFavoriteComment = {},
+        onNavMyComment = {},
+        onNavMyPost = {},
+        onNavBack = {}
     )
 }

@@ -1,29 +1,25 @@
 package com.example.userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.hmoa.component.Comment
 import com.hmoa.component.TopBar
+import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyFavoriteCommentPage(
-    navController : NavController,
-    navCommunityPage : () -> Unit,
+    onNavBack : () -> Unit,
+    onNavCommunity : () -> Unit //Community로 이동?
 ){
 
     //좋아요를 누른 comment 리스트
@@ -35,11 +31,9 @@ fun MyFavoriteCommentPage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = Icons.Filled.KeyboardArrowLeft,
+            navIcon = painterResource(R.drawable.back_btn),
             title = "좋아요 누른 댓글",
-            onNavClick = {
-                navController.navigateUp()
-            }
+            onNavClick = onNavBack //뒤로 가기
         )
 
         Spacer(Modifier.height(16.dp))
@@ -73,7 +67,7 @@ fun MyFavoriteCommentPage(
 @Composable
 fun TestMyFavoriteCommentPage(){
     MyFavoriteCommentPage(
-        navController = rememberNavController(),
-        navCommunityPage = {}
+        onNavBack = {},
+        onNavCommunity = {},
     )
 }

@@ -22,16 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.TopBar
+import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyCommentPage(
-    navController : NavController
+    onNavBack : () -> Unit,
+    onNavCommunity : () -> Unit, //Community로 이동 (Comment에서 사용)
 ){
 
     /** view model에서 받아온 댓글 데이터 */
@@ -45,11 +48,9 @@ fun MyCommentPage(
     ){
         //Toolbar
         TopBar(
-            navIcon = Icons.Filled.KeyboardArrowLeft,
+            navIcon = painterResource(R.drawable.back_btn),
             title = "작성한 댓글",
-            onNavClick = {
-                navController.navigateUp()
-            }
+            onNavClick = onNavBack //뒤로 가기
         )
 
         //data가 있으면 comment list, 없으면 no data page
@@ -81,6 +82,7 @@ fun MyCommentPage(
 @Composable
 fun TestMyCommentPage(){
     MyCommentPage(
-        navController = rememberNavController()
+        onNavBack = {},
+        onNavCommunity = {}
     )
 }

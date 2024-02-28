@@ -49,15 +49,18 @@ import com.hmoa.feature_userinfo.R
 
 @Composable
 fun EditProfilePage(
-    navController : NavController
+    onNavBack : () -> Unit,
 ){
 
     /** nick name 초반 값을 viewModel로 collectAsState()로 받아오고 그것을 변경 */
     //test 값
     var nickname by remember{mutableStateOf("test")}
 
-    //중복 확인에 따른 boolean 값
+    //중복 확인 여부
     var isChecked by remember{mutableStateOf(false)}
+    
+    //버튼 활성화 여부
+    var isEnabled by remember{mutableStateOf(false)}
 
     Column(
         modifier = Modifier
@@ -65,11 +68,9 @@ fun EditProfilePage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = Icons.Filled.KeyboardArrowLeft,
-            onNavClick = {
-                navController.navigateUp()
-            },
-            title = "프로필 수정"
+            navIcon = painterResource(R.drawable.back_btn),
+            onNavClick = onNavBack,
+            title = "프로필 수정",
         )
 
         Spacer(Modifier.height(38.dp))
@@ -86,7 +87,8 @@ fun EditProfilePage(
             ){
                 /** profile 이미지 정보 match */
                 Icon(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .background(color = Color(0xFFBBBBBB), shape = CircleShape),
                     imageVector = Icons.Filled.Person,
                     contentDescription = "Profile"
@@ -136,7 +138,8 @@ fun EditProfilePage(
                     .height(46.dp)
             ){
                 BasicTextField(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
                         .fillMaxHeight(),
                     value = nickname,
                     onValueChange = {
@@ -148,7 +151,8 @@ fun EditProfilePage(
                             modifier = Modifier.fillMaxSize()
                         ){
                             Row(
-                                modifier = Modifier.height(45.dp)
+                                modifier = Modifier
+                                    .height(45.dp)
                                     .padding(start = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ){
@@ -190,6 +194,20 @@ fun EditProfilePage(
                 fontSize = 12.sp
             )
         }
+        
+        Spacer(Modifier.weight(1f))
+        
+        com.hmoa.core_designsystem.component.Button(
+            buttonModifier = Modifier
+                .height(82.dp)
+                .fillMaxWidth()
+                .background(color = if(isEnabled) Color.Black else Color(0xFFBBBBBB)),
+            isEnabled = isEnabled,
+            btnText = "변경",
+            onClick = {
+                /** 닉네임 변경 로직 */
+            }
+        )
     }
 }
 
@@ -197,6 +215,6 @@ fun EditProfilePage(
 @Composable
 fun TestEditProfilePage(){
     EditProfilePage(
-        navController = rememberNavController()
+        onNavBack = {}
     )
 }

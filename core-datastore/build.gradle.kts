@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
     implementation(project(":core-model"))
     implementation(project(":core-network"))
     implementation(project(":core-database"))

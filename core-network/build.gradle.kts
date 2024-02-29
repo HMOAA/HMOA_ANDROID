@@ -38,7 +38,7 @@ android {
 dependencies {
     val ktor_version = "2.3.7"
     val mockito_version = "4.8.0"
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
 
     implementation(project(":core-model"))
     implementation(project(":core-database"))

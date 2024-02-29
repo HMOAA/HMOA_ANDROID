@@ -21,14 +21,15 @@ import com.hmoa.core_designsystem.theme.CustomColor
 @Composable
 internal fun LoginRoute(
     onSignup: () -> Unit,
-    //loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
-    LoginScreen(onSignup)
+    LoginScreen(onSignup,loginViewModel)
 }
 
 @Composable
 fun LoginScreen(
-    onSignupScreen: () -> Unit
+    onSignupScreen: () -> Unit,
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(vertical = 30.dp),
@@ -63,8 +64,7 @@ fun LoginScreen(
                 textColor = Color.Black,
                 textSize = 16,
                 onPress = {
-                    //loginViewModel.handleKakaoLogin(onLoginSuccess = { onSignupScreen })
-                    onSignupScreen()
+                    loginViewModel.handleKakaoLogin(onLoginSuccess = { onSignupScreen })
                 },
             )
         }

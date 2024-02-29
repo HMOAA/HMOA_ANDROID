@@ -8,8 +8,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
-private class AuthenticatorImpl constructor(
+class AuthenticatorImpl @Inject constructor(
     private val tokenManager: TokenManager,
     private val loginService: LoginService
 ) : Authenticator {

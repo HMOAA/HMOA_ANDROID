@@ -42,10 +42,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.viewModel.UserViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
+
+@Composable
+fun EditProfileRoute(
+    onNavBack : () -> Unit,
+    viewModel : UserViewModel = hiltViewModel()
+) {
+    EditProfilePage(
+        onNavBack = onNavBack
+    )
+}
 
 @Composable
 fun EditProfilePage(
@@ -201,7 +213,7 @@ fun EditProfilePage(
             buttonModifier = Modifier
                 .height(82.dp)
                 .fillMaxWidth()
-                .background(color = if(isEnabled) Color.Black else Color(0xFFBBBBBB)),
+                .background(color = if (isEnabled) Color.Black else Color(0xFFBBBBBB)),
             isEnabled = isEnabled,
             btnText = "변경",
             onClick = {

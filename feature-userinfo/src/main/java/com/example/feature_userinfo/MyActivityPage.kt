@@ -33,6 +33,21 @@ import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
+fun MyActivityRoute(
+    onNavMyFavoriteComment: () -> Unit,
+    onNavMyComment : () -> Unit,
+    onNavMyPost : () -> Unit,
+    onNavBack : () -> Unit,
+){
+    MyActivityPage(
+        onNavMyFavoriteComment = onNavMyFavoriteComment,
+        onNavMyComment = onNavMyComment,
+        onNavMyPost = onNavMyPost,
+        onNavBack = onNavBack
+    )
+}
+
+@Composable
 fun MyActivityPage(
     onNavMyFavoriteComment : () -> Unit,
     onNavMyComment : () -> Unit,

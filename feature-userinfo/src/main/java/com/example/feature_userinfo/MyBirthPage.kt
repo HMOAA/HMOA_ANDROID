@@ -24,14 +24,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.viewModel.UserViewModel
 import com.hmoa.component.Spinner
 import com.hmoa.component.TopBar
 import com.hmoa.component.YearPickerDialog
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.feature_userinfo.R
 
+@Composable
+fun MyBirthRoute(
+    onNavBack : () -> Unit,
+    viewModel : UserViewModel = hiltViewModel()
+){
+    MyBirthPage(
+        onNavBack = onNavBack
+    )
+}
 @Composable
 fun MyBirthPage(
     onNavBack : () -> Unit

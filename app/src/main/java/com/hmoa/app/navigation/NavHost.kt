@@ -3,6 +3,7 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.navigation
 import com.example.feature_userinfo.editProfile
 import com.example.feature_userinfo.myActivity
 import com.example.feature_userinfo.myBirth
@@ -21,6 +22,7 @@ import com.example.feature_userinfo.navigateToMyFavoriteCommentPage
 import com.example.feature_userinfo.navigateToMyGenderPage
 import com.example.feature_userinfo.navigateToMyInfoPage
 import com.example.feature_userinfo.navigateToMyPostPage
+import com.example.feature_userinfo.nestedUserInfoGraph
 import com.example.feature_userinfo.noAuthMyPage
 import com.hmoa.feature_authentication.navigation.*
 
@@ -35,49 +37,21 @@ fun SetUpNavGraph(
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
         
         /** user info 모듈 */
-        myPage(
-            onNavEditProfile = navController::navigateToEditProfilePage,
+        nestedUserInfoGraph(
             onNavLogin = navController::navigateToLogin,
+            onNavBack = navController::navigateToBack,
+            /** onNavCommunity는 Community 모듈로의 이동 */
+            onNavCommunity = navController::navigateToBack,
+            /** 여기서 게시글 수정으로 이동해야.. 하나요..? */
+            onNavEditPost = navController::navigateToBack,
+            onNavEditProfile = navController::navigateToEditProfilePage,
             onNavManageMyInfo = navController::navigateToMyInfoPage,
-            onNavMyActivity = navController::navigateToMyActivity
-        )
-        editProfile (
-            onNavBack = navController::navigateToBack
-        )
-        myActivity(
+            onNavMyActivity = navController::navigateToMyActivity,
             onNavMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
             onNavMyPost = navController::navigateToMyPostPage,
             onNavMyComment = navController::navigateToMyCommentPage,
-            onNavBack = navController::navigateToBack
-        )
-        myInfo(
-            onNavBack = navController::navigateToBack,
             onNavMyBirth = navController::navigateToMyBirth,
             onNavMyGender = navController::navigateToMyGenderPage
-        )
-        myFavoriteComment(
-            onNavBack = navController::navigateToBack,
-            /** onNavCommunity는 Community 모듈로의 이동 */
-            onNavCommunity = navController::navigateToBack
-        )
-        myComment(
-            onNavBack = navController::navigateToBack,
-            /** myFavoriteComment와 동일하게 Community 모듈로 이동 */
-            onNavCommunity = navController::navigateToBack
-        )
-        myPost(
-            onNavBack = navController::navigateToBack,
-            /** 여기서 게시글 수정으로 이동해야.. 하나요..? */
-            onNavEditPost = navController::navigateToBack
-        )
-        myBirth(
-            onNavBack = navController::navigateToBack
-        )
-        myGender(
-            onNavBack = navController::navigateToBack
-        )
-        noAuthMyPage (
-            onNavLogin = navController::navigateToLogin
         )
     }
 }

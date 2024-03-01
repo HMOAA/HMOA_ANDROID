@@ -23,16 +23,17 @@ import javax.inject.Singleton
 object HttpClientModule {
     @Provides
     @Singleton
-    private fun provideBaseUrl(): String = dotenv().get("BASE_URL")
+    fun provideBaseUrl(): String = dotenv().get("BASE_URL")
 
     @Provides
     @Singleton
-    private fun provideInterceptor(authenticator: Authenticator): AuthInterceptor =
+    fun provideInterceptor(authenticator: Authenticator): AuthInterceptor =
         AuthInterceptor(authenticator)
 
+
     @Provides
     @Singleton
-    private fun provideOkHttp(interceptor: Interceptor): OkHttpClient {
+    fun provideOkHttp(interceptor: Interceptor): OkHttpClient {
         val httpBuilder = OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .addNetworkInterceptor(interceptor)
@@ -44,7 +45,7 @@ object HttpClientModule {
 
     @Provides
     @Singleton
-    private fun provideHttpClient(
+    fun provideHttpClient(
         baseUrl: String,
         okHttpClient: OkHttpClient
     ): io.ktor.client.HttpClient {

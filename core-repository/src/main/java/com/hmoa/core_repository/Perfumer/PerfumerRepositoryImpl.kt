@@ -4,7 +4,7 @@ import com.hmoa.core_datastore.Perfumer.PerfumerDataStore
 import com.hmoa.core_model.response.DataResponseDto
 import javax.inject.Inject
 
-internal class PerfumerRepositoryImpl @Inject constructor(private val perfumerDataStore: PerfumerDataStore) :
+class PerfumerRepositoryImpl @Inject constructor(private val perfumerDataStore: PerfumerDataStore) :
     PerfumerRepository {
     override suspend fun getPerfumers(pageNum: String): DataResponseDto<Any> {
         return perfumerDataStore.getPerfumers(pageNum)

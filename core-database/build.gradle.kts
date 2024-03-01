@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
 
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")

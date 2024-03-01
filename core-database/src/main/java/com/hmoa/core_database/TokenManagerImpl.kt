@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-private class TokenManagerImpl @Inject constructor(private val dataStore: DataStore<Preferences>) : TokenManager {
+class TokenManagerImpl @Inject constructor(private val dataStore: DataStore<Preferences>) : TokenManager {
     companion object {
         private val AUTH_TOKEN_KEY = stringPreferencesKey("AUTH_TOKEN")
         private val REMEMBERED_TOKEN_KEY = stringPreferencesKey("REMEBERED_TOKEN")

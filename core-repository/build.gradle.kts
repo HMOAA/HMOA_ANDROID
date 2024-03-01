@@ -38,6 +38,7 @@ dependencies {
 
     implementation(project(":core-model"))
     implementation(project(":core-datastore"))
+    implementation(project(":core-domain"))
 
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")

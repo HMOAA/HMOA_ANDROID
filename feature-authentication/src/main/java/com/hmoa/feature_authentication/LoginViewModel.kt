@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.hmoa.core_domain.usecase.GetPerfumeUsecase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val application: Application,
     //private val loginRepository: LoginRepository,
+    private val perfumeUsecase: GetPerfumeUsecase
 ) : ViewModel() {
     private val context = application.applicationContext
 

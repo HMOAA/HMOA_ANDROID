@@ -1,22 +1,20 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
-    namespace = "com.hmoa.core_database"
-    compileSdk = 34
+    namespace = "com.hmoa.core_domain"
+    compileSdk = 33
 
     defaultConfig {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField("String", "LIBRARY_PACKAGE_NAME", "\"com.hmoa.core_database\"")
-    }
-    buildFeatures {
-        buildConfig = true
     }
 
     buildTypes {
@@ -35,12 +33,14 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-model"))
     val hilt_version = "2.48.1"
 
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")

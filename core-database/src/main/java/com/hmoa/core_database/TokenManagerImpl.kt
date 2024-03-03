@@ -1,14 +1,33 @@
 package com.hmoa.core_database
 
+import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class TokenManagerImpl @Inject constructor(private val dataStore: DataStore<Preferences>) : TokenManager {
+val Context.datastore: DataStore<Preferences> by preferencesDataStore(
+    corruptionHandler = ReplaceFileCorruptionHandler {
+        it.printStackTrace()
+        emptyPreferences()
+    },
+    scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+    name = BuildConfig.LIBRARY_PACKAGE_NAME
+)
+
+class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context) : TokenManager {
+    private val dataStore = context.datastore
+
     companion object {
         private val AUTH_TOKEN_KEY = stringPreferencesKey("AUTH_TOKEN")
         private val REMEMBERED_TOKEN_KEY = stringPreferencesKey("REMEBERED_TOKEN")

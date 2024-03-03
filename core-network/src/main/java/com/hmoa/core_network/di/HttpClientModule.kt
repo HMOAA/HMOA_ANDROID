@@ -1,11 +1,12 @@
-package com.hmoa.core_network
+package com.hmoa.core_network.di
 
+import com.hmoa.core_network.AuthInterceptor
+import com.hmoa.core_network.BuildConfig
 import com.hmoa.core_network.authentication.Authenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.github.cdimascio.dotenv.dotenv
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
@@ -21,9 +22,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object HttpClientModule {
-    @Provides
-    @Singleton
-    fun provideBaseUrl(): String = dotenv().get("BASE_URL")
+
 
     @Provides
     @Singleton
@@ -37,7 +36,7 @@ object HttpClientModule {
         val httpBuilder = OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .addNetworkInterceptor(interceptor)
-            .protocols(mutableListOf(Protocol.HTTP_2))
+            .protocols(mutableListOf(Protocol.HTTP_1_1))
             .build()
 
         return httpBuilder
@@ -46,7 +45,6 @@ object HttpClientModule {
     @Provides
     @Singleton
     fun provideHttpClient(
-        baseUrl: String,
         okHttpClient: OkHttpClient
     ): io.ktor.client.HttpClient {
         return HttpClient(OkHttp) {
@@ -65,7 +63,7 @@ object HttpClientModule {
             defaultRequest {
                 url {
                     protocol = URLProtocol.HTTPS
-                    host = baseUrl
+                    host = BuildConfig.BASE_URL
                 }
             }
         }

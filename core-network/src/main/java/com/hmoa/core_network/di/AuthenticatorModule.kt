@@ -1,5 +1,6 @@
-package com.hmoa.core_network
+package com.hmoa.core_network.di
 
+import com.hmoa.core_network.AuthInterceptor
 import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.authentication.AuthenticatorImpl
 import dagger.Binds

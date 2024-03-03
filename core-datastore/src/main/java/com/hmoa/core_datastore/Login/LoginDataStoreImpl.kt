@@ -43,7 +43,7 @@ class LoginDataStoreImpl @Inject constructor(
         provider: Provider
     ): MemberLoginResponseDto {
         return loginService.postOAuth(accessToken, provider).apply {
-            tokenManager.saveAccessToken(this.authToken)
+            tokenManager.saveAuthToken(this.authToken)
             tokenManager.saveRememberedToken(this.rememberedToken)
         }
     }
@@ -51,9 +51,9 @@ class LoginDataStoreImpl @Inject constructor(
     override suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto {
         return loginService.postRemembered(dto).apply {
             CoroutineScope(Dispatchers.IO).async {
-                tokenManager.deleteAccessToken()
+                tokenManager.deleteAuthToken()
             }.await()
-            tokenManager.saveAccessToken(this.authToken)
+            tokenManager.saveAuthToken(this.authToken)
             tokenManager.saveRememberedToken(this.rememberedToken)
         }
     }

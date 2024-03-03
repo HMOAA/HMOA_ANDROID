@@ -1,8 +1,6 @@
 package com.hmoa.core_network.di
 
-import com.hmoa.core_network.AuthInterceptor
 import com.hmoa.core_network.BuildConfig
-import com.hmoa.core_network.authentication.Authenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +12,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
@@ -23,19 +22,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object HttpClientModule {
 
-
     @Provides
     @Singleton
-    fun provideInterceptor(authenticator: Authenticator): AuthInterceptor =
-        AuthInterceptor(authenticator)
-
-
-    @Provides
-    @Singleton
-    fun provideOkHttp(interceptor: Interceptor): OkHttpClient {
+    fun provideOkHttp(interceptor: Interceptor, authenticator: Authenticator): OkHttpClient {
         val httpBuilder = OkHttpClient.Builder()
             .addInterceptor(interceptor)
-            .addNetworkInterceptor(interceptor)
+            .authenticator(authenticator)
             .protocols(mutableListOf(Protocol.HTTP_1_1))
             .build()
 

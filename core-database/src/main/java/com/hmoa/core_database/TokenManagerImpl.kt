@@ -52,7 +52,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
-    override suspend fun saveAccessToken(token: String) {
+    override suspend fun saveAuthToken(token: String) {
         dataStore.edit { preferences ->
             preferences[AUTH_TOKEN_KEY] = token
         }
@@ -70,7 +70,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
-    override suspend fun deleteAccessToken() {
+    override suspend fun deleteAuthToken() {
         dataStore.edit { preferences ->
             preferences.remove(AUTH_TOKEN_KEY)
         }

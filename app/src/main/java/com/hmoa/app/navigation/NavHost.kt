@@ -12,5 +12,7 @@ fun SetUpNavGraph(
     NavHost(navController = navController, startDestination = LOGIN_ROUTE) {
         loginScreen(onSignupClick = navController::navigateToSignup)
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
+        pickNicknameScreen (onPickPersonalInfoClick = navController::navigateToPickPersonalInfo, onSignupClick = navController::navigateToSignup)
+        pickPersonalInfoScreen(onHomeClick = {}, onPickNicknameClick = navController::navigateToPickNickname)
     }
 }

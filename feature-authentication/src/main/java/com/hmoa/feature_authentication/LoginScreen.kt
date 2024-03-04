@@ -64,7 +64,7 @@ fun LoginScreen(
                 textColor = Color.Black,
                 textSize = 16,
                 onPress = {
-                    loginViewModel.handleKakaoLogin(onLoginSuccess = { onSignupScreen })
+                    loginViewModel.handleKakaoLogin(onLoginSuccess = { onSignupScreen() })
                 },
             )
         }

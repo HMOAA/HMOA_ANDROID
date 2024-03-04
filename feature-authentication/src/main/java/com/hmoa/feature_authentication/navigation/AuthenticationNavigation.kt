@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.hmoa.feature_authentication.LoginRoute
 import com.hmoa.feature_authentication.PickNicknameRoute
+import com.hmoa.feature_authentication.PickPersonalInfoRoute
 import com.hmoa.feature_authentication.SignupRoute
 
 private const val AUTHENTICATION_GRAPH = "authentication_graph"
@@ -25,7 +26,7 @@ fun NavGraphBuilder.loginScreen(
 }
 
 fun NavGraphBuilder.signupScreen(
-    onPickNicknameClick: () -> Unit
+    onPickNicknameClick: () -> Unit,
 ) {
     composable(route = SIGNUP_ROUTE) {
         SignupRoute(onPickNicknameClick)
@@ -34,17 +35,19 @@ fun NavGraphBuilder.signupScreen(
 
 fun NavGraphBuilder.pickNicknameScreen(
     onPickPersonalInfoClick: () -> Unit,
+    onSignupClick: () -> Unit
 ) {
     composable(route = PICKNICKNAME_ROUTE) {
-        PickNicknameRoute(onPickPersonalInfoClick)
+        PickNicknameRoute(onPickPersonalInfoClick,onSignupClick)
     }
 }
 
 
 fun NavGraphBuilder.pickPersonalInfoScreen(
     onHomeClick: () -> Unit,
+    onPickNicknameClick: () -> Unit,
 ) {
     composable(route = PICKPERSONALINFO_ROUTE) {
-        PickNicknameRoute(onHomeClick)
+        PickPersonalInfoRoute(onHomeClick,onPickNicknameClick)
     }
 }

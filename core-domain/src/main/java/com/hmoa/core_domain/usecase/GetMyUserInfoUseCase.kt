@@ -8,7 +8,7 @@ class GetMyUserInfoUseCase @Inject constructor(
     private val memberRepository : MemberRepository
 ){
 
-    suspend fun invoke() = flow{
+    operator fun invoke() = flow{
         emit(memberRepository.getMember())
     }
 

@@ -83,7 +83,7 @@ class MemberServiceImpl @Inject constructor(
         return response.body()
     }
 
-    override suspend fun postProfilePhoto(image: String): DataResponseDto<Any> {
+    override suspend fun postProfilePhoto(image: File): DataResponseDto<Any> {
         val response = formUrlEncodedContentHttpClient.post("/member/profile-photo")
         return response.body()
     }

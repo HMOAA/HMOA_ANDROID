@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetMyFavoriteCommentUseCase @Inject constructor(
     private val memberRepository : MemberRepository
 ){
-    operator fun invoke(page : Int) : Flow<List<CommunityCommentDefaultResponseDto>> = flow{
+    suspend fun invoke(page : Int) : Flow<List<CommunityCommentDefaultResponseDto>> = flow{
         val result = memberRepository.getHearts(page)
             .map{ data ->
                 /** 시간을 n일 전으로 변경해 mapping */

@@ -31,8 +31,7 @@ class AuthAuthenticator @Inject constructor(
             response.close()
             return null
         }
-
-        //함수화 해야함. 토큰 리프레싱 요청한 뒤 갱신된 토큰으로 재요청 보내는 것.
+        
         runBlocking {
             refreshAuthTokenResponse = flow {
                 emit(refreshTokenManager.refreshAuthToken(RememberedLoginRequestDto(rememberedToken)))

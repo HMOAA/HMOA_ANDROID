@@ -15,7 +15,7 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.hmoa.feature_authentication"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 24

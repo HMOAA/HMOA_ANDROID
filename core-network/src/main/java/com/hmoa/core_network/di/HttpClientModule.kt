@@ -1,11 +1,10 @@
-package com.hmoa.core_network
+package com.hmoa.core_network.di
 
-import com.hmoa.core_network.authentication.Authenticator
+import com.hmoa.core_network.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.github.cdimascio.dotenv.dotenv
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
@@ -13,6 +12,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
@@ -21,23 +21,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object HttpClientModule {
-    @Provides
-    @Singleton
-    fun provideBaseUrl(): String = dotenv().get("BASE_URL")
 
     @Provides
     @Singleton
-    fun provideInterceptor(authenticator: Authenticator): AuthInterceptor =
-        AuthInterceptor(authenticator)
-
-
-    @Provides
-    @Singleton
-    fun provideOkHttp(interceptor: Interceptor): OkHttpClient {
+    fun provideOkHttp(interceptor: Interceptor, authenticator: Authenticator): OkHttpClient {
         val httpBuilder = OkHttpClient.Builder()
             .addInterceptor(interceptor)
-            .addNetworkInterceptor(interceptor)
-            .protocols(mutableListOf(Protocol.HTTP_2))
+            .authenticator(authenticator)
+            .protocols(mutableListOf(Protocol.HTTP_1_1))
             .build()
 
         return httpBuilder
@@ -46,7 +37,6 @@ object HttpClientModule {
     @Provides
     @Singleton
     fun provideHttpClient(
-        baseUrl: String,
         okHttpClient: OkHttpClient
     ): io.ktor.client.HttpClient {
         return HttpClient(OkHttp) {
@@ -65,7 +55,7 @@ object HttpClientModule {
             defaultRequest {
                 url {
                     protocol = URLProtocol.HTTPS
-                    host = baseUrl
+                    host = BuildConfig.BASE_URL
                 }
             }
         }

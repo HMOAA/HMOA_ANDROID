@@ -1,5 +1,6 @@
-package com.hmoa.core_network
+package com.hmoa.core_network.di
 
+import com.hmoa.core_network.HttpClientProvider
 import corenetwork.Admin.AdminService
 import corenetwork.Admin.AdminServiceImpl
 import corenetwork.Brand.BrandService

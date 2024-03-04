@@ -8,7 +8,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -31,12 +30,9 @@ class AuthAuthenticator @Inject constructor(
             response.close()
             return null
         }
-        
-        runBlocking {
-            refreshAuthTokenResponse = flow {
-                emit(refreshTokenManager.refreshAuthToken(RememberedLoginRequestDto(rememberedToken)))
-            }.first()
 
+        refreshAuthTokenResponse = runBlocking {
+            refreshTokenManager.refreshAuthToken(RememberedLoginRequestDto(rememberedToken))
         }
 
         if (refreshAuthTokenResponse.status.value == HttpStatusCode.Unauthorized.value) {

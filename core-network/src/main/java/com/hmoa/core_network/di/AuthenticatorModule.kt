@@ -1,11 +1,12 @@
-package com.hmoa.core_network
+package com.hmoa.core_network.di
 
-import com.hmoa.core_network.authentication.Authenticator
-import com.hmoa.core_network.authentication.AuthenticatorImpl
+import com.hmoa.core_network.authentication.AuthAuthenticator
+import com.hmoa.core_network.authentication.AuthInterceptor
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import javax.inject.Singleton
 
@@ -15,7 +16,7 @@ interface AuthenticatorModule {
 
     @Binds
     @Singleton
-    fun bindAuthenticatorImpl(authenticatorImpl: AuthenticatorImpl): Authenticator
+    fun bindAuthenticatorImpl(authAuthenticator: AuthAuthenticator): Authenticator
 
 
     @Binds

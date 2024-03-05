@@ -23,12 +23,13 @@ import com.hmoa.core_designsystem.theme.CustomColor
 @Composable
 internal fun PickNicknameRoute(
     onPickPersonalInfoClick: () -> Unit,
+    onSignupClick:() -> Unit
 ) {
-    PickNicknameScreen(onPickPersonalInfoClick)
+    PickNicknameScreen(onPickPersonalInfoClick,onSignupClick)
 }
 
 @Composable
-fun PickNicknameScreen(onPickPersonalInfoClick: () -> Unit) {
+fun PickNicknameScreen(onPickPersonalInfoClick: () -> Unit,onSignupClick:() -> Unit) {
     var text by remember { mutableStateOf("") }
     Column(
         horizontalAlignment = Alignment.Start,
@@ -38,7 +39,7 @@ fun PickNicknameScreen(onPickPersonalInfoClick: () -> Unit) {
         Column {
             TopBar(
                 navIcon = painterResource(R.drawable.ic_back),
-                onNavClick = {},
+                onNavClick = {onSignupClick()},
                 title = "1/2"
             )
             Column(modifier = Modifier.padding(horizontal = 15.dp)) {
@@ -68,12 +69,12 @@ fun PickNicknameScreen(onPickPersonalInfoClick: () -> Unit) {
                 )
             }
         }
-        Button(true, "다음", { onPickPersonalInfoClick }, Modifier.fillMaxWidth().height(80.dp))
+        Button(true, "다음", { onPickPersonalInfoClick() }, Modifier.fillMaxWidth().height(80.dp))
     }
 }
 
 @Preview
 @Composable
 fun PickNicknameScreenPreview() {
-    PickNicknameScreen({})
+    PickNicknameScreen({},{})
 }

@@ -1,6 +1,10 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
+    kotlin("plugin.serialization") version "1.5.0"
 }
 
 android {
@@ -31,12 +35,14 @@ android {
 
 
 dependencies {
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
 
     implementation(project(":core-model"))
     implementation(project(":core-datastore"))
+    implementation(project(":core-domain"))
 
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 }

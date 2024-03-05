@@ -7,10 +7,10 @@ interface TokenManager {
     fun getAuthToken(): Flow<String?>
     fun getRememberedToken(): Flow<String?>
     fun getKakaoAccessToken(): Flow<String?>
-    suspend fun saveAccessToken(token: String)
+    suspend fun saveAuthToken(token: String)
     suspend fun saveRememberedToken(token: String)
     suspend fun saveKakaoAccessToken(token: String)
-    suspend fun deleteAccessToken()
+    suspend fun deleteAuthToken()
     suspend fun deleteRememberedToken()
     suspend fun deleteKakaoAccessToken()
 }

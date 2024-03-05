@@ -1,6 +1,15 @@
+import java.util.*
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
+}
+
+val localProperties = Properties().apply {
+    load(project.rootProject.file("./core-network/local.properties").inputStream())
 }
 
 android {
@@ -13,6 +22,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         buildConfigField("String", "LIBRARY_PACKAGE_NAME", "\"com.hmoa.core_network\"")
+        buildConfigField("String", "BASE_URL", localProperties.getProperty("BASE_URL"))
     }
     buildFeatures {
         buildConfig = true
@@ -35,7 +45,7 @@ android {
 dependencies {
     val ktor_version = "2.3.7"
     val mockito_version = "4.8.0"
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
 
     implementation(project(":core-model"))
     implementation(project(":core-database"))
@@ -47,10 +57,10 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("io.ktor:ktor-client-okhttp-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:$mockito_version")

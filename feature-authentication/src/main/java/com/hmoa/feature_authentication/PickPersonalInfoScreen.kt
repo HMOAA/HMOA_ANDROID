@@ -18,12 +18,13 @@ import com.hmoa.core_designsystem.component.Button
 @Composable
 internal fun PickPersonalInfoRoute(
     onHomeClick: () -> Unit,
+    onPickNicknameClick: () -> Unit,
 ) {
-    PickPersonalInfoScreen(onHomeClick)
+    PickPersonalInfoScreen(onHomeClick,onPickNicknameClick)
 }
 
 @Composable
-fun PickPersonalInfoScreen(onHomeClick: () -> Unit) {
+fun PickPersonalInfoScreen(onHomeClick: () -> Unit, onPickNicknameClick: () -> Unit,) {
     var text by remember { mutableStateOf("") }
     Column(
         horizontalAlignment = Alignment.Start,
@@ -33,7 +34,7 @@ fun PickPersonalInfoScreen(onHomeClick: () -> Unit) {
         Column {
             TopBar(
                 navIcon = painterResource(R.drawable.ic_back),
-                onNavClick = {},
+                onNavClick = {onPickNicknameClick()},
                 title = "2/2"
             )
             Column(modifier = Modifier.padding(horizontal = 15.dp)) {
@@ -49,7 +50,7 @@ fun PickPersonalInfoScreen(onHomeClick: () -> Unit) {
                 )
             }
         }
-        Button(true, "시작하기", { onHomeClick }, Modifier.fillMaxWidth().height(80.dp))
+        Button(true, "시작하기", { onHomeClick() }, Modifier.fillMaxWidth().height(80.dp))
     }
 }
 
@@ -57,6 +58,6 @@ fun PickPersonalInfoScreen(onHomeClick: () -> Unit) {
 @Preview
 @Composable
 fun PickPersonalInfoScreenPreview() {
-    PickPersonalInfoScreen({})
+    PickPersonalInfoScreen({},{})
 }
 

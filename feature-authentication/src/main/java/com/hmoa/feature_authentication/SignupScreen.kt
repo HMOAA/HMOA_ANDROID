@@ -21,7 +21,7 @@ internal fun SignupRoute(
 
 @Composable
 fun SignupScreen(
-    onPickNicknameClick: () -> Unit
+    onPickNicknameClick: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
@@ -33,7 +33,7 @@ fun SignupScreen(
             Spacer(modifier = Modifier.padding(top = 20.dp))
             Text("향모아를 시작하기 위해\n간단한 몇가지 정보만 입력해주세요", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Thin))
         }
-        Button(true, "다음", { onPickNicknameClick }, Modifier.fillMaxWidth().height(80.dp))
+        Button(true, "다음", { onPickNicknameClick() }, Modifier.fillMaxWidth().height(80.dp))
     }
 }
 

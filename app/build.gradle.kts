@@ -58,13 +58,14 @@ android {
 }
 
 dependencies {
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
 
     implementation(project(":feature-authentication"))
     implementation(project(":feature-userInfo"))
     implementation(project(":core-designsystem"))
+    implementation(project(":core-repository"))
     implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원
     implementation("com.kakao.sdk:v2-user:2.19.0") // 카카오 로그인 API 모듈
     implementation("com.kakao.sdk:v2-talk:2.19.0") // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈

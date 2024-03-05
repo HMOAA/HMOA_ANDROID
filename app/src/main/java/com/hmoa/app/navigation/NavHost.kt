@@ -35,6 +35,7 @@ fun SetUpNavGraph(
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup)
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
+        pickNicknameScreen (onPickPersonalInfoClick = navController::navigateToPickPersonalInfo, onSignupClick = navController::navigateToSignup)
         
         /** user info 모듈 */
         nestedUserInfoGraph(

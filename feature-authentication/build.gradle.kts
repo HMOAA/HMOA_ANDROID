@@ -6,6 +6,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
+    kotlin("plugin.serialization") version "1.5.0"
 }
 
 val localProperties = Properties().apply {
@@ -14,7 +15,7 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.hmoa.feature_authentication"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 24
@@ -56,12 +57,12 @@ android {
 }
 
 dependencies {
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
 
     implementation(project(":core-designsystem"))
-    implementation(project(":core-repository"))
+    implementation(project(":core-domain"))
 
     implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원
     implementation("com.kakao.sdk:v2-user:2.19.0") // 카카오 로그인 API 모듈

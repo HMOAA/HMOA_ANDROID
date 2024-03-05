@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.hmoa.core_domain.repository.LoginRepository
+import com.hmoa.core_domain.usecase.GetPerfumeUsecase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -14,12 +16,13 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val application: Application,
-    //private val loginRepository: LoginRepository,
+    private val loginRepository: LoginRepository,
+    private val perfumeUsecase: GetPerfumeUsecase
 ) : ViewModel() {
     private val context = application.applicationContext
 
     fun saveKakoAccessToken(token: String) {
-        //suspend { loginRepository.saveKakaoAccessToken(token) }
+        suspend { loginRepository.saveKakaoAccessToken(token) }
     }
 
     fun handleKakaoLogin(onLoginSuccess: () -> Unit) {
@@ -29,7 +32,7 @@ class LoginViewModel @Inject constructor(
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
                 saveKakoAccessToken(token.accessToken)
-                onLoginSuccess
+                onLoginSuccess()
             }
         }
 
@@ -50,6 +53,7 @@ class LoginViewModel @Inject constructor(
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
                     saveKakoAccessToken(token.accessToken)
+                    onLoginSuccess()
                 }
             }
         } else {

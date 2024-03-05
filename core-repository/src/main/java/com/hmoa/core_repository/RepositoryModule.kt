@@ -66,5 +66,4 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindSearchRepositoryImpl(repositoryImpl: SearchRepositoryImpl): SearchRepository
-
 }

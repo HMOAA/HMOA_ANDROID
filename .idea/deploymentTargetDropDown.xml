@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="deploymentTargetDropDown">
+<<<<<<< HEAD
+    <value>
+      <entry key="TTest">
+        <State />
+      </entry>
+      <entry key="TestSlider">
+        <State />
+      </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="feature-userInfo">
+        <State />
+      </entry>
+      <entry key="test">
+        <State />
+      </entry>
+      <entry key="userinfo">
+        <State />
+      </entry>
+    </value>
+=======
     <targetSelectedWithDropDown>
       <Target>
         <type value="QUICK_BOOT_TARGET" />
@@ -13,5 +35,6 @@
       </Target>
     </targetSelectedWithDropDown>
     <timeTargetWasSelectedWithDropDown value="2024-02-26T18:39:00.547145Z" />
+>>>>>>> a9af71d40829ef4e965e8e36f06dfec225e1b3ca
   </component>
 </project>

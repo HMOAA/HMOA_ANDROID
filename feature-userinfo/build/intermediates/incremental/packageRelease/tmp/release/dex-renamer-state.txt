@@ -1,7 +1,0 @@
-#Wed Feb 21 13:54:12 KST 2024
-base.0=C\:\\Users\\User\\AndroidStudioProjects\\HProject\\HMOA_ANDROID\\feature-userInfo\\build\\intermediates\\dex\\release\\mergeDexRelease\\classes.dex
-base.1=C\:\\Users\\User\\AndroidStudioProjects\\HProject\\HMOA_ANDROID\\feature-userInfo\\build\\intermediates\\dex\\release\\mergeDexRelease\\classes2.dex
-path.0=classes.dex
-path.1=classes2.dex
-renamed.0=classes.dex
-renamed.1=classes2.dex

@@ -53,7 +53,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.getPerfumeComments(page)
     }
 
-    override suspend fun postProfilePhoto(image: File): DataResponseDto<Any> {
+    override suspend fun postProfilePhoto(image: String): DataResponseDto<Any> {
         return memberDataStore.postProfilePhoto(image)
     }
 

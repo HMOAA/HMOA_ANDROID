@@ -47,7 +47,7 @@ dependencies {
     val hilt_nav_compose_version = "1.0.0"
 
     implementation(project(":core-designsystem"))
-    implementation(project(":core-repository"))
+    implementation(project(":core-domain"))
     implementation(project(":core-model"))
 
     //material3

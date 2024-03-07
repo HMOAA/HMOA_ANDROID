@@ -5,7 +5,6 @@ import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
-import java.io.File
 
 interface MemberRepository {
     suspend fun getMember(): MemberResponseDto
@@ -13,7 +12,7 @@ interface MemberRepository {
     suspend fun getCommunities(page: Int): List<CommunityByCategoryResponseDto>
     suspend fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto>
     suspend fun deleteMember(): DataResponseDto<Any>
-    suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Any>
+    suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Boolean>
     suspend fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto>
     suspend fun updateJoin(request: JoinUpdateRequestDto): MemberResponseDto
     suspend fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any>

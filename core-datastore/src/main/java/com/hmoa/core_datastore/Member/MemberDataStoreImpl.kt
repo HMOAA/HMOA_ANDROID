@@ -6,7 +6,6 @@ import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
 import corenetwork.Member.MemberService
-import java.io.File
 import javax.inject.Inject
 
 class MemberDataStoreImpl @Inject constructor(
@@ -32,7 +31,7 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.deleteMember()
     }
 
-    override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Any> {
+    override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Boolean> {
         return memberService.postExistsNickname(request)
     }
 

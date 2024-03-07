@@ -9,7 +9,6 @@ import com.hmoa.core_network.HttpClientProvider
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.util.*
-import java.io.File
 import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
@@ -48,7 +47,7 @@ class MemberServiceImpl @Inject constructor(
         return jsonContentHttpClient.delete("/member/delete").body()
     }
 
-    override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Any> {
+    override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Boolean> {
         val response = jsonContentHttpClient.post("/member/existsnickname") {
             body = request
         }

@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface TokenManagerModule {
+interface LocalDataStorePreferenceManagerModule {
 
     @Binds
     @Singleton

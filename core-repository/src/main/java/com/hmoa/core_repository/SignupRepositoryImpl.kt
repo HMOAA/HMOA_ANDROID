@@ -17,15 +17,15 @@ class SignupRepositoryImpl @Inject constructor(private val signupDatastore: Sign
         return signupDatastore.getAge()
     }
 
-    override suspend fun saveNickname() {
-        signupDatastore.saveNickname()
+    override suspend fun saveNickname(value: String) {
+        signupDatastore.saveNickname(value)
     }
 
-    override suspend fun saveSex() {
-        TODO("Not yet implemented")
+    override suspend fun saveSex(value: String) {
+        signupDatastore.saveSex(value)
     }
 
-    override suspend fun saveAge() {
-        TODO("Not yet implemented")
+    override suspend fun saveAge(value: String) {
+        signupDatastore.saveAge(value)
     }
 }

@@ -17,4 +17,17 @@ class SignupDataStoreImpl @Inject constructor(private val signupInfoManager: Sig
         return signupInfoManager.getAge().firstOrNull()
     }
 
+    override suspend fun saveNickname(value: String) {
+        signupInfoManager.saveNickname(value)
+    }
+
+    override suspend fun saveSex(value: String) {
+        signupInfoManager.saveSex(value)
+    }
+
+    override suspend fun saveAge(value: String) {
+        signupInfoManager.saveAge(value)
+    }
+
+
 }

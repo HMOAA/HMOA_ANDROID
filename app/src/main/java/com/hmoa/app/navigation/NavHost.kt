@@ -18,6 +18,7 @@ fun SetUpNavGraph(
             onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,
             onSignupClick = navController::navigateToSignup
         )
+        pickPersonalInfoScreen(onHomeClick = {}, onPickNicknameClick = navController::navigateToPickNickname)
 
     }
 }

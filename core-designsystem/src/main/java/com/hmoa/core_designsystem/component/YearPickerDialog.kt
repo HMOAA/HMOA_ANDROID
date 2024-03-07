@@ -3,7 +3,6 @@ package com.hmoa.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,12 +26,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun YearPickerDialog(
     yearList: List<Int>, //출생연도 리스트
-    value: Int, //초기 값
+    initialValue: Int, //초기 값
     height: Dp, //높이
     onDismiss: () -> Unit, //dismiss event
     onDoneClick: (Int) -> Unit, //확인 클릭 event
 ) {
-    var selectedValue by remember { mutableIntStateOf(value) }
+    var selectedValue by remember { mutableIntStateOf(initialValue) }
 
     //offset을 통해 위치 조절
     val density = LocalDensity.current
@@ -42,7 +40,7 @@ fun YearPickerDialog(
     val coroutineScope = rememberCoroutineScope()
 
     val scrollState = rememberLazyListState(
-        initialFirstVisibleItemIndex = yearList.indexOf(value),
+        initialFirstVisibleItemIndex = yearList.indexOf(initialValue),
         initialFirstVisibleItemScrollOffset = -offset
     )
 
@@ -65,16 +63,16 @@ fun YearPickerDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(height)
-                    .background(color = Color.White)
+                    .background(color = Color.White),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(Modifier.height(16.dp))
 
-                Row(
+                Column(
                     modifier = Modifier
                         .height(36.dp)
                         .fillMaxWidth()
                         .padding(start = 38.dp, end = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(
                         modifier = Modifier
@@ -174,24 +172,10 @@ fun YearPickerDialog(
                         .height(40.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(
-                        modifier = Modifier
-                            .width(200.dp)
-                            .fillMaxHeight(),
-                        onClick = {
-                            onDoneClick(selectedValue)
-                            onDismiss()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        )
-                    ) {
-                        Text(
-                            text = "확인",
-                            fontSize = 16.sp,
-                            color = Color.White
-                        )
-                    }
+                    com.hmoa.core_designsystem.component.Button(true, textColor = Color.White, textSize = 16, btnText = "확인", onClick = {onDoneClick(selectedValue)
+                        onDismiss()}, buttonModifier = Modifier
+                        .width(200.dp)
+                        .fillMaxHeight(),)
                 }
 
                 Spacer(Modifier.height(24.dp))
@@ -216,7 +200,6 @@ fun YearPickerDialog(
 @Composable
 fun TestPickerDialog() {
 
-    val width = LocalConfiguration.current.screenWidthDp.dp
 
     var showDialog by remember { mutableStateOf(true) }
 
@@ -226,12 +209,11 @@ fun TestPickerDialog() {
     Box(
         modifier = Modifier
             .fillMaxHeight()
-            .width(width)
+            .fillMaxWidth()
             .background(color = Color.LightGray)
     ) {
         if (showDialog) {
             YearPickerDialog(
-                width = width,
                 height = 370.dp,
                 onDismiss = {
                     showDialog = !showDialog
@@ -239,7 +221,7 @@ fun TestPickerDialog() {
                 onDoneClick = {
                     value = it
                 },
-                value = value,
+                initialValue = value,
                 yearList = yearList
             )
         }

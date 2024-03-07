@@ -1,40 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="deploymentTargetDropDown">
-<<<<<<< HEAD
-    <value>
-      <entry key="TTest">
-        <State />
-      </entry>
-      <entry key="TestSlider">
-        <State />
-      </entry>
-      <entry key="app">
-        <State />
-      </entry>
-      <entry key="feature-userInfo">
-        <State />
-      </entry>
-      <entry key="test">
-        <State />
-      </entry>
-      <entry key="userinfo">
-        <State />
-      </entry>
-    </value>
-=======
-    <targetSelectedWithDropDown>
+    <runningDeviceTargetSelectedWithDropDown>
       <Target>
-        <type value="QUICK_BOOT_TARGET" />
+        <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="$USER_HOME$/.android/avd/Nexus_6_API_30.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="5200826afecab403" />
           </Key>
         </deviceKey>
       </Target>
-    </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2024-02-26T18:39:00.547145Z" />
->>>>>>> a9af71d40829ef4e965e8e36f06dfec225e1b3ca
+    </runningDeviceTargetSelectedWithDropDown>
+    <timeTargetWasSelectedWithDropDown value="2024-03-07T09:02:45.816045Z" />
   </component>
 </project>

@@ -1,5 +1,7 @@
 package com.hmoa.core_designsystem.component
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -34,12 +36,11 @@ fun RadioButtonList(radioOptions: List<String>,onButtonClick:(value:String)->Uni
                     onClick = {
                         onOptionSelected(it)
                         onButtonClick(it)
-                    }
+                    },
                 )
                 Text(
                     text = it,
                     style = TextStyle(color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Medium),
-                    modifier = Modifier.padding(start = 5.dp)
                 )
             }
         }

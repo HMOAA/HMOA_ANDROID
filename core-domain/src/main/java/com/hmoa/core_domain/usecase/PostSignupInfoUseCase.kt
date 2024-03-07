@@ -10,7 +10,7 @@ import javax.inject.Inject
 class PostSignupInfoUseCase @Inject constructor(private val memberRepository: MemberRepository) {
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    operator fun invoke(dto: JoinUpdateRequestDto) {
-        scope.launch { memberRepository.updateJoin(dto) }
+    operator fun invoke(age: Int, sex: Boolean, nickname: String) {
+        scope.launch { memberRepository.updateJoin(JoinUpdateRequestDto(age, nickname, sex)) }
     }
 }

@@ -6,7 +6,7 @@ import javax.inject.Inject
 class GetSignupInfoUseCase @Inject constructor(private val signupRepository: SignupRepository) {
 
     suspend fun getNickName(): String? {
-        return signupRepository.getAge()
+        return signupRepository.getNickname()
     }
 
     suspend fun getSex(): String? {

@@ -31,7 +31,7 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.deleteMember()
     }
 
-    override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Boolean> {
+    override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
         return memberService.postExistsNickname(request)
     }
 

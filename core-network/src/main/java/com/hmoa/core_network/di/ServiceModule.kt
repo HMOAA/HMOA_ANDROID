@@ -25,6 +25,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.*
 import javax.inject.Singleton
 
 @Module
@@ -65,8 +66,8 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun providerMemberService(httpClientProvider: HttpClientProvider): MemberService =
-        MemberServiceImpl(httpClientProvider)
+    fun providerMemberService(httpClientProvider: HttpClientProvider, httpClient: HttpClient): MemberService =
+        MemberServiceImpl(httpClientProvider, httpClient)
 
     @Singleton
     @Provides

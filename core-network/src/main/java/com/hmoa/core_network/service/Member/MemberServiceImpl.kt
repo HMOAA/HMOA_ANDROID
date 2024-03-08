@@ -6,14 +6,17 @@ import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
 import com.hmoa.core_network.HttpClientProvider
+import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.util.*
 import javax.inject.Inject
 
 @OptIn(InternalAPI::class)
 class MemberServiceImpl @Inject constructor(
-    private val httpClientProvider: HttpClientProvider
+    private val httpClientProvider: HttpClientProvider,
+    private val httpClient: HttpClient
 ) : MemberService {
     val jsonContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
     val formUrlEncodedContentHttpClient = httpClientProvider.getHttpClientWithJsonHeader()
@@ -48,9 +51,11 @@ class MemberServiceImpl @Inject constructor(
     }
 
     override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Boolean> {
-        val response = jsonContentHttpClient.post("/member/existsnickname") {
-            body = request
+        val response = httpClient.post("/member/existsnickname") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
         }
+        val result = DataResponseDto<Boolean>
         return response.body()
     }
 

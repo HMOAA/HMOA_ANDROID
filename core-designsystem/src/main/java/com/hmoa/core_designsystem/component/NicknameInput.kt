@@ -18,22 +18,16 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
-fun NicknameInput(checkNicknameExist: (text: String) -> Unit, isAvailable: Boolean) {
-    var text by remember { mutableStateOf("") }
+fun NicknameInput(onPressNicknameExist: (text: String) -> Unit, isAvailable: Boolean) {
+    var nickname by remember { mutableStateOf("") }
+    var isAvailable by remember { mutableStateOf(isAvailable) }
+    var nicknameLength by remember { mutableStateOf(nickname.length.toString()) }
+
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ) {
-        var nickname by remember { mutableStateOf("") }
-        var isAvailable by remember { mutableStateOf(isAvailable) }
-        var nicknameLength by remember { mutableStateOf(nickname.length.toString()) }
-
-        fun isLenthUnder9(text: String):Boolean {
-            if (text.length < 9) return true
-            return false
-        }
-
         Column(modifier = Modifier.padding(horizontal = 15.dp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
                 Column() {
@@ -87,7 +81,7 @@ fun NicknameInput(checkNicknameExist: (text: String) -> Unit, isAvailable: Boole
                     Button(
                         true,
                         "중복확인",
-                        {},
+                        {onPressNicknameExist(nickname)},
                         textSize = 14,
                         radious = 10,
                         buttonModifier = Modifier.height(46.dp).fillMaxWidth(1f)
@@ -99,6 +93,10 @@ fun NicknameInput(checkNicknameExist: (text: String) -> Unit, isAvailable: Boole
     }
 }
 
+fun isLenthUnder9(text: String):Boolean {
+    if (text.length < 9) return true
+    return false
+}
 
 
 @Composable

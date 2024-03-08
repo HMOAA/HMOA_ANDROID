@@ -5,7 +5,6 @@ import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
-import java.io.File
 
 interface MemberService {
     suspend fun getMember(): MemberResponseDto

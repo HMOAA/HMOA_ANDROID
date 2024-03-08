@@ -4,7 +4,7 @@ import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.Community.CommunityService
+import com.hmoa.core_network.service.CommunityService
 import java.io.File
 import javax.inject.Inject
 

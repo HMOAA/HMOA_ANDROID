@@ -1,80 +1,102 @@
 package com.hmoa.core_network.di
 
-import com.hmoa.core_network.HttpClientProvider
-import corenetwork.Admin.AdminService
-import corenetwork.Admin.AdminServiceImpl
-import corenetwork.Brand.BrandService
-import corenetwork.Brand.BrandServiceImpl
-import corenetwork.BrandHPedia.BrandHPediaService
-import corenetwork.BrandHPedia.BrandHPediaServiceImpl
-import corenetwork.Fcm.FcmService
-import corenetwork.Fcm.FcmServiceImpl
-import corenetwork.Login.LoginService
-import corenetwork.Login.LoginServiceImpl
-import corenetwork.Main.MainService
-import corenetwork.Main.MainServiceImpl
-import corenetwork.Member.MemberService
-import corenetwork.Member.MemberServiceImpl
-import corenetwork.Note.NoteService
-import corenetwork.Note.NoteServiceImpl
-import corenetwork.Perfume.PerfumeService
-import corenetwork.Perfume.PerfumeServiceImpl
-import corenetwork.Search.SearchService
-import corenetwork.Search.SearchServiceImpl
+import com.google.gson.GsonBuilder
+import com.hmoa.core_network.BuildConfig
+import com.hmoa.core_network.service.*
+import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.*
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
-    @Singleton
-    @Provides
-    fun providePerfumeService(httpClientProvider: HttpClientProvider): PerfumeService =
-        PerfumeServiceImpl(httpClientProvider)
 
     @Singleton
     @Provides
-    fun providerFcmService(httpClientProvider: HttpClientProvider): FcmService = FcmServiceImpl(httpClientProvider)
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(okHttpClient)
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .build()
+    }
 
     @Singleton
     @Provides
-    fun providerAdminService(httpClientProvider: HttpClientProvider): AdminService =
-        AdminServiceImpl(httpClientProvider)
+    fun provideOkHttpClient(headerInterceptor: Interceptor): OkHttpClient {
+        val okHttpClientBuilder = OkHttpClient().newBuilder()
+        okHttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS)
+        okHttpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
+        okHttpClientBuilder.addInterceptor(headerInterceptor)
+        return okHttpClientBuilder.build()
+    }
 
     @Singleton
     @Provides
-    fun providerBrandService(httpClientProvider: HttpClientProvider): BrandService =
-        BrandServiceImpl(httpClientProvider)
+    fun providePerfumeService(retrofit: Retrofit): PerfumeService {
+        return retrofit.create(PerfumeService::class.java)
+    }
 
     @Singleton
     @Provides
-    fun providerBrandHPediaService(httpClientProvider: HttpClientProvider): BrandHPediaService =
-        BrandHPediaServiceImpl(httpClientProvider)
+    fun providerFcmService(retrofit: Retrofit): FcmService {
+        return retrofit.create(FcmService::class.java)
+    }
 
     @Singleton
     @Provides
-    fun providerLoginService(httpClientProvider: HttpClientProvider): LoginService =
-        LoginServiceImpl(httpClientProvider)
+    fun providerAdminService(retrofit: Retrofit): AdminService {
+        return retrofit.create(AdminService::class.java)
+    }
 
     @Singleton
     @Provides
-    fun providerMainService(httpClientProvider: HttpClientProvider): MainService = MainServiceImpl(httpClientProvider)
+    fun providerBrandService(retrofit: Retrofit): BrandService {
+        return retrofit.create(BrandService::class.java)
+    }
 
     @Singleton
     @Provides
-    fun providerMemberService(httpClientProvider: HttpClientProvider, httpClient: HttpClient): MemberService =
-        MemberServiceImpl(httpClientProvider, httpClient)
+    fun providerBrandHPediaService(retrofit: Retrofit): BrandHPediaService {
+        return retrofit.create(BrandHPediaService::class.java)
+    }
 
     @Singleton
     @Provides
-    fun providerNoteService(httpClientProvider: HttpClientProvider): NoteService = NoteServiceImpl(httpClientProvider)
+    fun providerLoginService(retrofit: Retrofit): LoginService {
+        return retrofit.create(LoginService::class.java)
+    }
 
     @Singleton
     @Provides
-    fun providerSearchService(httpClientProvider: HttpClientProvider): SearchService =
-        SearchServiceImpl(httpClientProvider)
+    fun providerMainService(retrofit: Retrofit): MainService {
+        return retrofit.create(MainService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providerMemberService(retrofit: Retrofit): MemberService {
+        return retrofit.create(MemberService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providerNoteService(retrofit: Retrofit): NoteService {
+        return retrofit.create(NoteService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providerSearchService(retrofit: Retrofit): SearchService {
+        return retrofit.create(SearchService::class.java)
+    }
 }

@@ -5,7 +5,7 @@ import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
-import corenetwork.Member.MemberService
+import com.hmoa.core_network.service.MemberService
 import javax.inject.Inject
 
 class MemberDataStoreImpl @Inject constructor(
@@ -32,7 +32,7 @@ class MemberDataStoreImpl @Inject constructor(
     }
 
     override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
-        return memberService.postExistsNickname(request)
+        return true
     }
 
     override suspend fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto> {

@@ -1,7 +1,7 @@
 package com.hmoa.core_datastore.Brand
 
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.Brand.BrandService
+import com.hmoa.core_network.service.BrandService
 import java.io.File
 import javax.inject.Inject
 

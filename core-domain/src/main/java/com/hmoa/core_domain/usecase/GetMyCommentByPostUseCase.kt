@@ -1,7 +1,7 @@
 package com.hmoa.core_domain.usecase
 
 import com.hmoa.core_domain.repository.MemberRepository
-import com.hmoa.core_model.response.CommunityCommentByMemberResponseDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -9,7 +9,7 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-class GetMyCommentUseCase @Inject constructor(
+class GetMyCommentByPostUseCase @Inject constructor(
     private val memberRepository : MemberRepository
 ){
 
@@ -21,19 +21,20 @@ class GetMyCommentUseCase @Inject constructor(
                 /** API 버전에 따라 24~25는 DateTimeFormatter를 지원하지 않음
                  * 그에 따라 SimpleDateFormat 사용 */
                 val dateFormatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-                val time = dateFormatter.parse(comment.time) ?: Date(0L)
-
+                val time = dateFormatter.parse(comment.createAt) ?: Date(0L)
                 val today = Calendar.getInstance().timeInMillis
 
                 val dateDiff = (today - time.time) / (24 * 60 * 60 * 1000)
 
-                CommunityCommentByMemberResponseDto(
-                    author = comment.author,
-                    commentId = comment.commentId,
-                    communityId = comment.communityId,
+                CommunityCommentDefaultResponseDto(
                     content = comment.content,
+                    createAt = "${dateDiff}일 전",
+                    heartCount = comment.heartCount,
+                    id = comment.id,
+                    liked = comment.liked,
+                    nickname = comment.nickname,
+                    perfumeId = comment.perfumeId,
                     profileImg = comment.profileImg,
-                    time = "${dateDiff.toInt()}일 전",
                     writed = comment.writed
                 )
             }

@@ -20,18 +20,21 @@ class GetMyFavoriteCommentUseCase @Inject constructor(
                 /** API 버전에 따라 24~25는 DateTimeFormatter를 지원하지 않음
                  * 그에 따라 SimpleDateFormat 사용 */
                 val dateFormatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-                val time = dateFormatter.parse(comment.time) ?: Date(0L)
+                val time = dateFormatter.parse(comment.createAt) ?: Date(0L)
 
                 val today = Calendar.getInstance().timeInMillis
 
                 val dateDiff = (today - time.time) / (24 * 60 * 60 * 1000)
 
                 CommunityCommentDefaultResponseDto(
-                    author = comment.author,
-                    commentId = comment.commentId,
                     content = comment.content,
+                    createAt = "${dateDiff}일 전",
+                    heartCount = comment.heartCount,
+                    id = comment.id,
+                    liked = comment.liked,
+                    nickname = comment.nickname,
+                    perfumeId = comment.perfumeId,
                     profileImg = comment.profileImg,
-                    time = "${dateDiff.toInt()}일 전",
                     writed = comment.writed
                 )
             }

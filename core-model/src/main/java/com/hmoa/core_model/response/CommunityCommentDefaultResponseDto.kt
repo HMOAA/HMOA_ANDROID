@@ -4,10 +4,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CommunityCommentDefaultResponseDto(
-    val author: String,
-    val commentId: Int,
-    val content: String,
-    val profileImg: String,
-    val time: String,
-    val writed: Boolean
+    val content : String,
+    val createAt : String,
+    val heartCount : Int,
+    val id : Int,
+    val liked : Boolean,
+    val nickname : String,
+    val perfumeId : Int,
+    val profileImg : String,
+    val writed : Boolean
 )

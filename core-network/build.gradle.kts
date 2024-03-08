@@ -52,6 +52,10 @@ dependencies {
 
     implementation(project(":core-model"))
     implementation(project(":core-database"))
+    implementation("com.github.skydoves:sandwich:1.3.5")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")

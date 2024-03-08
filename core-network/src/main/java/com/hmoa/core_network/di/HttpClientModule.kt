@@ -1,17 +1,22 @@
 package com.hmoa.core_network.di
 
+import android.content.ContentValues
+import android.util.Log
+import com.hmoa.core_model.response.ErrorResponseDto
 import com.hmoa.core_network.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -50,12 +55,25 @@ object HttpClientModule {
                 level = LogLevel.ALL
             }
             install(ContentNegotiation) {
-                json()
+                json(Json {
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    coerceInputValues = true
+                }, contentType = ContentType.Application.Json)
             }
             defaultRequest {
                 url {
                     protocol = URLProtocol.HTTPS
                     host = BuildConfig.BASE_URL
+                }
+            }
+            HttpResponseValidator {
+                validateResponse { response ->
+                    if (response.status != HttpStatusCode.OK) {
+                        val error: ErrorResponseDto = response.body()
+                        Log.i(ContentValues.TAG, "HttpResponseValidator, code:${error.code}, message:${error.message}")
+                        throw Exception("HttpResponseValidator, code:${error.code}, message:${error.message}")
+                    }
                 }
             }
         }

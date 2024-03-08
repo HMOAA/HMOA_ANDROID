@@ -30,6 +30,19 @@ import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
+fun MyInfoRoute(
+    onNavBack : () -> Unit,
+    onNavMyBirth : () -> Unit,
+    onNavMyGender : () -> Unit,
+){
+    MyInfoPage(
+        onNavBack = onNavBack,
+        onNavMyBirth = onNavMyBirth,
+        onNavMyGender = onNavMyGender
+    )
+}
+
+@Composable
 fun MyInfoPage(
     onNavBack : () -> Unit,
     onNavMyBirth : () -> Unit,
@@ -72,7 +85,10 @@ fun MyInfoPage(
             }
         }
 
-        Divider(Modifier.fillMaxWidth().height(1.dp))
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp))
 
         Row(
             modifier = Modifier
@@ -100,7 +116,10 @@ fun MyInfoPage(
             }
         }
 
-        Divider(Modifier.fillMaxWidth().height(1.dp))
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp))
     }
 }
 

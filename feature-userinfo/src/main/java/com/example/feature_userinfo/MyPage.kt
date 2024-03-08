@@ -35,6 +35,11 @@ import com.example.feature_userinfo.viewModel.UserViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
+/** 중첩 navigation으로 user info 모듈로 들어올 때는 MyPage를 start destination으로 잡고 나머지를 이동할 수 있도록 합시다
+ * 이렇게 하면 navigation back stack entry에서 hiltViewModel을 공유하여 데이터를 한 번만 공유할 수 있음
+ * */
+
+
 @Composable
 internal fun MyPageRoute(
     onNavEditProfile : () -> Unit,

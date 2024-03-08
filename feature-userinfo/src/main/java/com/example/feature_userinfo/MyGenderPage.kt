@@ -33,6 +33,15 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.feature_userinfo.R
 
 @Composable
+fun MyGenderRoute(
+    onNavBack : () -> Unit,
+) {
+    MyGenderPage(
+        onNavBack = onNavBack
+    )
+}
+
+@Composable
 fun MyGenderPage(
     onNavBack : () -> Unit,
 ){

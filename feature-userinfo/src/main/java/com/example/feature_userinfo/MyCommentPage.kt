@@ -19,24 +19,41 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.viewModel.CommentUiState
+import com.example.feature_userinfo.viewModel.CommentViewModel
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyCommentRoute(
     onNavBack : () -> Unit,
-    onNavCommunity : () -> Unit
+    onNavCommunity : () -> Unit,
+    viewModel : CommentViewModel = hiltViewModel()
 ){
+    //comment list
+    val commentUiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     MyCommentPage(
+        uiState = commentUiState,
         onNavBack = onNavBack,
         onNavCommunity = onNavCommunity
     )
@@ -44,12 +61,10 @@ fun MyCommentRoute(
 
 @Composable
 fun MyCommentPage(
+    uiState : CommentUiState,
     onNavBack : () -> Unit,
-    onNavCommunity : () -> Unit, //Community로 이동 (Comment에서 사용)
+    onNavCommunity : () -> Unit, //Community로 이동 (Comment에서 사용),
 ){
-
-    /** view model에서 받아온 댓글 데이터 */
-    val commentList = listOf<Any>()
 
     Column(
         modifier = Modifier
@@ -64,27 +79,31 @@ fun MyCommentPage(
             onNavClick = onNavBack //뒤로 가기
         )
 
-        //data가 있으면 comment list, 없으면 no data page
-        if (commentList.isNotEmpty()){
-            LazyColumn {
-                items(commentList){ comment ->
-                    /** 받은 데이터에 match */
-                    /** Comment 클릭 시 해당 댓글이 있는 Community로 이동 */
-//                    Comment(
-//                        profile = ,
-//                        nickname = ,
-//                        dateDiff = ,
-//                        comment = ,
-//                        isFirst = ,
-//                        viewNumber =
-//                    )
+        when(uiState) {
+            CommentUiState.Loading -> {
+                /** Loading 화면 띄우기 */
+            }
+            is CommentUiState.Comments -> {
+                LazyColumn {
+                    items(uiState.comments){ comment ->
+                        /** Comment 클릭 시 해당 댓글이 있는 Community로 이동 */
+//                        Comment(
+//                            profile = comment.profileImg,
+//                            nickname = comment.author,
+//                            dateDiff = comment.writed,
+//                            comment = ,
+//                            isFirst = ,
+//                            viewNumber =
+//                        )
+                    }
                 }
             }
-        } else {
-            NoDataPage(
-                mainMsg = "작성한 댓글이\n없습니다",
-                subMsg = "좋아하는 함수에 댓글을 작성해주세요"
-            )
+            CommentUiState.Empty -> {
+                NoDataPage(
+                    mainMsg = "작성한 댓글이\n없습니다",
+                    subMsg = "좋아하는 함수에 댓글을 작성해주세요"
+                )
+            }
         }
     }
 }
@@ -93,6 +112,7 @@ fun MyCommentPage(
 @Composable
 fun TestMyCommentPage(){
     MyCommentPage(
+        uiState = CommentUiState.Empty,
         onNavBack = {},
         onNavCommunity = {}
     )

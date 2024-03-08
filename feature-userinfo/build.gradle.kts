@@ -61,6 +61,9 @@ dependencies {
     //bottom navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
 
+    //collectAsStateWithLifecycle 함수
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
+
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")

@@ -22,21 +22,6 @@ class UserViewModel @Inject constructor(
     val isLogin : Flow<Boolean>
         get() = _isLogin
 
-    //좋아요 누른 댓글 목록
-    private var _favoriteCommentList : Flow<List<CommunityCommentDefaultResponseDto>> = flowOf(emptyList())
-    val favoriteCommentList : Flow<List<CommunityCommentDefaultResponseDto>>
-        get() = _favoriteCommentList
-
-    //작성한 댓글
-    private var _commentList : Flow<List<CommunityCommentByMemberResponseDto>> = flowOf(emptyList())
-    val commentList : Flow<List<CommunityCommentByMemberResponseDto>>
-        get() = _commentList
-
-    //작성한 게시글
-    private var _postList : Flow<List<CommunityByCategoryResponseDto>> = flowOf(emptyList())
-    val postList : Flow<List<CommunityByCategoryResponseDto>>
-        get() = _postList
-
     //내 정보
     private var _myInfo = flowOf(null)
     val myInfo : Flow<MemberResponseDto?>

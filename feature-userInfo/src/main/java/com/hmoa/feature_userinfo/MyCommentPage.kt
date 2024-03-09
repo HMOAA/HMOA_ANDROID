@@ -41,6 +41,7 @@ import com.example.feature_userinfo.viewModel.CommentViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import com.hmoa.feature_userinfo.NoDataPage
 import com.hmoa.feature_userinfo.R
 
 @Composable
@@ -104,6 +105,8 @@ fun MyCommentPage(
                     subMsg = "좋아하는 함수에 댓글을 작성해주세요"
                 )
             }
+
+            else -> {}
         }
     }
 }

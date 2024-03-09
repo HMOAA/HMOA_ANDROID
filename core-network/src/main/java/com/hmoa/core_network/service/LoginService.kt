@@ -5,6 +5,7 @@ import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -17,5 +18,5 @@ interface LoginService {
 
     @FormUrlEncoded
     @POST("/login/remembered")
-    suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto
+    suspend fun postRemembered(dto: RememberedLoginRequestDto): ApiResponse<TokenResponseDto>
 }

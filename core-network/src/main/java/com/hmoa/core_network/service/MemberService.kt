@@ -5,7 +5,7 @@ import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
-import retrofit2.Call
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
 interface MemberService {
@@ -24,9 +24,8 @@ interface MemberService {
     @DELETE("/member/delete")
     suspend fun deleteMember(): DataResponseDto<Any>
 
-    @FormUrlEncoded
-    @POST("/member/existsnickname")
-    suspend fun postExistsNickname(@Body request: NickNameRequestDto): Call<Boolean>
+    @POST("/member/existsnickname/")
+    suspend fun postExistsNickname(@Body request: NickNameRequestDto): ApiResponse<Boolean>
 
     @GET("/member/hearts")
     suspend fun getHearts(@Field("page") page: Int): List<CommunityCommentDefaultResponseDto>

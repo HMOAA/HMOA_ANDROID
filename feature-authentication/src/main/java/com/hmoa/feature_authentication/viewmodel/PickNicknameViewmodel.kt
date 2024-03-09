@@ -1,4 +1,4 @@
-package com.hmoa.feature_authentication
+package com.hmoa.feature_authentication.viewmodel
 
 import android.content.ContentValues
 import android.util.Log

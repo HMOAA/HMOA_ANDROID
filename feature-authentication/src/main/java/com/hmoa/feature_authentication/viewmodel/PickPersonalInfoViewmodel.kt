@@ -1,4 +1,4 @@
-package com.hmoa.feature_authentication
+package com.hmoa.feature_authentication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.hmoa.core_domain.usecase.GetSignupInfoUseCase

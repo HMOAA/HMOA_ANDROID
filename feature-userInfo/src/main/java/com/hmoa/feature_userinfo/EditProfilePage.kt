@@ -1,58 +1,30 @@
 package com.example.feature_userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.viewModel.UserViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
 fun EditProfileRoute(
-    onNavBack : () -> Unit,
-    viewModel : UserViewModel = hiltViewModel()
+    onNavBack: () -> Unit,
+    viewModel: UserViewModel = hiltViewModel()
 ) {
     EditProfilePage(
         onNavBack = onNavBack
@@ -61,24 +33,24 @@ fun EditProfileRoute(
 
 @Composable
 fun EditProfilePage(
-    onNavBack : () -> Unit,
-){
+    onNavBack: () -> Unit,
+) {
 
     /** nick name 초반 값을 viewModel로 collectAsState()로 받아오고 그것을 변경 */
     //test 값
-    var nickname by remember{mutableStateOf("test")}
+    var nickname by remember { mutableStateOf("test") }
 
     //중복 확인 여부
-    var isChecked by remember{mutableStateOf(false)}
-    
+    var isChecked by remember { mutableStateOf(false) }
+
     //버튼 활성화 여부
-    var isEnabled by remember{mutableStateOf(false)}
+    var isEnabled by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-    ){
+    ) {
         TopBar(
             navIcon = painterResource(R.drawable.back_btn),
             onNavClick = onNavBack,
@@ -92,11 +64,11 @@ fun EditProfilePage(
                 .fillMaxWidth()
                 .height(72.dp),
             horizontalArrangement = Arrangement.Center
-        ){
+        ) {
             Box(
                 modifier = Modifier.size(72.dp),
                 contentAlignment = Alignment.BottomEnd
-            ){
+            ) {
                 /** profile 이미지 정보 match */
                 Icon(
                     modifier = Modifier
@@ -111,7 +83,7 @@ fun EditProfilePage(
                         .size(20.dp)
                         .background(color = Color.White, shape = CircleShape),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     IconButton(
                         modifier = Modifier.size(16.dp),
                         onClick = {
@@ -136,7 +108,7 @@ fun EditProfilePage(
                 .fillMaxWidth()
                 .height(300.dp)
                 .padding(horizontal = 16.dp)
-        ){
+        ) {
             Text(
                 text = "닉네임",
                 color = Color(0xFF414141)
@@ -148,7 +120,7 @@ fun EditProfilePage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(46.dp)
-            ){
+            ) {
                 BasicTextField(
                     modifier = Modifier
                         .weight(1f)
@@ -161,13 +133,13 @@ fun EditProfilePage(
                     decorationBox = {
                         Column(
                             modifier = Modifier.fillMaxSize()
-                        ){
+                        ) {
                             Row(
                                 modifier = Modifier
                                     .height(45.dp)
                                     .padding(start = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically
-                            ){
+                            ) {
                                 Text(
                                     text = nickname,
                                 )
@@ -201,14 +173,14 @@ fun EditProfilePage(
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = if(isChecked) "중복하는 아이디가 있습니다" else "사용할 수 있는 닉네임입니다",
+                text = if (isChecked) "중복하는 아이디가 있습니다" else "사용할 수 있는 닉네임입니다",
                 color = if (isChecked) Color(0xFFEE5D5D) else Color(0xFF3596EF),
                 fontSize = 12.sp
             )
         }
-        
+
         Spacer(Modifier.weight(1f))
-        
+
         com.hmoa.core_designsystem.component.Button(
             buttonModifier = Modifier
                 .height(82.dp)
@@ -225,7 +197,7 @@ fun EditProfilePage(
 
 @Preview(showBackground = true)
 @Composable
-fun TestEditProfilePage(){
+fun TestEditProfilePage() {
     EditProfilePage(
         onNavBack = {}
     )

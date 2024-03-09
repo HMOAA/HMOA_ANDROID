@@ -3,7 +3,7 @@ package com.hmoa.core_datastore.Main
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
-import corenetwork.Main.MainService
+import com.hmoa.core_network.service.MainService
 import javax.inject.Inject
 
 class MainDataStoreImpl @Inject constructor(

@@ -5,6 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
+    id("kotlinx-serialization")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.5.0"
     kotlin("kapt")
 }
 
@@ -46,17 +48,16 @@ dependencies {
     val ktor_version = "2.3.7"
     val mockito_version = "4.8.0"
     val hilt_version = "2.48.1"
+    val kotlinx_version = "1.5.0"
 
     implementation(project(":core-model"))
     implementation(project(":core-database"))
-    implementation("io.ktor:ktor-client-android:$ktor_version")
-    implementation("io.ktor:ktor-client-serialization:$ktor_version")
-    implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-    implementation("io.ktor:ktor-client-okhttp-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("com.github.skydoves:sandwich:1.3.5")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")

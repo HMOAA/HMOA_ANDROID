@@ -1,7 +1,7 @@
 package com.hmoa.core_datastore.BrandHPedia
 
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.BrandHPedia.BrandHPediaService
+import com.hmoa.core_network.service.BrandHPediaService
 import javax.inject.Inject
 
 class BrandHPediaDataStoreImpl @Inject constructor(

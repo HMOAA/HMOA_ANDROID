@@ -6,23 +6,48 @@ import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface MemberService {
+    @GET("/member")
     suspend fun getMember(): MemberResponseDto
-    suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any>
-    suspend fun getCommunities(page: Int): List<CommunityByCategoryResponseDto>
-    suspend fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto>
+
+    @PATCH("/member/age")
+    suspend fun updateAge(@Body request: AgeRequestDto): DataResponseDto<Any>
+
+    @GET("/member/communities")
+    suspend fun getCommunities(@Field("page") page: Int): List<CommunityByCategoryResponseDto>
+
+    @GET("/member/communityComments")
+    suspend fun getCommunityComments(@Field("page") page: Int): List<CommunityCommentByMemberResponseDto>
+
+    @DELETE("/member/delete")
     suspend fun deleteMember(): DataResponseDto<Any>
 
+    @FormUrlEncoded
     @POST("/member/existsnickname")
     suspend fun postExistsNickname(@Body request: NickNameRequestDto): Call<Boolean>
-    suspend fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto>
-    suspend fun updateJoin(request: JoinUpdateRequestDto): MemberResponseDto
-    suspend fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any>
-    suspend fun getPerfumeComments(page: Int): List<PerfumeCommentResponseDto>
-    suspend fun postProfilePhoto(image: String): DataResponseDto<Any>
+
+    @GET("/member/hearts")
+    suspend fun getHearts(@Field("page") page: Int): List<CommunityCommentDefaultResponseDto>
+
+    @PATCH("/member/join")
+    suspend fun updateJoin(@Body request: JoinUpdateRequestDto): MemberResponseDto
+
+    @PATCH("/member/nickname")
+    suspend fun updateNickname(@Body request: NickNameRequestDto): DataResponseDto<Any>
+
+    @GET("/member/perfumeComments")
+    suspend fun getPerfumeComments(@Field("page") page: Int): List<PerfumeCommentResponseDto>
+
+    @FormUrlEncoded
+    @POST("/member/profile-photo")
+    suspend fun postProfilePhoto(@Field("image") image: String): DataResponseDto<Any>
+
+
+    @DELETE("/member/profile-photo")
     suspend fun deleteProfilePhoto(): DataResponseDto<Any>
-    suspend fun updateSex(request: SexRequestDto): DataResponseDto<Any>
+
+    @PATCH("/member/sex")
+    suspend fun updateSex(@Body request: SexRequestDto): DataResponseDto<Any>
 }

@@ -1,21 +1,56 @@
 package com.hmoa.core_network.service
 
 import com.hmoa.core_model.response.*
+import retrofit2.http.Field
+import retrofit2.http.GET
 
 interface SearchService {
+    @GET("/search/brand")
     suspend fun getBrand(searchWord: String): BrandSearchResponseDto
-    suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto>
-    suspend fun getBrandStory(page: Int, searchWord: String): List<BrandStoryDefaultResponseDto>
-    suspend fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto>
-    suspend fun getCommunityCategory(
-        category: String,
-        page: Int,
-        searchWord: String
+
+    @GET("/search/brandAll")
+    suspend fun getBrandAll(@Field("consonant") consonant: Int): List<BrandDefaultResponseDto>
+
+    @GET("/search/brandStory")
+    suspend fun getBrandStory(
+        @Field("page") page: Int,
+        @Field("searchWord") searchWord: String
+    ): List<BrandStoryDefaultResponseDto>
+
+    @GET("/search/community")
+    suspend fun getCommunity(
+        @Field("page") page: Int,
+        @Field("searchWord") searchWord: String
     ): List<CommunityByCategoryResponseDto>
 
-    suspend fun getNote(page: Int, searchWord: String): List<NoteDefaultResponseDto>
-    suspend fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto>
-    suspend fun getPerfumeName(page: Int, searchWord: String): List<PerfumeNameSearchResponseDto>
-    suspend fun getPerfumer(page: Int, searchWord: String): List<PerfumerDefaultResponseDto>
-    suspend fun getTerm(page: Int, searchWord: String): List<TermDefaultResponseDto>
+    @GET("/search/community/category")
+    suspend fun getCommunityCategory(
+        @Field("category") category: String,
+        @Field("page") page: Int,
+        @Field("searchWord") searchWord: String
+    ): List<CommunityByCategoryResponseDto>
+
+    @GET("/search/note")
+    suspend fun getNote(@Field("page") page: Int, @Field("searchWord") searchWord: String): List<NoteDefaultResponseDto>
+
+    @GET("/search/perfume")
+    suspend fun getPerfume(
+        @Field("page") page: Int,
+        @Field("searchWord") searchWord: String
+    ): List<PerfumeSearchResponseDto>
+
+    @GET("/search/perfumeName")
+    suspend fun getPerfumeName(
+        @Field("page") page: Int,
+        @Field("searchWord") searchWord: String
+    ): List<PerfumeNameSearchResponseDto>
+
+    @GET("/search/perfumer")
+    suspend fun getPerfumer(
+        @Field("page") page: Int,
+        @Field("searchWord") searchWord: String
+    ): List<PerfumerDefaultResponseDto>
+
+    @GET("/search/term")
+    suspend fun getTerm(@Field("page") page: Int, @Field("searchWord") searchWord: String): List<TermDefaultResponseDto>
 }

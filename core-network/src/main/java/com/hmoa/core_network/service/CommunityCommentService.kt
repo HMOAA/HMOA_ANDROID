@@ -4,17 +4,30 @@ import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import retrofit2.http.*
 
 interface CommunityCommentService {
+    @PUT("/community/comment/{commentId}")
     suspend fun putCommunityComment(
+        @Path(value = "commentId")
         commentId: Int,
-        dto: CommunityCommentDefaultRequestDto
+        @Body dto: CommunityCommentDefaultRequestDto
     ): CommunityCommentDefaultResponseDto
 
-    suspend fun deleteCommunityComment(commentId: Int): DataResponseDto<Any>
-    suspend fun getCommunityComments(commentId: Int, page: String): CommunityCommentAllResponseDto
+    @DELETE("/community/comment/{commentId}")
+    suspend fun deleteCommunityComment(@Path(value = "commentId") commentId: Int): DataResponseDto<Any>
+
+    @GET("/community/comment/{commentId}/findAll")
+    suspend fun getCommunityComments(
+        @Path(value = "commentId") commentId: Int,
+        @Field("page") page: String
+    ): CommunityCommentAllResponseDto
+
+    @FormUrlEncoded
+    @POST("/community/comment/{commentId}/save")
     suspend fun postCommunityComment(
+        @Path(value = "commentId")
         commentId: Int,
-        dto: CommunityCommentDefaultRequestDto
+        @Body dto: CommunityCommentDefaultRequestDto
     ): CommunityCommentDefaultResponseDto
 }

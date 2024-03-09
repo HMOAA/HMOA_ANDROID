@@ -3,10 +3,24 @@ package com.hmoa.core_network.service
 import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
+import retrofit2.http.*
 
 interface AdminService {
-    suspend fun deleteHomeMenu(homeMenuId: Int): DataResponseDto<Any>
-    suspend fun postHomeMenu(homeMenuId: Int, homeMenuSaveRequestDto: HomeMenuSaveRequestDto): DataResponseDto<Any>
-    suspend fun postHomePerfume(dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any>
-    suspend fun postHomePerfumeAdd(homeId: Int, perfumeId: Int): DataResponseDto<Any>
+    @DELETE("/admin/{homeMenuId}/delete")
+    suspend fun deleteHomeMenu(@Path(value = "homeMenuId") homeMenuId: Int): DataResponseDto<Any>
+
+    @GET("/admin/{homeMenuId}/modify")
+    suspend fun postHomeMenu(
+        @Path(value = "homeMenuId") homeMenuId: Int,
+        @Body homeMenuSaveRequestDto: HomeMenuSaveRequestDto
+    ): DataResponseDto<Any>
+
+    @GET("/admin/homePerfume")
+    suspend fun postHomePerfume(@Body dto: HomeMenuPerfumeResponseDto): DataResponseDto<Any>
+
+    @GET("/admin/homePerfume/add")
+    suspend fun postHomePerfumeAdd(
+        @Field("homeId") homeId: Int,
+        @Field("perfumeId") perfumeId: Int
+    ): DataResponseDto<Any>
 }

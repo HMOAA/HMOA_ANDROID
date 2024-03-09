@@ -5,8 +5,17 @@ import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
+import retrofit2.http.Body
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface LoginService {
-    suspend fun postOAuth(accessToken: OauthLoginRequestDto, provider: Provider): MemberLoginResponseDto
+    @FormUrlEncoded
+    @POST("/login/oauth2/{provider}")
+    suspend fun postOAuth(@Body dto: OauthLoginRequestDto, @Path("provider") provider: Provider): MemberLoginResponseDto
+
+    @FormUrlEncoded
+    @POST("/login/remembered")
     suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto
 }

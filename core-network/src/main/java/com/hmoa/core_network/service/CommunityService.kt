@@ -4,26 +4,48 @@ import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import retrofit2.http.*
 import java.io.File
 
 interface CommunityService {
-    suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto
+    @GET("/community/{communityId}")
+    suspend fun getCommunity(@Path(value = "communityId") communityId: Int): CommunityDefaultResponseDto
+
+    @FormUrlEncoded
+    @POST("/community/{communityId}")
     suspend fun postCommunityUpdate(
-        images: Array<File>,
-        deleteCommunityPhotoIds: Array<Int>,
-        title: String,
-        content: String,
-        communityId: Int
+        @Field("images") images: Array<File>,
+        @Field("eleteCommunityPhotoIds") deleteCommunityPhotoIds: Array<Int>,
+        @Field("title") title: String,
+        @Field("content") content: String,
+        @Path("communityId") communityId: Int
     ): CommunityDefaultResponseDto
 
-    suspend fun deleteCommunity(communityId: Int): DataResponseDto<Any>
-    suspend fun getCommunityByCategory(category: Category, page: String): CommunityByCategoryResponseDto
+    @DELETE("/community/{communityId}")
+    suspend fun deleteCommunity(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
+
+    @GET("/community/{communityId}/like")
+    suspend fun putCommuntiyLike(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
+
+    @GET("/community/{communityId}/like")
+    suspend fun deleteCommunityLike(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
+
+    @GET("/community/{category}")
+    suspend fun getCommunityByCategory(
+        @Path("category") category: Category,
+        @Field("page") page: String
+    ): CommunityByCategoryResponseDto
+
+    @GET("/community/home")
     suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto>
+
+    @FormUrlEncoded
+    @POST("/community/save")
     suspend fun postCommunitySave(
-        images: Array<File>,
-        category: Category,
-        title: String,
-        content: String
+        @Field("images") images: Array<File>,
+        @Field("category") category: Category,
+        @Field("title") title: String,
+        @Field("content") content: String
     ): CommunityDefaultResponseDto
 
 }

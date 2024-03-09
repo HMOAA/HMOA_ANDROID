@@ -4,64 +4,48 @@ import com.hmoa.core_database.TokenManager
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.TokenResponseDto
 import com.hmoa.core_network.BuildConfig
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.util.*
+import com.hmoa.core_network.service.LoginService
+import com.skydoves.sandwich.ApiResponse
+import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
+import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import okhttp3.OkHttpClient
-import okhttp3.Protocol
+import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RefreshTokenManagerImpl @Inject constructor(private val tokenManager: TokenManager) : RefreshTokenManager {
 
-    companion object {
-        val okHttpClient = OkHttpClient.Builder()
-            .protocols(mutableListOf(Protocol.HTTP_1_1))
-            .build()
-        val httpClient = HttpClient(OkHttp) {
-            engine {
-                config {
-                    okHttpClient
-                }
-            }
-            install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.ALL
-            }
-            install(ContentNegotiation) {
-                json()
-            }
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = BuildConfig.BASE_URL
-                }
-                header(HttpHeaders.ContentType, ContentType.Application.Json)
-            }
+    override suspend fun refreshTokens(dto: RememberedLoginRequestDto): ApiResponse<TokenResponseDto> {
+        val response = createWebService().create(LoginService::class.java).postRemembered(dto)
+        var refreshedAuthToken = ""
+        var rememberedToken = ""
+        response.suspendOnSuccess {
+            refreshedAuthToken = this.response.body()!!.authToken
+            rememberedToken = this.response.body()!!.rememberedToken
         }
+
+        CoroutineScope(Dispatchers.IO).async {
+            saveRefreshTokens(refreshedAuthToken, rememberedToken)
+        }
+        return response
     }
 
-    @OptIn(InternalAPI::class)
-    override suspend fun refreshAuthToken(dto: RememberedLoginRequestDto): HttpResponse {
-        val response = httpClient.post("/login/remembered") {
-            body = dto
-        }
-        val refreshedAuthToken = response.body<TokenResponseDto>().authToken
-        val rememberedToken = response.body<TokenResponseDto>().rememberedToken
-
-        suspend {
-            tokenManager.saveAuthToken(refreshedAuthToken)
-            tokenManager.saveRememberedToken(rememberedToken)
-        }
+    override suspend fun saveRefreshTokens(authToken: String, rememberedToken: String) {
+        tokenManager.saveAuthToken(authToken)
+        tokenManager.saveRememberedToken(rememberedToken)
+    }
 
 
-        return response
+    private val okHttp =
+        OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).build()
+
+    private fun createWebService(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(okHttp)
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create()).build()
     }
 }

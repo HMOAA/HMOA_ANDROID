@@ -1,7 +1,5 @@
 package com.hmoa.feature_authentication
 
-import android.content.ContentValues
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -20,6 +18,8 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.NicknameInput
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.feature_authentication.viewmodel.PickNicknameUiState
+import com.hmoa.feature_authentication.viewmodel.PickNicknameViewmodel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,26 +32,33 @@ internal fun PickNicknameRoute(
     viewmodel: PickNicknameViewmodel = hiltViewModel()
 ) {
     val scope = CoroutineScope(Dispatchers.IO)
-    val isAvailableNickname by viewmodel.isAvailabeNickname.collectAsStateWithLifecycle(false)
+    val isAvailableState by viewmodel.isExistedNicknameState.collectAsStateWithLifecycle()
 
     PickNicknameScreen(
         onPickPersonalInfoClick,
         onSignupClick,
-        isAvailableNickname = isAvailableNickname,
+        isExistedNicknameState = isAvailableState,
         onCheckNicknameDuplication = {
-            Log.i(ContentValues.TAG, "screen:postExistsNickname")
-            scope.launch { viewmodel.checkNicknameDuplication(it) }
-        })
+            scope.launch {
+                viewmodel.onNicknameChanged(it)
+                viewmodel.saveNickname(it)
+            }
+        }
+    )
 }
 
 @Composable
 fun PickNicknameScreen(
     onPickPersonalInfoClick: () -> Unit,
     onSignupClick: () -> Unit,
-    isAvailableNickname: Boolean,
+    isExistedNicknameState: PickNicknameUiState = PickNicknameUiState.PickNickname(isExistedNickname = true),
     onCheckNicknameDuplication: (nickname: String) -> Unit
 ) {
-    var isAvailableNickname by remember { mutableStateOf(isAvailableNickname) }
+    var isAvailableNickname by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isExistedNicknameState) {
+        isAvailableNickname = handleNicknameInput(isExistedNicknameState)
+    }
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -70,15 +77,30 @@ fun PickNicknameScreen(
                     modifier = Modifier.padding(top = 60.dp).padding(horizontal = 15.dp),
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Thin, color = CustomColor.gray4)
                 )
-                NicknameInput({ onCheckNicknameDuplication(it) }, isAvailable = isAvailableNickname)
+                NicknameInput(
+                    { onCheckNicknameDuplication(it) },
+                    isAvailable = isAvailableNickname
+                )
             }
         }
-        Button(isAvailableNickname, "다음", { onPickPersonalInfoClick() }, Modifier.fillMaxWidth().height(80.dp))
+        Button(
+            isAvailableNickname,
+            "다음",
+            { onPickPersonalInfoClick() },
+            Modifier.fillMaxWidth().height(80.dp)
+        )
     }
+}
+
+fun handleNicknameInput(value: PickNicknameUiState): Boolean {
+    if (value == PickNicknameUiState.PickNickname(isExistedNickname = true)) {
+        return false
+    }
+    return true
 }
 
 @Preview
 @Composable
 fun PickNicknameScreenPreview() {
-    PickNicknameScreen({}, {}, true, {})
+    PickNicknameScreen({}, {}, PickNicknameUiState.PickNickname(isExistedNickname = true), {})
 }

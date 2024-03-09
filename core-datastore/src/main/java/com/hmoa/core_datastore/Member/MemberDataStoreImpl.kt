@@ -34,10 +34,10 @@ class MemberDataStoreImpl @Inject constructor(
     }
 
     override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
-        var result = false
+        var result = true
         Log.i("postExistsNickName", "접근함")
         memberService.postExistsNickname(request).suspendOnSuccess {
-            result = true
+            result = false
         }
         return result
     }

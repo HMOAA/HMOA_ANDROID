@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":core-network"))
     implementation(project(":core-database"))
 
+    implementation("com.github.skydoves:sandwich:1.3.5")
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")

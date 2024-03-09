@@ -21,7 +21,7 @@ class BrandDataStoreImpl @Inject constructor(
     }
 
     override suspend fun postBrandTestSave(image: File, brandId: Int): DataResponseDto<Any> {
-        return brandService.postBrandTestSave(image, brandId)
+        return brandService.postBrandTestSave(image = image, brandId = brandId)
     }
 
     override suspend fun postBrand(

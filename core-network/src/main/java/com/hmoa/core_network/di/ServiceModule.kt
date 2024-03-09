@@ -1,6 +1,7 @@
 package com.hmoa.core_network.di
 
 import com.google.gson.GsonBuilder
+import com.hmoa.core_database.TokenManager
 import com.hmoa.core_network.BuildConfig
 import com.hmoa.core_network.service.*
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
@@ -8,8 +9,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -32,12 +37,33 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(headerInterceptor: Interceptor): OkHttpClient {
+    fun provideOkHttpClient(headerInterceptor: Interceptor, authenticator: Authenticator): OkHttpClient {
+        val httpLoggingInterceptor = HttpLoggingInterceptor()
+        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
         val okHttpClientBuilder = OkHttpClient().newBuilder()
         okHttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS)
         okHttpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
         okHttpClientBuilder.addInterceptor(headerInterceptor)
+        okHttpClientBuilder.addInterceptor(httpLoggingInterceptor)
+        okHttpClientBuilder.authenticator(authenticator)
         return okHttpClientBuilder.build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
+        val token = runBlocking {
+            tokenManager.getAuthToken().firstOrNull()
+        }
+        return Interceptor { chain ->
+            with(chain) {
+                val newRequest = request().newBuilder()
+                    .addHeader("X-AUTH-TOKEN", "${token}")
+                    .build()
+                proceed(newRequest)
+            }
+        }
     }
 
     @Singleton

@@ -24,7 +24,7 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataStore
         return communityDataStore.postCommunityUpdate(images, deleteCommunityPhotoIds, title, content, communityId)
     }
 
-    override suspend fun deleteCommunity(communityId: Int): DataResponseDto<Any> {
+    override suspend fun deleteCommunity(communityId: Int): DataResponseDto<Nothing> {
         return communityDataStore.deleteCommunity(communityId)
     }
 

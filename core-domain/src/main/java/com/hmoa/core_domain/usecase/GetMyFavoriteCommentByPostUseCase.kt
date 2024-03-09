@@ -10,7 +10,7 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-class GetMyFavoriteCommentUseCase @Inject constructor(
+class GetMyFavoriteCommentByPostUseCase @Inject constructor(
     private val memberRepository : MemberRepository
 ){
     operator fun invoke(page : Int) : Flow<List<CommunityCommentDefaultResponseDto>> = flow{

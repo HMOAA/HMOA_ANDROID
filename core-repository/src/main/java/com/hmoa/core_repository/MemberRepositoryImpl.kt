@@ -24,7 +24,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.getCommunities(page)
     }
 
-    override suspend fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto> {
+    override suspend fun getCommunityComments(page: Int): List<CommunityCommentDefaultResponseDto> {
         return memberDataStore.getCommunityComments(page)
     }
 

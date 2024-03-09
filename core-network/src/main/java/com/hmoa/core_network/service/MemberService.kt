@@ -19,7 +19,7 @@ interface MemberService {
     suspend fun getCommunities(@Field("page") page: Int): List<CommunityByCategoryResponseDto>
 
     @GET("/member/communityComments")
-    suspend fun getCommunityComments(@Field("page") page: Int): List<CommunityCommentByMemberResponseDto>
+    suspend fun getCommunityComments(@Field("page") page: Int): List<CommunityCommentDefaultResponseDto>
 
     @DELETE("/member/delete")
     suspend fun deleteMember(): DataResponseDto<Any>

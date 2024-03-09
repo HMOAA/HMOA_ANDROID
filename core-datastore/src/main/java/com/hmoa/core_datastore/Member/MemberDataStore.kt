@@ -10,7 +10,7 @@ interface MemberDataStore {
     suspend fun getMember(): MemberResponseDto
     suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any>
     suspend fun getCommunities(page: Int): List<CommunityByCategoryResponseDto>
-    suspend fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto>
+    suspend fun getCommunityComments(page: Int): List<CommunityCommentDefaultResponseDto>
     suspend fun deleteMember(): DataResponseDto<Any>
     suspend fun postExistsNickname(request: NickNameRequestDto): Boolean
     suspend fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto>

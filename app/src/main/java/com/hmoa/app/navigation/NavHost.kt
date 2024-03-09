@@ -3,6 +3,7 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 
 @Composable
@@ -20,7 +21,7 @@ fun SetUpNavGraph(
         )
 
         /** user info 모듈 */
-        nestedUserInfoGraph(
+        this.nestedUserInfoGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
             /** onNavCommunity는 Community 모듈로의 이동 */

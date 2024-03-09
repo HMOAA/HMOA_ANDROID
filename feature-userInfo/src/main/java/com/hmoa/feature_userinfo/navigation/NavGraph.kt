@@ -6,10 +6,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.userinfo.MyActivityPage
 import com.example.userinfo.MyCommentPage
-import com.example.userinfo.MyFavoriteCommentPage
-import com.example.userinfo.MyPage
+import com.example.userinfo.MyCommentRoute
 import com.example.userinfo.MyPageRoute
-import com.example.userinfo.NoAuthMyPage
+import com.hmoa.feature_userinfo.MyFavoriteCommentPage
+import com.hmoa.feature_userinfo.MyPostPage
+import com.hmoa.feature_userinfo.NoAuthMyPage
 
 //마이페이지로 이동
 fun NavController.navigateToMyPage() = navigate(Screens.MyPageRoute.name)
@@ -42,26 +43,26 @@ fun NavController.navigateToMyPostPage() = navigate(Screens.MyPostRoute.name)
 fun NavController.navigateToBack() = navigateUp()
 
 fun NavGraphBuilder.nestedUserInfoGraph(
-    onNavLogin : () -> Unit,
-    onNavBack : () -> Unit,
+    onNavLogin: () -> Unit,
+    onNavBack: () -> Unit,
     /** onNavCommunity는 Community 모듈로의 이동 */
-    onNavCommunity : () -> Unit,
+    onNavCommunity: () -> Unit,
     /** 여기서 게시글 수정으로 이동해야.. 하나요..? */
-    onNavEditPost : () -> Unit,
-    onNavEditProfile : () -> Unit,
-    onNavManageMyInfo : () -> Unit,
-    onNavMyActivity : () -> Unit,
-    onNavMyFavoriteComment : () -> Unit,
-    onNavMyPost : () -> Unit,
-    onNavMyComment : () -> Unit,
-    onNavMyBirth : () -> Unit,
-    onNavMyGender : () -> Unit
+    onNavEditPost: () -> Unit,
+    onNavEditProfile: () -> Unit,
+    onNavManageMyInfo: () -> Unit,
+    onNavMyActivity: () -> Unit,
+    onNavMyFavoriteComment: () -> Unit,
+    onNavMyPost: () -> Unit,
+    onNavMyComment: () -> Unit,
+    onNavMyBirth: () -> Unit,
+    onNavMyGender: () -> Unit
 ) {
     navigation(
         startDestination = Screens.MyPageRoute.name,
         route = "user_info_graph"
-    ){
-        composable(route = Screens.MyPageRoute.name){
+    ) {
+        composable(route = Screens.MyPageRoute.name) {
             MyPageRoute(
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
@@ -70,17 +71,17 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = Screens.EditProfileRoute.name) {
-            EditProfilePage (
+            EditProfilePage(
                 onNavBack = onNavBack
             )
         }
-        composable(route = Screens.MyPostRoute.name){
+        composable(route = Screens.MyPostRoute.name) {
             MyPostPage(
                 onNavBack = onNavBack,
                 onNavEditPost = onNavEditPost
             )
         }
-        composable(route = Screens.MyActivityRoute.name){
+        composable(route = Screens.MyActivityRoute.name) {
             MyActivityPage(
                 onNavMyFavoriteComment = onNavMyFavoriteComment,
                 onNavMyComment = onNavMyComment,
@@ -88,36 +89,36 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 onNavBack = onNavBack
             )
         }
-        composable(route = Screens.MyCommentRoute.name){
-            MyCommentPage(
+        composable(route = Screens.MyCommentRoute.name) {
+            MyCommentRoute(
                 onNavBack = onNavBack,
                 onNavCommunity = onNavCommunity
             )
         }
-        composable(route = Screens.MyFavoriteCommentRoute.name){
+        composable(route = Screens.MyFavoriteCommentRoute.name) {
             MyFavoriteCommentPage(
                 onNavBack = onNavBack,
                 onNavCommunity = onNavCommunity
             )
         }
-        composable(route = Screens.MyInfoRoute.name){
+        composable(route = Screens.MyInfoRoute.name) {
             MyInfoPage(
                 onNavBack = onNavBack,
                 onNavMyBirth = onNavMyBirth,
                 onNavMyGender = onNavMyGender
             )
         }
-        composable(route = Screens.MyBirthRoute.name){
+        composable(route = Screens.MyBirthRoute.name) {
             MyBirthPage(
                 onNavBack = onNavBack
             )
         }
-        composable(route = Screens.MyGenderRoute.name){
-            MyBirthPage (
+        composable(route = Screens.MyGenderRoute.name) {
+            MyBirthPage(
                 onNavBack = onNavBack
             )
         }
-        composable(route = Screens.NoAuthMyPage.name){
+        composable(route = Screens.NoAuthMyPage.name) {
             NoAuthMyPage(
                 onNavLogin = onNavLogin
             )

@@ -6,7 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CommunityByCategoryResponseDto(
     var category: String,
+    val commentCount : Int,
     val communityId: Int,
+    val heartCount : Int,
+    val liked : Boolean,
     val title: String
 ) {
     init {

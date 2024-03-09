@@ -12,13 +12,6 @@ class GetMyPostUseCase @Inject constructor(
 
     operator fun invoke(page : Int) : Flow<List<CommunityByCategoryResponseDto>> = flow{
         val result = memberRepository.getCommunities(page)
-            .map{ community ->
-                CommunityByCategoryResponseDto(
-                    category = community.category,
-                    communityId = community.communityId,
-                    title = community.title
-                )
-            }
         emit(result)
     }
 

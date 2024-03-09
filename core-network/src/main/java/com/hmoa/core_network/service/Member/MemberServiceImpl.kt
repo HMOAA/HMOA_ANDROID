@@ -37,7 +37,7 @@ class MemberServiceImpl @Inject constructor(
         return response.body()
     }
 
-    override suspend fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto> {
+    override suspend fun getCommunityComments(page: Int): List<CommunityCommentDefaultResponseDto> {
         val response = jsonContentHttpClient.get("/member/communityComments") {
             url.parameters.append("page", page.toString())
         }
@@ -76,7 +76,7 @@ class MemberServiceImpl @Inject constructor(
         return response.body()
     }
 
-    override suspend fun getPerfumeComments(page: Int): List<PerfumeCommentResponseDto> {
+    override suspend fun getPerfumeComments(page: Int): List<CommunityCommentDefaultResponseDto> {
         val response = jsonContentHttpClient.get("/member/perfumeComments") {
             url.parameters.append("page", page.toString())
         }

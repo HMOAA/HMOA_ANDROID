@@ -8,7 +8,6 @@ import com.hmoa.feature_authentication.PickNicknameRoute
 import com.hmoa.feature_authentication.PickPersonalInfoRoute
 import com.hmoa.feature_authentication.SignupRoute
 
-private const val AUTHENTICATION_GRAPH = "authentication_graph"
 const val LOGIN_ROUTE = "login_route"
 const val SIGNUP_ROUTE = "signup_route"
 const val PICKNICKNAME_ROUTE = "pickNickname_route"
@@ -38,7 +37,7 @@ fun NavGraphBuilder.pickNicknameScreen(
     onSignupClick: () -> Unit
 ) {
     composable(route = PICKNICKNAME_ROUTE) {
-        PickNicknameRoute(onPickPersonalInfoClick,onSignupClick)
+        PickNicknameRoute(onPickPersonalInfoClick, onSignupClick)
     }
 }
 
@@ -48,6 +47,6 @@ fun NavGraphBuilder.pickPersonalInfoScreen(
     onPickNicknameClick: () -> Unit,
 ) {
     composable(route = PICKPERSONALINFO_ROUTE) {
-        PickPersonalInfoRoute(onHomeClick,onPickNicknameClick)
+        PickPersonalInfoRoute(onHomeClick, onPickNicknameClick)
     }
 }

@@ -9,8 +9,9 @@ import com.hmoa.feature_authentication.navigation.*
 @Composable
 fun SetUpNavGraph(
     navController: NavHostController,
+    startDestination: String
 ) {
-    NavHost(navController = navController, startDestination = LOGIN_ROUTE) {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup)

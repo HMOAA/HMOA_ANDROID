@@ -26,7 +26,8 @@ class CommentViewModel @Inject constructor(
 ): ViewModel() {
 
     //댓글 종류 (perfume / post)
-    private var commentType = MutableStateFlow("Perfume")
+    private var _commentType = MutableStateFlow("Perfume")
+    val commentType get() = _commentType
 
     private val _comments = MutableStateFlow<List<CommunityCommentDefaultResponseDto>>(emptyList())
     val comments get() = _comments

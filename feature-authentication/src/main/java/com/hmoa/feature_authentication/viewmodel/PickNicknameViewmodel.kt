@@ -1,6 +1,5 @@
 package com.hmoa.feature_authentication.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.hmoa.core_domain.usecase.CheckNicknameDuplicationUseCase
 import com.hmoa.core_domain.usecase.SaveSignupInfoUseCase
@@ -14,7 +13,6 @@ import javax.inject.Inject
 class PickNicknameViewmodel @Inject constructor(
     private val checkNicknameDuplicateUseCase: CheckNicknameDuplicationUseCase,
     private val saveSignupInfoUseCase: SaveSignupInfoUseCase,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _isExistedNicknameState = MutableStateFlow(PickNicknameUiState.PickNickname(isExistedNickname = true))

@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.feature_userinfo.viewModel.CommentUiState
 import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.feature_userinfo.NoDataPage
 import com.hmoa.feature_userinfo.R
 
@@ -70,14 +71,14 @@ fun MyCommentPage(
                 LazyColumn {
                     items(uiState.comments){ comment ->
                         /** Comment 클릭 시 해당 댓글이 있는 Community로 이동 */
-//                        Comment(
-//                            profile = comment.profileImg,
-//                            nickname = comment.author,
-//                            dateDiff = comment.writed,
-//                            comment = ,
-//                            isFirst = ,
-//                            viewNumber =
-//                        )
+                        Comment(
+                            profile = comment.profileImg,
+                            nickname = comment.nickname,
+                            dateDiff = comment.createAt,
+                            comment = comment.content,
+                            isFirst = false,
+                            viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
+                        )
                     }
                 }
             }

@@ -63,6 +63,7 @@ dependencies {
 
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
+    implementation(project(":core-common"))
 
     implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원
     implementation("com.kakao.sdk:v2-user:2.19.0") // 카카오 로그인 API 모듈
@@ -78,7 +79,9 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:$hilt_viewmodel_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.5.1")
 
+    implementation("androidx.compose.material:material:1.2.0-beta02")
     implementation("androidx.compose.material3:material3:1.1.0")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui:1.1.0")

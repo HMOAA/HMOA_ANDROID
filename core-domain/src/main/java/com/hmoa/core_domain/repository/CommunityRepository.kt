@@ -16,7 +16,7 @@ interface CommunityRepository {
         communityId: Int
     ): CommunityDefaultResponseDto
 
-    suspend fun deleteCommunity(communityId: Int): DataResponseDto<Any>
+    suspend fun deleteCommunity(communityId: Int): DataResponseDto<Nothing>
     suspend fun getCommunityByCategory(category: Category, page: String): CommunityByCategoryResponseDto
     suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto>
     suspend fun postCommunitySave(

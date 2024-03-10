@@ -1,7 +1,7 @@
 package com.hmoa.core_datastore.Brand
 
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.Brand.BrandService
+import com.hmoa.core_network.service.BrandService
 import java.io.File
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class BrandDataStoreImpl @Inject constructor(
     }
 
     override suspend fun postBrandTestSave(image: File, brandId: Int): DataResponseDto<Any> {
-        return brandService.postBrandTestSave(image, brandId)
+        return brandService.postBrandTestSave(image = image, brandId = brandId)
     }
 
     override suspend fun postBrand(

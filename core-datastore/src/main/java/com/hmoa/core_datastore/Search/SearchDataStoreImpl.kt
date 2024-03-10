@@ -1,7 +1,7 @@
 package com.hmoa.core_datastore.Search
 
 import com.hmoa.core_model.response.*
-import corenetwork.Search.SearchService
+import com.hmoa.core_network.service.SearchService
 import javax.inject.Inject
 
 class SearchDataStoreImpl @Inject constructor(

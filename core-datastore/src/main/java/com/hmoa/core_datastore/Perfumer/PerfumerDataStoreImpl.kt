@@ -1,7 +1,7 @@
 package com.hmoa.core_datastore.Perfumer
 
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.Perfumer.PerfumerService
+import com.hmoa.core_network.service.PerfumerService
 import javax.inject.Inject
 
 class PerfumerDataStoreImpl @Inject constructor(private val perfumerService: PerfumerService) :

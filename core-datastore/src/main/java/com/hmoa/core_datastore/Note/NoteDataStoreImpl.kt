@@ -1,7 +1,7 @@
 package com.hmoa.core_datastore.Note
 
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.Note.NoteService
+import com.hmoa.core_network.service.NoteService
 import javax.inject.Inject
 
 class NoteDataStoreImpl @Inject constructor(

@@ -26,6 +26,8 @@ import com.hmoa.core_datastore.Perfumer.PerfumerDataStore
 import com.hmoa.core_datastore.Perfumer.PerfumerDataStoreImpl
 import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_datastore.Search.SearchDataStoreImpl
+import com.hmoa.core_datastore.Signup.SignupDataStore
+import com.hmoa.core_datastore.Signup.SignupDataStoreImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -86,4 +88,8 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun provideSearchDatastore(searchDataStoreImpl: SearchDataStoreImpl): SearchDataStore
+
+    @Singleton
+    @Binds
+    fun provideSignupDatastore(signupDataStoreImpl: SignupDataStoreImpl): SignupDataStore
 }

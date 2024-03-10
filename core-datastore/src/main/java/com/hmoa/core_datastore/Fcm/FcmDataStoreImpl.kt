@@ -2,7 +2,7 @@ package com.hmoa.core_datastore.Fcm
 
 import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.Fcm.FcmService
+import com.hmoa.core_network.service.FcmService
 import javax.inject.Inject
 
 class FcmDataStoreImpl @Inject constructor(

@@ -1,12 +1,13 @@
 package com.hmoa.core_datastore.Member
 
+import android.util.Log
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.*
-import corenetwork.Member.MemberService
-import java.io.File
+import com.hmoa.core_network.service.MemberService
+import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class MemberDataStoreImpl @Inject constructor(
@@ -24,7 +25,7 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.getCommunities(page)
     }
 
-    override suspend fun getCommunityComments(page: Int): List<CommunityCommentByMemberResponseDto> {
+    override suspend fun getCommunityComments(page: Int): List<CommunityCommentDefaultResponseDto> {
         return memberService.getCommunityComments(page)
     }
 
@@ -32,8 +33,13 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.deleteMember()
     }
 
-    override suspend fun postExistsNickname(request: NickNameRequestDto): DataResponseDto<Any> {
-        return memberService.postExistsNickname(request)
+    override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
+        var result = true
+        Log.i("postExistsNickName", "접근함")
+        memberService.postExistsNickname(request).suspendOnSuccess {
+            result = false
+        }
+        return result
     }
 
     override suspend fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto> {

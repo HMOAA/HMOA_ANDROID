@@ -37,7 +37,10 @@ fun SetUpNavGraph(
             onNavMyBirth = navController::navigateToMyBirth,
             onNavMyGender = navController::navigateToMyGenderPage
         )
-        pickPersonalInfoScreen(onHomeClick = {}, onPickNicknameClick = navController::navigateToPickNickname)
+        pickPersonalInfoScreen(
+            onHomeClick = { navController::navigateToMain },
+            onPickNicknameClick = navController::navigateToPickNickname
+        )
 
     }
 }

@@ -13,6 +13,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.MainTopBar
 
+
+fun MainRoute() {
+    MainScreen()
+}
+        
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
@@ -20,10 +25,10 @@ fun MainScreen() {
     Scaffold(
         backgroundColor = Color.White,
         scaffoldState = scaffoldState,
-        topBar = { MainTopBar({},{},{},true)  },
+        topBar = { MainTopBar({}, {}, {}, true) },
         drawerContent = { Text(text = "drawerContent") },
-        bottomBar = { MainBottomBar({},{},{},{}) }
-    ){
+        bottomBar = { MainBottomBar({}, {}, {}, {}) }
+    ) {
         Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
 
         }

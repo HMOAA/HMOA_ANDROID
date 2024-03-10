@@ -1,7 +1,6 @@
 package com.hmoa.app
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,11 +12,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.MainTopBar
 
-
+@Composable
 fun MainRoute() {
     MainScreen()
 }
-        
+
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {

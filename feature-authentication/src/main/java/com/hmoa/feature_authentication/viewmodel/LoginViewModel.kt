@@ -1,4 +1,4 @@
-package com.hmoa.feature_authentication
+package com.hmoa.feature_authentication.viewmodel
 
 import android.app.Application
 import android.content.ContentValues.TAG

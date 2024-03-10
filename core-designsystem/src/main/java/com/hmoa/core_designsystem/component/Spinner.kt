@@ -21,16 +21,16 @@ import com.hmoa.core_designsystem.theme.CustomColor
 fun Spinner(
     width: Dp, //넓이
     height: Dp, //높이
-    value: String?, //선택된 값
+    value: Int?, //선택된 값
     onClick: () -> Unit, //클릭 시 이벤트 (Dialog를 띄움)
     placeholder: String
 ) {
 
-    fun handlePlaceHolder(value: String?, placeholder: String): String {
+    fun handlePlaceHolder(value: Int?, placeholder: String): String {
         if (value == null) {
             return placeholder
         }
-        return value
+        return value.toString()
     }
 
     fun handleColor(): Color {
@@ -86,7 +86,7 @@ fun TestSpinner() {
         Spinner(
             width = 152.dp,
             height = 48.dp,
-            value = "선택",
+            value = null,
             onClick = {
                 test = "clicked"
             },

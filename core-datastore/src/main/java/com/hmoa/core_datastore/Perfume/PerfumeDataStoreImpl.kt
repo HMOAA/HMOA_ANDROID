@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
-import corenetwork.Perfume.PerfumeService
+import com.hmoa.core_network.service.PerfumeService
 import javax.inject.Inject
 
 class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: PerfumeService) : PerfumeDataStore {

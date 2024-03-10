@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
-import corenetwork.CommunityComment.CommunityCommentService
+import com.hmoa.core_network.service.CommunityCommentService
 import javax.inject.Inject
 
 class CommunityCommentDataStoreImpl @Inject constructor(private val communityCommentService: CommunityCommentService) :

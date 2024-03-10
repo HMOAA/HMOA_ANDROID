@@ -6,7 +6,8 @@ import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
-import corenetwork.Login.LoginService
+import com.hmoa.core_network.service.LoginService
+import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -49,13 +50,14 @@ class LoginDataStoreImpl @Inject constructor(
     }
 
     override suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto {
-        return loginService.postRemembered(dto).apply {
-            CoroutineScope(Dispatchers.IO).async {
-                tokenManager.deleteAuthToken()
-            }.await()
-            tokenManager.saveAuthToken(this.authToken)
-            tokenManager.saveRememberedToken(this.rememberedToken)
+        var result = TokenResponseDto("", "")
+        loginService.postRemembered(dto).suspendOnSuccess {
+            tokenManager.saveAuthToken(this.data.authToken)
+            tokenManager.saveRememberedToken(this.data.rememberedToken)
+            result.authToken = this.data.authToken
+            result.rememberedToken = this.data.rememberedToken
         }
+        return result
     }
 
     override suspend fun saveKakaoAccessToken(token: String) {

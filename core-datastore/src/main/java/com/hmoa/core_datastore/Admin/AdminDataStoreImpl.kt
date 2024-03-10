@@ -3,7 +3,7 @@ package com.hmoa.core_datastore.Admin
 import com.hmoa.core_model.request.HomeMenuSaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
-import corenetwork.Admin.AdminService
+import com.hmoa.core_network.service.AdminService
 import javax.inject.Inject
 
 class AdminDataStoreImpl @Inject constructor(

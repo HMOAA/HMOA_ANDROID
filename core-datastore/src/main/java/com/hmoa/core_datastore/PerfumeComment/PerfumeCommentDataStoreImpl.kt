@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
-import corenetwork.PerfumeComment.PerfumeCommentService
+import com.hmoa.core_network.service.PerfumeCommentService
 import javax.inject.Inject
 
 internal class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :

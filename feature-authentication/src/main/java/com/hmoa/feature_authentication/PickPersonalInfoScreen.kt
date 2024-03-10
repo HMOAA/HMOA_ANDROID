@@ -51,7 +51,9 @@ internal fun PickPersonalInfoRoute(
 
     PickPersonalInfoScreen(
         onHomeClick = {
-            viewModel.postSignup(birthYear = birthYearState, sex = sexState)
+            scope.launch {
+                viewModel.postSignup(birthYear = birthYearState, sex = sexState)
+            }
         },
         onPickNicknameClick = { onPickNicknameClick() },
         onClickBirthYear = { viewModel.saveBirthYear(it) },

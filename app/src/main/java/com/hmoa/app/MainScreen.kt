@@ -1,6 +1,7 @@
-package com.hmoa.feature_main
+package com.hmoa.app
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,21 +10,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.hmoa.core_designsystem.component.MainBottomBar
+import com.hmoa.core_designsystem.component.MainTopBar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
-    val materialBlue700= Color(0xFF1976D2)
-    val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Open))
+    val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     Scaffold(
+        backgroundColor = Color.White,
         scaffoldState = scaffoldState,
-        topBar = { TopAppBar(title = {Text("TopAppBar")},backgroundColor = materialBlue700)  },
-        floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = { FloatingActionButton(onClick = {}){
-            Text("X")
-        } },
+        topBar = { MainTopBar({},{},{},true)  },
         drawerContent = { Text(text = "drawerContent") },
-        bottomBar = { BottomAppBar(backgroundColor = materialBlue700) { Text("BottomAppBar") } }
+        bottomBar = { MainBottomBar({},{},{},{}) }
     ){
         Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
 

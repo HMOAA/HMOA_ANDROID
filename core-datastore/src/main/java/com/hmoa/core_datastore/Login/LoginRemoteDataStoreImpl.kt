@@ -1,6 +1,5 @@
 package com.hmoa.core_datastore.Login
 
-import com.hmoa.core_database.TokenManager
 import com.hmoa.core_model.Provider
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
@@ -12,7 +11,6 @@ import javax.inject.Inject
 
 class LoginRemoteDataStoreImpl @Inject constructor(
     private val loginService: LoginService,
-    private val tokenManager: TokenManager
 ) : LoginRemoteDataStore {
 
 

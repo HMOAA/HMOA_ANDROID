@@ -27,7 +27,6 @@ interface BrandHPediaService {
         @Field("content") content: String
     ): DataResponseDto<Any>
 
-    @FormUrlEncoded
     @POST("/brandstory/testSave")
     suspend fun postTestSave(): DataResponseDto<Any> //Test
 }

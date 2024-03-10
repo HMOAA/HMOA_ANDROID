@@ -14,7 +14,6 @@ interface PerfumeCommentService {
         @Path("perfumeId") perfumeId: Int
     ): PerfumeCommentGetResponseDto
 
-    @FormUrlEncoded
     @POST("perfume/{perfumeId}/comments")
     suspend fun postPerfumeComment(
         @Path("perfumeId") perfumeId: Int,

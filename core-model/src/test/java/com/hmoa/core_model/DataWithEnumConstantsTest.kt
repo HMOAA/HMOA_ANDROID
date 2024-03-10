@@ -15,8 +15,10 @@ class testDataWithEnumConstants {
     @Test
     fun isAvailableData_includeCategoryPropertyAsEnumConstants() {
         val communityPhotoDefaultResponseDto = CommunityPhotoDefaultResponseDto(1, "사진1")
-        val communityByCategoryResponseDto = CommunityByCategoryResponseDto(Category.시향기.name, 1, "조말론 넥타르 블라썸 좋아요")
-        val communityByCategoryResponseDto2 = CommunityByCategoryResponseDto(Category.추천.name, 1, "조말론 넥타르 블라썸 좋아요")
+        val communityByCategoryResponseDto =
+            CommunityByCategoryResponseDto(Category.시향기.name, 1, 1, liked = true, heartCount = 1, title = "시향기")
+        val communityByCategoryResponseDto2 =
+            CommunityByCategoryResponseDto(Category.추천.name, 1, 1, liked = true, heartCount = 1, title = "추천")
         val communityDefaultResponseDto = CommunityDefaultResponseDto(
             "사용자1",
             Category.자유.name,

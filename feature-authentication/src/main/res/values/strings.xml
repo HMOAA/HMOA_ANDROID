@@ -1,3 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="female">여성</string>
+    <string name="male">남성</string>
 </resources>

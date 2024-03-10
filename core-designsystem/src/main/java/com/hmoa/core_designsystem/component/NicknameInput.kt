@@ -20,8 +20,14 @@ import com.hmoa.core_designsystem.theme.CustomColor
 @Composable
 fun NicknameInput(onPressNicknameExist: (text: String) -> Unit, isAvailable: Boolean) {
     var nickname by remember { mutableStateOf("") }
-    var isAvailable by remember { mutableStateOf(isAvailable) }
+    var descriptionText by remember { mutableStateOf("닉네임 제한 캡션입니다") }
+    var descriptionTextColor by remember { mutableStateOf(Color.Black) }
     var nicknameLength by remember { mutableStateOf(nickname.length.toString()) }
+
+    LaunchedEffect(isAvailable) {
+        descriptionText = handleText(isAvailable)
+        descriptionTextColor = handleTextColor(isAvailable)
+    }
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -47,8 +53,9 @@ fun NicknameInput(onPressNicknameExist: (text: String) -> Unit, isAvailable: Boo
                             textStyle = TextStyle(color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Light),
                             value = nickname,
                             onValueChange = {
-                                if(isLenthUnder9(it)){
+                                if (isLenthUnder9(it)) {
                                     nickname = it
+                                    nicknameLength = it.length.toString()
                                 }
                             },
                             placeholder = {
@@ -81,47 +88,46 @@ fun NicknameInput(onPressNicknameExist: (text: String) -> Unit, isAvailable: Boo
                     Button(
                         true,
                         "중복확인",
-                        {onPressNicknameExist(nickname)},
+                        { onPressNicknameExist(nickname) },
                         textSize = 14,
                         radious = 10,
                         buttonModifier = Modifier.height(46.dp).fillMaxWidth(1f)
                     )
                 }
             }
-            Row(modifier = Modifier.padding(start = 10.dp)) { DescriptionText(isAvailable) }
+            Row(modifier = Modifier.padding(start = 10.dp)) {
+                Text(
+                    descriptionText,
+                    modifier = Modifier.padding(top = 8.dp),
+                    style = TextStyle(color = descriptionTextColor, fontSize = 14.sp, fontWeight = FontWeight.Light)
+                )
+            }
         }
     }
 }
 
-fun isLenthUnder9(text: String):Boolean {
+fun handleText(isAvailable: Boolean): String {
+    if (isAvailable) {
+        return "사용가능한 닉네임 입니다"
+    }
+    return "닉네임 제한 캡션입니다"
+}
+
+fun isLenthUnder9(text: String): Boolean {
     if (text.length < 9) return true
     return false
 }
 
-
-@Composable
-fun DescriptionText(isAvailable: Boolean) {
-    handleTextColor(isAvailable)
-}
-@Composable
-fun handleTextColor(isAvailable: Boolean) {
-    if(isAvailable){
-        return Text(
-            "사용가능한 닉네임 입니다",
-            modifier = Modifier.padding(top = 8.dp),
-            style = TextStyle(color = CustomColor.blue, fontSize = 14.sp, fontWeight = FontWeight.Light)
-        )
+fun handleTextColor(isAvailable: Boolean): Color {
+    if (isAvailable) {
+        return CustomColor.blue
     }
-    return Text(
-        "닉네임 제한 캡션입니다",
-        modifier = Modifier.padding(top = 8.dp),
-        style = TextStyle(color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Light)
-    )
+    return Color.Black
 }
 
 
 @Preview
 @Composable
 fun NicknameInputPreview() {
-    NicknameInput({},true)
+    NicknameInput({}, true)
 }

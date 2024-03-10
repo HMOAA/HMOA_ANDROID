@@ -1,6 +1,5 @@
 package com.hmoa.feature_authentication
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
@@ -13,11 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.Spinner
 import com.hmoa.component.TopBar
 import com.hmoa.component.YearPickerDialog
@@ -25,29 +27,57 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.RadioButtonList
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.feature_authentication.viewmodel.PickPersonalInfoViewmodel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun PickPersonalInfoRoute(
     onHomeClick: () -> Unit,
     onPickNicknameClick: () -> Unit,
+    viewModel: PickPersonalInfoViewmodel = hiltViewModel()
 ) {
-    PickPersonalInfoScreen(onHomeClick, onPickNicknameClick)
+    val scope = CoroutineScope(Dispatchers.IO)
+    val birthYearState by viewModel.birthYearState.collectAsStateWithLifecycle()
+    val sexState by viewModel.sexState.collectAsStateWithLifecycle()
+    val isPostComplete by viewModel.isPostComplete.collectAsStateWithLifecycle()
+
+    LaunchedEffect(isPostComplete) {
+        onHomeClick()
+    }
+
+    PickPersonalInfoScreen(
+        onHomeClick = {
+            viewModel.postSignup(birthYear = birthYearState, sex = sexState)
+        },
+        onPickNicknameClick = { onPickNicknameClick() },
+        onClickBirthYear = { viewModel.saveBirthYear(it) },
+        onClickSex = { viewModel.saveSex(it) },
+        birthYearState = birthYearState,
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PickPersonalInfoScreen(onHomeClick: () -> Unit, onPickNicknameClick: () -> Unit) {
-    var birthYear by remember { mutableStateOf<String?>(null) }
-    var sex by remember { mutableStateOf("") }
+fun PickPersonalInfoScreen(
+    onHomeClick: () -> Unit,
+    onPickNicknameClick: () -> Unit,
+    onClickBirthYear: (birthYear: Int) -> Unit,
+    onClickSex: (sex: String) -> Unit,
+    birthYearState: Int?,
+) {
+    var isAvailableButtonState by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     )
-    val yearList = (1950..2024).toList()
-    var value by remember { mutableStateOf(2000) }
+
+    LaunchedEffect(birthYearState) {
+        isAvailableButtonState = isAvailableNextButton(birthYearState)
+    }
 
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
@@ -57,14 +87,13 @@ fun PickPersonalInfoScreen(onHomeClick: () -> Unit, onPickNicknameClick: () -> U
                 verticalArrangement = Arrangement.Bottom
             ) {
                 YearPickerDialog(
-                    yearList = yearList,
-                    initialValue = value,
+                    yearList = (1950..2024).toList(),
+                    initialValue = 2000,
                     height = 380.dp,
                     onDismiss = { scope.launch { modalSheetState.hide() } },
                     onDoneClick = {
-                        birthYear = it.toString()
+                        onClickBirthYear(it)
                         scope.launch { modalSheetState.hide() }
-                        Log.w("onDoneClick", "it:${it}, birthYear:${birthYear}")
                     })
             }
         }
@@ -100,22 +129,28 @@ fun PickPersonalInfoScreen(onHomeClick: () -> Unit, onPickNicknameClick: () -> U
                         Spinner(
                             width = 152.dp,
                             height = 46.dp,
-                            value = birthYear,
+                            value = birthYearState,
                             onClick = { scope.launch { modalSheetState.show() } },
                             placeholder = "선택"
                         )
                     }
                 }
-                Column(modifier = Modifier.padding(top = 25.dp).padding(start = 5.dp)) { RadioButtonList(listOf("여성", "남성"), onButtonClick = { sex = it })
+                Column(modifier = Modifier.padding(top = 25.dp).padding(start = 5.dp)) {
+                    RadioButtonList(
+                        listOf(
+                            stringResource(com.hmoa.feature_authentication.R.string.female),
+                            stringResource(com.hmoa.feature_authentication.R.string.male)
+                        ), onButtonClick = { onClickSex(it) }
+                    )
                 }
             }
-            Button(isAvailableNextButton(birthYear), "시작하기", { onHomeClick() }, Modifier.fillMaxWidth().height(80.dp))
+            Button(isAvailableButtonState, "시작하기", { onHomeClick() }, Modifier.fillMaxWidth().height(80.dp))
         }
     }
 }
 
-fun isAvailableNextButton(birthYear:String?):Boolean{
-    if(birthYear != null){
+fun isAvailableNextButton(birthYear: Int?): Boolean {
+    if (birthYear != null) {
         return true
     }
     return false
@@ -125,6 +160,6 @@ fun isAvailableNextButton(birthYear:String?):Boolean{
 @Preview
 @Composable
 fun PickPersonalInfoScreenPreview() {
-    PickPersonalInfoScreen({}, {})
+    PickPersonalInfoScreen({}, {}, {}, {}, 2000)
 }
 

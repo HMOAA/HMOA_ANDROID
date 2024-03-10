@@ -93,7 +93,7 @@ fun MyBirthPage(
             Spinner(
                 width = 152.dp,
                 height = 46.dp,
-                value = "${selectedYear}",
+                value = selectedYear,
                 onClick = {
                     showDialog = true
                 },

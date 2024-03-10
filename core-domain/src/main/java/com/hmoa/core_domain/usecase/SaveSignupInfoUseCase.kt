@@ -11,12 +11,4 @@ class SaveSignupInfoUseCase @Inject constructor(private val signupRepository: Si
     fun saveNickname(value: String) {
         scope.launch { signupRepository.saveNickname(value) }
     }
-
-    fun saveSex(value: String) {
-        scope.launch { signupRepository.saveSex(value) }
-    }
-
-    fun saveAge(value: String) {
-        scope.launch { signupRepository.saveAge(value) }
-    }
 }

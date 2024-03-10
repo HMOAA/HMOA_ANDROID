@@ -12,8 +12,8 @@ import com.hmoa.core_datastore.CommunityComment.CommunityCommentDataStore
 import com.hmoa.core_datastore.CommunityComment.CommunityCommentDataStoreImpl
 import com.hmoa.core_datastore.Fcm.FcmDataStore
 import com.hmoa.core_datastore.Fcm.FcmDataStoreImpl
-import com.hmoa.core_datastore.Login.LoginDataStore
-import com.hmoa.core_datastore.Login.LoginDataStoreImpl
+import com.hmoa.core_datastore.Login.LoginRemoteDataStore
+import com.hmoa.core_datastore.Login.LoginRemoteDataStoreImpl
 import com.hmoa.core_datastore.Main.MainDataStore
 import com.hmoa.core_datastore.Main.MainDataStoreImpl
 import com.hmoa.core_datastore.Member.MemberDataStore
@@ -63,7 +63,7 @@ interface DatastoreModule {
 
     @Singleton
     @Binds
-    fun provideLoginDatastore(loginDataStoreImpl: LoginDataStoreImpl): LoginDataStore
+    fun provideLoginDatastore(loginDataStoreImpl: LoginRemoteDataStoreImpl): LoginRemoteDataStore
 
     @Singleton
     @Binds

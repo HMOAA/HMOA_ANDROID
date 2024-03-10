@@ -6,9 +6,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.usecase.PostSocialTokenUseCase
+import com.hmoa.core_domain.usecase.PostKakaoTokenUseCase
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
-import com.hmoa.core_domain.usecase.SaveSocialTokenUseCase
+import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -26,9 +26,9 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val application: Application,
-    private val saveSocialTokenUseCase: SaveSocialTokenUseCase,
-    private val postSocialTokenUseCase: PostSocialTokenUseCase,
-    private val saveAuthAndRememberedTokenUseCase: SaveAuthAndRememberedTokenUseCase
+    private val saveKakaoToken: SaveKakaoTokenUseCase,
+    private val postSocialToken: PostKakaoTokenUseCase,
+    private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
     private val context = application.applicationContext
     private val _isPostComplete = MutableStateFlow(false)
@@ -42,17 +42,17 @@ class LoginViewModel @Inject constructor(
     }
 
     fun saveKakoAccessToken(token: String) {
-        suspend { saveSocialTokenUseCase.saveKakaoAccessToken(token) }
+        suspend { saveKakaoToken(token) }
     }
 
     suspend fun postKakaoAccessToken(token: String) {
-        postSocialTokenUseCase.postKakaoAccessToken(token).asResult()
+        postSocialToken(token).asResult()
             .collectLatest {
                 when (it) {
                     is Result.Success -> {
                         val authToken = it.data.authToken
                         val rememberedToken = it.data.rememberedToken
-                        saveAuthAndRememberedTokenUseCase(authToken, rememberedToken)
+                        saveAuthAndRememberedToken(authToken, rememberedToken)
                         _isPostComplete.update { true }
                     }
 

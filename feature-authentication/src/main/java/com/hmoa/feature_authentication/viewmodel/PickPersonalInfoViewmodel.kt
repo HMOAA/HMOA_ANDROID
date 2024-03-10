@@ -3,7 +3,7 @@ package com.hmoa.feature_authentication.viewmodel
 import androidx.lifecycle.ViewModel
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.usecase.GetSignupInfoUseCase
+import com.hmoa.core_domain.usecase.GetNicknameUseCase
 import com.hmoa.core_domain.usecase.PostSignupInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PickPersonalInfoViewmodel @Inject constructor(
-    private val getSignupInfoUseCase: GetSignupInfoUseCase,
-    private val postSignupInfoUseCase: PostSignupInfoUseCase,
+    private val getNickname: GetNicknameUseCase,
+    private val postSignupInfo: PostSignupInfoUseCase,
 ) : ViewModel() {
     private val scope = CoroutineScope(Dispatchers.IO)
     private val _birthYearState = MutableStateFlow<Int?>(null)
@@ -30,7 +30,7 @@ class PickPersonalInfoViewmodel @Inject constructor(
     var isPostComplete = _isPostComplete.asStateFlow()
 
     private suspend fun getSavedNickname(): String? {
-        return getSignupInfoUseCase.getNickName()
+        return getNickname()
     }
 
     fun saveBirthYear(value: Int) {
@@ -48,7 +48,7 @@ class PickPersonalInfoViewmodel @Inject constructor(
             val sex = mapSexToBoolean(sex)
             val nickname = getSavedNickname()
             if (!isAvailableToSignup(nickname, age)) return@launch
-            postSignupInfoUseCase(age, sex, nickname = nickname!!).asResult().collectLatest { result ->
+            postSignupInfo(age, sex, nickname = nickname!!).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
                         _isPostComplete.update { true }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.*
@@ -47,19 +47,23 @@ class PickPersonalInfoViewmodel @Inject constructor(
             val age = mapBirthYearToAge(birthYear)
             val sex = mapSexToBoolean(sex)
             val nickname = getSavedNickname()
-            if (isNicknameNotNull(nickname) && isAvailableAge(age)) {
-                postSignupInfoUseCase(age, sex, nickname = nickname!!).asResult().map { result ->
-                    when (result) {
-                        is Result.Success -> {
-                            _isPostComplete.update { true }
-                        }
-
-                        is Result.Loading -> TODO("로딩화면")
-                        is Result.Error -> TODO()
+            if (!isAvailableToSignup(nickname, age)) return@launch
+            postSignupInfoUseCase(age, sex, nickname = nickname!!).asResult().collectLatest { result ->
+                when (result) {
+                    is Result.Success -> {
+                        _isPostComplete.update { true }
                     }
+
+                    is Result.Loading -> {}//TODO("로딩화면")
+                    is Result.Error -> {}//TODO()
                 }
             }
         }
+    }
+
+    fun isAvailableToSignup(nickname: String?, age: Int): Boolean {
+        if (isNicknameNotNull(nickname) && isAvailableAge(age)) return true
+        return false
     }
 
     private fun mapBirthYearToAge(birthYear: Int): Int {

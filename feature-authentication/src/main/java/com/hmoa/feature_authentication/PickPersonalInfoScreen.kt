@@ -44,7 +44,9 @@ internal fun PickPersonalInfoRoute(
     val isPostComplete by viewModel.isPostComplete.collectAsStateWithLifecycle()
 
     LaunchedEffect(isPostComplete) {
-        onHomeClick()
+        if (isPostComplete) {
+            onHomeClick()
+        }
     }
 
     PickPersonalInfoScreen(

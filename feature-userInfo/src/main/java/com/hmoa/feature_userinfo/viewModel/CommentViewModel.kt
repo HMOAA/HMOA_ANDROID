@@ -24,7 +24,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommentViewModel @Inject constructor(
-    private val repository : MemberRepository,
     private val commentUseCaseByPerfume : GetMyCommentByPerfumeUseCase,
     private val commentUseCaseByPost : GetMyCommentByPostUseCase
 ): ViewModel() {
@@ -54,6 +53,7 @@ class CommentViewModel @Inject constructor(
     //page 증가
     fun addPage(){
         _page.update{_page.value + 1}
+        updateComments(true)
     }
 
     //type 변환
@@ -61,21 +61,28 @@ class CommentViewModel @Inject constructor(
         if (_type.value != newType) {
             _type.update{newType}
         }
+        _page.update{0}
+        updateComments(false)
     }
 
     //comment list 업데이트
-    fun updateComments(){
+    private fun updateComments(isAdd : Boolean){
         viewModelScope.launch(Dispatchers.IO){
             if (type.value == "Perfume") {
                 commentUseCaseByPerfume(page.value)
             } else {
                 commentUseCaseByPost(page.value)
-            }.map{
-                _comments.update{it}
+            }.map{result ->
+                _comments.update{
+                    if (isAdd) {
+                        it + result
+                    } else {
+                        result
+                    }
+                }
             }
         }
     }
-
 }
 
 sealed interface CommentUiState{

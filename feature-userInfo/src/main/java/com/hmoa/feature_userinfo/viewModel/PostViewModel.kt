@@ -52,7 +52,7 @@ class PostViewModel @Inject constructor(
     //page 증가
     fun addPage(){
         _page.update{_page.value + 1}
-        updatePosts()
+        updatePosts(true)
     }
 
     //type 변환
@@ -60,14 +60,21 @@ class PostViewModel @Inject constructor(
         if (_type.value != newType) {
             _type.update{newType}
         }
-        updatePosts()
+        _page.update{0}
+        updatePosts(false)
     }
 
     //comment list 업데이트
-    private fun updatePosts(){
+    private fun updatePosts(isAdd : Boolean){
         viewModelScope.launch(Dispatchers.IO){
-            postUseCase(page.value).map{
-                _posts.update{it}
+            postUseCase(page.value).map{result ->
+                _posts.update{
+                    if (isAdd) {
+                        it + result
+                    } else {
+                        result
+                    }
+                }
             }
         }
     }

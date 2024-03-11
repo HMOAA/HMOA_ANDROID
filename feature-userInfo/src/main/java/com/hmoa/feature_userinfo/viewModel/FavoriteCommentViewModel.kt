@@ -24,7 +24,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteCommentViewModel @Inject constructor(
-    private val repository: MemberRepository,
     private val favoriteCommentsByCommunity : GetMyFavoriteCommentByPostUseCase,
     private val favoriteCommentsByPerfume : GetMyFavoriteCommentByPerfumeUseCase
 ) : ViewModel() {
@@ -54,7 +53,7 @@ class FavoriteCommentViewModel @Inject constructor(
     //page 증가
     fun addPage(){
         _page.update{_page.value + 1}
-        updateComments()
+        updateComments(true)
     }
 
     //type 변환
@@ -62,18 +61,25 @@ class FavoriteCommentViewModel @Inject constructor(
         if (_type.value != newType) {
             _type.update{newType}
         }
-        updateComments()
+        _page.update{0}
+        updateComments(false)
     }
 
     //comment list 업데이트
-    private fun updateComments(){
+    private fun updateComments(isAdd : Boolean){
         viewModelScope.launch(Dispatchers.IO){
             if (type.value == "Perfume") {
                 favoriteCommentsByPerfume(page.value)
             } else {
                 favoriteCommentsByCommunity(page.value)
-            }.map{
-                _comments.update{it}
+            }.map{result ->
+                _comments.update{
+                    if (isAdd) {
+                        it + result
+                    } else {
+                        result
+                    }
+                }
             }
         }
     }

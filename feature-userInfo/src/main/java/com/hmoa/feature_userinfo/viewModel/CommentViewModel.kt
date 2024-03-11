@@ -42,6 +42,11 @@ class CommentViewModel @Inject constructor(
     private val _comments = MutableStateFlow(emptyList<CommunityCommentDefaultResponseDto>())
     val comments get() = _comments.asStateFlow()
 
+    init {
+        //기본 perfume으로 데이터 init
+        updateComments(false)
+    }
+
     val uiState: StateFlow<CommentUiState> = combine(
         type,
         comments,

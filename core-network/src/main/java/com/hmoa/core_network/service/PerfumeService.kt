@@ -13,14 +13,12 @@ interface PerfumeService {
     @GET("/perfume/{perfumeId}/2")
     suspend fun getPerfumeBottomDetail(@Path("perfumeId") perfumeId: String): PerfumeDetailSecondResponseDto
 
-    @FormUrlEncoded
     @POST("/perfume/{perfumeId}/age")
     suspend fun postPerfumeAge(@Body dto: AgeRequestDto, @Path("perfumeId") perfumeId: String): PerfumeAgeResponseDto
 
     @DELETE("/perfume/{perfumeId}/age")
     suspend fun deletePerfumeAge(@Path("perfumeId") perfumeId: String): PerfumeAgeResponseDto
 
-    @FormUrlEncoded
     @POST("/perfume/{perfumeId}/gender")
     suspend fun postPerfumeGender(
         @Body dto: PerfumeGenderRequestDto,

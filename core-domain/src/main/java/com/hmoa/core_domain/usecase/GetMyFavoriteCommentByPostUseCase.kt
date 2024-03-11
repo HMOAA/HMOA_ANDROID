@@ -14,7 +14,7 @@ class GetMyFavoriteCommentByPostUseCase @Inject constructor(
     private val memberRepository : MemberRepository
 ){
     operator fun invoke(page : Int) : Flow<List<CommunityCommentDefaultResponseDto>> = flow{
-        val result = memberRepository.getHearts(page)
+        val result = memberRepository.getCommunityFavoriteComments(page)
             .map{ comment ->
                 /// 시간 계산 후 몇일 전인지 변환
                 /** API 버전에 따라 24~25는 DateTimeFormatter를 지원하지 않음

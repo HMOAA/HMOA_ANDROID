@@ -17,12 +17,11 @@ class GetMyCommentByPerfumeUseCase @Inject constructor(
     operator fun invoke(page : Int) : Flow<List<CommunityCommentDefaultResponseDto>> = flow {
         val result = memberRepository.getPerfumeComments(page)
             .map{comment ->
-
                 // 시간 계산 후 몇일 전인지 변환
                 /** API 버전에 따라 24~25는 DateTimeFormatter를 지원하지 않음
                  * 그에 따라 SimpleDateFormat 사용 */
                 val dateFormatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-                val time = dateFormatter.parse(comment.createdAt) ?: Date(0L)
+                val time = dateFormatter.parse(comment.createAt) ?: Date(0L)
                 val today = Calendar.getInstance().timeInMillis
 
                 val dateDiff = (today - time.time) / (24 * 60 * 60 * 1000)

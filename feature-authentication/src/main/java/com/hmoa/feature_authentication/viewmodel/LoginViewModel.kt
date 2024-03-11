@@ -4,33 +4,70 @@ import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.hmoa.core_domain.usecase.SaveSocialTokenUseCase
+import com.hmoa.core_common.Result
+import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.usecase.PostKakaoTokenUseCase
+import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
+import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val application: Application,
-    private val saveSocialTokenUseCase: SaveSocialTokenUseCase
+    private val saveKakaoToken: SaveKakaoTokenUseCase,
+    private val postSocialToken: PostKakaoTokenUseCase,
+    private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
     private val context = application.applicationContext
+    private val _isPostComplete = MutableStateFlow(false)
+    var isPostComplete = _isPostComplete.asStateFlow()
+    val scope = CoroutineScope(Dispatchers.IO)
 
-    fun saveKakoAccessToken(token: String) {
-        suspend { saveSocialTokenUseCase.saveKakaoAccessToken(token) }
+    suspend fun onKakaoLoginSuccess(token: String) {
+        Log.i(TAG, "카카오계정으로 로그인 성공 ${token}")
+        saveKakoAccessToken(token)
+        postKakaoAccessToken(token)
     }
 
-    fun handleKakaoLogin(onLoginSuccess: () -> Unit) {
+    fun saveKakoAccessToken(token: String) {
+        suspend { saveKakaoToken(token) }
+    }
+
+    suspend fun postKakaoAccessToken(token: String) {
+        postSocialToken(token).asResult()
+            .collectLatest {
+                when (it) {
+                    is Result.Success -> {
+                        val authToken = it.data.authToken
+                        val rememberedToken = it.data.rememberedToken
+                        saveAuthAndRememberedToken(authToken, rememberedToken)
+                        _isPostComplete.update { true }
+                    }
+
+                    is Result.Loading -> {}//TODO("로딩화면")
+                    is Result.Error -> {}//TODO()
+                }
+            }
+    }
+
+    fun handleKakaoLogin() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
-                Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                saveKakoAccessToken(token.accessToken)
-                onLoginSuccess()
+                scope.launch { onKakaoLoginSuccess(token.accessToken) }
             }
         }
 
@@ -49,9 +86,7 @@ class LoginViewModel @Inject constructor(
                     // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
                     UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
                 } else if (token != null) {
-                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
-                    saveKakoAccessToken(token.accessToken)
-                    onLoginSuccess()
+                    scope.launch { onKakaoLoginSuccess(token.accessToken) }
                 }
             }
         } else {

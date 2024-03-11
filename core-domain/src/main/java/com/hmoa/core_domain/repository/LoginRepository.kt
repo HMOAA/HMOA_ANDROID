@@ -12,6 +12,10 @@ interface LoginRepository {
     suspend fun getKakaoAccessToken(): String?
     suspend fun postOAuth(accessToken: OauthLoginRequestDto, provider: Provider): MemberLoginResponseDto
     suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto
+    suspend fun saveAuthToken(token: String)
+    suspend fun saveRememberedToken(token: String)
     suspend fun saveKakaoAccessToken(token: String)
+    suspend fun deleteAuthToken()
+    suspend fun deleteRememberedToken()
     suspend fun deleteKakaoAccessToken()
 }

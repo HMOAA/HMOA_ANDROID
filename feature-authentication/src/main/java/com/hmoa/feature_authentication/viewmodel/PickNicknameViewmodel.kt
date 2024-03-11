@@ -11,19 +11,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PickNicknameViewmodel @Inject constructor(
-    private val checkNicknameDuplicateUseCase: CheckNicknameDuplicationUseCase,
-    private val saveSignupInfoUseCase: SaveSignupInfoUseCase,
+    private val checkNicknameDuplicate: CheckNicknameDuplicationUseCase,
+    private val saveSignupInfo: SaveSignupInfoUseCase,
 ) : ViewModel() {
 
     private val _isExistedNicknameState = MutableStateFlow(PickNicknameUiState.PickNickname(isExistedNickname = true))
     val isExistedNicknameState = _isExistedNicknameState.asStateFlow()
 
     fun saveNickname(nickname: String) {
-        saveSignupInfoUseCase.saveNickname(nickname)
+        saveSignupInfo(nickname)
     }
 
     suspend fun onNicknameChanged(nickname: String?) {
-        val result = checkNicknameDuplicateUseCase.invoke(nickname)
+        val result = checkNicknameDuplicate(nickname)
         _isExistedNicknameState.update { PickNicknameUiState.PickNickname(result) }
     }
 }

@@ -5,7 +5,7 @@ import com.hmoa.core_model.request.NickNameRequestDto
 import javax.inject.Inject
 
 class CheckNicknameDuplicationUseCase @Inject constructor(private val memberRepository: MemberRepository) {
-    suspend fun invoke(nickname: String?): Boolean {
+    suspend operator fun invoke(nickname: String?): Boolean {
         return memberRepository.postExistsNickname(NickNameRequestDto(nickname))
     }
 }

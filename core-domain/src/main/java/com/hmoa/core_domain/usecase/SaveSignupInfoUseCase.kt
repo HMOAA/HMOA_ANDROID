@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class SaveSignupInfoUseCase @Inject constructor(private val signupRepository: SignupRepository) {
     private val scope = CoroutineScope(Dispatchers.IO)
-    fun saveNickname(value: String) {
+    operator fun invoke(value: String) {
         scope.launch { signupRepository.saveNickname(value) }
     }
 }

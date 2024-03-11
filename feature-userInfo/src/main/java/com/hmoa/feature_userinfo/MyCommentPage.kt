@@ -80,7 +80,7 @@ fun MyCommentPage(
                 /** Loading 화면 띄우기 */
             }
             else -> {
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ){

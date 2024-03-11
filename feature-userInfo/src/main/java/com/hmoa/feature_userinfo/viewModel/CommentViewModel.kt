@@ -10,11 +10,15 @@ import com.hmoa.core_domain.usecase.GetMyCommentByPerfumeUseCase
 import com.hmoa.core_domain.usecase.GetMyCommentByPostUseCase
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,47 +29,49 @@ class CommentViewModel @Inject constructor(
     private val commentUseCaseByPost : GetMyCommentByPostUseCase
 ): ViewModel() {
 
-    //댓글 종류 (perfume / post)
-    private var _commentType = MutableStateFlow("Perfume")
-    val commentType get() = _commentType
+    //선택된 type
+    private val _type = MutableStateFlow("Perfume")
+    val type get() = _type.asStateFlow()
 
-    private val _comments = MutableStateFlow<List<CommunityCommentDefaultResponseDto>>(emptyList())
-    val comments get() = _comments
+    //현재 page
+    private val _page = MutableStateFlow(0)
+    val page get() = _page.asStateFlow()
 
-    //페이징
-    private var page by mutableIntStateOf(0)
+    //comment 리스트
+    private val _comments = MutableStateFlow(emptyList<CommunityCommentDefaultResponseDto>())
+    val comments get() = _comments.asStateFlow()
 
-    val uiState : StateFlow<CommentUiState> = combine(
-        commentType,
+    val uiState: StateFlow<CommentUiState> = combine(
+        type,
         comments,
-        CommentUiState::Comments,
+        CommentUiState::Comments
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = CommentUiState.Loading
     )
 
-    //page 더하기
+    //page 증가
     fun addPage(){
-        page += 1
+        _page.update{_page.value + 1}
     }
 
-    //type update
-    fun updateType(newType : String) {
-        commentType.value = newType
-        updateComments()
+    //type 변환
+    fun changeType(newType : String){
+        if (_type.value != newType) {
+            _type.update{newType}
+        }
     }
 
-    private fun updateComments(){
-        viewModelScope.launch{
-            val result = if (commentType.value == "Perfume") {
-                commentUseCaseByPerfume.invoke(page)
+    //comment list 업데이트
+    fun updateComments(){
+        viewModelScope.launch(Dispatchers.IO){
+            if (type.value == "Perfume") {
+                commentUseCaseByPerfume(page.value)
             } else {
-                commentUseCaseByPost.invoke(page)
-            }
-
-            result.collect{
-                _comments.value = it
+                commentUseCaseByPost(page.value)
+            }.map{
+                _comments.update{it}
             }
         }
     }

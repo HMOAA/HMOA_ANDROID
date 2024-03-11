@@ -16,19 +16,19 @@ interface MemberService {
     suspend fun updateAge(@Body request: AgeRequestDto): DataResponseDto<Any>
 
     @GET("/member/communities")
-    suspend fun getCommunities(@Field("page") page: Int): List<CommunityByCategoryResponseDto>
+    suspend fun getCommunities(@Query("page") page: Int): List<CommunityByCategoryResponseDto>
 
     @GET("/member/communityComments")
-    suspend fun getCommunityComments(@Field("page") page: Int): List<CommunityCommentDefaultResponseDto>
+    suspend fun getCommunityComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
+
+    @GET("/member/communityHearts")
+    suspend fun getCommunityFavoriteComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
 
     @DELETE("/member/delete")
     suspend fun deleteMember(): DataResponseDto<Any>
 
     @POST("/member/existsnickname/")
     suspend fun postExistsNickname(@Body request: NickNameRequestDto): ApiResponse<Boolean>
-
-    @GET("/member/hearts")
-    suspend fun getHearts(@Field("page") page: Int): List<CommunityCommentDefaultResponseDto>
 
     @PATCH("/member/join")
     suspend fun updateJoin(@Body request: JoinUpdateRequestDto): MemberResponseDto
@@ -37,7 +37,10 @@ interface MemberService {
     suspend fun updateNickname(@Body request: NickNameRequestDto): DataResponseDto<Any>
 
     @GET("/member/perfumeComments")
-    suspend fun getPerfumeComments(@Field("page") page: Int): List<PerfumeCommentResponseDto>
+    suspend fun getPerfumeComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
+
+    @GET("/member/perfumeHearts")
+    suspend fun getPerfumeFavoriteComments(@Query("page") page : Int) : List<CommunityCommentDefaultResponseDto>
 
     @FormUrlEncoded
     @POST("/member/profile-photo")

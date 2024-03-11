@@ -42,10 +42,6 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getHearts(page: Int): List<CommunityCommentDefaultResponseDto> {
-        return memberService.getHearts(page)
-    }
-
     override suspend fun updateJoin(request: JoinUpdateRequestDto): MemberResponseDto {
         return memberService.updateJoin(request)
     }
@@ -54,7 +50,15 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.updateNickname(request)
     }
 
-    override suspend fun getPerfumeComments(page: Int): List<PerfumeCommentResponseDto> {
+    override suspend fun getCommunityFavoriteComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+        return memberService.getCommunityFavoriteComments(page)
+    }
+
+    override suspend fun getPerfumeFavoriteComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+        return memberService.getPerfumeFavoriteComments(page)
+    }
+
+    override suspend fun getPerfumeComments(page: Int): List<CommunityCommentDefaultResponseDto> {
         return memberService.getPerfumeComments(page)
     }
 

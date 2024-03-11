@@ -2,6 +2,8 @@ package com.example.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.Result
+import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyPostUseCase
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
@@ -67,12 +69,22 @@ class PostViewModel @Inject constructor(
     //comment list 업데이트
     private fun updatePosts(isAdd : Boolean){
         viewModelScope.launch(Dispatchers.IO){
-            postUseCase(page.value).map{result ->
-                _posts.update{
-                    if (isAdd) {
-                        it + result
-                    } else {
-                        result
+            postUseCase(page.value).asResult().map{result ->
+                when(result) {
+                    is Result.Loading -> {
+
+                    }
+                    is Result.Success -> {
+                        _posts.update{
+                            if (isAdd) {
+                                it + result.data
+                            } else {
+                                result.data
+                            }
+                        }
+                    }
+                    is Result.Error -> {
+
                     }
                 }
             }

@@ -45,7 +45,8 @@ internal fun MyPageRoute(
     onNavEditProfile : () -> Unit,
     onNavMyActivity : () -> Unit,
     onNavManageMyInfo : () -> Unit,
-    onNavLogin : () -> Unit
+    onNavLogin : () -> Unit,
+    viewModel : UserViewModel = hiltViewModel()
 ) {
 
     //로그인 분기 처리 (토큰 확인)

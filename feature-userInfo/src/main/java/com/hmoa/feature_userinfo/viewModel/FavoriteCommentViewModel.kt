@@ -2,6 +2,8 @@ package com.example.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.Result
+import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyFavoriteCommentByPerfumeUseCase
 import com.hmoa.core_domain.usecase.GetMyFavoriteCommentByPostUseCase
@@ -72,12 +74,22 @@ class FavoriteCommentViewModel @Inject constructor(
                 favoriteCommentsByPerfume(page.value)
             } else {
                 favoriteCommentsByCommunity(page.value)
-            }.map{result ->
-                _comments.update{
-                    if (isAdd) {
-                        it + result
-                    } else {
-                        result
+            }.asResult().map{result ->
+                when (result) {
+                    is Result.Success -> {
+                        _comments.update{
+                            if (isAdd) {
+                                it + result.data
+                            } else {
+                                result.data
+                            }
+                        }
+                    }
+                    is Result.Loading -> {
+
+                    }
+                    is Result.Error -> {
+
                     }
                 }
             }

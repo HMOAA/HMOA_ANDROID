@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.Result
+import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyCommentByPerfumeUseCase
 import com.hmoa.core_domain.usecase.GetMyCommentByPostUseCase
@@ -72,12 +74,22 @@ class CommentViewModel @Inject constructor(
                 commentUseCaseByPerfume(page.value)
             } else {
                 commentUseCaseByPost(page.value)
-            }.map{result ->
-                _comments.update{
-                    if (isAdd) {
-                        it + result
-                    } else {
-                        result
+            }.asResult().map{ result ->
+                when (result) {
+                    is Result.Success -> {
+                        _comments.update{
+                            if (isAdd) {
+                                it + result.data
+                            } else {
+                                result.data
+                            }
+                        }
+                    }
+                    is Result.Loading -> {
+
+                    }
+                    is Result.Error -> {
+
                     }
                 }
             }

@@ -31,8 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature_userinfo.viewModel.UserViewModel
 import com.hmoa.component.TopBar
+import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.hmoa.feature_userinfo.R
 
 /** 중첩 navigation으로 user info 모듈로 들어올 때는 MyPage를 start destination으로 잡고 나머지를 이동할 수 있도록 합시다
@@ -49,17 +51,22 @@ internal fun MyPageRoute(
     viewModel : UserViewModel = hiltViewModel()
 ) {
 
-    //로그인 분기 처리 (토큰 확인)
-    MyPage(
-        onNavEditProfile = onNavEditProfile,
-        onNavMyActivity = onNavMyActivity,
-        onNavManageMyInfo = onNavManageMyInfo,
-        onNavLogin = onNavLogin
-    )
-//    //로그인 안 되어 있으면
-//    NoAuthMyPage (
-//        onNavLogin = onNavLogin
-//    )
+    val isLogin = viewModel.isLogin.collectAsStateWithLifecycle()
+
+    if (isLogin.value) {
+        //로그인 분기 처리 (토큰 확인)
+        MyPage(
+            onNavEditProfile = onNavEditProfile,
+            onNavMyActivity = onNavMyActivity,
+            onNavManageMyInfo = onNavManageMyInfo,
+            onNavLogin = onNavLogin
+        )
+    } else {
+        //로그인 안 되어 있으면
+        NoAuthMyPage (
+            onNavLogin = onNavLogin
+        )
+    }
 }
 
 //인증이 되어 있는 My Page
@@ -70,9 +77,6 @@ fun MyPage(
     onNavManageMyInfo : () -> Unit,
     onNavLogin : () -> Unit
 ){
-
-    var test by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

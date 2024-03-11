@@ -23,7 +23,6 @@ interface CommunityCommentService {
         @Field("page") page: String
     ): CommunityCommentAllResponseDto
 
-    @FormUrlEncoded
     @POST("/community/comment/{commentId}/save")
     suspend fun postCommunityComment(
         @Path(value = "commentId")

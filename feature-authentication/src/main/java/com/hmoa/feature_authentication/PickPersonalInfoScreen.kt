@@ -44,12 +44,16 @@ internal fun PickPersonalInfoRoute(
     val isPostComplete by viewModel.isPostComplete.collectAsStateWithLifecycle()
 
     LaunchedEffect(isPostComplete) {
-        onHomeClick()
+        if (isPostComplete) {
+            onHomeClick()
+        }
     }
 
     PickPersonalInfoScreen(
         onHomeClick = {
-            viewModel.postSignup(birthYear = birthYearState, sex = sexState)
+            scope.launch {
+                viewModel.postSignup(birthYear = birthYearState, sex = sexState)
+            }
         },
         onPickNicknameClick = { onPickNicknameClick() },
         onClickBirthYear = { viewModel.saveBirthYear(it) },

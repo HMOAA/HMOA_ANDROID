@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun PostListItem(
     onPostClick : () -> Unit,
-    onMenuClick : () -> Unit,
     postType : String,
     postTitle : String,
 ){
@@ -64,26 +63,6 @@ fun PostListItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
-
-        Column(
-            modifier = Modifier.fillMaxHeight()
-                .width(23.dp)
-                .padding(bottom = 7.dp, end = 7.dp),
-            verticalArrangement = Arrangement.Bottom
-        ){
-            IconButton(
-                modifier = Modifier.size(16.dp),
-                onClick = onMenuClick
-            ) {
-                /** icon 추가되는 대로 resoruce 추가해서 변경하기 */
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "Menu Button",
-                    tint = Color(0xFFBBBBBB)
-                )
-            }
-        }
     }
 }
 
@@ -92,7 +71,6 @@ fun PostListItem(
 fun TestPostListItem(){
     PostListItem (
         onPostClick = {},
-        onMenuClick = {},
         postType = "추천해주세요",
         postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?"
     )

@@ -99,6 +99,7 @@ fun MyFavoriteCommentPage(
                                     comment = comment.content,
                                     isFirst = false,
                                     viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
+                                    onNavCommunity = onNavCommunity
                                 )
                             }
                         }

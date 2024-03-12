@@ -1,13 +1,9 @@
 package com.hmoa.feature_userinfo.viewModel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyCommentByPerfumeUseCase
 import com.hmoa.core_domain.usecase.GetMyCommentByPostUseCase
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto

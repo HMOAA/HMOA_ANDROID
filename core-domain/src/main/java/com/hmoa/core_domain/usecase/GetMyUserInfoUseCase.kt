@@ -1,7 +1,12 @@
 package com.hmoa.core_domain.usecase
 
 import com.hmoa.core_domain.repository.MemberRepository
+import com.hmoa.core_model.data.UserInfo
 import kotlinx.coroutines.flow.flow
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class GetMyUserInfoUseCase @Inject constructor(
@@ -9,7 +14,21 @@ class GetMyUserInfoUseCase @Inject constructor(
 ){
 
     operator fun invoke() = flow{
-        emit(memberRepository.getMember())
+        val result = memberRepository.getMember()
+
+        val todayYear = Calendar.getInstance().weekYear
+
+        val birth = todayYear - result.age + 1
+        val gender = if (result.sex) "male" else "female"
+
+        val user = UserInfo(
+            birth = birth,
+            gender = gender,
+            profile = result.memberImageUrl,
+            nickname = result.nickname,
+            provider = result.provider
+        )
+        emit(user)
     }
 
 }

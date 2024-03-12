@@ -1,5 +1,6 @@
 package com.example.feature_userinfo.viewModel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -53,8 +54,20 @@ class UserViewModel @Inject constructor(
     val gender : StateFlow<String> get() = _gender
 
     //birth
-    private val _birth = MutableStateFlow(2000)
+    private val _birth = MutableStateFlow(0)
     val birth : StateFlow<Int> get() = _birth
+
+    //provider
+    private val _provider = MutableStateFlow("")
+    val provider : StateFlow<String> get() = _provider
+
+    //버튼 활성화
+    private val _isEnabled = MutableStateFlow(false)
+    val isEnabled get() = _isEnabled
+
+    //중복 확인
+    private val _isDuplicated = MutableStateFlow(false)
+    val isDuplicated get() = _isDuplicated
 
     init {
         viewModelScope.launch{
@@ -77,6 +90,7 @@ class UserViewModel @Inject constructor(
                             _gender.update {result.data.sex}
                             _profile.update {result.data.memberImageUrl}
                             _nickname.update {result.data.nickname}
+                            _provider.update {result.data.provider}
                         }
                         is Result.Loading -> {
 
@@ -95,12 +109,30 @@ class UserViewModel @Inject constructor(
         profile,
         gender,
         birth,
+        provider,
         UserInfoUiState::UserInfo
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = UserInfoUiState.Loading
     )
+
+    //nickname 중복 확인 여부
+    fun checkDuplicate(){
+        viewModelScope.launch(Dispatchers.IO){
+            val request = NickNameRequestDto(nickname.value)
+            val result = repository.postExistsNickname(request)
+            if (result) {
+                //중복 검사 true면 괜찮다는 말이겠지..
+                _isDuplicated.update {true}
+                _isEnabled.update {true}
+            } else {
+                //중복 검사 false면 불가능이라는 뜻이겠지?
+                _isDuplicated.update {false}
+                _isEnabled.update {false}
+            }
+        }
+    }
 
     //nickname update
     fun updateNickname(newNickname : String) {
@@ -113,11 +145,15 @@ class UserViewModel @Inject constructor(
             val request = NickNameRequestDto(nickname = nickname.value)
             repository.updateNickname(request)
         }
+        resetEnabled()
     }
 
     //gender update
     fun updateGender(newGender : String) {
-        _gender.update{newGender}
+        if (newGender != _gender.value) {
+            _gender.update{newGender}
+            _isEnabled.update{true}
+        }
     }
 
     //gender update
@@ -127,11 +163,12 @@ class UserViewModel @Inject constructor(
             val request = SexRequestDto(sex)
             repository.updateSex(request)
         }
+        resetEnabled()
     }
 
     //profile update
-    fun updateProfile(newProfile : String) {
-        _profile.update { newProfile }
+    fun updateProfile(newProfile : Uri) {
+        _profile.update { newProfile.toString() }
     }
 
     //profile update
@@ -139,6 +176,7 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO){
             repository.postProfilePhoto(profile.value)
         }
+        resetEnabled()
     }
 
     //age update
@@ -154,6 +192,13 @@ class UserViewModel @Inject constructor(
             val request = AgeRequestDto(age)
             repository.updateAge(request)
         }
+        resetEnabled()
+    }
+
+    //버튼 활성화 여부 초기화
+    private fun resetEnabled() {
+        _isEnabled.update{false}
+        _isDuplicated.update{false}
     }
 }
 
@@ -164,8 +209,7 @@ sealed interface UserInfoUiState {
         val nickname : String,
         val profile : String,
         val gender : String,
-        val birth : Int
+        val birth : Int,
+        val provider : String
     ) : UserInfoUiState
-
-    data object Empty : UserInfoUiState
 }

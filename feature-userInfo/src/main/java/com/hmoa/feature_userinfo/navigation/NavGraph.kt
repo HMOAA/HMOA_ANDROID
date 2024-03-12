@@ -73,7 +73,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = Screens.EditProfileRoute.name) {
-            EditProfilePage(
+            EditProfileRoute(
                 onNavBack = onNavBack
             )
         }
@@ -111,12 +111,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = Screens.MyBirthRoute.name) {
-            MyBirthPage(
-                onNavBack = onNavBack
-            )
-        }
-        composable(route = Screens.MyGenderRoute.name) {
-            MyBirthPage(
+            MyBirthRoute(
                 onNavBack = onNavBack
             )
         }

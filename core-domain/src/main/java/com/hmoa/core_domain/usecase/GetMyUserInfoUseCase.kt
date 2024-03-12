@@ -25,7 +25,8 @@ class GetMyUserInfoUseCase @Inject constructor(
             birth = birth,
             gender = gender,
             profile = result.memberImageUrl,
-            nickname = result.nickname
+            nickname = result.nickname,
+            provider = result.provider
         )
         emit(user)
     }

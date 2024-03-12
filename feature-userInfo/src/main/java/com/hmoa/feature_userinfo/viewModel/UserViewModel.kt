@@ -86,9 +86,9 @@ class UserViewModel @Inject constructor(
                 .map{ result ->
                     when(result) {
                         is Result.Success -> {
-                            _birth.update {result.data.age}
-                            _gender.update {result.data.sex}
-                            _profile.update {result.data.memberImageUrl}
+                            _birth.update {result.data.birth}
+                            _gender.update {result.data.gender}
+                            _profile.update {result.data.profile}
                             _nickname.update {result.data.nickname}
                             _provider.update {result.data.provider}
                         }

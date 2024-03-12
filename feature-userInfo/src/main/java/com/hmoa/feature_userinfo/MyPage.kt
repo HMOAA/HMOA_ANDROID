@@ -72,6 +72,9 @@ internal fun MyPageRoute(
 //인증이 되어 있는 My Page
 @Composable
 fun MyPage(
+    profile : String,
+    nickname : String,
+    provider : String,
     onNavEditProfile : () -> Unit,
     onNavMyActivity : () -> Unit,
     onNavManageMyInfo : () -> Unit,

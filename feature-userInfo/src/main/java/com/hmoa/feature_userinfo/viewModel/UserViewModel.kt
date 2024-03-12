@@ -8,6 +8,9 @@ import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetAuthAndRememberedTokenUseCase
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_domain.usecase.GetNicknameUseCase
+import com.hmoa.core_model.request.AgeRequestDto
+import com.hmoa.core_model.request.NickNameRequestDto
+import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +25,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -97,6 +101,60 @@ class UserViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = UserInfoUiState.Loading
     )
+
+    //nickname update
+    fun updateNickname(newNickname : String) {
+        _nickname.update{newNickname}
+    }
+
+    //nickname update
+    fun saveNickname(){
+        viewModelScope.launch(Dispatchers.IO){
+            val request = NickNameRequestDto(nickname = nickname.value)
+            repository.updateNickname(request)
+        }
+    }
+
+    //gender update
+    fun updateGender(newGender : String) {
+        _gender.update{newGender}
+    }
+
+    //gender update
+    fun saveGender(){
+        viewModelScope.launch(Dispatchers.IO){
+            val sex = if (gender.value == "male") true else false
+            val request = SexRequestDto(sex)
+            repository.updateSex(request)
+        }
+    }
+
+    //profile update
+    fun updateProfile(newProfile : String) {
+        _profile.update { newProfile }
+    }
+
+    //profile update
+    fun saveProfile() {
+        viewModelScope.launch(Dispatchers.IO){
+            repository.postProfilePhoto(profile.value)
+        }
+    }
+
+    //age update
+    fun updateBirth(newBirth : Int) {
+        _birth.update {newBirth}
+    }
+
+    //age update
+    fun saveBirth(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val today = Calendar.getInstance().weekYear
+            val age = today - birth.value + 1
+            val request = AgeRequestDto(age)
+            repository.updateAge(request)
+        }
+    }
 }
 
 sealed interface UserInfoUiState {

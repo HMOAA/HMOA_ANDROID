@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.component.TopBar
-import com.hmoa.core_designsystem.component.TypeButton
+import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
@@ -41,7 +41,7 @@ fun PerfumeScreen() {
         )
         Column(modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2)) { }
         Column(modifier = Modifier.padding(16.dp)) {
-            TypeButton(
+            TypeBadge(
                 roundedCorner = 20.dp,
                 type = "2310",
                 fontColor = Color.Black,
@@ -98,7 +98,7 @@ fun PerfumeScreen() {
                 style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
                 modifier = Modifier.padding(top = 16.dp)
             )
-            Row(verticalAlignment = Alignment.Bottom){
+            Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     "댓글",
                     style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),

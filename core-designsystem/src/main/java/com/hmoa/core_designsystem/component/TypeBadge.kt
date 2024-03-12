@@ -20,7 +20,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 
 //여기 Component가 자세히 나와 있지 않아서 일단 감으로 합니다
 @Composable
-fun TypeButton(
+fun TypeBadge(
     roundedCorner: Dp,
     type: String,
     fontSize: TextUnit,
@@ -58,7 +58,7 @@ fun TypeButton(
 @Preview(showBackground = true)
 @Composable
 fun TestTypeButton() {
-    TypeButton(
+    TypeBadge(
         roundedCorner = 20.dp,
         type = "추천",
         fontSize = 14.sp,

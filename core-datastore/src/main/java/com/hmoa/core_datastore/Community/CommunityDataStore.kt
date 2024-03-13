@@ -17,11 +17,13 @@ interface CommunityDataStore {
     ): CommunityDefaultResponseDto
 
     suspend fun deleteCommunity(communityId: Int): DataResponseDto<Nothing>
-    suspend fun getCommunityByCategory(category: Category, page: String): CommunityByCategoryResponseDto
+    suspend fun putCommunityLike(communityId : Int) : DataResponseDto<Nothing>
+    suspend fun deleteCommunityLike(communityId: Int) : DataResponseDto<Nothing>
+    suspend fun getCommunityByCategory(category: String, page: Int): List<CommunityByCategoryResponseDto>
     suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto>
     suspend fun postCommunitySave(
         images: Array<File>,
-        category: Category,
+        category: String,
         title: String,
         content: String
     ): CommunityDefaultResponseDto

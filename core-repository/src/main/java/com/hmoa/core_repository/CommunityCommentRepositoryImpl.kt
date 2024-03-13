@@ -20,14 +20,25 @@ class CommunityCommentRepositoryImpl @Inject constructor(private val communityCo
         return communityCommentDataStore.deleteCommunityComment(commentId)
     }
 
-    override suspend fun getCommunityComments(commentId: Int, page: String): CommunityCommentAllResponseDto {
-        return communityCommentDataStore.getCommunityComments(commentId, page)
-    }
-
-    override suspend fun postCommunityComment(
+    override suspend fun putCommunityCommentLiked(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
     ): CommunityCommentDefaultResponseDto {
-        return communityCommentDataStore.postCommunityComment(commentId, dto)
+        return communityCommentDataStore.putCommunityCommentLiked(commentId, dto)
+    }
+
+    override suspend fun deleteCommunityCommentLiked(commentId: Int): DataResponseDto<Any> {
+        return communityCommentDataStore.deleteCommunityCommentLiked(commentId)
+    }
+
+    override suspend fun getCommunityComments(communityId: Int, page: String): CommunityCommentAllResponseDto {
+        return communityCommentDataStore.getCommunityComments(communityId, page)
+    }
+
+    override suspend fun postCommunityComment(
+        communityId: Int,
+        dto: CommunityCommentDefaultRequestDto
+    ): CommunityCommentDefaultResponseDto {
+        return communityCommentDataStore.postCommunityComment(communityId, dto)
     }
 }

@@ -43,7 +43,7 @@ interface CommunityService {
     @POST("/community/save")
     suspend fun postCommunitySave(
         @Field("images") images: Array<File>,
-        @Field("category") category: Category,
+        @Field("category") category: String,
         @Field("title") title: String,
         @Field("content") content: String
     ): CommunityDefaultResponseDto

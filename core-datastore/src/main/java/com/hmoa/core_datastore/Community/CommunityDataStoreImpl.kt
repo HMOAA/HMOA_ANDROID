@@ -28,7 +28,18 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         return communityService.deleteCommunity(communityId)
     }
 
-    override suspend fun getCommunityByCategory(category: Category, page: String): CommunityByCategoryResponseDto {
+    override suspend fun putCommunityLike(communityId: Int): DataResponseDto<Nothing> {
+        return communityService.putCommunityLike(communityId)
+    }
+
+    override suspend fun deleteCommunityLike(communityId: Int): DataResponseDto<Nothing> {
+        return communityService.deleteCommunity(communityId)
+    }
+
+    override suspend fun getCommunityByCategory(
+        category: String,
+        page: Int
+    ): List<CommunityByCategoryResponseDto> {
         return communityService.getCommunityByCategory(category, page)
     }
 
@@ -38,7 +49,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
 
     override suspend fun postCommunitySave(
         images: Array<File>,
-        category: Category,
+        category: String,
         title: String,
         content: String
     ): CommunityDefaultResponseDto {

@@ -9,24 +9,35 @@ import retrofit2.http.*
 interface CommunityCommentService {
     @PUT("/community/comment/{commentId}")
     suspend fun putCommunityComment(
-        @Path(value = "commentId")
-        commentId: Int,
+        @Path(value = "commentId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
     ): CommunityCommentDefaultResponseDto
 
     @DELETE("/community/comment/{commentId}")
-    suspend fun deleteCommunityComment(@Path(value = "commentId") commentId: Int): DataResponseDto<Any>
+    suspend fun deleteCommunityComment(
+        @Path(value = "commentId") commentId: Int
+    ): DataResponseDto<Any>
 
-    @GET("/community/comment/{commentId}/findAll")
-    suspend fun getCommunityComments(
+    @PUT("/community/comment/{commentId}/like")
+    suspend fun putCommunityCommentLiked(
         @Path(value = "commentId") commentId: Int,
-        @Field("page") page: String
+        @Body dto: CommunityCommentDefaultRequestDto
+    ): DataResponseDto<Any>
+
+    @DELETE("/community/comment/{commentId}/like")
+    suspend fun deleteCommunityCommentLiked(
+        @Path(value = "commentId") commentId: Int
+    ): DataResponseDto<Any>
+
+    @GET("/community/comment/{communityId}/findAll")
+    suspend fun getCommunityComments(
+        @Path(value = "communityId") communityId: Int,
+        @Query("page") page: String
     ): CommunityCommentAllResponseDto
 
-    @POST("/community/comment/{commentId}/save")
+    @POST("/community/comment/{communityId}/save")
     suspend fun postCommunityComment(
-        @Path(value = "commentId")
-        commentId: Int,
+        @Path(value = "communityId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
     ): CommunityCommentDefaultResponseDto
 }

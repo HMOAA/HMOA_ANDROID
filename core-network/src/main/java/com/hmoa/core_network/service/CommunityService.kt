@@ -15,7 +15,7 @@ interface CommunityService {
     @POST("/community/{communityId}")
     suspend fun postCommunityUpdate(
         @Field("images") images: Array<File>,
-        @Field("eleteCommunityPhotoIds") deleteCommunityPhotoIds: Array<Int>,
+        @Field("deleteCommunityPhotoIds") deleteCommunityPhotoIds: Array<Int>,
         @Field("title") title: String,
         @Field("content") content: String,
         @Path("communityId") communityId: Int
@@ -24,17 +24,17 @@ interface CommunityService {
     @DELETE("/community/{communityId}")
     suspend fun deleteCommunity(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
 
-    @GET("/community/{communityId}/like")
-    suspend fun putCommuntiyLike(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
+    @PUT("/community/{communityId}/like")
+    suspend fun putCommunityLike(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
 
-    @GET("/community/{communityId}/like")
+    @DELETE("/community/{communityId}/like")
     suspend fun deleteCommunityLike(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
 
-    @GET("/community/{category}")
+    @GET("/community/category")
     suspend fun getCommunityByCategory(
-        @Path("category") category: Category,
-        @Field("page") page: String
-    ): CommunityByCategoryResponseDto
+        @Query("category") category: String,
+        @Query("page") page: Int
+    ): List<CommunityByCategoryResponseDto>
 
     @GET("/community/home")
     suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto>

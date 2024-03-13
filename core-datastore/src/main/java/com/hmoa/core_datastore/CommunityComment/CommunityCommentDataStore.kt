@@ -3,20 +3,21 @@ package com.hmoa.core_datastore.CommunityComment
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 
 interface CommunityCommentDataStore {
     suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto
+    ): CommunityCommentWithLikedResponseDto
 
     suspend fun deleteCommunityComment(commentId: Int): DataResponseDto<Any>
 
     suspend fun putCommunityCommentLiked(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto
+    ): DataResponseDto<Any>
 
     suspend fun deleteCommunityCommentLiked(commentId: Int): DataResponseDto<Any>
 
@@ -24,5 +25,5 @@ interface CommunityCommentDataStore {
     suspend fun postCommunityComment(
         communityId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto
+    ): CommunityCommentWithLikedResponseDto
 }

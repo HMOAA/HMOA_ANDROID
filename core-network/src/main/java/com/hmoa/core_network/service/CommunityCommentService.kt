@@ -3,6 +3,7 @@ package com.hmoa.core_network.service
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import retrofit2.http.*
 
@@ -11,7 +12,7 @@ interface CommunityCommentService {
     suspend fun putCommunityComment(
         @Path(value = "commentId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto
+    ): CommunityCommentWithLikedResponseDto
 
     @DELETE("/community/comment/{commentId}")
     suspend fun deleteCommunityComment(
@@ -39,5 +40,5 @@ interface CommunityCommentService {
     suspend fun postCommunityComment(
         @Path(value = "communityId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto
+    ): CommunityCommentWithLikedResponseDto
 }

@@ -3,6 +3,7 @@ package com.hmoa.core_datastore.CommunityComment
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_network.service.CommunityCommentService
 import javax.inject.Inject
@@ -12,7 +13,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
     override suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto {
+    ): CommunityCommentWithLikedResponseDto {
         return communityCommentService.putCommunityComment(commentId, dto)
     }
 
@@ -23,12 +24,12 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
     override suspend fun putCommunityCommentLiked(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto {
-        return communityCommentService.putCommunityComment(commentId, dto)
+    ): DataResponseDto<Any>  {
+        return communityCommentService.putCommunityCommentLiked(commentId, dto)
     }
 
     override suspend fun deleteCommunityCommentLiked(commentId: Int): DataResponseDto<Any> {
-        return communityCommentService.deleteCommunityComment(commentId)
+        return communityCommentService.deleteCommunityCommentLiked(commentId)
     }
 
     override suspend fun getCommunityComments(communityId: Int, page: String): CommunityCommentAllResponseDto {
@@ -38,7 +39,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
     override suspend fun postCommunityComment(
         communityId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto {
+    ): CommunityCommentWithLikedResponseDto {
         return communityCommentService.postCommunityComment(communityId, dto)
     }
 }

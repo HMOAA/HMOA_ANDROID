@@ -10,27 +10,47 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.feature_userinfo.viewModel.PostUiState
+import com.example.feature_userinfo.viewModel.PostViewModel
+import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
 
 @Composable
 fun MyPostRoute(
     onNavBack: () -> Unit,
-    onNavEditPost: () -> Unit
+    onNavEditPost: () -> Unit,
+    viewModel : PostViewModel = hiltViewModel()
 ) {
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    val type = viewModel.type.collectAsStateWithLifecycle()
+
     MyPostPage(
+        uiState = uiState.value,
+        postType = type.value,
+        onAddPage = {
+            viewModel.addPage()
+        },
+        onTypeChanged = {
+            viewModel.changeType(it)
+        },
         onNavBack = onNavBack,
-        onNavEditPost = onNavEditPost
+        onNavEditPost = onNavEditPost,
     )
 }
 
 @Composable
 fun MyPostPage(
+    uiState : PostUiState,
+    postType : String,
+    onAddPage : () -> Unit,
+    onTypeChanged : (String) -> Unit,
     onNavBack: () -> Unit,
     onNavEditPost: () -> Unit, //누르면 게시글 수정 화면으로?
 ) {
-
-    /** view model에서 작성한 게시글 데이터를 받아옴 */
-    val postList = listOf<Any>()
 
     Column(
         modifier = Modifier
@@ -43,21 +63,46 @@ fun MyPostPage(
             onNavClick = onNavBack
         )
 
-        Spacer(Modifier.height(23.dp))
+        when(uiState) {
+            PostUiState.Loading -> {
+                /** Loading 화면 */
+            }
+            else -> {
+                Spacer(Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    /** PL되면 TypeButton 2개 추가 */
+                }
+                when(uiState){
+                    is PostUiState.Posts -> {
+                        Spacer(Modifier.height(23.dp))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            items(postList) { post ->
-                /** post에 따른 match */
-//                PostListItem(
-//                    onPostClick = { /*TODO*/ },
-//                    onMenuClick = { /*TODO*/ },
-//                    postType = ,
-//                    postTitle =
-//                )
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        ) {
+                            items(uiState.posts) { post ->
+                                /** post에 따른 match */
+                                PostListItem(
+                                    onPostClick = onNavEditPost,
+                                    postType = post.category,
+                                    postTitle = post.title
+                                )
+                            }
+                        }
+                    }
+                    PostUiState.Empty -> {
+                        NoDataPage(
+                            mainMsg = "작성한 게시글이\n없습니다.",
+                            subMsg = "게시글을 올려주세요"
+                        )
+                    }
+                    else -> {
+
+                    }
+                }
             }
         }
     }
@@ -68,6 +113,14 @@ fun MyPostPage(
 fun TestMyPostPage() {
     MyPostPage(
         onNavBack = {},
-        onNavEditPost = {}
+        onNavEditPost = {},
+        uiState = PostUiState.Loading,
+        postType = "시향기",
+        onAddPage = {
+
+        },
+        onTypeChanged = {
+
+        }
     )
 }

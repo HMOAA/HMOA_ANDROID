@@ -38,9 +38,6 @@ fun PostListItem(
     onPostClick : () -> Unit,
     postType : String,
     postTitle : String,
-    heartCount : String,
-    isLiked : Boolean = false,
-    commentCount : String,
 ){
     Row(
         modifier = Modifier
@@ -83,8 +80,5 @@ fun TestPostListItem(){
         onPostClick = {},
         postType = "추천해주세요",
         postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
-        heartCount = "10",
-        isLiked = false,
-        commentCount = "18"
     )
 }

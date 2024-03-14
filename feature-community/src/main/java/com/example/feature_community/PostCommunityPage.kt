@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.Category
 
 @Composable
 fun PostCommunityRoute(
@@ -45,6 +46,7 @@ fun PostCommunityRoute(
         onContentChanged = {
             content = it
         },
+        category = Category.추천,
         onNavBack = onNavBack,
         onPostCommunity = {
             //view model의 post 사용
@@ -58,6 +60,8 @@ fun PostCommunityPage(
     onTitleChanged : (String) -> Unit,
     content : String,
     onContentChanged : (String) -> Unit,
+    //Floating Button에서 받아와야 함
+    category : Category,
     //뒤로가기
     onNavBack : () -> Unit,
     //해당 게시글 Post
@@ -111,7 +115,7 @@ fun PostCommunityPage(
             Spacer(Modifier.weight(1f))
 
             Text(
-                text = "추천",
+                text = category.name,
                 style = mainTopBarTextStyle
             )
 
@@ -227,6 +231,7 @@ fun TestPostCommunityPage(){
         onContentChanged = {
             content = it
         },
+        category = Category.추천,
         onNavBack = {
 
         },

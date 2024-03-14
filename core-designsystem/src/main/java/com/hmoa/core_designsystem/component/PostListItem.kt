@@ -59,40 +59,11 @@ fun PostListItem(
                 .weight(1f),
             verticalArrangement = Arrangement.Center
         ){
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Text(
-                    text = postType,
-                    fontSize = 14.sp,
-                    color = CustomColor.gray2
-                )
-
-                Spacer(Modifier.weight(1f))
-
-                TypeBadge(
-                    roundedCorner = 20.dp,
-                    type = heartCount,
-                    fontSize = 12.sp,
-                    fontColor = Color.Black,
-                    selected = isLiked,
-                    icon = painterResource(R.drawable.heart_icon),
-                )
-
-                Spacer(Modifier.width(8.dp))
-
-                TypeBadge(
-                    roundedCorner = 20.dp,
-                    type = commentCount,
-                    fontSize = 12.sp,
-                    fontColor = Color.Black,
-                    selected = isLiked,
-                    //여기는 Comment Icon으로 바꿔야 함
-                    icon = painterResource(R.drawable.heart_icon),
-                    iconColor = Color.Black,
-                )
-            }
+            Text(
+                text = postType,
+                fontSize = 14.sp,
+                color = CustomColor.gray2
+            )
 
             Spacer(Modifier.height(8.dp))
 

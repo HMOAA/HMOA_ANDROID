@@ -27,10 +27,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    composeOptions{
+    composeOptions {
         kotlinCompilerExtensionVersion = "1.5.0"
     }
-    buildFeatures{
+    buildFeatures {
         compose = true
     }
 }
@@ -49,7 +49,7 @@ dependencies {
 
     //coil 라이브러리
     implementation("com.github.skydoves:landscapist-glide:1.4.7")
-
+    implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     testImplementation("junit:junit:4.13.2")

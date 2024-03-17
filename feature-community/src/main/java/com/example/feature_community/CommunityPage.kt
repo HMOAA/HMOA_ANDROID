@@ -50,7 +50,10 @@ fun CommunityRoute(
         },
         communities = list,
         onNavBack = onNavBack,
-        onNavCommunityDescription = onNavCommunityDescription
+        onNavCommunityDescription = onNavCommunityDescription,
+        onNavRecommend = {},
+        onNavPresent = {},
+        onNavFree = {}
     )
 }
 
@@ -60,7 +63,10 @@ fun CommunityPage(
     onTypeChanged : (Category) -> Unit,
     communities : List<CommunityByCategoryResponseDto>,
     onNavBack : () -> Unit,
-    onNavCommunityDescription: () -> Unit
+    onNavCommunityDescription: () -> Unit,
+    onNavRecommend : () -> Unit,
+    onNavPresent : () -> Unit,
+    onNavFree : () -> Unit,
 ){
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -154,7 +160,9 @@ fun CommunityPage(
             }
         }
         FloatingActionBtn(
-
+            onNavRecommend = onNavRecommend,
+            onNavPresent = onNavPresent,
+            onNavFree = onNavFree,
         )
     }
 }
@@ -188,6 +196,9 @@ fun TestCommunity(){
         },
         communities = testList,
         onNavBack = {},
-        onNavCommunityDescription = {}
+        onNavCommunityDescription = {},
+        onNavRecommend = {},
+        onNavPresent = {},
+        onNavFree = {}
     )
 }

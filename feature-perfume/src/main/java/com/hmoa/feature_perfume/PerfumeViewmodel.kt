@@ -32,6 +32,7 @@ class PerfumeViewmodel @Inject constructor(
     private val weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
     private val genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
     private val ageState = MutableStateFlow<PerfumeAgeResponseDto?>(null)
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     val uiState: StateFlow<PerfumeUiState> =
         combine(weatherState, genderState, ageState, perfumeState) { weather, gender, age, perfume ->
@@ -49,47 +50,53 @@ class PerfumeViewmodel @Inject constructor(
             )
 
 
-    suspend fun onChangePerfumeAge(age: Float, perfumeId: Int) {
-        updatePerfumeAge(age = age, perfumeId).asResult().collectLatest { result ->
-            when (result) {
-                is Result.Success -> {
-                    ageState.update { result.data }
-                }
+    fun onChangePerfumeAge(age: Float, perfumeId: Int) {
+        scope.launch {
+            updatePerfumeAge(age = age, perfumeId).asResult().collectLatest { result ->
+                when (result) {
+                    is Result.Success -> {
+                        ageState.update { result.data }
+                    }
 
-                is Result.Error -> {}
-                is Result.Loading -> {}
+                    is Result.Error -> {}
+                    is Result.Loading -> {}
+                }
             }
         }
     }
 
-    suspend fun onChangePerfumeGender(gender: PerfumeGender, perfumeId: Int) {
-        updatePerfumeGender(gender, perfumeId).asResult().collectLatest { result ->
-            when (result) {
-                is Result.Success -> {
-                    genderState.update { result.data }
-                }
+    fun onChangePerfumeGender(gender: PerfumeGender, perfumeId: Int) {
+        scope.launch {
+            updatePerfumeGender(gender, perfumeId).asResult().collectLatest { result ->
+                when (result) {
+                    is Result.Success -> {
+                        genderState.update { result.data }
+                    }
 
-                is Result.Error -> {}
-                is Result.Loading -> {}
+                    is Result.Error -> {}
+                    is Result.Loading -> {}
+                }
             }
         }
     }
 
-    suspend fun onChangePerfumeWeather(weather: Weather, perfumeId: Int) {
-        updatePerfumeWeather(weather, perfumeId).asResult().collectLatest { result ->
-            when (result) {
-                is Result.Success -> {
-                    weatherState.update { result.data }
-                }
+    fun onChangePerfumeWeather(weather: Weather, perfumeId: Int) {
+        scope.launch {
+            updatePerfumeWeather(weather, perfumeId).asResult().collectLatest { result ->
+                when (result) {
+                    is Result.Success -> {
+                        weatherState.update { result.data }
+                    }
 
-                is Result.Error -> {}
-                is Result.Loading -> {}
+                    is Result.Error -> {}
+                    is Result.Loading -> {}
+                }
             }
         }
     }
 
     fun initializePerfume(perfumeId: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             getPerfume(perfumeId.toString()).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {

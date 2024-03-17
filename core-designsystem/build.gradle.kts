@@ -50,6 +50,9 @@ dependencies {
     //coil 라이브러리
     implementation("com.github.skydoves:landscapist-glide:1.4.7")
 
+    //paging 라이브러리
+    implementation("com.google.accompanist:accompanist-pager:0.20.0")
+
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     testImplementation("junit:junit:4.13.2")

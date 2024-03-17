@@ -23,7 +23,7 @@ data class Perfume(
     val review: PerfumeReviewResponseDto,
     val singleNote: Array<String>,
     val sortType: Int,
-    val volume: Array<Int>,
+    val perfumeVolumeList: Array<Int>,
     val perfumeVolume: Int,
     val commentInfo: PerfumeCommentGetResponseDto,
     val similarPerfumes: Array<PerfumeSimilarResponseDto>

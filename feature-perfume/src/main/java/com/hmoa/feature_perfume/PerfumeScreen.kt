@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +19,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -29,53 +32,73 @@ import com.hmoa.core_model.response.PerfumeGenderResponseDto
 import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 
 @Composable
-fun PerfumeRoute(
+fun PerfumeScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
     onCommentAddClick: () -> Unit,
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: () -> Unit,
-    onClickSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    perfumeId: Int
+    onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    perfumeId: Int,
+    viewModel: PerfumeViewmodel = hiltViewModel()
 ) {
-    PerfumeScreen(
-        onBackClick = { onBackClick() },
-        onHomeClick = { onHomeClick() },
-        onLikeClick = {},
-        onCommentAddClick = { onCommentAddClick() },
-        onBrandClick = { onBrandClick(it) },
-        onWeatherClick = {},
-        onGenderClick = {},
-        onInitializeAgeClick = {},
-        onAgeDragFinish = {},
-        onViewCommentAllClick = { onViewCommentAllClick() },
-        onClickSimilarPerfumeClick = { onClickSimilarPerfumeClick(it) },
-        data = {},
-        weather = {},
-        gender = {},
-        age = {}
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    Column(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        when (uiState) {
+            is PerfumeViewmodel.PerfumeUiState.Loading -> {}
+            is PerfumeViewmodel.PerfumeUiState.PerfumeData -> {
+                PerfumeContent(
+                    onBackClick = { onBackClick() },
+                    onHomeClick = { onHomeClick() },
+                    onLikeClick = {},
+                    onCommentAddClick = { onCommentAddClick() },
+                    onBrandClick = { onBrandClick(it) },
+                    onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
+                    onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },
+                    onInitializeAgeClick = {},
+                    onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
+                    onViewCommentAllClick = { onViewCommentAllClick() },
+                    onSimilarPerfumeClick = { onSimilarPerfumeClick(perfumeId) },
+                    data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
+                    weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
+                    gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
+                    age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age
+                )
+            }
+
+            is PerfumeViewmodel.PerfumeUiState.Empty -> {}
+        }
+    }
 }
 
+
 @Composable
-fun PerfumeScreen(
+fun PerfumeContent(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
     onLikeClick: () -> Unit,
     onCommentAddClick: () -> Unit,
     onBrandClick: (brandId: String) -> Unit,
-    onWeatherClick: () -> Unit,
-    onGenderClick: () -> Unit,
+    onWeatherClick: (weather: Weather) -> Unit,
+    onGenderClick: (gender: PerfumeGender) -> Unit,
     onInitializeAgeClick: () -> Unit,
-    onAgeDragFinish: () -> Unit,
+    onAgeDragFinish: (age: Float) -> Unit,
     onViewCommentAllClick: () -> Unit,
-    onClickSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    data: Perfume,
-    weather: PerfumeWeatherResponseDto,
-    gender: PerfumeGenderResponseDto,
-    age: PerfumeAgeResponseDto
+    onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    data: Perfume?,
+    weather: PerfumeWeatherResponseDto?,
+    gender: PerfumeGenderResponseDto?,
+    age: PerfumeAgeResponseDto?
 ) {
     val verticalScrollState = rememberScrollState()
+
+    if (data == null) return
+
     Column(
         modifier = Modifier.fillMaxWidth().verticalScroll(verticalScrollState)
             .background(color = Color.White)
@@ -103,10 +126,10 @@ fun PerfumeScreen(
                 BrandCard(data.brandImgUrl, data.brandEnglishName, data.brandKoreanName)
             }
             TastingNoteView(topNote = data.topNote, heartNote = data.heartNote, baseNote = data.baseNote)
-            PerfumeWeathernessView(onWeatherClick = { onWeatherClick() }, weather)
-            PerfumeGenderView(onGenderClick = { onGenderClick() }, gender)
+            PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
+            PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
             PerfumeAgeView(
-                onAgeDragFinish = { onAgeDragFinish() },
+                onAgeDragFinish = { onAgeDragFinish(it) },
                 onInitializeAgeClick = { onInitializeAgeClick() },
                 age
             )
@@ -143,7 +166,7 @@ fun PerfumeScreen(
             Spacer(modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp))
             LazyRow {
                 items(data.similarPerfumes) { it ->
-                    Column(modifier = Modifier.clickable { onClickSimilarPerfumeClick(it.perfumeId) }) {
+                    Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
                         SimilarPerfumeView(it.perfumeImgUrl, it.perfumeName, it.brandName)
                     }
                 }
@@ -297,7 +320,7 @@ fun TastingNoteView(topNote: String, heartNote: String, baseNote: String) {
 }
 
 @Composable
-fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData: PerfumeWeatherResponseDto) {
+fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData: PerfumeWeatherResponseDto?) {
     Text(
         "계절감",
         style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
@@ -308,25 +331,25 @@ fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData
         modifier = Modifier.fillMaxWidth().padding(horizontal = 50.dp)
     ) {
         VoteView(
-            weatherData.spring,
+            weatherData?.spring ?: 0,
             icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_bee_flower),
             title = "봄",
             onVote = { onWeatherClick(Weather.SPRING) }
         )
         VoteView(
-            weatherData.summer,
+            weatherData?.summer ?: 0,
             icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_sun),
             title = "여름",
             onVote = { onWeatherClick(Weather.SUMMER) }
         )
         VoteView(
-            weatherData.autumn,
+            weatherData?.autumn ?: 0,
             icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_leaf),
             title = "가을",
             onVote = { onWeatherClick(Weather.AUTUMN) }
         )
         VoteView(
-            weatherData.winter,
+            weatherData?.winter ?: 0,
             icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_winter),
             title = "겨울",
             onVote = { onWeatherClick(Weather.WINTER) }
@@ -340,7 +363,7 @@ fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData
 
 
 @Composable
-fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData: PerfumeGenderResponseDto) {
+fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData: PerfumeGenderResponseDto?) {
     Text(
         "성별",
         style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
@@ -351,19 +374,19 @@ fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData:
         modifier = Modifier.fillMaxWidth().padding(horizontal = 66.dp)
     ) {
         VoteView(
-            genderData.man,
+            genderData?.man ?: 0,
             icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_male),
             title = "남성",
             onVote = { onGenderClick(PerfumeGender.MALE) }
         )
         VoteView(
-            genderData.neuter,
+            genderData?.neuter ?: 0,
             icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_neutral),
             title = "중성",
             onVote = { onGenderClick(PerfumeGender.NEUTRAL) }
         )
         VoteView(
-            genderData.woman,
+            genderData?.woman ?: 0,
             icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_female),
             title = "여성",
             onVote = { onGenderClick(PerfumeGender.FEMALE) }
@@ -379,7 +402,7 @@ fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData:
 fun PerfumeAgeView(
     onAgeDragFinish: (age: Float) -> Unit,
     onInitializeAgeClick: () -> Unit,
-    ageData: PerfumeAgeResponseDto
+    ageData: PerfumeAgeResponseDto?
 ) {
     Text(
         "연령대",
@@ -393,7 +416,7 @@ fun PerfumeAgeView(
             modifier = Modifier.height(12.dp).clickable { onInitializeAgeClick() }
         )
     }
-    CustomSlider(ageData.age.toFloat(), { onAgeDragFinish(it) })
+    CustomSlider(ageData?.age?.toFloat() ?: 0f, { onAgeDragFinish(it) })
     Row(
         modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween

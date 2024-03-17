@@ -9,7 +9,9 @@ import com.example.userinfo.MyCommentPage
 import com.example.userinfo.MyCommentRoute
 import com.example.userinfo.MyPageRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentPage
+import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
 import com.hmoa.feature_userinfo.MyPostPage
+import com.hmoa.feature_userinfo.MyPostRoute
 import com.hmoa.feature_userinfo.NoAuthMyPage
 
 //마이페이지로 이동
@@ -71,12 +73,12 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = Screens.EditProfileRoute.name) {
-            EditProfilePage(
+            EditProfileRoute(
                 onNavBack = onNavBack
             )
         }
         composable(route = Screens.MyPostRoute.name) {
-            MyPostPage(
+            MyPostRoute(
                 onNavBack = onNavBack,
                 onNavEditPost = onNavEditPost
             )
@@ -96,7 +98,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = Screens.MyFavoriteCommentRoute.name) {
-            MyFavoriteCommentPage(
+            MyFavoriteCommentRoute(
                 onNavBack = onNavBack,
                 onNavCommunity = onNavCommunity
             )
@@ -109,12 +111,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = Screens.MyBirthRoute.name) {
-            MyBirthPage(
-                onNavBack = onNavBack
-            )
-        }
-        composable(route = Screens.MyGenderRoute.name) {
-            MyBirthPage(
+            MyBirthRoute(
                 onNavBack = onNavBack
             )
         }

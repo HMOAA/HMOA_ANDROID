@@ -42,13 +42,14 @@ android {
 
 dependencies {
 
-    val hilt_version = "2.44"
+    val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
 
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
+    implementation(project(":core-common"))
 
     //material3
     implementation("androidx.compose.material3:material3:1.1.0")

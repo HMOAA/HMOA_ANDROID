@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetPerfumeUsecase @Inject constructor(
     private val perfumeRepository: PerfumeRepository
 ) {
-    suspend operator fun invoke(perfumeId: String): Flow<Perfume> {
+    operator fun invoke(perfumeId: String): Flow<Perfume> {
         val perfumeInfo1 = perfumeRepository.getPerfumeTopDetail(perfumeId)
         val perfumeInfo2 = perfumeRepository.getPerfumeBottomDetail(perfumeId)
         val result = Perfume(

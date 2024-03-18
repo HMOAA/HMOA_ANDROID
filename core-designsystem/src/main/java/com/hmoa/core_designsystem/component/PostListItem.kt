@@ -35,15 +35,13 @@ import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
 fun PostListItem(
+    modifier : Modifier = Modifier,
     onPostClick : () -> Unit,
     postType : String,
     postTitle : String,
 ){
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp))
+        modifier = modifier
             .clickable {
                 onPostClick()
             }
@@ -77,6 +75,10 @@ fun PostListItem(
 @Composable
 fun TestPostListItem(){
     PostListItem (
+        Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
         onPostClick = {},
         postType = "추천해주세요",
         postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",

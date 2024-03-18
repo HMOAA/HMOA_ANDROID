@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
+    implementation(project(":core-common"))
 
     //material3
     implementation("androidx.compose.material3:material3:1.1.0")

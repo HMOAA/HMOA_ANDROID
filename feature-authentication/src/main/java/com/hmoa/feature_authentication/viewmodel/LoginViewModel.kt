@@ -57,7 +57,10 @@ class LoginViewModel @Inject constructor(
                     }
 
                     is Result.Loading -> {}//TODO("로딩화면")
-                    is Result.Error -> {}//TODO()
+                    is Result.Error -> {
+                        it
+                        it.exception
+                    }//TODO()
                 }
             }
     }

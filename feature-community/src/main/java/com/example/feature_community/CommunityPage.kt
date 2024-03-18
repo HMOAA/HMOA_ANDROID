@@ -1,6 +1,8 @@
 package com.example.feature_community
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
@@ -32,7 +36,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.R
 
 @Composable
-fun CommunityRoute(
+fun CommunityPageRoute(
     onNavBack : () -> Unit,
     onNavCommunityDescription : () -> Unit,
 ){
@@ -148,6 +152,10 @@ fun CommunityPage(
             LazyColumn{
                 items(communities){community ->
                     PostListItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .border(width = 1.dp, color = CustomColor.gray2),
                         onPostClick = {
                             /** 여기서 Description으로 이동 */
                             /** id를 어떤 방식으로 전달할지 */

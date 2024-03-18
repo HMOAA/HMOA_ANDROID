@@ -3,6 +3,10 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.example.feature_community.Navigation.navigateToCommunityDescriptionRoute
+import com.example.feature_community.Navigation.navigateToCommunityEditRoute
+import com.example.feature_community.Navigation.navigateToCommunityPostRoute
+import com.example.feature_community.Navigation.nestedCommunityGraph
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 
@@ -38,6 +42,15 @@ fun SetUpNavGraph(
             onNavMyBirth = navController::navigateToMyBirth,
             onNavMyGender = navController::navigateToMyGenderPage
         )
+
+        /** community 모듈 */
+        this.nestedCommunityGraph(
+            onNavBack = navController::navigateToBack,
+            onNavCommunityPost = navController::navigateToCommunityPostRoute,
+            onNavCommunityEdit = navController::navigateToCommunityEditRoute,
+            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute
+        )
+
         pickPersonalInfoScreen(
             onHomeClick = navController::navigateToMain,
             onPickNicknameClick = navController::navigateToPickNickname

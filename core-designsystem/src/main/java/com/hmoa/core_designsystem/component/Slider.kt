@@ -3,15 +3,7 @@ package com.hmoa.core_designsystem.component
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -32,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.theme.CustomColor
 import kotlin.math.roundToInt
 
 @Composable
@@ -43,9 +36,9 @@ fun Slider(
 
     Row(
         modifier = Modifier
-            .width(296.dp)
+            .fillMaxWidth()
             .height(52.dp)
-            .background(color = Color(0xFFF4F4F4), shape = RoundedCornerShape(size = 5.dp))
+            .background(color = CustomColor.gray1, shape = RoundedCornerShape(size = 5.dp))
             .pointerInput(Unit) {
                 detectTransformGestures { centroid, pan, zoom, rotation ->
                     offsetX += pan.x
@@ -66,7 +59,16 @@ fun Slider(
             modifier = Modifier
                 .size(52.dp)
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
-                .background(color = Color(0xFFBBBBBB), shape = RoundedCornerShape(size = 5.dp)),
+                .background(color = Color.Blue, shape = RoundedCornerShape(size = 5.dp)),
+            contentAlignment = Alignment.Center
+        ){
+
+        }
+        Box(
+            modifier = Modifier
+                .size(52.dp)
+                .offset { IntOffset(offsetX.roundToInt(), 0) }
+                .background(color = CustomColor.gray2, shape = RoundedCornerShape(size = 5.dp)),
             contentAlignment = Alignment.Center
         ){
             Icon(
@@ -84,7 +86,7 @@ fun Slider(
             fontSize = 16.sp,
             lineHeight = 16.sp,
             fontWeight = FontWeight(400),
-            color = Color(0xFFBBBBBB),
+            color = CustomColor.gray2,
             textAlign = TextAlign.Center
         )
     }

@@ -27,10 +27,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    composeOptions{
+    composeOptions {
         kotlinCompilerExtensionVersion = "1.5.0"
     }
-    buildFeatures{
+    buildFeatures {
         compose = true
     }
 }
@@ -43,16 +43,20 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
 
     implementation("androidx.compose.ui:ui:1.1.0")
-
+    
     //bottom navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
 
     //coil 라이브러리
     implementation("com.github.skydoves:landscapist-glide:1.4.7")
+<<<<<<< HEAD
 
     //paging 라이브러리
     implementation("com.google.accompanist:accompanist-pager:0.20.0")
 
+=======
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+>>>>>>> da5b8e518156790f9d4d2ca0c8783d515268dbb8
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     testImplementation("junit:junit:4.13.2")

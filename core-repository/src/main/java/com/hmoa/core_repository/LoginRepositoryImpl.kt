@@ -1,5 +1,6 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Login.LoginLocalDataStore
 import com.hmoa.core_datastore.Login.LoginRemoteDataStore
 import com.hmoa.core_model.Provider
@@ -32,7 +33,7 @@ class LoginRepositoryImpl @Inject constructor(
         return loginRemoteDataStore.postOAuth(accessToken, provider)
     }
 
-    override suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto {
+    override suspend fun postRemembered(dto: RememberedLoginRequestDto): ResultResponse<TokenResponseDto> {
         return loginRemoteDataStore.postRemembered(dto)
     }
 

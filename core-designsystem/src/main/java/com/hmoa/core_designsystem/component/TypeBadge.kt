@@ -26,7 +26,8 @@ fun TypeBadge(
     fontSize: TextUnit,
     fontColor: Color,
     selected: Boolean,
-    icon: Painter? = null,
+    selectedIcon: Painter? = null,
+    unSelectedIcon:Painter? = null,
     iconColor: Color? = null,
     selectedColor:Color = Color.Black,
     unSelectedColor:Color = CustomColor.gray2
@@ -36,6 +37,7 @@ fun TypeBadge(
         color = fontColor
     )
     val backgroundColor = if (selected) selectedColor else unSelectedColor
+    val icon = if (selected) selectedIcon else unSelectedIcon
 
     Row(
         modifier = Modifier

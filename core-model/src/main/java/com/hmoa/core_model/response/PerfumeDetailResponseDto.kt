@@ -14,14 +14,14 @@ data class PerfumeDetailResponseDto(
     val heartNum: Int,
     val koreanName: String,
     val liked: Boolean,
-    val notePhotos: List<Int>,
+    val notePhotos: Array<String>,
     val perfumeId: Int,
     val perfumeImageUrl: String,
     val price: Int,
     val priceVolume: Int,
     val review: PerfumeReviewResponseDto,
-    val singleNote: List<String>,
+    val singleNote: Array<String>,
     val sortType: Int,
     val topNote: String,
-    val volume: List<Int>
+    val volume: Array<Int>
 )

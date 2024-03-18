@@ -1,5 +1,6 @@
 package com.hmoa.core_domain.repository
 
+import ResultResponse
 import com.hmoa.core_model.Provider
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
@@ -11,7 +12,7 @@ interface LoginRepository {
     suspend fun getRememberedToken(): String?
     suspend fun getKakaoAccessToken(): String?
     suspend fun postOAuth(accessToken: OauthLoginRequestDto, provider: Provider): MemberLoginResponseDto
-    suspend fun postRemembered(dto: RememberedLoginRequestDto): TokenResponseDto
+    suspend fun postRemembered(dto: RememberedLoginRequestDto): ResultResponse<TokenResponseDto>
     suspend fun saveAuthToken(token: String)
     suspend fun saveRememberedToken(token: String)
     suspend fun saveKakaoAccessToken(token: String)

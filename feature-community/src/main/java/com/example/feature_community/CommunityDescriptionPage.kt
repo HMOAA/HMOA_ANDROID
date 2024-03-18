@@ -41,16 +41,23 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 
 @Composable
 fun CommunityDescriptionRoute(
+    id : Int?,
     onNavBack : () -> Unit,
 ){
 
-    /** bottom options 상태 관리 state **/
+    if (id != null) {
+        /** bottom options 상태 관리 state **/
 
-    /** 데이터 받아와서 CommunityData로 상태 관리 **/
+        /** 데이터 받아와서 CommunityData로 상태 관리 **/
 
 //    CommunityDescriptionPage(
-//        onNavBack = onNavBack
+//        onNavBack = onNavBack,
+//        
 //    )
+
+    } else {
+        /** 여기 id가 null일 때 */
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

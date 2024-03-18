@@ -29,29 +29,41 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
 
 @Composable
-fun PostCommunityRoute(
+fun CommunityPostRoute(
     onNavBack : () -> Unit,
+    category : String?
 ){
 
-    /** view model은 title, content를 관리 */
-    var title = ""
-    var content = ""
+    if (category != null) {
+        /** view model은 title, content를 관리 */
+        var title = ""
+        var content = ""
 
-    PostCommunityPage(
-        title = title,
-        onTitleChanged = {
-            title = it
-        },
-        content = content,
-        onContentChanged = {
-            content = it
-        },
-        category = Category.추천,
-        onNavBack = onNavBack,
-        onPostCommunity = {
-            //view model의 post 사용
+        val categoryData = when(category) {
+            "추천" -> Category.추천
+            "시향기" -> Category.시향기
+            "자유" -> Category.자유
+            else -> Category.추천
         }
-    )
+
+        PostCommunityPage(
+            title = title,
+            onTitleChanged = {
+                title = it
+            },
+            content = content,
+            onContentChanged = {
+                content = it
+            },
+            category = categoryData,
+            onNavBack = onNavBack,
+            onPostCommunity = {
+                //view model의 post 사용
+            }
+        )
+    } else {
+        /** category가 null일 경우 처리 */
+    }
 }
 
 @Composable

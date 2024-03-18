@@ -30,28 +30,34 @@ import com.hmoa.core_model.Category
 
 @Composable
 fun CommunityEditRoute(
+    id : Int?,
     onNavBack : () -> Unit,
 ){
 
-    /** view model은 title, content를 관리 */
-    var title = ""
-    var content = ""
+    if (id != null) {
+        /** view model은 title, content를 관리 */
+        var title = ""
+        var content = ""
 
-    CommunityEditPage(
-        title = title,
-        onTitleChanged = {
-            title = it
-        },
-        content = content,
-        onContentChanged = {
-            content = it
-        },
-        category = Category.추천,
-        onNavBack = onNavBack,
-        onPostCommunity = {
-            //view model의 post 사용
-        }
-    )
+        CommunityEditPage(
+            title = title,
+            onTitleChanged = {
+                title = it
+            },
+            content = content,
+            onContentChanged = {
+                content = it
+            },
+            category = Category.추천,
+            onNavBack = onNavBack,
+            onPostCommunity = {
+                //view model의 post 사용
+            }
+        )
+
+    } else {
+        /** 여기서 id가 null일 때 처리 */
+    }
 }
 
 @Composable

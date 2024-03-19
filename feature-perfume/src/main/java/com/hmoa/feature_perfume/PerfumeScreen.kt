@@ -435,7 +435,7 @@ fun CommentView(commentInfo: PerfumeCommentGetResponseDto, onViewCommentAllClick
 
         else -> {
             LazyColumn {
-                items(commentInfo.comments) {
+                items(commentInfo.comments.subList(0, 3)) {
                     CommentItem(
                         count = it.heartCount,
                         isCommentLiked = it.liked,

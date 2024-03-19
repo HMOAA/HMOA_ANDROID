@@ -2,8 +2,10 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +25,15 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
-fun CommentItem(count: Int, isCommentLiked: Boolean, userImgUrl: String, userName: String, content: String) {
+fun CommentItem(
+    count: Int,
+    isCommentLiked: Boolean,
+    userImgUrl: String,
+    userName: String,
+    content: String,
+    createdDate: Int,
+    onReportClick: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth().height(102.dp).padding(10.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
@@ -41,19 +51,32 @@ fun CommentItem(count: Int, isCommentLiked: Boolean, userImgUrl: String, userNam
                     style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal),
                     modifier = Modifier.padding(start = 8.dp)
                 )
+                Text(
+                    text = "${createdDate}일전",
+                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = CustomColor.gray3),
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
-            TypeBadge(
-                roundedCorner = 20.dp,
-                type = "${count}",
-                fontColor = Color.Black,
-                unSelectedIcon = painterResource(R.drawable.ic_heart),
-                selectedIcon = painterResource(R.drawable.ic_heart_filled),
-                iconColor = Color.Black,
-                fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
-                selected = isCommentLiked,
-                unSelectedColor = CustomColor.gray1,
-                selectedColor = Color.Black
-            )
+            Row {
+                Icon(
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_kebab),
+                    contentDescription = "아이콘",
+                    modifier = Modifier.size(12.dp).padding(2.dp).clickable { onReportClick() },
+                    tint = CustomColor.gray2
+                )
+                TypeBadge(
+                    roundedCorner = 20.dp,
+                    type = "${count}",
+                    fontColor = Color.Black,
+                    unSelectedIcon = painterResource(R.drawable.ic_heart),
+                    selectedIcon = painterResource(R.drawable.ic_heart_filled),
+                    iconColor = Color.Black,
+                    fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
+                    selected = isCommentLiked,
+                    unSelectedColor = CustomColor.gray1,
+                    selectedColor = Color.Black
+                )
+            }
         }
         Text(
             content,
@@ -67,5 +90,12 @@ fun CommentItem(count: Int, isCommentLiked: Boolean, userImgUrl: String, userNam
 @Preview
 @Composable
 fun CommentItemPreview() {
-    CommentItem(300, false, userImgUrl = "", userName = "임현규", content = "선물용으로 구매했는데, 친구가 좋아했어요")
+    CommentItem(
+        300,
+        false,
+        userImgUrl = "",
+        userName = "임현규",
+        content = "선물용으로 구매했는데, 친구가 좋아했어요",
+        createdDate = 12,
+        onReportClick = {})
 }

@@ -99,7 +99,9 @@ fun PerfumeCommentContent(
                         isCommentLiked = it.liked,
                         userImgUrl = it.profileImg,
                         userName = it.nickname,
-                        content = it.content
+                        content = it.content,
+                        createdDate = it.createdAt.toInt(),
+                        onReportClick = {}
                     )
                 }
             }

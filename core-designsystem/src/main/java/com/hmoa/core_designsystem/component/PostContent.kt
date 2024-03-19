@@ -173,8 +173,8 @@ fun PostContent(
                 fontSize = 12.sp,
                 fontColor = Color.Black,
                 selected = isLiked,
-                icon = if (isLiked) painterResource(R.drawable.fill_heart_ic)
-                else painterResource(R.drawable.ic_heart),
+                selectedIcon = painterResource(R.drawable.fill_heart_ic),
+                unSelectedIcon = painterResource(R.drawable.ic_heart),
                 iconColor = Color.Black,
                 selectedColor = CustomColor.gray1,
                 unSelectedColor = CustomColor.gray1

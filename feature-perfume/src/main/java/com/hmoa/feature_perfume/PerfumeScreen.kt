@@ -2,12 +2,12 @@ package com.hmoa.feature_perfume
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +28,7 @@ import com.hmoa.core_model.PerfumeGender
 import com.hmoa.core_model.Weather
 import com.hmoa.core_model.data.Perfume
 import com.hmoa.core_model.response.PerfumeAgeResponseDto
+import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeGenderResponseDto
 import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 
@@ -55,12 +56,12 @@ fun PerfumeScreen(
                 PerfumeContent(
                     onBackClick = { onBackClick() },
                     onHomeClick = { onHomeClick() },
-                    onLikeClick = {},
+                    onLikeClick = { viewModel.updateLike(it, perfumeId) },
                     onCommentAddClick = { onCommentAddClick() },
                     onBrandClick = { onBrandClick(it) },
                     onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
                     onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },
-                    onInitializeAgeClick = {},
+                    onInitializeAgeClick = { viewModel.onBackAgeToZero() },
                     onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
                     onViewCommentAllClick = { onViewCommentAllClick() },
                     onSimilarPerfumeClick = { onSimilarPerfumeClick(perfumeId) },
@@ -81,7 +82,7 @@ fun PerfumeScreen(
 fun PerfumeContent(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onLikeClick: () -> Unit,
+    onLikeClick: (isLike: Boolean) -> Unit,
     onCommentAddClick: () -> Unit,
     onBrandClick: (brandId: String) -> Unit,
     onWeatherClick: (weather: Weather) -> Unit,
@@ -133,31 +134,7 @@ fun PerfumeContent(
                 onInitializeAgeClick = { onInitializeAgeClick() },
                 age
             )
-            Row(
-                verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp)
-            ) {
-                Text(
-                    "댓글",
-                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-                    modifier = Modifier.padding(end = 4.dp)
-                )
-                Text(
-                    "${data.commentInfo.commentCount}",
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light)
-                )
-            }
-            Column(modifier = Modifier.padding(top = 8.dp)) {
-                Button(
-                    isEnabled = true,
-                    btnText = "모두 보기",
-                    onClick = { onViewCommentAllClick() },
-                    buttonModifier = Modifier.fillMaxWidth().height(32.dp).background(color = CustomColor.gray4),
-                    textColor = Color.White,
-                    textSize = 14
-                )
-
-            }
+            CommentView(data.commentInfo,onViewCommentAllClick = {onViewCommentAllClick()})
             Text(
                 "같은 브랜드의 제품",
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
@@ -172,7 +149,7 @@ fun PerfumeContent(
                 }
             }
         }
-        BottomToolBar(true, onLikeClick = { onLikeClick() }, onCommentAddClick = { onCommentAddClick() })
+        BottomToolBar(data.liked, onLikeClick = { onLikeClick(it) }, onCommentAddClick = { onCommentAddClick() })
     }
 }
 
@@ -432,8 +409,52 @@ fun PerfumeAgeView(
 }
 
 @Composable
+fun CommentView(commentInfo: PerfumeCommentGetResponseDto, onViewCommentAllClick: () -> Unit, ) {
+    Row(
+        verticalAlignment = Alignment.Bottom,
+        modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp)
+    ) {
+        Text(
+            "댓글",
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+            modifier = Modifier.padding(end = 4.dp)
+        )
+        Text(
+            "${commentInfo.commentCount}",
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light)
+        )
+    }
+    when(commentInfo.commentCount){
+        0 -> Text("해당 제품에 대한 의견을 남겨주세요",
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
+            textAlign = TextAlign.Center
+        )
+        else -> {
+            LazyColumn {
+                items(commentInfo.comments){
+                    CommentItem(count = it.heartCount, isCommentLiked = it.liked, userImgUrl = it.profileImg, userName = it.nickname, content = it.content)
+                }
+            }
+            Column(modifier = Modifier.padding(top = 8.dp),) {
+                Button(
+                    isEnabled = true,
+                    btnText = "모두 보기",
+                    onClick = { onViewCommentAllClick() },
+                    buttonModifier = Modifier.fillMaxWidth().height(32.dp).background(color = CustomColor.gray4),
+                    textColor = Color.White,
+                    textSize = 14
+                )
+
+            }
+        }
+    }
+}
+
+@Composable
 fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCommentAddClick: () -> Unit) {
-    val heartColor = if (isLiked) CustomColor.red else Color.White
+    var heartLike by remember { mutableStateOf(isLiked) }
+    val heartColor = if (heartLike) CustomColor.red else Color.White
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -441,7 +462,10 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
         modifier = Modifier.fillMaxWidth().height(82.dp).background(color = Color.Black)
     ) {
         Column(
-            modifier = Modifier.clickable { onLikeClick(!isLiked) }
+            modifier = Modifier.clickable {
+                onLikeClick(!heartLike)
+                heartLike = !heartLike
+            }
         ) {
             Icon(
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_heart),

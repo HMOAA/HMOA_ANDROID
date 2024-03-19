@@ -13,19 +13,19 @@ import com.example.feature_community.CommunityPostRoute
 fun NavController.navigateToCommunityRoute() = navigate(Route.CommunityPageRoute.name)
 
 //게시글 등록 화면
-fun NavController.navigateToCommunityPostRoute() = navigate(Route.CommunityPostRoute.name)
+fun NavController.navigateToCommunityPostRoute(type : String) = navigate("${Route.CommunityPostRoute.name}/${type}")
 
 //게시글 수정 화면
-fun NavController.navigateToCommunityEditRoute() = navigate(Route.CommunityEditRoute.name)
+fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${Route.CommunityEditRoute.name}/${id}")
 
 //게시글 상세 화면
-fun NavController.navigateToCommunityDescriptionRoute() = navigate(Route.CommunityDescriptionRoute.name)
+fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${Route.CommunityDescriptionRoute.name}/${id}")
 
 fun NavGraphBuilder.nestedCommunityGraph(
     onNavBack : () -> Unit,
-    onNavCommunityPost : () -> Unit,
-    onNavCommunityEdit : () -> Unit,
-    onNavCommunityDescription : () -> Unit
+    onNavCommunityPost : (String) -> Unit,
+    onNavCommunityEdit : (Int) -> Unit,
+    onNavCommunityDescription : (Int) -> Unit
 ){
     navigation(
         startDestination = Route.CommunityPageRoute.name,
@@ -34,7 +34,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
         composable(route = Route.CommunityPageRoute.name){
             CommunityPageRoute(
                 onNavBack = onNavBack,
-                onNavCommunityDescription = onNavCommunityDescription
+                onNavCommunityDescription = onNavCommunityDescription,
+                onNavPost = onNavCommunityPost
             )
         }
         composable(route = "${Route.CommunityPostRoute.name}/{type}") {
@@ -42,7 +43,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
 
             CommunityPostRoute(
                 onNavBack = onNavBack,
-                category = type
+                _category = type
             )
         }
         composable(route = "${Route.CommunityEditRoute.name}/{id}"){

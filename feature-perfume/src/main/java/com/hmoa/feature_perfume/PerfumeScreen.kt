@@ -38,7 +38,7 @@ fun PerfumeScreen(
     onHomeClick: () -> Unit,
     onCommentAddClick: () -> Unit,
     onBrandClick: (brandId: String) -> Unit,
-    onViewCommentAllClick: () -> Unit,
+    onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     perfumeId: Int,
     viewModel: PerfumeViewmodel = hiltViewModel()
@@ -64,7 +64,7 @@ fun PerfumeScreen(
                     onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },
                     onInitializeAgeClick = { viewModel.onBackAgeToZero() },
                     onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
-                    onViewCommentAllClick = { onViewCommentAllClick() },
+                    onViewCommentAllClick = { onViewCommentAllClick(it) },
                     onSimilarPerfumeClick = { onSimilarPerfumeClick(perfumeId) },
                     data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
                     weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
@@ -90,7 +90,7 @@ fun PerfumeContent(
     onGenderClick: (gender: PerfumeGender) -> Unit,
     onInitializeAgeClick: () -> Unit,
     onAgeDragFinish: (age: Float) -> Unit,
-    onViewCommentAllClick: () -> Unit,
+    onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     data: Perfume?,
     weather: PerfumeWeatherResponseDto?,
@@ -135,7 +135,7 @@ fun PerfumeContent(
                 onInitializeAgeClick = { onInitializeAgeClick() },
                 age
             )
-            CommentView(data.commentInfo, onViewCommentAllClick = { onViewCommentAllClick() })
+            CommentView(data.commentInfo, onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) })
             Text(
                 "같은 브랜드의 제품",
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),

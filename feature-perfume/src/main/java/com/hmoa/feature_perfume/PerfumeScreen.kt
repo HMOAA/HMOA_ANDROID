@@ -43,6 +43,7 @@ fun PerfumeScreen(
     perfumeId: Int,
     viewModel: PerfumeViewmodel = hiltViewModel()
 ) {
+    viewModel.initializePerfume(perfumeId)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
@@ -134,7 +135,7 @@ fun PerfumeContent(
                 onInitializeAgeClick = { onInitializeAgeClick() },
                 age
             )
-            CommentView(data.commentInfo,onViewCommentAllClick = {onViewCommentAllClick()})
+            CommentView(data.commentInfo, onViewCommentAllClick = { onViewCommentAllClick() })
             Text(
                 "같은 브랜드의 제품",
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
@@ -409,7 +410,7 @@ fun PerfumeAgeView(
 }
 
 @Composable
-fun CommentView(commentInfo: PerfumeCommentGetResponseDto, onViewCommentAllClick: () -> Unit, ) {
+fun CommentView(commentInfo: PerfumeCommentGetResponseDto, onViewCommentAllClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp)
@@ -424,19 +425,27 @@ fun CommentView(commentInfo: PerfumeCommentGetResponseDto, onViewCommentAllClick
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light)
         )
     }
-    when(commentInfo.commentCount){
-        0 -> Text("해당 제품에 대한 의견을 남겨주세요",
+    when (commentInfo.commentCount) {
+        0 -> Text(
+            "해당 제품에 대한 의견을 남겨주세요",
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
             modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
             textAlign = TextAlign.Center
         )
+
         else -> {
             LazyColumn {
-                items(commentInfo.comments){
-                    CommentItem(count = it.heartCount, isCommentLiked = it.liked, userImgUrl = it.profileImg, userName = it.nickname, content = it.content)
+                items(commentInfo.comments) {
+                    CommentItem(
+                        count = it.heartCount,
+                        isCommentLiked = it.liked,
+                        userImgUrl = it.profileImg,
+                        userName = it.nickname,
+                        content = it.content
+                    )
                 }
             }
-            Column(modifier = Modifier.padding(top = 8.dp),) {
+            Column(modifier = Modifier.padding(top = 8.dp)) {
                 Button(
                     isEnabled = true,
                     btnText = "모두 보기",

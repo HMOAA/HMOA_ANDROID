@@ -25,6 +25,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.feature_community.ViewModel.CommunityEditUiState
+import com.example.feature_community.ViewModel.CommunityEditViewModel
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
 
@@ -32,26 +36,28 @@ import com.hmoa.core_model.Category
 fun CommunityEditRoute(
     id : Int?,
     onNavBack : () -> Unit,
+    viewModel : CommunityEditViewModel = hiltViewModel()
 ){
 
     if (id != null) {
-        /** view model은 title, content를 관리 */
-        var title = ""
-        var content = ""
+
+        //id가 null이 아니면 view model에 setting
+        viewModel.setId(id)
+
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
         CommunityEditPage(
-            title = title,
+            uiState = uiState.value,
             onTitleChanged = {
-                title = it
+                viewModel.updateTitle(it)
             },
-            content = content,
             onContentChanged = {
-                content = it
+                viewModel.updateContent(it)
             },
-            category = Category.추천,
             onNavBack = onNavBack,
             onPostCommunity = {
-                //view model의 post 사용
+                //view model의 update community 사용
+                viewModel.updateCommunity()
             }
         )
 
@@ -62,12 +68,9 @@ fun CommunityEditRoute(
 
 @Composable
 fun CommunityEditPage(
-    title : String,
+    uiState : CommunityEditUiState,
     onTitleChanged : (String) -> Unit,
-    content : String,
     onContentChanged : (String) -> Unit,
-    //Floating Button에서 받아와야 함
-    category : Category,
     //뒤로가기
     onNavBack : () -> Unit,
     //해당 게시글 Post
@@ -98,161 +101,162 @@ fun CommunityEditPage(
         color = CustomColor.gray3
     )
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        //unique top bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                modifier = Modifier.clickable{
-                    onNavBack()
-                },
-                text = "취소",
-                style = sideTopBarTextStyle
-            )
+    when (uiState) {
+        is CommunityEditUiState.Loading -> {
 
-            Spacer(Modifier.weight(1f))
-
-            Text(
-                text = category.name,
-                style = mainTopBarTextStyle
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Text(
-                modifier = Modifier.clickable{
-                    onPostCommunity()
-                    onNavBack()
-                },
-                text = "확인",
-                style = sideTopBarTextStyle
-            )
         }
+        is CommunityEditUiState.Community -> {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ){
+                //unique top bar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        modifier = Modifier.clickable{
+                            onNavBack()
+                        },
+                        text = "취소",
+                        style = sideTopBarTextStyle
+                    )
 
-        Divider(
-            Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = Color.Black
-        )
+                    Spacer(Modifier.weight(1f))
 
-        //title input
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(45.dp)
-                .padding(start = 33.dp, end = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text = "제목:",
-                style = titleTextIntroTextStyle
-            )
+                    Text(
+                        text = uiState.category!!.name,
+                        style = mainTopBarTextStyle
+                    )
 
-            Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.weight(1f))
 
-            BasicTextField(
-                modifier = Modifier.weight(1f),
-                value = title,
-                onValueChange = {
-                    //글자 수 제한 20
-                    if (title.length <= 20) {
-                        onTitleChanged(it)
+                    Text(
+                        modifier = Modifier.clickable{
+                            onPostCommunity()
+                            onNavBack()
+                        },
+                        text = "확인",
+                        style = sideTopBarTextStyle
+                    )
+                }
+
+                Divider(
+                    Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = Color.Black
+                )
+
+                //title input
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .padding(start = 33.dp, end = 15.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text = "제목:",
+                        style = titleTextIntroTextStyle
+                    )
+
+                    Spacer(Modifier.width(6.dp))
+
+                    BasicTextField(
+                        modifier = Modifier.weight(1f),
+                        value = uiState.title,
+                        onValueChange = {
+                            //글자 수 제한 20
+                            if (uiState.title.length <= 20) {
+                                onTitleChanged(it)
+                            }
+                        },
+                        textStyle = titleInputTextStyle,
+                        maxLines = 1,
+                        singleLine = true,
+                    ){
+                        //placeholder
+                        if (uiState.content.isEmpty()){
+                            Text(
+                                text = "제목을 입력해주세요",
+                                style = placeholderTextStyle
+                            )
+                        }
                     }
-                },
-                textStyle = titleInputTextStyle,
-                maxLines = 1,
-                singleLine = true,
-            ){
-                //placeholder
-                if (content.isEmpty()){
+
                     Text(
-                        text = "제목을 입력해주세요",
-                        style = placeholderTextStyle
+                        text = "${uiState.title.length}/20",
+                        style = titleInputTextStyle
                     )
                 }
-            }
 
-            Text(
-                text = "${title.length}/20",
-                style = titleInputTextStyle
-            )
-        }
+                Divider(
+                    Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = Color.Black
+                )
 
-        Divider(
-            Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = Color.Black
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 33.dp, vertical = 27.dp)
-        ){
-            //content input
-            BasicTextField(
-                value = content,
-                onValueChange = {
-                    onContentChanged(it)
-                },
-                textStyle = contentInputTextStyle,
-            ){
-                //placeholder
-                if (content.isEmpty()){
-                    Text(
-                        text = "제목을 입력해주세요",
-                        style = placeholderTextStyle
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 33.dp, vertical = 27.dp)
+                ){
+                    //content input
+                    BasicTextField(
+                        value = uiState.content,
+                        onValueChange = {
+                            onContentChanged(it)
+                        },
+                        textStyle = contentInputTextStyle,
+                    ){
+                        //placeholder
+                        if (uiState.content.isEmpty()){
+                            Text(
+                                text = "내용을 입력해주세요",
+                                style = placeholderTextStyle
+                            )
+                        }
+                    }
                 }
+
+                /** 사진 추가가 된다면 선택된 사진을 받아올 View
+                 * 글이 길어지게 된다면 Scroll을 사용해서 사진은 최하단에 맞춰 추가 */
+
+                /** 사진 추가가 된다면 선택된 사진을 받아올 View
+                 * 글이 길어지게 된다면 Scroll을 사용해서 사진은 최하단에 맞춰 추가 */
+                Box(
+
+                ){
+
+                }
+
+                /** 원래는 키보드에 달려있었는데
+                 * 안드로이드에서 기본 옵션에 카메라를 넣는 것은 불가능
+                 * 따라서 카메라를 따로 추가하는 방향으로 진행할 것 같음 */
+
+                /** 원래는 키보드에 달려있었는데
+                 * 안드로이드에서 기본 옵션에 카메라를 넣는 것은 불가능
+                 * 따라서 카메라를 따로 추가하는 방향으로 진행할 것 같음 */
+
             }
         }
-
-        /** 사진 추가가 된다면 선택된 사진을 받아올 View
-         * 글이 길어지게 된다면 Scroll을 사용해서 사진은 최하단에 맞춰 추가 */
-
-        /** 사진 추가가 된다면 선택된 사진을 받아올 View
-         * 글이 길어지게 된다면 Scroll을 사용해서 사진은 최하단에 맞춰 추가 */
-        Box(
-
-        ){
-
-        }
-
-        /** 원래는 키보드에 달려있었는데
-         * 안드로이드에서 기본 옵션에 카메라를 넣는 것은 불가능
-         * 따라서 카메라를 따로 추가하는 방향으로 진행할 것 같음 */
-
-        /** 원래는 키보드에 달려있었는데
-         * 안드로이드에서 기본 옵션에 카메라를 넣는 것은 불가능
-         * 따라서 카메라를 따로 추가하는 방향으로 진행할 것 같음 */
-
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun TestCommunityEditPage(){
-
-    var title by remember{ mutableStateOf("") }
-    var content by remember{ mutableStateOf("") }
-
     CommunityEditPage(
-        title = title,
+        uiState = CommunityEditUiState.Loading,
         onTitleChanged = {
-            title = it
+
         },
-        content = content,
         onContentChanged = {
-            content = it
+
         },
-        category = Category.추천,
         onNavBack = {
 
         },

@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
+import com.hmoa.feature_perfume.navigation.perfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeScreen
 
 @Composable
@@ -51,6 +52,11 @@ fun SetUpNavGraph(
             onBrandClick = {},
             onViewCommentAllClick = {},
             onSimilarPerfumeClick = {},
+            perfumeId = 1
+        ) //perfumeId는 임시값입니다
+        perfumeComment(
+            onBackClick = {},
+            onAddCommentClick = {},
             perfumeId = 1
         ) //perfumeId는 임시값입니다
     }

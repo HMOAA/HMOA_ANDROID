@@ -1,6 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 //여기 Component가 자세히 나와 있지 않아서 일단 감으로 합니다
 @Composable
 fun TypeBadge(
+    onClickItem : () -> Unit = {},
     roundedCorner: Dp,
     type: String,
     fontSize: TextUnit,
@@ -42,6 +44,9 @@ fun TypeBadge(
     Row(
         modifier = Modifier
             .background(color = backgroundColor, shape = RoundedCornerShape(size = roundedCorner))
+            .clickable{
+                onClickItem()
+            }
             .padding(horizontal = 6.dp).padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically

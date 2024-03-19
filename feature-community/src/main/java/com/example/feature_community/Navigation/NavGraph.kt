@@ -58,7 +58,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
             val id = it.arguments?.getInt("id")
 
             CommunityDescriptionRoute (
-                id = id,
+                _id = id,
+                onNavCommunityEdit = onNavCommunityEdit,
                 onNavBack = onNavBack
             )
         }

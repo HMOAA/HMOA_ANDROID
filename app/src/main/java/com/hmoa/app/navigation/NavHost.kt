@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
+import com.hmoa.feature_perfume.navigation.perfumeScreen
 
 @Composable
 fun SetUpNavGraph(
@@ -43,5 +44,14 @@ fun SetUpNavGraph(
             onPickNicknameClick = navController::navigateToPickNickname
         )
         mainScreen()
+        perfumeScreen(
+            onBackClick = {},
+            onHomeClick = {},
+            onCommentAddClick = {},
+            onBrandClick = {},
+            onViewCommentAllClick = {},
+            onSimilarPerfumeClick = {},
+            perfumeId = 1
+        ) //perfumeId는 임시값입니다
     }
 }

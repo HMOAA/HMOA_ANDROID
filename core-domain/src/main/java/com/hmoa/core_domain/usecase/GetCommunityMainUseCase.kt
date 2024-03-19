@@ -4,7 +4,7 @@ import com.hmoa.core_domain.repository.CommunityRepository
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetCommunityMain @Inject constructor(
+class GetCommunityMainUseCase @Inject constructor(
     private val repository : CommunityRepository
 ) {
 

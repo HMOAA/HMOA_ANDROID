@@ -25,40 +25,41 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.feature_community.ViewModel.CommunityPostViewModel
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
 
 @Composable
 fun CommunityPostRoute(
     onNavBack : () -> Unit,
-    category : String?
+    _category : String?,
+    viewModel : CommunityPostViewModel = hiltViewModel()
 ){
 
-    if (category != null) {
-        /** view model은 title, content를 관리 */
-        var title = ""
-        var content = ""
+    if (_category != null) {
+        //category set
+        viewModel.setCategory(_category)
 
-        val categoryData = when(category) {
-            "추천" -> Category.추천
-            "시향기" -> Category.시향기
-            "자유" -> Category.자유
-            else -> Category.추천
-        }
+        val title = viewModel.title.collectAsStateWithLifecycle()
+        val content = viewModel.content.collectAsStateWithLifecycle()
+        val category = viewModel.category.collectAsStateWithLifecycle()
 
         PostCommunityPage(
-            title = title,
+            title = title.value,
             onTitleChanged = {
-                title = it
+                viewModel.updateTitle(it)
             },
-            content = content,
+            content = content.value,
             onContentChanged = {
-                content = it
+                viewModel.updateContent(it)
             },
-            category = categoryData,
+            category = category.value,
             onNavBack = onNavBack,
             onPostCommunity = {
                 //view model의 post 사용
+                viewModel.postCommunity()
             }
         )
     } else {

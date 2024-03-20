@@ -189,7 +189,6 @@ fun CommunityDescriptionPage(
                                 textAlign = TextAlign.Center,
                                 style = dialogRedTextStyle
                             )
-
                         } else {
                             Text(
                                 modifier = Modifier
@@ -310,7 +309,6 @@ fun CommunityDescriptionPage(
                                 viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
                                 onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */}
                             )
-
                             if (index != commentList.size - 1) {
                                 Spacer(Modifier.height(15.dp))
                             }
@@ -325,25 +323,22 @@ fun CommunityDescriptionPage(
                     }
                 }
             }
-
+            CommentInputBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(horizontal = 16.dp)
+                    .background(color = CustomColor.gray6, shape = RoundedCornerShape(5.dp)),
+                profile = profile,
+                onCommentApply = {
+                    onPostComment(it)
+                }
+            )
         }
         CommunityDescUiState.Error -> {
 
         }
     }
-
-    /** 여기에 댓글 작성 EditText 생성 */
-    CommentInputBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .padding(horizontal = 16.dp)
-            .background(color = CustomColor.gray6, shape = RoundedCornerShape(5.dp)),
-        profile = profile,
-        onCommentApply = {
-            onPostComment(it)
-        }
-    )
 }
 
 @Preview
@@ -356,6 +351,7 @@ fun TestCommunityDescriptionPage(){
             isOpenBottomOptions = it
         },
         uiState = CommunityDescUiState.Loading,
+        profile = null,
         isLiked = false,
         onNavBack = {},
         onClickReport = {},

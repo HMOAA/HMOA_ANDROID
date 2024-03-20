@@ -6,6 +6,7 @@ import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_domain.usecase.GetCommunityMainUseCase
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@HiltViewModel
 class CommunityMainViewModel(
     private val repository : CommunityRepository,
     private val communityMainUseCase : GetCommunityMainUseCase

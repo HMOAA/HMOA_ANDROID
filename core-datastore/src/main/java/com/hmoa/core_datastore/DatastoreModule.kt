@@ -24,6 +24,8 @@ import com.hmoa.core_datastore.Note.NoteDataStore
 import com.hmoa.core_datastore.Note.NoteDataStoreImpl
 import com.hmoa.core_datastore.Perfume.PerfumeDataStore
 import com.hmoa.core_datastore.Perfume.PerfumeDataStoreImpl
+import com.hmoa.core_datastore.PerfumeComment.PerfumeCommentDataStore
+import com.hmoa.core_datastore.PerfumeComment.PerfumeCommentDataStoreImpl
 import com.hmoa.core_datastore.Perfumer.PerfumerDataStore
 import com.hmoa.core_datastore.Perfumer.PerfumerDataStoreImpl
 import com.hmoa.core_datastore.Report.ReportDataStore
@@ -92,6 +94,10 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun providePerfumerDatastore(perfumerDataStoreImpl: PerfumerDataStoreImpl): PerfumerDataStore
+
+    @Singleton
+    @Binds
+    fun providePerfumeCommentDatastore(perfumeCommentDataStoreImpl: PerfumeCommentDataStoreImpl): PerfumeCommentDataStore
 
     @Singleton
     @Binds

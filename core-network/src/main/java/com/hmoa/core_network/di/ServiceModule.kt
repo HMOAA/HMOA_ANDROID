@@ -74,6 +74,18 @@ object ServiceModule {
 
     @Singleton
     @Provides
+    fun providePerfumerService(retrofit: Retrofit): PerfumerService {
+        return retrofit.create(PerfumerService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providePerfumeCommentService(retrofit: Retrofit): PerfumeCommentService {
+        return retrofit.create(PerfumeCommentService::class.java)
+    }
+
+    @Singleton
+    @Provides
     fun providerFcmService(retrofit: Retrofit): FcmService {
         return retrofit.create(FcmService::class.java)
     }

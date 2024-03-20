@@ -70,4 +70,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindSignupRepositoryImpl(repositoryImpl: SignupRepositoryImpl): SignupRepository
+
+    @Binds
+    @Singleton
+    fun bindReportRepositoryImpl(repositoryImpl: ReportRepositoryImpl): ReportRepository
 }

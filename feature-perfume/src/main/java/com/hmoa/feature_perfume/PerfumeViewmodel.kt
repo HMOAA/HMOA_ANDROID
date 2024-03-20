@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.usecase.GetPerfumeUsecase
-import com.hmoa.core_domain.usecase.UpdatePerfumeAgeUseCase
-import com.hmoa.core_domain.usecase.UpdatePerfumeGenderUseCase
-import com.hmoa.core_domain.usecase.UpdatePerfumeWeatherUseCase
+import com.hmoa.core_domain.usecase.*
 import com.hmoa.core_model.PerfumeGender
 import com.hmoa.core_model.Weather
 import com.hmoa.core_model.data.Perfume
@@ -15,8 +12,6 @@ import com.hmoa.core_model.response.PerfumeAgeResponseDto
 import com.hmoa.core_model.response.PerfumeGenderResponseDto
 import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,13 +21,13 @@ class PerfumeViewmodel @Inject constructor(
     private val updatePerfumeAge: UpdatePerfumeAgeUseCase,
     private val updatePerfumeGender: UpdatePerfumeGenderUseCase,
     private val updatePerfumeWeather: UpdatePerfumeWeatherUseCase,
-    private val getPerfume: GetPerfumeUsecase
+    private val getPerfume: GetPerfumeUsecase,
+    private val updatePerfumeLike: UpdatePerfumeLikeUseCase
 ) : ViewModel() {
     private val perfumeState = MutableStateFlow<Perfume?>(null)
-    private val weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
-    private val genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
-    private val ageState = MutableStateFlow<PerfumeAgeResponseDto?>(null)
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
+    private var genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
+    private var ageState = MutableStateFlow<PerfumeAgeResponseDto?>(null)
 
     val uiState: StateFlow<PerfumeUiState> =
         combine(weatherState, genderState, ageState, perfumeState) { weather, gender, age, perfume ->
@@ -51,7 +46,7 @@ class PerfumeViewmodel @Inject constructor(
 
 
     fun onChangePerfumeAge(age: Float, perfumeId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             updatePerfumeAge(age = age, perfumeId).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
@@ -66,7 +61,7 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun onChangePerfumeGender(gender: PerfumeGender, perfumeId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             updatePerfumeGender(gender, perfumeId).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
@@ -81,7 +76,7 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun onChangePerfumeWeather(weather: Weather, perfumeId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             updatePerfumeWeather(weather, perfumeId).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
@@ -96,7 +91,7 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun initializePerfume(perfumeId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             getPerfume(perfumeId.toString()).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
@@ -107,6 +102,17 @@ class PerfumeViewmodel @Inject constructor(
                     is Result.Error -> {}
                 }
             }
+        }
+    }
+
+    fun onBackAgeToZero() {
+        val result = PerfumeAgeResponseDto(age = 0, writed = true)
+        ageState.update { result }
+    }
+
+    fun updateLike(like: Boolean, perfumeId: Int) {
+        viewModelScope.launch {
+            updatePerfumeLike(like, perfumeId)
         }
     }
 

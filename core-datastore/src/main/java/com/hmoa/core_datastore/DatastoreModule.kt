@@ -26,6 +26,8 @@ import com.hmoa.core_datastore.Perfume.PerfumeDataStore
 import com.hmoa.core_datastore.Perfume.PerfumeDataStoreImpl
 import com.hmoa.core_datastore.Perfumer.PerfumerDataStore
 import com.hmoa.core_datastore.Perfumer.PerfumerDataStoreImpl
+import com.hmoa.core_datastore.Report.ReportDataStore
+import com.hmoa.core_datastore.Report.ReportDataStoreImpl
 import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_datastore.Search.SearchDataStoreImpl
 import com.hmoa.core_datastore.Signup.SignupDataStore
@@ -98,4 +100,9 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun provideSignupDatastore(signupDataStoreImpl: SignupDataStoreImpl): SignupDataStore
+
+    @Singleton
+    @Binds
+    fun provideReportDatastore(reportDataStoreImpl: ReportDataStoreImpl): ReportDataStore
+
 }

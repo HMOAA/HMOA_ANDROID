@@ -64,6 +64,7 @@ dependencies {
 
     implementation(project(":feature-authentication"))
     implementation(project(":feature-userInfo"))
+    implementation(project(":feature-perfume"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))

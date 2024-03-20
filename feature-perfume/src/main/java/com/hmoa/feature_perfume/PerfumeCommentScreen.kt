@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingSource.LoadResult.Page
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.CommentItem
@@ -39,11 +40,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun PerfumeCommentScreen(
     onBackClick: () -> Unit,
-    onAddCommentClick: (perfumeId: Int) -> Unit,
-    perfumeId: Int,
+    onAddCommentClick: (perfumeId: Int?) -> Unit,
+    perfumeId: Int?,
     viewModel: PerfumeCommentViewmodel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val result = Page(
+        data = listOf(),
+        prevKey = null,
+        nextKey = null
+    )
 
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),

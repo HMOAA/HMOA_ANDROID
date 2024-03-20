@@ -33,6 +33,30 @@ import com.hmoa.core_model.response.PerfumeGenderResponseDto
 import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 
 @Composable
+fun PerfumeRoute(
+    onBackClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onCommentAddClick: () -> Unit,
+    onBrandClick: (brandId: String) -> Unit,
+    onViewCommentAllClick: (perfumeId: Int) -> Unit,
+    onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    perfumeId: Int?,
+) {
+
+    if (perfumeId != null) {
+        PerfumeScreen(
+            onBackClick = { onBackClick() },
+            onHomeClick = { onHomeClick() },
+            onCommentAddClick = { onCommentAddClick() },
+            onBrandClick = { onBrandClick(it) },
+            onViewCommentAllClick = { onViewCommentAllClick(it) },
+            onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
+            perfumeId = perfumeId
+        )
+    }
+}
+
+@Composable
 fun PerfumeScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
@@ -40,8 +64,8 @@ fun PerfumeScreen(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    viewModel: PerfumeViewmodel = hiltViewModel(),
     perfumeId: Int,
-    viewModel: PerfumeViewmodel = hiltViewModel()
 ) {
     viewModel.initializePerfume(perfumeId)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

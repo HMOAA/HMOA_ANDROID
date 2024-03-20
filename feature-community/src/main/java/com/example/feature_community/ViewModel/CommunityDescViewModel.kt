@@ -8,6 +8,9 @@ import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_domain.usecase.GetCommunityComment
 import com.hmoa.core_domain.usecase.GetCommunityDescription
+import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
+import com.hmoa.core_model.data.UserInfo
+import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
@@ -23,11 +26,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityDescViewModel @Inject constructor(
-    private val reportRepository :
+    private val communityRepository : CommunityRepository,
+    private val communityCommentRepository : CommunityCommentRepository,
+    getUserInfo : GetMyUserInfoUseCase,
     communityUseCase : GetCommunityDescription,
     commentUseCase : GetCommunityComment
 ) : ViewModel() {
@@ -49,6 +55,24 @@ class CommunityDescViewModel @Inject constructor(
 
     private val _page = MutableStateFlow(0)
     val page get() = _page.asStateFlow()
+
+    private val _profile = MutableStateFlow<String?>(null)
+    val profile get() = _profile.asStateFlow()
+
+    init{
+        viewModelScope.launch{
+            getUserInfo().asResult()
+                .map{ result ->
+                    when(result) {
+                        Result.Loading -> _profile.update{null}
+                        is Result.Success -> {
+                            _profile.update { result.data.profile }
+                        }
+                        is Result.Error -> _errState.update{ result.exception.toString() }
+                    }
+                }
+        }
+    }
 
     val communityUiState : StateFlow<CommunityDescUiState> = combine(
         communityUseCase(id.value)
@@ -79,12 +103,36 @@ class CommunityDescViewModel @Inject constructor(
 
     //신고하기
     fun reportCommunity(){
-
+        /** 신고하기 repository 추가되어서 이거 추가해야 함 */
     }
 
     //삭제
     fun delCommunity(){
+        viewModelScope.launch{
+            try{
+                communityRepository.deleteCommunity(id.value)
+            } catch (e : Exception) {
+                _errState.update{ e.message.toString() }
+            }
+        }
+    }
 
+    //댓글 작성
+    fun postComment(comment : String){
+        viewModelScope.launch{
+            val requestDto = CommunityCommentDefaultRequestDto(
+                content = comment
+            )
+
+            try {
+                communityCommentRepository.postCommunityComment(
+                    communityId = id.value,
+                    dto = requestDto
+                )
+            } catch (e : Exception) {
+                _errState.update{ e.message.toString() }
+            }
+        }
     }
 }
 
@@ -93,6 +141,18 @@ sealed interface CommunityDescUiState{
     data class CommunityDesc(
         val community : CommunityDefaultResponseDto,
         val comments : CommunityCommentAllResponseDto
-    ) : CommunityDescUiState
+    ) : CommunityDescUiState {
+        val photoList = community.communityPhotos.map{
+            it.photoUrl
+        }
+    }
     data object Error : CommunityDescUiState
+}
+
+sealed interface UserInfoState{
+    data object Loading : UserInfoState
+    data class User(
+        val profile : String,
+    ) : UserInfoState
+    data object Error : UserInfoState
 }

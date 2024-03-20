@@ -38,6 +38,7 @@ import com.example.feature_community.ViewModel.CommunityDescUiState
 import com.example.feature_community.ViewModel.CommunityDescViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_designsystem.component.CommentInputBar
 import com.hmoa.core_designsystem.component.PostContent
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -52,28 +53,31 @@ fun CommunityDescriptionRoute(
 ){
     if (_id != null) {
 
-        val id = viewModel.id.collectAsStateWithLifecycle()
         val uiState = viewModel.communityUiState.collectAsStateWithLifecycle()
+        val profile = viewModel.profile.collectAsStateWithLifecycle()
         val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
         val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
 
         CommunityDescriptionPage(
-            id = id.value,
             isOpenBottomOptions = isOpenBottomOptions.value,
             changeBottomOptionState = {
                 viewModel.updateBottomOptionsState(it)
             },
             isLiked = isLiked.value,
             uiState = uiState.value,
+            profile = profile.value,
             onNavBack = onNavBack,
             onClickReport = {
                 viewModel.reportCommunity()
+            },
+            onPostComment = {
+                viewModel.postComment(it)
             },
             onDeleteCommunity = {
                 viewModel.delCommunity()
             },
             onNavCommunityEdit = {
-                onNavCommunityEdit(it)
+                onNavCommunityEdit(_id)
             }
         )
 
@@ -85,16 +89,16 @@ fun CommunityDescriptionRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityDescriptionPage(
-    //bottom sheet 띄우는 state 갱신 event
-    id : Int,
     isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
     uiState : CommunityDescUiState,
     isLiked : Boolean,
+    profile : String?,
     onClickReport : () -> Unit,
+    onPostComment : (String) -> Unit,
     onDeleteCommunity : () -> Unit,
     onNavBack : () -> Unit,
-    onNavCommunityEdit : (Int) -> Unit,
+    onNavCommunityEdit : () -> Unit,
 ){
     /** Text Style 정의 */
     val categoryTextStyle = TextStyle(
@@ -152,7 +156,7 @@ fun CommunityDescriptionPage(
                                     .fillMaxWidth()
                                     .clickable {
                                         /** 게시글 수정 화면으로 이동 */
-                                        onNavCommunityEdit(id)
+                                        onNavCommunityEdit()
                                     },
                                 text = "수정",
                                 textAlign = TextAlign.Center,
@@ -229,7 +233,10 @@ fun CommunityDescriptionPage(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .scrollable(state = rememberScrollState(), orientation = Orientation.Vertical)
+                        .scrollable(
+                            state = rememberScrollState(),
+                            orientation = Orientation.Vertical
+                        )
                 ){
                     Spacer(Modifier.height(16.dp))
 
@@ -267,7 +274,8 @@ fun CommunityDescriptionPage(
                             title = community.title,
                             content = community.content,
                             heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
-                            isLiked = isLiked
+                            isLiked = isLiked,
+                            pictures = uiState.photoList
                         )
                     }
 
@@ -300,7 +308,7 @@ fun CommunityDescriptionPage(
                                 comment = comment.content,
                                 isFirst = false,
                                 viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
-                                onNavCommunity = {}
+                                onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */}
                             )
 
                             if (index != commentList.size - 1) {
@@ -325,6 +333,17 @@ fun CommunityDescriptionPage(
     }
 
     /** 여기에 댓글 작성 EditText 생성 */
+    CommentInputBar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .padding(horizontal = 16.dp)
+            .background(color = CustomColor.gray6, shape = RoundedCornerShape(5.dp)),
+        profile = profile,
+        onCommentApply = {
+            onPostComment(it)
+        }
+    )
 }
 
 @Preview
@@ -332,7 +351,6 @@ fun CommunityDescriptionPage(
 fun TestCommunityDescriptionPage(){
     var isOpenBottomOptions by remember{mutableStateOf(false)}
     CommunityDescriptionPage(
-        id = 0,
         isOpenBottomOptions = isOpenBottomOptions,
         changeBottomOptionState = {
             isOpenBottomOptions = it
@@ -342,6 +360,7 @@ fun TestCommunityDescriptionPage(){
         onNavBack = {},
         onClickReport = {},
         onDeleteCommunity = {},
-        onNavCommunityEdit = {}
+        onNavCommunityEdit = {},
+        onPostComment = {}
     )
 }

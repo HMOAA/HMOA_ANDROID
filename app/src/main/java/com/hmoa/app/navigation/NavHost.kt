@@ -9,6 +9,9 @@ import com.example.feature_community.Navigation.navigateToCommunityPostRoute
 import com.example.feature_community.Navigation.nestedCommunityGraph
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
+import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
+import com.hmoa.feature_perfume.navigation.perfumeComment
+import com.hmoa.feature_perfume.navigation.perfumeScreen
 
 @Composable
 fun SetUpNavGraph(
@@ -56,5 +59,17 @@ fun SetUpNavGraph(
             onPickNicknameClick = navController::navigateToPickNickname
         )
         mainScreen()
+        perfumeScreen(
+            onBackClick = {},
+            onHomeClick = {},
+            onCommentAddClick = {},
+            onBrandClick = {},
+            onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
+            onSimilarPerfumeClick = {},
+        )
+        perfumeComment(
+            onBackClick = {},
+            onAddCommentClick = {},
+        )
     }
 }

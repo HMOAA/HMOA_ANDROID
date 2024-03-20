@@ -117,7 +117,7 @@ fun CommentInputBar(
         ) {
             Icon(
                 modifier = Modifier.size(20.dp),
-                painter = painterResource(R.drawable.apply_ic),
+                painter = painterResource(R.drawable.ic_comment_input),
                 contentDescription = "Apply Comment Button"
             )
         }

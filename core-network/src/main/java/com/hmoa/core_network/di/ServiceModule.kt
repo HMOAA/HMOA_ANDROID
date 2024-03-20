@@ -74,6 +74,18 @@ object ServiceModule {
 
     @Singleton
     @Provides
+    fun providePerfumerService(retrofit: Retrofit): PerfumerService {
+        return retrofit.create(PerfumerService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providePerfumeCommentService(retrofit: Retrofit): PerfumeCommentService {
+        return retrofit.create(PerfumeCommentService::class.java)
+    }
+
+    @Singleton
+    @Provides
     fun providerFcmService(retrofit: Retrofit): FcmService {
         return retrofit.create(FcmService::class.java)
     }
@@ -134,7 +146,12 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun providerCommunityCommentService(retrofit : Retrofit) : CommunityCommentService{
+    fun providerCommunityCommentService(retrofit : Retrofit) : CommunityCommentService {
         return retrofit.create(CommunityCommentService::class.java)
+    }
+    @Singleton
+    @Provides
+    fun providerReportService(retrofit: Retrofit): ReportService {
+        return retrofit.create(ReportService::class.java)
     }
 }

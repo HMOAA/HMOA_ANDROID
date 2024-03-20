@@ -46,8 +46,6 @@ fun CommunityPageRoute(
     onNavPost : (String) -> Unit,
     viewModel : CommunityMainViewModel = hiltViewModel()
 ){
-
-    /** 선택된 type을 Page에 넘기고 이에 따라 isSelect 값을 선택 */
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 

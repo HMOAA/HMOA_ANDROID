@@ -51,7 +51,7 @@ fun SetUpNavGraph(
             onHomeClick = {},
             onCommentAddClick = {},
             onBrandClick = {},
-            onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment() },
+            onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
             onSimilarPerfumeClick = {},
         )
         perfumeComment(

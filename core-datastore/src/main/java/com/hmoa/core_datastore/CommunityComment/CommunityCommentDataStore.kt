@@ -21,7 +21,7 @@ interface CommunityCommentDataStore {
 
     suspend fun deleteCommunityCommentLiked(commentId: Int): DataResponseDto<Any>
 
-    suspend fun getCommunityComments(communityId: Int, page: String): CommunityCommentAllResponseDto
+    suspend fun getCommunityComments(communityId: Int, page: Int): CommunityCommentAllResponseDto
     suspend fun postCommunityComment(
         communityId: Int,
         dto: CommunityCommentDefaultRequestDto

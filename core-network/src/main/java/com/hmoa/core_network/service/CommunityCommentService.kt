@@ -33,7 +33,7 @@ interface CommunityCommentService {
     @GET("/community/comment/{communityId}/findAll")
     suspend fun getCommunityComments(
         @Path(value = "communityId") communityId: Int,
-        @Query("page") page: String
+        @Query("page") page: Int
     ): CommunityCommentAllResponseDto
 
     @POST("/community/comment/{communityId}/save")

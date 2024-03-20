@@ -7,7 +7,7 @@ import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.core_network.service.PerfumeCommentService
 import javax.inject.Inject
 
-internal class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :
+class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :
     PerfumeCommentDataStore {
     override suspend fun getPerfumeCommentsLatest(page: String, perfumeId: Int): PerfumeCommentGetResponseDto {
         return perfumeCommentService.getPerfumeCommentsLatest(page, perfumeId)

@@ -8,10 +8,10 @@ plugins {
 
 android {
     namespace = "com.hmoa.feature_perfume"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -51,20 +51,11 @@ dependencies {
 
     implementation("androidx.compose.material:material:1.2.0-beta02")
     implementation("androidx.compose.material3:material3:1.1.0")
-    // Paging
     implementation("androidx.paging:paging-compose:1.0.0-alpha02")
-
-    //preview
     implementation("androidx.compose.ui:ui-tooling-preview")
-
     implementation("androidx.compose.ui:ui:1.1.0")
-
-    //bottom navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
-
-    //collectAsStateWithLifecycle 함수
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
-
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")

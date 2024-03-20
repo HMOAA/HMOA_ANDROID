@@ -125,4 +125,16 @@ object ServiceModule {
     fun providerSearchService(retrofit: Retrofit): SearchService {
         return retrofit.create(SearchService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun providerCommunityService(retrofit : Retrofit) : CommunityService{
+        return retrofit.create(CommunityService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providerCommunityCommentService(retrofit : Retrofit) : CommunityCommentService{
+        return retrofit.create(CommunityCommentService::class.java)
+    }
 }

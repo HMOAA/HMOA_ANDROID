@@ -15,9 +15,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class CommunityMainViewModel(
+class CommunityMainViewModel @Inject constructor(
     private val repository : CommunityRepository,
     private val communityMainUseCase : GetCommunityMainUseCase
 ) : ViewModel() {

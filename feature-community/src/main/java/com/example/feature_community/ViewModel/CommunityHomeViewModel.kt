@@ -18,10 +18,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class CommunityHomeViewModel(
-    private val communityHomeUseCase: GetCommunityHomeUseCase
+class CommunityHomeViewModel @Inject constructor(
+    communityHomeUseCase: GetCommunityHomeUseCase
 ) : ViewModel() {
 
     private val _comments = MutableStateFlow(emptyList<CommunityByCategoryResponseDto>())

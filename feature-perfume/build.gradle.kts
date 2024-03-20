@@ -51,6 +51,8 @@ dependencies {
 
     implementation("androidx.compose.material:material:1.2.0-beta02")
     implementation("androidx.compose.material3:material3:1.1.0")
+    // Paging
+    implementation("androidx.paging:paging-compose:1.0.0-alpha02")
 
     //preview
     implementation("androidx.compose.ui:ui-tooling-preview")

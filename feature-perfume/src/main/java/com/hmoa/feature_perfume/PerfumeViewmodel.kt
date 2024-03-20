@@ -12,8 +12,6 @@ import com.hmoa.core_model.response.PerfumeAgeResponseDto
 import com.hmoa.core_model.response.PerfumeGenderResponseDto
 import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +22,7 @@ class PerfumeViewmodel @Inject constructor(
     private val updatePerfumeGender: UpdatePerfumeGenderUseCase,
     private val updatePerfumeWeather: UpdatePerfumeWeatherUseCase,
     private val getPerfume: GetPerfumeUsecase,
-    private val updatePerfumeLike:UpdatePerfumeLikeUseCase
+    private val updatePerfumeLike: UpdatePerfumeLikeUseCase
 ) : ViewModel() {
     private val perfumeState = MutableStateFlow<Perfume?>(null)
     private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
@@ -112,9 +110,9 @@ class PerfumeViewmodel @Inject constructor(
         ageState.update { result }
     }
 
-    fun updateLike(like: Boolean,perfumeId: Int) {
+    fun updateLike(like: Boolean, perfumeId: Int) {
         viewModelScope.launch {
-            updatePerfumeLike(like,perfumeId)
+            updatePerfumeLike(like, perfumeId)
         }
     }
 

@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 fun PerfumeCommentScreen(
     onBackClick: () -> Unit,
     onAddCommentClick: (perfumeId: Int?) -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
     perfumeId: Int?,
     viewModel: PerfumeCommentViewmodel = hiltViewModel(),
 ) {
@@ -69,7 +69,7 @@ fun PerfumeCommentScreen(
                     onAddCommentClick = { onAddCommentClick(perfumeId) },
                     onReportClick = { viewModel.onClickReport() },
                     saveReportTarget = { viewModel.saveTargetId(it) },
-                    onSpecificCommentClick = { onSpecificCommentClick(it) }
+                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
                 )
             }
 
@@ -89,7 +89,7 @@ fun PerfumeCommentContent(
     onAddCommentClick: () -> Unit,
     onReportClick: () -> Unit,
     saveReportTarget: (commentId: String) -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     val scope = CoroutineScope(Dispatchers.IO)
     val verticalScrollState = rememberScrollState()
@@ -146,7 +146,7 @@ fun PerfumeCommentContent(
                             content = it.content,
                             createdDate = it.createdAt.toInt(),
                             onReportClick = { showReportModal(it.id.toString()) },
-                            onCommentItemClick = { onSpecificCommentClick(it.id.toString()) }
+                            onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
                         )
                     }
                 }

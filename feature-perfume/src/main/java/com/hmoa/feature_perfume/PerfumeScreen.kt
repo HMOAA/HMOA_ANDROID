@@ -40,6 +40,7 @@ fun PerfumeRoute(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    onSpecificCommentClick: (commentId: String) -> Unit,
     perfumeId: Int?,
 ) {
 
@@ -51,7 +52,8 @@ fun PerfumeRoute(
             onBrandClick = { onBrandClick(it) },
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
-            perfumeId = perfumeId
+            perfumeId = perfumeId,
+            onSpecificCommentClick = { onSpecificCommentClick(it) }
         )
     }
 }
@@ -64,6 +66,7 @@ fun PerfumeScreen(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    onSpecificCommentClick: (commentId: String) -> Unit,
     viewModel: PerfumeViewmodel = hiltViewModel(),
     perfumeId: Int,
 ) {
@@ -93,7 +96,8 @@ fun PerfumeScreen(
                     data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
                     weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
                     gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
-                    age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age
+                    age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
+                    onSpecificCommentClick = { onSpecificCommentClick(it) }
                 )
             }
 
@@ -116,6 +120,7 @@ fun PerfumeContent(
     onAgeDragFinish: (age: Float) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    onSpecificCommentClick: (commentId: String) -> Unit,
     data: Perfume?,
     weather: PerfumeWeatherResponseDto?,
     gender: PerfumeGenderResponseDto?,
@@ -159,7 +164,10 @@ fun PerfumeContent(
                 onInitializeAgeClick = { onInitializeAgeClick() },
                 age
             )
-            CommentView(data.commentInfo, onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) })
+            CommentView(
+                data.commentInfo,
+                onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
+                onSpecificCommentClick = { onSpecificCommentClick(it) })
             Text(
                 "같은 브랜드의 제품",
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
@@ -434,7 +442,11 @@ fun PerfumeAgeView(
 }
 
 @Composable
-fun CommentView(commentInfo: PerfumeCommentGetResponseDto, onViewCommentAllClick: () -> Unit) {
+fun CommentView(
+    commentInfo: PerfumeCommentGetResponseDto,
+    onViewCommentAllClick: () -> Unit,
+    onSpecificCommentClick: (commentId: String) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp)
@@ -467,7 +479,8 @@ fun CommentView(commentInfo: PerfumeCommentGetResponseDto, onViewCommentAllClick
                         userName = it.nickname,
                         content = it.content,
                         createdDate = it.createdAt.toInt(),
-                        onReportClick = {}
+                        onReportClick = {},
+                        onCommentItemClick = { onSpecificCommentClick(it.id.toString()) }
                     )
                 }
             }

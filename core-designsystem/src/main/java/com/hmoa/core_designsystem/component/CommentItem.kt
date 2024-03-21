@@ -32,9 +32,10 @@ fun CommentItem(
     userName: String,
     content: String,
     createdDate: Int,
-    onReportClick: () -> Unit
+    onReportClick: () -> Unit,
+    onCommentItemClick: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().height(102.dp).padding(10.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().height(102.dp).padding(10.dp).clickable { onCommentItemClick() }) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
                 Box(
@@ -97,5 +98,6 @@ fun CommentItemPreview() {
         userName = "임현규",
         content = "선물용으로 구매했는데, 친구가 좋아했어요",
         createdDate = 12,
-        onReportClick = {})
+        onReportClick = {},
+        onCommentItemClick = {})
 }

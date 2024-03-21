@@ -66,12 +66,12 @@ fun SetUpNavGraph(
             onBrandClick = {},
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
             onSimilarPerfumeClick = {},
-            onSpecificCommentClick = { commentId -> }
+            onSpecificCommentClick = { commentId, isEditable -> }
         )
         perfumeComment(
             onBackClick = {},
             onAddCommentClick = {},
-            onSpecificCommentClick = { commentId -> }
+            onSpecificCommentClick = { commentId, isEditable -> }
         )
     }
 }

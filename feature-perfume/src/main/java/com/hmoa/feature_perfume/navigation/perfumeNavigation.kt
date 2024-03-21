@@ -20,7 +20,7 @@ fun NavGraphBuilder.perfumeScreen(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     composable(route = PERFUME_ROUTE, arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })) {
         val perfumeId = it.arguments?.getInt("perfumeId")
@@ -32,7 +32,7 @@ fun NavGraphBuilder.perfumeScreen(
             onViewCommentAllClick = { perfumeId -> onViewCommentAllClick(perfumeId) },
             onSimilarPerfumeClick = { perfumeId -> onSimilarPerfumeClick(perfumeId) },
             perfumeId = perfumeId,
-            onSpecificCommentClick = { commentId -> onSpecificCommentClick(commentId) }
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
         )
     }
 }
@@ -40,7 +40,7 @@ fun NavGraphBuilder.perfumeScreen(
 fun NavGraphBuilder.perfumeComment(
     onBackClick: () -> Unit,
     onAddCommentClick: (perfumeId: Int?) -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     composable(route = PERFUME_COMMENT_ROUTE, arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })) {
         val perfumeId = it.arguments?.getInt("perfumeId")
@@ -48,7 +48,7 @@ fun NavGraphBuilder.perfumeComment(
             onBackClick = { onBackClick() },
             onAddCommentClick = { onAddCommentClick(perfumeId) },
             perfumeId = perfumeId,
-            onSpecificCommentClick = { commentId -> onSpecificCommentClick(commentId) }
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
         )
     }
 }

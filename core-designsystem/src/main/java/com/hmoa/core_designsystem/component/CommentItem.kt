@@ -62,7 +62,7 @@ fun CommentItem(
                 Icon(
                     painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_kebab),
                     contentDescription = "아이콘",
-                    modifier = Modifier.size(12.dp).padding(2.dp).clickable { onReportClick() },
+                    modifier = Modifier.size(23.dp).padding(2.dp).clickable { onReportClick() },
                     tint = CustomColor.gray2
                 )
                 TypeBadge(

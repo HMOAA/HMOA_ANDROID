@@ -1,4 +1,4 @@
-package com.hmoa.feature_perfume
+package com.hmoa.feature_perfume.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.hmoa.feature_perfume
+package com.hmoa.feature_perfume.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +33,7 @@ import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
+import com.hmoa.feature_perfume.viewmodel.PerfumeCommentViewmodel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

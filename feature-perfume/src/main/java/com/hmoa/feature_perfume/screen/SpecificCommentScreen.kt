@@ -1,4 +1,4 @@
-package com.hmoa.feature_perfume
+package com.hmoa.feature_perfume.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

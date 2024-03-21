@@ -5,8 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.hmoa.feature_perfume.PerfumeCommentScreen
-import com.hmoa.feature_perfume.PerfumeRoute
+import com.hmoa.feature_perfume.screen.PerfumeCommentScreen
+import com.hmoa.feature_perfume.screen.PerfumeRoute
 
 const val PERFUME_ROUTE = "perfume_route"
 const val PERFUME_COMMENT_ROUTE = "perfume_comment"

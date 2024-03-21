@@ -1,4 +1,4 @@
-package com.hmoa.feature_perfume
+package com.hmoa.feature_perfume.screen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -31,6 +31,7 @@ import com.hmoa.core_model.response.PerfumeAgeResponseDto
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeGenderResponseDto
 import com.hmoa.core_model.response.PerfumeWeatherResponseDto
+import com.hmoa.feature_perfume.viewmodel.PerfumeViewmodel
 
 @Composable
 fun PerfumeRoute(

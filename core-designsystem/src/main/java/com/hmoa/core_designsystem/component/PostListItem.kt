@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
@@ -22,26 +24,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
 fun PostListItem(
+    modifier : Modifier = Modifier,
     onPostClick : () -> Unit,
     postType : String,
     postTitle : String,
 ){
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(76.dp)
-            .border(width = 1.dp, color = Color(0xFFBBBBBB))
+        modifier = modifier
             .clickable {
                 onPostClick()
             }
-            .padding(start = 32.dp),
+            .padding(start = 16.dp, end = 12.dp)
+            .padding(vertical = 16.dp),
     ){
         Column(
             modifier = Modifier
@@ -52,10 +57,10 @@ fun PostListItem(
             Text(
                 text = postType,
                 fontSize = 14.sp,
-                color = Color(0xFFBBBBBB)
+                color = CustomColor.gray2
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = postTitle,
@@ -70,8 +75,12 @@ fun PostListItem(
 @Composable
 fun TestPostListItem(){
     PostListItem (
+        Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
         onPostClick = {},
         postType = "추천해주세요",
-        postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?"
+        postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
     )
 }

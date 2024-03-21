@@ -140,6 +140,17 @@ object ServiceModule {
 
     @Singleton
     @Provides
+    fun providerCommunityService(retrofit : Retrofit) : CommunityService{
+        return retrofit.create(CommunityService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providerCommunityCommentService(retrofit : Retrofit) : CommunityCommentService {
+        return retrofit.create(CommunityCommentService::class.java)
+    }
+    @Singleton
+    @Provides
     fun providerReportService(retrofit: Retrofit): ReportService {
         return retrofit.create(ReportService::class.java)
     }

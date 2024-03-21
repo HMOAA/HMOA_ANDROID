@@ -7,10 +7,12 @@ import kotlinx.serialization.Serializable
 data class CommunityDefaultResponseDto(
     val author: String,
     var category: String,
-    val communityPhotos: CommunityPhotoDefaultResponseDto,
+    val communityPhotos: List<CommunityPhotoDefaultResponseDto>,
     val content: String,
+    val heartCount : Int,
     val id: Int,
     val imagesCount: Int,
+    val liked : Boolean,
     val myProfileImgUrl: String,
     val profileImgUrl: String,
     val time: String,

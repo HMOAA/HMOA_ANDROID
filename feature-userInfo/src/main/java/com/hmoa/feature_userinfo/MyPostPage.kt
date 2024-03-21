@@ -1,9 +1,11 @@
 package com.hmoa.feature_userinfo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,6 +18,7 @@ import com.example.feature_userinfo.viewModel.PostUiState
 import com.example.feature_userinfo.viewModel.PostViewModel
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
 fun MyPostRoute(
@@ -86,6 +89,10 @@ fun MyPostPage(
                             items(uiState.posts) { post ->
                                 /** post에 따른 match */
                                 PostListItem(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
                                     onPostClick = onNavEditPost,
                                     postType = post.category,
                                     postTitle = post.title

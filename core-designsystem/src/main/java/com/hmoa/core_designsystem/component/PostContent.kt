@@ -44,7 +44,6 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.skydoves.landscapist.glide.GlideImage
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostContent(
     modifier : Modifier = Modifier,
@@ -56,6 +55,7 @@ fun PostContent(
     content : String,
     heartCount : String,
     isLiked : Boolean,
+    pictures : List<String>
 ){
     val nicknameTextStyle = TextStyle(
         fontSize = 14.sp,
@@ -173,8 +173,8 @@ fun PostContent(
                 fontSize = 12.sp,
                 fontColor = Color.Black,
                 selected = isLiked,
-                selectedIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_heart_filled),
-                unSelectedIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_heart),
+                selectedIcon = painterResource(R.drawable.ic_heart_filled),
+                unSelectedIcon = painterResource(R.drawable.ic_heart),
                 iconColor = Color.Black,
                 selectedColor = CustomColor.gray1,
                 unSelectedColor = CustomColor.gray1
@@ -209,7 +209,8 @@ fun TestPostContent(){
             isLiked = false,
             onChangeBottomSheetState = {
                 isOpen = it
-            }
+            },
+            pictures = listOf()
         )
     }
 }

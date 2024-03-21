@@ -1,18 +1,20 @@
 package com.hmoa.core_repository
 
 import com.hmoa.core_datastore.CommunityComment.CommunityCommentDataStore
+import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import javax.inject.Inject
 
-class CommunityCommentRepositoryImpl @Inject constructor(private val communityCommentDataStore: CommunityCommentDataStore) :
-    com.hmoa.core_domain.repository.CommunityCommentRepository {
+class CommunityCommentRepositoryImpl @Inject constructor(private val communityCommentDataStore: CommunityCommentDataStore)
+    : CommunityCommentRepository {
     override suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto {
+    ): CommunityCommentWithLikedResponseDto {
         return communityCommentDataStore.putCommunityComment(commentId, dto)
     }
 
@@ -20,14 +22,24 @@ class CommunityCommentRepositoryImpl @Inject constructor(private val communityCo
         return communityCommentDataStore.deleteCommunityComment(commentId)
     }
 
-    override suspend fun getCommunityComments(commentId: Int, page: String): CommunityCommentAllResponseDto {
-        return communityCommentDataStore.getCommunityComments(commentId, page)
+    override suspend fun putCommunityCommentLiked(
+        commentId: Int,
+        dto: CommunityCommentDefaultRequestDto
+    ): DataResponseDto<Any>  {
+        return communityCommentDataStore.putCommunityCommentLiked(commentId, dto)
+    }
+
+    override suspend fun deleteCommunityCommentLiked(commentId: Int): DataResponseDto<Any> {
+        return communityCommentDataStore.deleteCommunityCommentLiked(commentId)
+    }
+    override suspend fun getCommunityComments(communityId: Int, page: Int): CommunityCommentAllResponseDto {
+        return communityCommentDataStore.getCommunityComments(communityId, page)
     }
 
     override suspend fun postCommunityComment(
-        commentId: Int,
+        communityId: Int,
         dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentDefaultResponseDto {
-        return communityCommentDataStore.postCommunityComment(commentId, dto)
+    ): CommunityCommentWithLikedResponseDto {
+        return communityCommentDataStore.postCommunityComment(communityId, dto)
     }
 }

@@ -40,7 +40,7 @@ fun PerfumeRoute(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
     perfumeId: Int?,
 ) {
 
@@ -53,7 +53,7 @@ fun PerfumeRoute(
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
             perfumeId = perfumeId,
-            onSpecificCommentClick = { onSpecificCommentClick(it) }
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
         )
     }
 }
@@ -66,7 +66,7 @@ fun PerfumeScreen(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
     viewModel: PerfumeViewmodel = hiltViewModel(),
     perfumeId: Int,
 ) {
@@ -97,7 +97,7 @@ fun PerfumeScreen(
                     weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
                     gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
                     age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
-                    onSpecificCommentClick = { onSpecificCommentClick(it) }
+                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
                 )
             }
 
@@ -120,7 +120,7 @@ fun PerfumeContent(
     onAgeDragFinish: (age: Float) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
     data: Perfume?,
     weather: PerfumeWeatherResponseDto?,
     gender: PerfumeGenderResponseDto?,
@@ -167,7 +167,7 @@ fun PerfumeContent(
             CommentView(
                 data.commentInfo,
                 onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
-                onSpecificCommentClick = { onSpecificCommentClick(it) })
+                onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) })
             Text(
                 "같은 브랜드의 제품",
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
@@ -251,7 +251,7 @@ fun PerfumeVolumeView(volume: Int, color: Color) {
 fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: String) {
     Row(modifier = Modifier.border(border = BorderStroke(width = 1.dp, color = CustomColor.gray3))) {
         Column(modifier = Modifier.width(68.dp).height(68.dp)) {
-            PerfumeView(imageUrl = imageUrl, backgroundColor = Color.White, width = 60, height = 60)
+            ImageView(imageUrl = imageUrl, backgroundColor = Color.White, width = 60, height = 60)
         }
         Column(
             modifier = Modifier.fillMaxWidth().height(68.dp).background(color = Color.Black).padding(start = 10.dp),
@@ -445,7 +445,7 @@ fun PerfumeAgeView(
 fun CommentView(
     commentInfo: PerfumeCommentGetResponseDto,
     onViewCommentAllClick: () -> Unit,
-    onSpecificCommentClick: (commentId: String) -> Unit
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -480,7 +480,7 @@ fun CommentView(
                         content = it.content,
                         createdDate = it.createdAt.toInt(),
                         onReportClick = {},
-                        onCommentItemClick = { onSpecificCommentClick(it.id.toString()) }
+                        onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
                     )
                 }
             }
@@ -542,7 +542,7 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
 @Composable
 fun SimilarPerfumeView(imageUrl: String, perfumeName: String, brandName: String) {
     Column(modifier = Modifier.padding(end = 8.dp).width(88.dp)) {
-        PerfumeView(imageUrl = imageUrl, backgroundColor = Color.White, width = 88, height = 88)
+        ImageView(imageUrl = imageUrl, backgroundColor = Color.White, width = 88, height = 88)
         Text(
             text = brandName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
             modifier = Modifier.padding(end = 4.dp)

@@ -68,7 +68,7 @@ fun SetUpNavGraph(
             onHomeClick = navController::navigateToMain,
             onPickNicknameClick = navController::navigateToPickNickname
         )
-        mainScreen()
+
         perfumeScreen(
             onBackClick = {},
             onHomeClick = {},

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -157,7 +158,7 @@ fun PerfumeContent(
             Column(modifier = Modifier.clickable { onBrandClick(data.brandId) }) {
                 BrandCard(data.brandImgUrl, data.brandEnglishName, data.brandKoreanName)
             }
-            TastingNoteView(topNote = data.topNote, heartNote = data.heartNote, baseNote = data.baseNote)
+            TastingNoteView(notes = arrayOf(data.topNote, data.heartNote, data.baseNote), imageUrls = data.notePhotos)
             PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
             PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
             PerfumeAgeView(
@@ -273,61 +274,38 @@ fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: Strin
 }
 
 @Composable
-fun TastingNoteView(topNote: String, heartNote: String, baseNote: String) {
+fun TastingNoteView(notes: Array<String>, imageUrls: Array<String>) {
     Text(
         "테이스팅 노트",
         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
         modifier = Modifier.padding(bottom = 8.dp).padding(top = 48.dp)
     )
     Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            //ImageKebabView("")
-            Text("ㅇㅇㅇ", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium))
-            Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
-            Text(
-                topNote,
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-                modifier = Modifier.padding(start = 8.dp)
-            )
+        LazyRow {
+            itemsIndexed(imageUrls) { index, item ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ImageView(item, 180, 60, Color.White)
+                    Text("ㅇㅇㅇ", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium))
+                    Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
+                    Text(
+                        notes[index],
+                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            //ImageKebabView("")
-            Text("ㅇㅇㅇ", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium))
-            Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
-            Text(
-                heartNote,
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            //ImageKebabView("")
-            Text("ㅇㅇㅇ", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium))
-            Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
-            Text(
-                baseNote,
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        }
+
+        Text(
+            "이 제품에 대해 평가해주세요",
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+            modifier = Modifier.padding(bottom = 8.dp).padding(top = 48.dp)
+        )
     }
-    Text(
-        "이 제품에 대해 평가해주세요",
-        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-        modifier = Modifier.padding(bottom = 8.dp).padding(top = 48.dp)
-    )
 }
 
 @Composable

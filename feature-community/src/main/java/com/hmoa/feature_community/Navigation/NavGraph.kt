@@ -11,7 +11,7 @@ import com.hmoa.feature_community.CommunityPostRoute
 import com.hmoa.feature_community.Navigation.Route
 
 //게시글 기본 화면
-fun NavController.navigateToCommunityRoute() = navigate(Route.CommunityPageRoute.name)
+fun NavController.navigateToCommunityRoute() = navigate(Route.CommunityGraphRoute.name)
 
 //게시글 등록 화면
 fun NavController.navigateToCommunityPostRoute(type : String) = navigate("${Route.CommunityPostRoute.name}/${type}")
@@ -30,7 +30,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
 ){
     navigation(
         startDestination = Route.CommunityPageRoute.name,
-        route = "community_graph"
+        route = Route.CommunityGraphRoute.name
     ){
         composable(route = Route.CommunityPageRoute.name){
             CommunityPageRoute(

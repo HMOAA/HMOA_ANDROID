@@ -1,9 +1,8 @@
-package com.example.feature_community.ViewModel
+package com.hmoa.feature_community.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.CommunityRepository
-import com.hmoa.core_domain.usecase.GetCommunityMainUseCase
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityMainViewModel @Inject constructor(
-    private val repository : CommunityRepository,
-    private val communityMainUseCase : GetCommunityMainUseCase
+    private val repository : CommunityRepository
 ) : ViewModel() {
 
     //type 정보
@@ -38,12 +36,7 @@ class CommunityMainViewModel @Inject constructor(
     init {
         //초기화 시 추천 type으로 먼저 데이터를 받아옴
         viewModelScope.launch{
-            communityMainUseCase(
-                category = type.value.name,
-                page = page.value
-            ).collect{
-                _community.update{it}
-            }
+            _community.update { repository.getCommunityByCategory(Category.추천.name, page.value) }
         }
     }
 
@@ -62,16 +55,15 @@ class CommunityMainViewModel @Inject constructor(
         isAdd : Boolean
     ){
         viewModelScope.launch{
-            communityMainUseCase(
-                category = type.value.name,
-                page = page.value
-            ).collect{
-                if (isAdd) {
-                    _community.update {_community.value + it}
-                } else {
-                    _community.update { it }
+            repository.getCommunityByCategory(type.value.name, page.value)
+                .map{
+                    if(isAdd) {
+                        _community.update { _community.value + it }
+                    }
+                    else {
+                        _community.update { it }
+                    }
                 }
-            }
         }
     }
 

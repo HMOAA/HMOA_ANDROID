@@ -1,4 +1,4 @@
-package com.example.feature_community
+package com.hmoa.feature_community
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_community.ViewModel.CommunityPostViewModel
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
+import com.hmoa.feature_community.ViewModel.CommunityPostViewModel
 
 @Composable
 fun CommunityPostRoute(

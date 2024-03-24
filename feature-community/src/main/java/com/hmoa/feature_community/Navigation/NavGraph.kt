@@ -1,16 +1,17 @@
-package com.example.feature_community.Navigation
+package com.hmoa.feature_community.Navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.feature_community.CommunityDescriptionRoute
-import com.example.feature_community.CommunityEditRoute
-import com.example.feature_community.CommunityPageRoute
-import com.example.feature_community.CommunityPostRoute
+import com.hmoa.feature_community.CommunityDescriptionRoute
+import com.hmoa.feature_community.CommunityEditRoute
+import com.hmoa.feature_community.CommunityPageRoute
+import com.hmoa.feature_community.CommunityPostRoute
+import com.hmoa.feature_community.Navigation.Route
 
 //게시글 기본 화면
-fun NavController.navigateToCommunityRoute() = navigate(Route.CommunityPageRoute.name)
+fun NavController.navigateToCommunityRoute() = navigate(Route.CommunityGraphRoute.name)
 
 //게시글 등록 화면
 fun NavController.navigateToCommunityPostRoute(type : String) = navigate("${Route.CommunityPostRoute.name}/${type}")
@@ -29,7 +30,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
 ){
     navigation(
         startDestination = Route.CommunityPageRoute.name,
-        route = "community_graph"
+        route = Route.CommunityGraphRoute.name
     ){
         composable(route = Route.CommunityPageRoute.name){
             CommunityPageRoute(

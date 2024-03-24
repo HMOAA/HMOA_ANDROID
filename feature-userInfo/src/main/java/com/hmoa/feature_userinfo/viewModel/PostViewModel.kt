@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.usecase.GetMyPostUseCase
+import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val postUseCase: GetMyPostUseCase
+    private val memberRepository: MemberRepository
 ) : ViewModel() {
 
     //선택된 type
@@ -35,6 +36,12 @@ class PostViewModel @Inject constructor(
     //comment 리스트
     private val _posts = MutableStateFlow(emptyList<CommunityByCategoryResponseDto>())
     val posts get() = _posts.asStateFlow()
+
+    init{
+        viewModelScope.launch{
+            _posts.update{ memberRepository.getCommunities(page.value) }
+        }
+    }
 
     val uiState: StateFlow<PostUiState> = combine(
         type,
@@ -64,7 +71,9 @@ class PostViewModel @Inject constructor(
     //comment list 업데이트
     private fun updatePosts(isAdd : Boolean){
         viewModelScope.launch(Dispatchers.IO){
-            postUseCase(page.value).asResult().map{result ->
+            flow{
+                emit(memberRepository.getCommunities(page.value))
+            }.asResult().map{result ->
                 when(result) {
                     is Result.Loading -> {
 

@@ -26,6 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -240,7 +243,8 @@ fun CommunityDescriptionPage(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .weight(1f)
                         .padding(horizontal = 16.dp)
                         .scrollable(
                             state = rememberScrollState(),
@@ -343,6 +347,7 @@ fun CommunityDescriptionPage(
                         onPostComment(it)
                     }
                 )
+                Spacer(Modifier.height(7.dp))
             }
         }
         CommunityDescUiState.Error -> {

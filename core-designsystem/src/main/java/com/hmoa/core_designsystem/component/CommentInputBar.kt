@@ -59,6 +59,10 @@ fun CommentInputBar(
             fontSize = 14.sp,
             color = Color.Black
         )
+        val placeHolderTextStyle = TextStyle(
+            fontSize = 14.sp,
+            color = CustomColor.gray3
+        )
 
         /** loading 화면을 따로 받을 수 있다면 추가 */
         GlideImage(
@@ -101,10 +105,14 @@ fun CommentInputBar(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ){
-                Text(
-                    text = "댓글을 입력하세요",
-                    style = commentTextStyle
-                )
+                if (comment.isEmpty()) {
+                    Text(
+                        text = "댓글을 입력하세요",
+                        style = placeHolderTextStyle
+                    )
+                } else {
+                    it()
+                }
             }
         }
 

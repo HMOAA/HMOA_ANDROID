@@ -1,6 +1,7 @@
 package com.hmoa.app
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,22 +14,32 @@ import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.MainTopBar
 
 @Composable
-fun MainRoute() {
-    MainScreen()
+fun MainRoute(
+    onNavCommunity : () -> Unit
+) {
+    MainScreen(
+        onNavCommunity = onNavCommunity
+    )
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onNavCommunity: () -> Unit
+) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     Scaffold(
         backgroundColor = Color.White,
         scaffoldState = scaffoldState,
         topBar = { MainTopBar({}, {}, {}, true) },
         drawerContent = { Text(text = "drawerContent") },
-        bottomBar = { MainBottomBar({}, {}, {}, {}) }
+        bottomBar = { MainBottomBar({}, {
+            onNavCommunity()
+        }, {}, {}) }
     ) {
-        Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+        Column(modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()) {
 
         }
     }
@@ -37,5 +48,5 @@ fun MainScreen() {
 @Preview
 @Composable
 fun ScaffoldDemoPreview() {
-    MainScreen()
+    MainScreen({})
 }

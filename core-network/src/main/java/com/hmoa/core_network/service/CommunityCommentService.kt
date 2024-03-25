@@ -30,7 +30,7 @@ interface CommunityCommentService {
         @Path(value = "commentId") commentId: Int
     ): DataResponseDto<Any>
 
-    @GET("/community/comment/{communityId}/findAll")
+    @POST("/community/comment/{communityId}/findAll")
     suspend fun getCommunityComments(
         @Path(value = "communityId") communityId: Int,
         @Query("page") page: Int

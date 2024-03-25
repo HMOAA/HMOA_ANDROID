@@ -52,7 +52,7 @@ fun MainBottomBar(
         bottomNavItems.forEach{item ->
             NavigationBarItem(
                 selected = false,
-                onClick = {},
+                onClick = item.route,
                 label = { Text(text = item.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White) },
                 icon = {
                     Image(

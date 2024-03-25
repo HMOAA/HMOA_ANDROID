@@ -15,6 +15,7 @@ class AppViewModel @Inject constructor(private val getAuthAndRememberedTokenUseC
         val pair = getAuthAndRememberedTokenUseCase()
         val authToken = pair.first
         val rememberedToken = pair.second
+        Log.d("TAG TEST", "token : ${authToken} / remember : ${rememberedToken}")
 
         if (authToken == null && rememberedToken == null) {
             return LOGIN_ROUTE

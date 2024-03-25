@@ -8,8 +8,11 @@ import com.hmoa.app.MainRoute
 const val MAIN_ROUTE = "main_route"
 fun NavController.navigateToMain() = navigate(MAIN_ROUTE)
 fun NavGraphBuilder.mainScreen(
+    onNavCommunity : () -> Unit
 ) {
     composable(route = MAIN_ROUTE) {
-        MainRoute()
+        MainRoute(
+            onNavCommunity = onNavCommunity
+        )
     }
 }

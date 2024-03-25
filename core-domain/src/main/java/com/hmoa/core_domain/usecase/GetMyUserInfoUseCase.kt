@@ -4,6 +4,7 @@ import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.data.UserInfo
 import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -16,7 +17,7 @@ class GetMyUserInfoUseCase @Inject constructor(
     operator fun invoke() = flow{
         val result = memberRepository.getMember()
 
-        val todayYear = Calendar.getInstance().weekYear
+        val todayYear = LocalDateTime.now().year
 
         val birth = todayYear - result.age + 1
         val gender = if (result.sex) "male" else "female"

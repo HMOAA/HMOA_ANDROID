@@ -45,9 +45,11 @@ fun CommunityPageRoute(
 ){
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val type = viewModel.type.collectAsStateWithLifecycle()
 
     CommunityPage(
         uiState = uiState.value,
+        type = type.value,
         onTypeChanged = {
             viewModel.updateCategory(it)
         },
@@ -60,6 +62,7 @@ fun CommunityPageRoute(
 @Composable
 fun CommunityPage(
     uiState : CommunityMainUiState,
+    type : Category,
     onTypeChanged : (Category) -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
@@ -119,7 +122,7 @@ fun CommunityPage(
                             type = Category.추천.name,
                             fontSize = 14.sp,
                             fontColor = Color.White,
-                            selected = uiState.type == Category.추천
+                            selected = type == Category.추천
                         )
 
                         Spacer(Modifier.width(8.dp))
@@ -132,7 +135,7 @@ fun CommunityPage(
                             type = Category.시향기.name,
                             fontSize = 14.sp,
                             fontColor = Color.White,
-                            selected = uiState.type == Category.시향기
+                            selected = type == Category.시향기
                         )
 
                         Spacer(Modifier.width(8.dp))
@@ -145,7 +148,7 @@ fun CommunityPage(
                             type = Category.자유.name,
                             fontSize = 14.sp,
                             fontColor = Color.White,
-                            selected = uiState.type == Category.자유
+                            selected = type == Category.자유
                         )
                     }
 
@@ -181,10 +184,7 @@ fun CommunityPage(
                 )
             }
         }
-        is CommunityMainUiState.Empty -> {
-
-        }
-        else -> {
+        is CommunityMainUiState.Error -> {
 
         }
     }
@@ -214,6 +214,7 @@ fun TestCommunity(){
     )
     CommunityPage(
         uiState = CommunityMainUiState.Loading,
+        type = Category.추천,
         onTypeChanged = {
             type = it
         },

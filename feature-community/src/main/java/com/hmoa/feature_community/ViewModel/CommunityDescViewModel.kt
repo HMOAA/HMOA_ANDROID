@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -11,6 +12,8 @@ import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -53,6 +56,7 @@ class CommunityDescViewModel @Inject constructor(
 
     init{
         viewModelScope.launch{
+            Log.d("TAG TEST", "view model init")
             getUserInfo().asResult()
                 .map{ result ->
                     when(result) {
@@ -66,18 +70,23 @@ class CommunityDescViewModel @Inject constructor(
         }
     }
 
-    val communityUiState : StateFlow<CommunityDescUiState> = combine(
+    val uiState : StateFlow<CommunityDescUiState> = combine(
         flow{
-            emit(communityRepository.getCommunity(id.value))
+            val result = communityRepository.getCommunity(id.value)
+            Log.d("TAG TEST", "community : ${result}")
+            emit(result)
         }.asResult(),
         flow{
-            emit(communityCommentRepository.getCommunityComments(id.value, page.value))
+            val result = communityCommentRepository.getCommunityComments(id.value, page.value)
+            Log.d("TAG TEST", "comments ; ${result}")
+            emit(result)
         }.asResult()
     ){ communityResult, commentsResult ->
         when {
             communityResult is Result.Error || commentsResult is Result.Error -> CommunityDescUiState.Error
             communityResult is Result.Loading || commentsResult is Result.Loading -> CommunityDescUiState.Loading
             else -> {
+                Log.d("TAG TEST", "community : ${communityResult} / comment : ${commentsResult}")
                 CommunityDescUiState.CommunityDesc(
                     (communityResult as Result.Success).data,
                     (commentsResult as Result.Success).data,
@@ -127,6 +136,11 @@ class CommunityDescViewModel @Inject constructor(
                 _errState.update{ e.message.toString() }
             }
         }
+    }
+
+    //id 설정
+    fun setId(id: Int) {
+        _id.update{ id }
     }
 }
 

@@ -1,7 +1,10 @@
 package com.hmoa.feature_community.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.Result
+import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
@@ -11,6 +14,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,11 +45,15 @@ class CommunityMainViewModel @Inject constructor(
         }
     }
 
-    val uiState : StateFlow<CommunityMainUiState> = combine(
-        type,
-        community,
-        CommunityMainUiState::Community
-    ).stateIn(
+    val uiState : StateFlow<CommunityMainUiState> = type.combine(page){ type, page ->
+        repository.getCommunityByCategory(type.name, page)
+    }.asResult().map{
+        when (it) {
+            is Result.Loading -> CommunityMainUiState.Loading
+            is Result.Success -> CommunityMainUiState.Community(it.data)
+            is Result.Error -> CommunityMainUiState.Error
+        }
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(1_000),
         initialValue = CommunityMainUiState.Loading
@@ -55,8 +64,10 @@ class CommunityMainViewModel @Inject constructor(
         isAdd : Boolean
     ){
         viewModelScope.launch{
+            Log.d("TEST TAG", "Category : ${type.value}")
             repository.getCommunityByCategory(type.value.name, page.value)
                 .map{
+                    Log.d("TEST TAG", "community -> ${it}")
                     if(isAdd) {
                         _community.update { _community.value + it }
                     }
@@ -64,6 +75,7 @@ class CommunityMainViewModel @Inject constructor(
                         _community.update { it }
                     }
                 }
+            Log.d("TEST TAG", "community : ${community.value}")
         }
     }
 
@@ -84,8 +96,7 @@ class CommunityMainViewModel @Inject constructor(
 sealed interface CommunityMainUiState {
     data object Loading : CommunityMainUiState
     data class Community(
-        val type : Category,
         val communities : List<CommunityByCategoryResponseDto>
     ) : CommunityMainUiState
-    data object Empty : CommunityMainUiState
+    data object Error : CommunityMainUiState
 }

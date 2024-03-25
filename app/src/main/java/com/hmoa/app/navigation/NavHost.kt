@@ -19,6 +19,9 @@ import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
 import com.hmoa.feature_community.Navigation.nestedCommunityGraph
 import com.hmoa.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
+import com.hmoa.feature_community.Navigation.navigateToCommunityHome
+import com.hmoa.feature_community.Navigation.navigateToCommunityPage
+import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeScreen
@@ -29,6 +32,10 @@ fun SetUpNavGraph(
     startDestination: String
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
+
+        mainScreen(
+            onNavCommunity = navController::navigateToCommunityRoute
+        )
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup)
@@ -61,7 +68,8 @@ fun SetUpNavGraph(
             onNavBack = navController::navigateToBack,
             onNavCommunityPost = navController::navigateToCommunityPostRoute,
             onNavCommunityEdit = navController::navigateToCommunityEditRoute,
-            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute
+            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
+            onNavCommunityPage = navController::navigateToCommunityPage
         )
 
         pickPersonalInfoScreen(

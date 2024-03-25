@@ -1,4 +1,4 @@
-package com.example.feature_community.ViewModel
+package com.hmoa.feature_community.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,22 +6,16 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.CommunityRepository
-import com.hmoa.core_domain.usecase.GetCommunityComment
-import com.hmoa.core_domain.usecase.GetCommunityDescription
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
-import com.hmoa.core_model.data.UserInfo
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -34,8 +28,6 @@ class CommunityDescViewModel @Inject constructor(
     private val communityRepository : CommunityRepository,
     private val communityCommentRepository : CommunityCommentRepository,
     getUserInfo : GetMyUserInfoUseCase,
-    communityUseCase : GetCommunityDescription,
-    commentUseCase : GetCommunityComment
 ) : ViewModel() {
 
     private val _isOpenBottomOptions = MutableStateFlow(false)
@@ -75,10 +67,12 @@ class CommunityDescViewModel @Inject constructor(
     }
 
     val communityUiState : StateFlow<CommunityDescUiState> = combine(
-        communityUseCase(id.value)
-            .asResult(),
-        commentUseCase(id.value, page.value)
-            .asResult()
+        flow{
+            emit(communityRepository.getCommunity(id.value))
+        }.asResult(),
+        flow{
+            emit(communityCommentRepository.getCommunityComments(id.value, page.value))
+        }.asResult()
     ){ communityResult, commentsResult ->
         when {
             communityResult is Result.Error || commentsResult is Result.Error -> CommunityDescUiState.Error

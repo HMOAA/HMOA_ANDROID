@@ -1,4 +1,4 @@
-package com.example.feature_community
+package com.hmoa.feature_community
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_community.ViewModel.CommunityDescUiState
-import com.example.feature_community.ViewModel.CommunityDescViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.CommentInputBar
 import com.hmoa.core_designsystem.component.PostContent
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.Category
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.feature_community.ViewModel.CommunityDescUiState
+import com.hmoa.feature_community.ViewModel.CommunityDescViewModel
 
 @Composable
 fun CommunityDescriptionRoute(
@@ -336,6 +333,9 @@ fun CommunityDescriptionPage(
             )
         }
         CommunityDescUiState.Error -> {
+
+        }
+        else -> {
 
         }
     }

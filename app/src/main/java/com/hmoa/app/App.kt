@@ -9,7 +9,6 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class App : Application() {
     override fun onCreate() {
-        Log.d("A123", "App : Application - onCreate()")
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate()
         KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)

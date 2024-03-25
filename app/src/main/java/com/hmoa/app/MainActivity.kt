@@ -16,11 +16,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var initialRoute: String
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        Log.d("A123","MainActivity onCreate()")
         super.onCreate(savedInstanceState)
-        Log.d("A123","onCreate done")
         runBlocking { initialRoute = viewModel.routeInitialScreen() }
-        Log.d("A123", "runBlocking is done")
 
         setContent {
             val navHostController = rememberNavController()

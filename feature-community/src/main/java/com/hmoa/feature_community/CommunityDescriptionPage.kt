@@ -309,6 +309,7 @@ fun CommunityDescriptionPage(
 
                     if (commentList.isNotEmpty()){
                         commentList.forEachIndexed{ index, comment ->
+                            Log.d("TEST TAG", "comment : ${comment}")
                             Comment(
                                 profile = comment.profileImg,
                                 nickname = comment.nickname,

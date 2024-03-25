@@ -1,5 +1,6 @@
 package com.hmoa.feature_community
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,7 +35,7 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 @Composable
 fun CommunityHomeRoute(
     onNavCommunityByCategory: () -> Unit,
-    onNavCommunityDescription: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
     viewModel : CommunityHomeViewModel = hiltViewModel()
 ){
     
@@ -52,7 +53,7 @@ fun CommunityHomeRoute(
 fun CommunityHome(
     uiState : CommunityHomeUiState, //이거 uiState로 이전해서 uiState에서 데이터 가져오는 방식으로
     onNavCommunityByCategory : () -> Unit, //카테고리 별 Community 화면으로 이동
-    onNavCommunityDescription : () -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
+    onNavCommunityDescription : (Int) -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
 ){
 
     when (uiState) {
@@ -104,7 +105,8 @@ fun CommunityHome(
                                 ),
                             onPostClick = {
                                 /** 여기서 해당 post description으로 이동 */
-                                onNavCommunityDescription()
+                                Log.d("TAG TEST", "id = ${community.communityId}")
+                                onNavCommunityDescription(community.communityId)
                             },
                             postType = community.category,
                             postTitle = community.title
@@ -114,9 +116,6 @@ fun CommunityHome(
             }
         }
         is CommunityHomeUiState.Error -> {
-
-        }
-        else -> {
 
         }
     }

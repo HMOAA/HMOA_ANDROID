@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.CommunityRepository
@@ -53,6 +54,7 @@ class CommunityPostViewModel @Inject constructor(
     //title update
     fun updateTitle (title : String) {
         _title.update{ title }
+        Log.d("TEST TAG", "title : ${this.title.value}")
     }
 
     //content update

@@ -22,9 +22,7 @@ class LoginRemoteDataStoreImpl @Inject constructor(
     ): ResultResponse<MemberLoginResponseDto> {
         var result = ResultResponse<MemberLoginResponseDto>()
         loginService.postOAuth(accessToken, provider).suspendMapSuccess {
-            result.data!!.authToken = this.authToken
-            result.data!!.rememberedToken = this.rememberedToken
-            result.data!!.existedMember = this.existedMember
+            result.data = this
         }.suspendOnError {
             result.errorCode = response.code()
             result.errorMessage = response.message()
@@ -35,8 +33,7 @@ class LoginRemoteDataStoreImpl @Inject constructor(
     override suspend fun postRemembered(dto: RememberedLoginRequestDto): ResultResponse<TokenResponseDto> {
         var result = ResultResponse<TokenResponseDto>(data = null, errorCode = null, errorMessage = null)
         loginService.postRemembered(dto).suspendMapSuccess {
-            result.data!!.authToken = this.authToken
-            result.data!!.rememberedToken = this.rememberedToken
+            result.data = this
         }.suspendOnError {
             result.errorCode = response.code()
             result.errorMessage = response.message()

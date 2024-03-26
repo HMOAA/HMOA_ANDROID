@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.FloatingActionBtn
+import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -41,6 +42,11 @@ fun CommunityPageRoute(
     onNavBack : () -> Unit,
     onNavCommunityDescription : (Int) -> Unit,
     onNavPost : (String) -> Unit,
+    onNavHome : () -> Unit,
+    onNavHPedia : () -> Unit,
+    onNavLike : () -> Unit,
+    onNavMyPage : () -> Unit,
+
     viewModel : CommunityMainViewModel = hiltViewModel()
 ){
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
@@ -55,7 +61,11 @@ fun CommunityPageRoute(
         },
         onNavBack = onNavBack,
         onNavCommunityDescription = onNavCommunityDescription,
-        onNavPost = onNavPost
+        onNavPost = onNavPost,
+        onNavHome = onNavHome,
+        onNavHPedia = onNavHPedia,
+        onNavLike = onNavLike,
+        onNavMyPage = onNavMyPage,
     )
 }
 
@@ -67,6 +77,10 @@ fun CommunityPage(
     onNavBack : () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
     onNavPost : (String) -> Unit,
+    onNavHome : () -> Unit,
+    onNavHPedia : () -> Unit,
+    onNavLike : () -> Unit,
+    onNavMyPage : () -> Unit,
 ){
     when(uiState) {
         is CommunityMainUiState.Loading -> {
@@ -167,8 +181,7 @@ fun CommunityPage(
                                     .wrapContentHeight()
                                     .border(width = 1.dp, color = CustomColor.gray2),
                                 onPostClick = {
-                                    /** 여기서 Description으로 이동 */
-                                    /** id를 어떤 방식으로 전달할지 */
+                                    // 여기서 Description으로 이동
                                     onNavCommunityDescription(community.communityId)
                                 },
                                 postType = community.category,
@@ -177,11 +190,27 @@ fun CommunityPage(
                         }
                     }
                 }
-                FloatingActionBtn(
-                    onNavRecommend = { onNavPost(Category.추천.name) },
-                    onNavPresent = { onNavPost(Category.시향기.name) },
-                    onNavFree = { onNavPost(Category.자유.name) },
-                )
+
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .wrapContentHeight(),
+                    horizontalAlignment = Alignment.End
+                ){
+                    FloatingActionBtn(
+                        onNavRecommend = { onNavPost(Category.추천.name) },
+                        onNavPresent = { onNavPost(Category.시향기.name) },
+                        onNavFree = { onNavPost(Category.자유.name) },
+                    )
+
+                    Spacer(Modifier.height(13.dp))
+
+                    MainBottomBar(
+                        onClickHome = onNavHome,
+                        onClickHPedia = onNavHPedia,
+                        onClickLike = onNavLike,
+                        onClickMyPage = onNavMyPage
+                    )
+                }
             }
         }
         is CommunityMainUiState.Error -> {
@@ -221,5 +250,9 @@ fun TestCommunity(){
         onNavBack = {},
         onNavCommunityDescription = {},
         onNavPost = {},
+        onNavHome = { },
+        onNavHPedia = {  },
+        onNavLike = {  },
+        onNavMyPage = {  },
     )
 }

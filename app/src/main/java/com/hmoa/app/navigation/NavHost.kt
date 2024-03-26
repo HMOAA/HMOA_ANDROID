@@ -49,10 +49,8 @@ fun SetUpNavGraph(
         this.nestedUserInfoGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
-            /** onNavCommunity는 Community 모듈로의 이동 */
-            onNavCommunity = navController::navigateToBack,
-            /** 여기서 게시글 수정으로 이동해야.. 하나요..? */
-            onNavEditPost = navController::navigateToBack,
+            onNavCommunity = { /** onNavCommunity는 Community 모듈로의 이동 */ },
+            onNavEditPost = { /** 여기서 게시글 수정으로 이동 */ },
             onNavEditProfile = navController::navigateToEditProfilePage,
             onNavManageMyInfo = navController::navigateToMyInfoPage,
             onNavMyActivity = navController::navigateToMyActivity,
@@ -69,7 +67,11 @@ fun SetUpNavGraph(
             onNavCommunityPost = navController::navigateToCommunityPostRoute,
             onNavCommunityEdit = navController::navigateToCommunityEditRoute,
             onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunityPage = navController::navigateToCommunityPage
+            onNavCommunityPage = navController::navigateToCommunityPage,
+            onNavHome = { /** Home Navigation */},
+            onNavHPedia = navController::navigateToCommunityRoute,
+            onNavLike = { /** Like Navigation */ },
+            onNavMyPage = { /** Setting Navigation */ }
         )
 
         pickPersonalInfoScreen(

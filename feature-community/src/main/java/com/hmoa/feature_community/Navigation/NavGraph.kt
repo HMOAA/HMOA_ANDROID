@@ -33,6 +33,10 @@ fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${Route.Com
 fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${Route.CommunityDescriptionRoute.name}/${id}")
 
 fun NavGraphBuilder.nestedCommunityGraph(
+    onNavHome : () -> Unit,
+    onNavHPedia : () -> Unit,
+    onNavLike : () -> Unit,
+    onNavMyPage : () -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityPage : () -> Unit,
     onNavCommunityPost : (String) -> Unit,
@@ -47,13 +51,21 @@ fun NavGraphBuilder.nestedCommunityGraph(
             CommunityHomeRoute(
                 onNavCommunityDescription = onNavCommunityDescription,
                 onNavCommunityByCategory = onNavCommunityPage,
+                onNavHome = onNavHome,
+                onNavHPedia = onNavHPedia,
+                onNavLike = onNavLike,
+                onNavMyPage = onNavMyPage
             )
         }
         composable(route = Route.CommunityPageRoute.name){
             CommunityPageRoute(
                 onNavBack = onNavBack,
                 onNavCommunityDescription = onNavCommunityDescription,
-                onNavPost = onNavCommunityPost
+                onNavPost = onNavCommunityPost,
+                onNavHome = onNavHome,
+                onNavHPedia = onNavHPedia,
+                onNavLike = onNavLike,
+                onNavMyPage = onNavMyPage
             )
         }
         composable(route = "${Route.CommunityPostRoute.name}/{type}") {

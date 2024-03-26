@@ -28,7 +28,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val application: Application,
     private val saveKakaoToken: SaveKakaoTokenUseCase,
-    private val postSocialToken: PostKakaoTokenUseCase,
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {

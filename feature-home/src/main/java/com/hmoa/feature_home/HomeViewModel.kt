@@ -20,12 +20,6 @@ class HomeViewModel @Inject constructor(
     private val secondMenu = MutableStateFlow<HomeMenuDefaultResponseDto?>(null)
     private val thirdMenu = MutableStateFlow<HomeMenuDefaultResponseDto?>(null)
 
-    init {
-        getFirstMenuWithBanner()
-        getSecondMenu()
-        getThirdMenu()
-    }
-
     val uiState: StateFlow<HomeUiState> =
         combine(firstMenuWithBanner, secondMenu, thirdMenu) { firstMenuWithBanner, secondMenu, thirdMenu ->
             HomeUiState.HomeData(
@@ -65,7 +59,7 @@ class HomeViewModel @Inject constructor(
                     }
 
                     is Result.Error -> {}//TODO()
-                    Result.Loading -> {}//TODO()
+                    is Result.Loading -> {}//TODO()
                 }
             }
         }

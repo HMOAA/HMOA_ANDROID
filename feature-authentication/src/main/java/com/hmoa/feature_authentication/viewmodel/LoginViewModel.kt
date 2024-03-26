@@ -55,28 +55,27 @@ class LoginViewModel @Inject constructor(
             .collectLatest {
                 when (it) {
                     is Result.Success -> {
-                        val authToken = it.data.authToken
-                        val rememberedToken = it.data.rememberedToken
+                        val authToken = it.data.data!!.authToken
+                        val rememberedToken = it.data.data!!.rememberedToken
                         saveAuthAndRememberedToken(authToken, rememberedToken)
-                        _isAbleToGoHome.update { true }
+                        postOAuthLogin(token)
                     }
 
                     is Result.Loading -> {}//TODO("로딩화면")
                     is Result.Error -> {
-                        it
                         it.exception
                     }//TODO()
                 }
             }
     }
 
-    fun postKakaoLogin(token: String) {
+    fun postOAuthLogin(token: String) {
         viewModelScope.launch {
             flow { emit(loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.KAKAO)) }.asResult()
                 .collectLatest {
                     when (it) {
                         is Result.Success -> {
-                            checkIsExistedMember(it.data)
+                            checkIsExistedMember(it.data.data!!)
                         }
 
                         is Result.Loading -> {}

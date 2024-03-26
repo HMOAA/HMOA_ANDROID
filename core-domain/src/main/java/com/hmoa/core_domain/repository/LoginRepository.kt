@@ -11,7 +11,7 @@ interface LoginRepository {
     suspend fun getAuthToken(): String?
     suspend fun getRememberedToken(): String?
     suspend fun getKakaoAccessToken(): String?
-    suspend fun postOAuth(accessToken: OauthLoginRequestDto, provider: Provider): MemberLoginResponseDto
+    suspend fun postOAuth(accessToken: OauthLoginRequestDto, provider: Provider): ResultResponse<MemberLoginResponseDto>
     suspend fun postRemembered(dto: RememberedLoginRequestDto): ResultResponse<TokenResponseDto>
     suspend fun saveAuthToken(token: String)
     suspend fun saveRememberedToken(token: String)

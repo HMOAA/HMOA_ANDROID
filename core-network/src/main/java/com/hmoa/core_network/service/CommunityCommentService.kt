@@ -5,6 +5,7 @@ import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
 interface CommunityCommentService {
@@ -12,33 +13,33 @@ interface CommunityCommentService {
     suspend fun putCommunityComment(
         @Path(value = "commentId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentWithLikedResponseDto
+    ): ApiResponse<CommunityCommentWithLikedResponseDto>
 
     @DELETE("/community/comment/{commentId}")
     suspend fun deleteCommunityComment(
         @Path(value = "commentId") commentId: Int
-    ): DataResponseDto<Any>
+    ): ApiResponse<DataResponseDto<Any>>
 
     @PUT("/community/comment/{commentId}/like")
     suspend fun putCommunityCommentLiked(
         @Path(value = "commentId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
-    ): DataResponseDto<Any>
+    ): ApiResponse<DataResponseDto<Any>>
 
     @DELETE("/community/comment/{commentId}/like")
     suspend fun deleteCommunityCommentLiked(
         @Path(value = "commentId") commentId: Int
-    ): DataResponseDto<Any>
+    ): ApiResponse<DataResponseDto<Any>>
 
-    @GET("/community/comment/{communityId}/findAll")
+    @POST("/community/comment/{communityId}/findAll")
     suspend fun getCommunityComments(
         @Path(value = "communityId") communityId: Int,
         @Query("page") page: Int
-    ): CommunityCommentAllResponseDto
+    ): ApiResponse<CommunityCommentAllResponseDto>
 
     @POST("/community/comment/{communityId}/save")
     suspend fun postCommunityComment(
         @Path(value = "communityId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
-    ): CommunityCommentWithLikedResponseDto
+    ): ApiResponse<CommunityCommentWithLikedResponseDto>
 }

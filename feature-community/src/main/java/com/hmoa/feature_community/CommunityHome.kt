@@ -1,12 +1,11 @@
-package com.example.feature_community
+package com.hmoa.feature_community
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,18 +26,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_community.ViewModel.CommunityHomeUiState
-import com.example.feature_community.ViewModel.CommunityHomeViewModel
 import com.hmoa.component.PostListItem
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
-import com.hmoa.core_model.response.CommunityDefaultResponseDto
+import com.hmoa.feature_community.ViewModel.CommunityHomeUiState
+import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 
 @Composable
 fun CommunityHomeRoute(
     onNavCommunityByCategory: () -> Unit,
-    onNavCommunityDescription: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
     viewModel : CommunityHomeViewModel = hiltViewModel()
 ){
     
@@ -57,7 +53,7 @@ fun CommunityHomeRoute(
 fun CommunityHome(
     uiState : CommunityHomeUiState, //이거 uiState로 이전해서 uiState에서 데이터 가져오는 방식으로
     onNavCommunityByCategory : () -> Unit, //카테고리 별 Community 화면으로 이동
-    onNavCommunityDescription : () -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
+    onNavCommunityDescription : (Int) -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
 ){
 
     when (uiState) {
@@ -109,7 +105,8 @@ fun CommunityHome(
                                 ),
                             onPostClick = {
                                 /** 여기서 해당 post description으로 이동 */
-                                onNavCommunityDescription()
+                                Log.d("TAG TEST", "id = ${community.communityId}")
+                                onNavCommunityDescription(community.communityId)
                             },
                             postType = community.category,
                             postTitle = community.title
@@ -118,7 +115,7 @@ fun CommunityHome(
                 }
             }
         }
-        is CommunityHomeUiState.Empty -> {
+        is CommunityHomeUiState.Error -> {
 
         }
     }

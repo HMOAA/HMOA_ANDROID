@@ -1,11 +1,10 @@
-package com.example.feature_community.ViewModel
+package com.hmoa.feature_community.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityRepository
-import com.hmoa.core_domain.usecase.GetCommunityDescription
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityPhotoDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -24,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CommunityEditViewModel @Inject constructor(
     private val repository : CommunityRepository,
-    private val useCase : GetCommunityDescription
 ) : ViewModel() {
 
     //가져올 게시글 id
@@ -79,16 +78,24 @@ class CommunityEditViewModel @Inject constructor(
     //id 기반 데이터 받아오기
     private fun getCommunityDescription(id : Int){
         viewModelScope.launch{
-            useCase(id).asResult().map{
-                when (it) {
+            flow{
+                val result = repository.getCommunity(id)
+                if (result.data == null) {
+                    _errState.update {"${result.errorCode} : ${result.errorMessage}"}
+                    return@flow
+                }
+                emit(result.data!!)
+            }.asResult()
+                .map{ result ->
+                when (result) {
                     is Result.Loading -> {
                         _isLoading.update {false}
                     }
                     is Result.Error -> {
-                        _errState.update { "Error : 데이터를 받아오는 데 실패했습니다." }
+                        _errState.update { "Error : ${result.exception}" }
                     }
                     is Result.Success -> {
-                        val data = it.data
+                        val data = result.data
                         _title.update{ data.title }
                         _content.update { data.content }
                         _category.update {

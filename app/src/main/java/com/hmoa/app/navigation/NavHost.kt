@@ -3,13 +3,29 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.example.feature_community.Navigation.navigateToCommunityDescriptionRoute
-import com.example.feature_community.Navigation.navigateToCommunityEditRoute
-import com.example.feature_community.Navigation.navigateToCommunityPostRoute
-import com.example.feature_community.Navigation.nestedCommunityGraph
-import com.example.feature_userinfo.*
+import com.example.feature_userinfo.navigateToBack
+import com.example.feature_userinfo.navigateToEditProfilePage
+import com.example.feature_userinfo.navigateToMyActivity
+import com.example.feature_userinfo.navigateToMyBirth
+import com.example.feature_userinfo.navigateToMyCommentPage
+import com.example.feature_userinfo.navigateToMyFavoriteCommentPage
+import com.example.feature_userinfo.navigateToMyGenderPage
+import com.example.feature_userinfo.navigateToMyInfoPage
+import com.example.feature_userinfo.navigateToMyPostPage
+import com.example.feature_userinfo.nestedUserInfoGraph
+import com.hmoa.feature_community.Navigation.navigateToCommunityDescriptionRoute
+import com.hmoa.feature_community.Navigation.navigateToCommunityEditRoute
+import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
+import com.hmoa.feature_community.Navigation.nestedCommunityGraph
+import com.hmoa.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
+<<<<<<< HEAD
 import com.hmoa.feature_home.homeScreen
+=======
+import com.hmoa.feature_community.Navigation.navigateToCommunityHome
+import com.hmoa.feature_community.Navigation.navigateToCommunityPage
+import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
+>>>>>>> e2cda221ab3875424e9d44177271ce75eb846d9a
 import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeScreen
@@ -21,6 +37,9 @@ fun SetUpNavGraph(
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
 
+        mainScreen(
+            onNavCommunity = navController::navigateToCommunityRoute
+        )
         /** home 모듈 */
         homeScreen(onPerfumeClick = {})
 
@@ -59,10 +78,10 @@ fun SetUpNavGraph(
             onNavBack = navController::navigateToBack,
             onNavCommunityPost = navController::navigateToCommunityPostRoute,
             onNavCommunityEdit = navController::navigateToCommunityEditRoute,
-            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute
+            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
+            onNavCommunityPage = navController::navigateToCommunityPage
         )
 
-        mainScreen()
         /** perfume 모듈 */
         perfumeScreen(
             onBackClick = {},

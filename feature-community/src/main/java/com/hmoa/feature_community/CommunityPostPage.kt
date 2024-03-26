@@ -1,5 +1,6 @@
-package com.example.feature_community
+package com.hmoa.feature_community
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,16 +21,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_community.ViewModel.CommunityPostViewModel
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
+import com.hmoa.feature_community.ViewModel.CommunityPostViewModel
 
 @Composable
 fun CommunityPostRoute(
@@ -170,21 +173,28 @@ fun PostCommunityPage(
                 value = title,
                 onValueChange = {
                     //글자 수 제한 20
-                    if (title.length <= 20) {
+                    if (title.length < 20) {
                         onTitleChanged(it)
                     }
+                },
+                onTextLayout = {
+
                 },
                 textStyle = titleInputTextStyle,
                 maxLines = 1,
                 singleLine = true,
+                cursorBrush = SolidColor(CustomColor.gray3)
             ){
+
+                Log.d("TEST TAG", "title : ${title}")
                 //placeholder
-                if (content.isEmpty()){
+                if (title.isEmpty()){
                     Text(
                         text = "제목을 입력해주세요",
                         style = placeholderTextStyle
                     )
                 }
+                it()
             }
 
             Text(
@@ -206,19 +216,22 @@ fun PostCommunityPage(
         ){
             //content input
             BasicTextField(
+                modifier = Modifier.fillMaxSize(),
                 value = content,
                 onValueChange = {
                     onContentChanged(it)
                 },
                 textStyle = contentInputTextStyle,
             ){
+                Log.d("TAG TEST", "content : ${content}")
                 //placeholder
                 if (content.isEmpty()){
                     Text(
-                        text = "제목을 입력해주세요",
+                        text = "내용을 입력해주세요",
                         style = placeholderTextStyle
                     )
                 }
+                it()
             }
         }
 

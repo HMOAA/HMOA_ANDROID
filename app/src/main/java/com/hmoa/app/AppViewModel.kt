@@ -12,16 +12,14 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(private val getAuthAndRememberedTokenUseCase: GetAuthAndRememberedTokenUseCase) :
     ViewModel() {
     suspend fun routeInitialScreen(): String {
-        Log.d("A123","routeInit")
         val pair = getAuthAndRememberedTokenUseCase()
         val authToken = pair.first
         val rememberedToken = pair.second
+        Log.d("TAG TEST", "token : ${authToken} / remember : ${rememberedToken}")
 
-        Log.d("A123","token check")
         if (authToken == null && rememberedToken == null) {
             return LOGIN_ROUTE
         }
-        Log.d("A123", "return")
         return MAIN_ROUTE
     }
 }

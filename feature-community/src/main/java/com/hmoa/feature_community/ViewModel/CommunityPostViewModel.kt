@@ -1,13 +1,12 @@
-package com.example.feature_community.ViewModel
+package com.hmoa.feature_community.ViewModel
 
-import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -69,7 +68,6 @@ class CommunityPostViewModel @Inject constructor(
 
     //게시글 게시
     fun postCommunity(){
-
         viewModelScope.launch{
             //content, title 모두 isNotEmpty일 때
             if (content.value != ""){
@@ -81,12 +79,15 @@ class CommunityPostViewModel @Inject constructor(
 
                 try{
                     _isLoading.update{false}
-                    repository.postCommunitySave(
+                    val result = repository.postCommunitySave(
                         images = images,
                         category = category.value.name,
                         title = title.value,
                         content = content.value
                     )
+                    if (result.data == null) {
+                        _errState.update{"${result.errorCode} : ${result.errorMessage}"}
+                    }
                     _isLoading.update{true}
                 } catch (e : Exception) {
                     _errState.update{ e.message ?: "" }
@@ -94,5 +95,4 @@ class CommunityPostViewModel @Inject constructor(
             }
         }
     }
-
 }

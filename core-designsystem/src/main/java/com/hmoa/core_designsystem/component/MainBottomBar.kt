@@ -1,67 +1,101 @@
 package com.hmoa.core_designsystem.component
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.BottomNavItem
-import org.w3c.dom.Text
+import com.hmoa.core_designsystem.BottomScreen
+import com.hmoa.core_designsystem.R
 
 @Composable
 fun MainBottomBar(
+    initValue : BottomScreen,
     onClickHome: () -> Unit,
     onClickHPedia: () -> Unit,
     onClickLike: () -> Unit,
     onClickMyPage: () -> Unit
 ) {
+    var selectedScreen by remember{mutableStateOf(initValue)}
+
     val bottomNavItems = listOf(
         BottomNavItem(
-            name = "Home",
+            name = BottomScreen.Home,
             route = onClickHome,
-            icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_home)
+            icon = if(selectedScreen.name == "Home") painterResource(R.drawable.ic_nav_home_selected)
+            else painterResource(R.drawable.ic_home)
         ),
         BottomNavItem(
-            name = "HPedia",
+            name = BottomScreen.HPedia,
             route = onClickHPedia,
-            icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_hpedia)
+            icon = if (selectedScreen.name == "HPedia") painterResource(R.drawable.ic_nav_hpedia_selected)
+            else painterResource(R.drawable.ic_hpedia)
         ),
         BottomNavItem(
-            name = "Like",
+            name = BottomScreen.Like,
             route = onClickLike,
-            icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_heart)
+            icon = if (selectedScreen.name == "Like") painterResource(R.drawable.ic_nav_like_selected)
+            else painterResource(R.drawable.ic_heart)
         ),
         BottomNavItem(
-            name = "My",
+            name = BottomScreen.MyPage,
             route = onClickMyPage,
-            icon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_person)
+            icon = if (selectedScreen.name == "MyPage") painterResource(R.drawable.ic_nav_my_page_selected)
+            else painterResource(R.drawable.ic_person)
         ),
     )
+
     NavigationBar(containerColor = Color.Black) {
-        bottomNavItems.forEach{item ->
-            NavigationBarItem(
-                selected = false,
-                onClick = {},
-                label = { Text(text = item.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White) },
-                icon = {
-                    Image(
-                        modifier = Modifier.size(25.dp),
-                        painter = item.icon,
-                        contentDescription = "${item.name}아이템",
-                    )
-                }
-            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            bottomNavItems.forEach{item ->
+                NavigationBarItem(
+                    selected = false,
+                    onClick = {
+                        item.route()
+                        selectedScreen = item.name
+                    },
+                    icon = {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            Image(
+                                modifier = Modifier.size(25.dp),
+                                painter = item.icon,
+                                contentDescription = "${item.name}아이템",
+                            )
+
+                            Spacer(Modifier.height(5.dp))
+
+                            if (selectedScreen == item.name) {
+                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White)
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -69,5 +103,5 @@ fun MainBottomBar(
 @Preview
 @Composable
 fun MainBottomBarPreview() {
-    MainBottomBar({}, {}, {}, {})
+    MainBottomBar(BottomScreen.Home, {}, {}, {}, {})
 }

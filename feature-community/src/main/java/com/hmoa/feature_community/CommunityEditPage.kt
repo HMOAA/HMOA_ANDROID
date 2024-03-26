@@ -1,4 +1,4 @@
-package com.example.feature_community
+package com.hmoa.feature_community
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,10 +14,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,10 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_community.ViewModel.CommunityEditUiState
-import com.example.feature_community.ViewModel.CommunityEditViewModel
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.Category
+import com.hmoa.feature_community.ViewModel.CommunityEditUiState
+import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
 
 @Composable
 fun CommunityEditRoute(
@@ -242,6 +237,9 @@ fun CommunityEditPage(
                  * 따라서 카메라를 따로 추가하는 방향으로 진행할 것 같음 */
 
             }
+        }
+        else -> {
+
         }
     }
 }

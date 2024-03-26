@@ -4,11 +4,16 @@ import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.usecase.PostKakaoTokenUseCase
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
+import com.hmoa.core_model.Provider
+import com.hmoa.core_model.request.OauthLoginRequestDto
+import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -16,10 +21,7 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,11 +30,14 @@ class LoginViewModel @Inject constructor(
     private val application: Application,
     private val saveKakaoToken: SaveKakaoTokenUseCase,
     private val postSocialToken: PostKakaoTokenUseCase,
+    private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
     private val context = application.applicationContext
-    private val _isPostComplete = MutableStateFlow(false)
-    var isPostComplete = _isPostComplete.asStateFlow()
+    private val _isAbleToGoHome = MutableStateFlow(false)
+    var isAbleToGoHome = _isAbleToGoHome.asStateFlow()
+    private val _isNeedToSignUp = MutableStateFlow(false)
+    var isNeedToSignUp = _isNeedToSignUp.asStateFlow()
     val scope = CoroutineScope(Dispatchers.IO)
 
     suspend fun onKakaoLoginSuccess(token: String) {
@@ -53,7 +58,7 @@ class LoginViewModel @Inject constructor(
                         val authToken = it.data.authToken
                         val rememberedToken = it.data.rememberedToken
                         saveAuthAndRememberedToken(authToken, rememberedToken)
-                        _isPostComplete.update { true }
+                        _isAbleToGoHome.update { true }
                     }
 
                     is Result.Loading -> {}//TODO("로딩화면")
@@ -63,6 +68,30 @@ class LoginViewModel @Inject constructor(
                     }//TODO()
                 }
             }
+    }
+
+    fun postKakaoLogin(token: String) {
+        viewModelScope.launch {
+            flow { emit(loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.KAKAO)) }.asResult()
+                .collectLatest {
+                    when (it) {
+                        is Result.Success -> {
+                            checkIsExistedMember(it.data)
+                        }
+
+                        is Result.Loading -> {}
+                        is Result.Error -> {}
+                    }
+                }
+        }
+    }
+
+    fun checkIsExistedMember(data: MemberLoginResponseDto) {
+        if (data.existedMember) {
+            _isAbleToGoHome.update { true }
+        } else {
+            _isNeedToSignUp.update { true }
+        }
     }
 
     fun handleKakaoLogin() {

@@ -1,11 +1,15 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Member.MemberDataStore
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.MemberResponseDto
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
@@ -44,7 +48,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.getPerfumeFavoriteComments(page)
     }
 
-    override suspend fun updateJoin(request: JoinUpdateRequestDto): MemberResponseDto {
+    override suspend fun updateJoin(request: JoinUpdateRequestDto): ResultResponse<MemberResponseDto> {
         return memberDataStore.updateJoin(request)
     }
 

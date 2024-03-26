@@ -25,12 +25,17 @@ import com.hmoa.feature_authentication.viewmodel.LoginViewModel
 @Composable
 internal fun LoginRoute(
     onSignup: () -> Unit,
+    onHome: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val isPostComplete by viewModel.isPostComplete.collectAsStateWithLifecycle()
+    val isAbleToGoHome by viewModel.isAbleToGoHome.collectAsStateWithLifecycle()
+    val isNeedToSignup by viewModel.isNeedToSignUp.collectAsStateWithLifecycle()
 
-    LaunchedEffect(isPostComplete) {
-        if (isPostComplete) {
+    LaunchedEffect(isAbleToGoHome) {
+        if (isAbleToGoHome) {
+            onHome()
+        }
+        if (isNeedToSignup){
             onSignup()
         }
     }

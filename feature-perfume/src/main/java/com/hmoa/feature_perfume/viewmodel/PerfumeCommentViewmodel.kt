@@ -1,4 +1,4 @@
-package com.hmoa.feature_perfume
+package com.hmoa.feature_perfume.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

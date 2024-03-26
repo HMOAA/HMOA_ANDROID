@@ -5,8 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.hmoa.feature_perfume.PerfumeCommentScreen
-import com.hmoa.feature_perfume.PerfumeRoute
+import com.hmoa.feature_perfume.screen.PerfumeCommentScreen
+import com.hmoa.feature_perfume.screen.PerfumeRoute
 
 const val PERFUME_ROUTE = "perfume_route"
 const val PERFUME_COMMENT_ROUTE = "perfume_comment"
@@ -20,6 +20,7 @@ fun NavGraphBuilder.perfumeScreen(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     composable(route = PERFUME_ROUTE, arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })) {
         val perfumeId = it.arguments?.getInt("perfumeId")
@@ -31,6 +32,7 @@ fun NavGraphBuilder.perfumeScreen(
             onViewCommentAllClick = { perfumeId -> onViewCommentAllClick(perfumeId) },
             onSimilarPerfumeClick = { perfumeId -> onSimilarPerfumeClick(perfumeId) },
             perfumeId = perfumeId,
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
         )
     }
 }
@@ -38,6 +40,7 @@ fun NavGraphBuilder.perfumeScreen(
 fun NavGraphBuilder.perfumeComment(
     onBackClick: () -> Unit,
     onAddCommentClick: (perfumeId: Int?) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     composable(route = PERFUME_COMMENT_ROUTE, arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })) {
         val perfumeId = it.arguments?.getInt("perfumeId")
@@ -45,6 +48,7 @@ fun NavGraphBuilder.perfumeComment(
             onBackClick = { onBackClick() },
             onAddCommentClick = { onAddCommentClick(perfumeId) },
             perfumeId = perfumeId,
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
         )
     }
 }

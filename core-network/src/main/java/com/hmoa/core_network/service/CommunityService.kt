@@ -47,6 +47,6 @@ interface CommunityService {
         @Field("category") category: String,
         @Field("title") title: String,
         @Field("content") content: String
-    ): CommunityDefaultResponseDto
+    ): ApiResponse<CommunityDefaultResponseDto>
 
 }

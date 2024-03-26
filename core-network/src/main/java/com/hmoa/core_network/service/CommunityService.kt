@@ -4,12 +4,13 @@ import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 import java.io.File
 
 interface CommunityService {
     @GET("/community/{communityId}")
-    suspend fun getCommunity(@Path(value = "communityId") communityId: Int): CommunityDefaultResponseDto
+    suspend fun getCommunity(@Path(value = "communityId") communityId: Int): ApiResponse<CommunityDefaultResponseDto>
 
     @FormUrlEncoded
     @POST("/community/{communityId}")
@@ -19,25 +20,25 @@ interface CommunityService {
         @Field("title") title: String,
         @Field("content") content: String,
         @Path("communityId") communityId: Int
-    ): CommunityDefaultResponseDto
+    ): ApiResponse<CommunityDefaultResponseDto>
 
     @DELETE("/community/{communityId}")
-    suspend fun deleteCommunity(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
+    suspend fun deleteCommunity(@Path("communityId") communityId: Int): ApiResponse<DataResponseDto<Nothing>>
 
     @PUT("/community/{communityId}/like")
-    suspend fun putCommunityLike(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
+    suspend fun putCommunityLike(@Path("communityId") communityId: Int): ApiResponse<DataResponseDto<Nothing>>
 
     @DELETE("/community/{communityId}/like")
-    suspend fun deleteCommunityLike(@Path("communityId") communityId: Int): DataResponseDto<Nothing>
+    suspend fun deleteCommunityLike(@Path("communityId") communityId: Int): ApiResponse<DataResponseDto<Nothing>>
 
     @GET("/community/category")
     suspend fun getCommunityByCategory(
         @Query("category") category: String,
         @Query("page") page: Int
-    ): List<CommunityByCategoryResponseDto>
+    ): ApiResponse<List<CommunityByCategoryResponseDto>>
 
     @GET("/community/home")
-    suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto>
+    suspend fun getCommunitiesHome(): ApiResponse<List<CommunityByCategoryResponseDto>>
 
     @FormUrlEncoded
     @POST("/community/save")

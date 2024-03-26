@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.ViewModel
 
+import ResultResponse
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,27 +31,29 @@ class CommunityMainViewModel @Inject constructor(
     private val _type = MutableStateFlow(Category.추천)
     val type get() = _type.asStateFlow()
 
-    //community
-    private val _community = MutableStateFlow(emptyList<CommunityByCategoryResponseDto>())
-    val community get() = _community.asStateFlow()
-
     //page
     private val _page = MutableStateFlow(0)
     val page get() = _page.asStateFlow()
 
-    init {
-        //초기화 시 추천 type으로 먼저 데이터를 받아옴
-        viewModelScope.launch{
-            _community.update { repository.getCommunityByCategory(Category.추천.name, page.value) }
-        }
-    }
+    private val _errState = MutableStateFlow("")
+    val errState get() = _errState.asStateFlow()
 
     val uiState : StateFlow<CommunityMainUiState> = type.combine(page){ type, page ->
-        repository.getCommunityByCategory(type.name, page)
+        val response = repository.getCommunityByCategory(type.name, page)
+        if (response.data == null) {
+            _errState.update{"${response.errorCode} : ${response.errorMessage}"}
+        }
+        response.data
     }.asResult().map{
         when (it) {
             is Result.Loading -> CommunityMainUiState.Loading
-            is Result.Success -> CommunityMainUiState.Community(it.data)
+            is Result.Success -> {
+                if (it.data == null){
+                    CommunityMainUiState.Error
+                } else {
+                    CommunityMainUiState.Community(it.data!!)
+                }
+            }
             is Result.Error -> CommunityMainUiState.Error
         }
     }.stateIn(
@@ -59,36 +62,14 @@ class CommunityMainViewModel @Inject constructor(
         initialValue = CommunityMainUiState.Loading
     )
 
-    //community 리스트 갱신
-    private fun updateCommunity(
-        isAdd : Boolean
-    ){
-        viewModelScope.launch{
-            Log.d("TEST TAG", "Category : ${type.value}")
-            repository.getCommunityByCategory(type.value.name, page.value)
-                .map{
-                    Log.d("TEST TAG", "community -> ${it}")
-                    if(isAdd) {
-                        _community.update { _community.value + it }
-                    }
-                    else {
-                        _community.update { it }
-                    }
-                }
-            Log.d("TEST TAG", "community : ${community.value}")
-        }
-    }
-
     //category 정보 변경
     fun updateCategory(category : Category) {
         _type.update {category}
-        updateCommunity(false)
     }
 
     //page 정보 변경
     fun addPage(){
         _page.update{_page.value + 1}
-        updateCommunity(true)
     }
 
 }

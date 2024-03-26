@@ -73,20 +73,25 @@ class CommunityDescViewModel @Inject constructor(
     val uiState : StateFlow<CommunityDescUiState> = combine(
         flow{
             val result = communityRepository.getCommunity(id.value)
-            Log.d("TAG TEST", "community : ${result}")
-            emit(result)
+            if (result.data == null) {
+                _errState.update { "${result.errorCode} : ${result.errorMessage}"}
+                return@flow
+            }
+            emit(result.data!!)
         }.asResult(),
         flow{
             val result = communityCommentRepository.getCommunityComments(id.value, page.value)
-            Log.d("TAG TEST", "comments ; ${result}")
-            emit(result)
+            if (result.data == null) {
+                _errState.update { "${result.errorCode} : ${result.errorMessage}"}
+                return@flow
+            }
+            emit(result.data!!)
         }.asResult()
     ){ communityResult, commentsResult ->
         when {
             communityResult is Result.Error || commentsResult is Result.Error -> CommunityDescUiState.Error
             communityResult is Result.Loading || commentsResult is Result.Loading -> CommunityDescUiState.Loading
             else -> {
-                Log.d("TAG TEST", "community : ${communityResult} / comment : ${commentsResult}")
                 CommunityDescUiState.CommunityDesc(
                     (communityResult as Result.Success).data,
                     (commentsResult as Result.Success).data,

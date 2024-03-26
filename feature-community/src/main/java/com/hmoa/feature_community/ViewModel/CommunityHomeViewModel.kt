@@ -25,9 +25,19 @@ class CommunityHomeViewModel @Inject constructor(
     private val _community = MutableStateFlow(emptyList<CommunityByCategoryResponseDto>())
     val community get() = _community.asStateFlow()
 
+    private val _errState = MutableStateFlow("")
+    val errState get() = _errState.asStateFlow()
+
     init{
         viewModelScope.launch{
-            _community.update { repository.getCommunitiesHome() }
+            _community.update {
+                val result = repository.getCommunitiesHome()
+                if (result.data == null) {
+                    _errState.update {"${result.errorCode} ${result.errorMessage}"}
+                    return@launch
+                }
+                result.data!!
+            }
         }
     }
 

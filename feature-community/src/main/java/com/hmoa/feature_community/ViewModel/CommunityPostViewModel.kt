@@ -54,7 +54,6 @@ class CommunityPostViewModel @Inject constructor(
     //title update
     fun updateTitle (title : String) {
         _title.update{ title }
-        Log.d("TEST TAG", "title : ${this.title.value}")
     }
 
     //content update
@@ -69,7 +68,6 @@ class CommunityPostViewModel @Inject constructor(
 
     //게시글 게시
     fun postCommunity(){
-
         viewModelScope.launch{
             //content, title 모두 isNotEmpty일 때
             if (content.value != ""){
@@ -81,12 +79,15 @@ class CommunityPostViewModel @Inject constructor(
 
                 try{
                     _isLoading.update{false}
-                    repository.postCommunitySave(
+                    val result = repository.postCommunitySave(
                         images = images,
                         category = category.value.name,
                         title = title.value,
                         content = content.value
                     )
+                    if (result.data == null) {
+                        _errState.update{"${result.errorCode} : ${result.errorMessage}"}
+                    }
                     _isLoading.update{true}
                 } catch (e : Exception) {
                     _errState.update{ e.message ?: "" }
@@ -94,5 +95,4 @@ class CommunityPostViewModel @Inject constructor(
             }
         }
     }
-
 }

@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.LoginRepository
-import com.hmoa.core_domain.usecase.PostKakaoTokenUseCase
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
 import com.hmoa.core_model.Provider
@@ -51,35 +50,21 @@ class LoginViewModel @Inject constructor(
     }
 
     suspend fun postKakaoAccessToken(token: String) {
-        postSocialToken(token).asResult()
-            .collectLatest {
-                when (it) {
-                    is Result.Success -> {
-                        val authToken = it.data.data!!.authToken
-                        val rememberedToken = it.data.data!!.rememberedToken
-                        saveAuthAndRememberedToken(authToken, rememberedToken)
-                        postOAuthLogin(token)
-                    }
-
-                    is Result.Loading -> {}//TODO("로딩화면")
-                    is Result.Error -> {
-                        it.exception
-                    }//TODO()
-                }
-            }
-    }
-
-    fun postOAuthLogin(token: String) {
         viewModelScope.launch {
             flow { emit(loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.KAKAO)) }.asResult()
                 .collectLatest {
                     when (it) {
                         is Result.Success -> {
+                            val authToken = it.data.data!!.authToken
+                            val rememberedToken = it.data.data!!.rememberedToken
                             checkIsExistedMember(it.data.data!!)
+                            saveAuthAndRememberedToken(authToken, rememberedToken)
                         }
 
                         is Result.Loading -> {}
-                        is Result.Error -> {}
+                        is Result.Error -> {
+                            it.exception
+                        }
                     }
                 }
         }

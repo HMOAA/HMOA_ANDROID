@@ -1,6 +1,5 @@
 package com.hmoa.feature_community
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -77,51 +76,57 @@ fun CommunityHome(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
             ){
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
+                Column(
+                    modifier = Modifier.weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 ){
-                    Text(
-                        text = "Community",
-                        fontSize = 16.sp,
-                        color = Color.Black
-                    )
-
-                    Text(
-                        modifier = Modifier.clickable{
-                            onNavCommunityByCategory()
-                        },
-                        text = "전체보기",
-                        fontSize = 12.sp,
-                        color = Color.Black
-                    )
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                LazyColumn(
-                    modifier = Modifier.background(color = Color.White),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ){
-                    items(uiState.communities){community ->
-                        PostListItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .border(
-                                    width = 1.dp,
-                                    color = CustomColor.gray2,
-                                    shape = RoundedCornerShape(10.dp)
-                                ),
-                            onPostClick = {
-                                onNavCommunityDescription(community.communityId)
-                            },
-                            postType = community.category,
-                            postTitle = community.title
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom
+                    ){
+                        Text(
+                            text = "Community",
+                            fontSize = 16.sp,
+                            color = Color.Black
                         )
+
+                        Text(
+                            modifier = Modifier.clickable{
+                                onNavCommunityByCategory()
+                            },
+                            text = "전체보기",
+                            fontSize = 12.sp,
+                            color = Color.Black
+                        )
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+
+                    LazyColumn(
+                        modifier = Modifier.background(color = Color.White)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ){
+                        items(uiState.communities){community ->
+                            PostListItem(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .border(
+                                        width = 1.dp,
+                                        color = CustomColor.gray2,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
+                                onPostClick = {
+                                    onNavCommunityDescription(community.communityId)
+                                },
+                                postType = community.category,
+                                postTitle = community.title
+                            )
+                        }
                     }
                 }
                 MainBottomBar(

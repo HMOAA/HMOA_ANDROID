@@ -9,6 +9,7 @@ import com.example.feature_community.Navigation.navigateToCommunityPostRoute
 import com.example.feature_community.Navigation.nestedCommunityGraph
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
+import com.hmoa.feature_home.homeScreen
 import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeScreen
@@ -20,12 +21,19 @@ fun SetUpNavGraph(
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
 
+        /** home 모듈 */
+        homeScreen(onPerfumeClick = {})
+
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToMain)
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
         pickNicknameScreen(
             onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,
             onSignupClick = navController::navigateToSignup
+        )
+        pickPersonalInfoScreen(
+            onHomeClick = navController::navigateToMain,
+            onPickNicknameClick = navController::navigateToPickNickname
         )
 
         /** user info 모듈 */
@@ -54,11 +62,8 @@ fun SetUpNavGraph(
             onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute
         )
 
-        pickPersonalInfoScreen(
-            onHomeClick = navController::navigateToMain,
-            onPickNicknameClick = navController::navigateToPickNickname
-        )
         mainScreen()
+        /** perfume 모듈 */
         perfumeScreen(
             onBackClick = {},
             onHomeClick = {},

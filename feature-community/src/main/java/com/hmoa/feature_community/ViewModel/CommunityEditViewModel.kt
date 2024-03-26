@@ -79,18 +79,23 @@ class CommunityEditViewModel @Inject constructor(
     private fun getCommunityDescription(id : Int){
         viewModelScope.launch{
             flow{
-                emit(repository.getCommunity(id))
+                val result = repository.getCommunity(id)
+                if (result.data == null) {
+                    _errState.update {"${result.errorCode} : ${result.errorMessage}"}
+                    return@flow
+                }
+                emit(result.data!!)
             }.asResult()
-                .map{
-                when (it) {
+                .map{ result ->
+                when (result) {
                     is Result.Loading -> {
                         _isLoading.update {false}
                     }
                     is Result.Error -> {
-                        _errState.update { "Error : 데이터를 받아오는 데 실패했습니다." }
+                        _errState.update { "Error : ${result.exception}" }
                     }
                     is Result.Success -> {
-                        val data = it.data
+                        val data = result.data
                         _title.update{ data.title }
                         _content.update { data.content }
                         _category.update {

@@ -1,17 +1,28 @@
 package com.hmoa.core_datastore.Community
 
+import ResultResponse
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_network.service.CommunityService
+import com.skydoves.sandwich.suspendMapSuccess
+import com.skydoves.sandwich.suspendOnError
 import java.io.File
 import javax.inject.Inject
 
 class CommunityDataStoreImpl @Inject constructor(private val communityService: CommunityService) :
     CommunityDataStore {
-    override suspend fun getCommunity(communityId: Int): CommunityDefaultResponseDto {
-        return communityService.getCommunity(communityId)
+    override suspend fun getCommunity(communityId: Int): ResultResponse<CommunityDefaultResponseDto> {
+        val result = ResultResponse<CommunityDefaultResponseDto>()
+        communityService.getCommunity(communityId).suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
     override suspend fun postCommunityUpdate(
@@ -20,31 +31,73 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         title: String,
         content: String,
         communityId: Int
-    ): CommunityDefaultResponseDto {
-        return communityService.postCommunityUpdate(images, deleteCommunityPhotoIds, title, content, communityId)
+    ): ResultResponse<CommunityDefaultResponseDto> {
+        val result = ResultResponse<CommunityDefaultResponseDto>()
+        communityService.postCommunityUpdate(images, deleteCommunityPhotoIds, title, content, communityId).suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
-    override suspend fun deleteCommunity(communityId: Int): DataResponseDto<Nothing> {
-        return communityService.deleteCommunity(communityId)
+    override suspend fun deleteCommunity(communityId: Int): ResultResponse<DataResponseDto<Nothing>> {
+        val result = ResultResponse<DataResponseDto<Nothing>>()
+        communityService.deleteCommunity(communityId).suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
-    override suspend fun putCommunityLike(communityId: Int): DataResponseDto<Nothing> {
-        return communityService.putCommunityLike(communityId)
+    override suspend fun putCommunityLike(communityId: Int): ResultResponse<DataResponseDto<Nothing>> {
+        val result = ResultResponse<DataResponseDto<Nothing>>()
+        communityService.putCommunityLike(communityId).suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
-    override suspend fun deleteCommunityLike(communityId: Int): DataResponseDto<Nothing> {
-        return communityService.deleteCommunity(communityId)
+    override suspend fun deleteCommunityLike(communityId: Int): ResultResponse<DataResponseDto<Nothing>> {
+        val result = ResultResponse<DataResponseDto<Nothing>>()
+        communityService.deleteCommunity(communityId).suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
     override suspend fun getCommunityByCategory(
         category: String,
         page: Int
-    ): List<CommunityByCategoryResponseDto> {
-        return communityService.getCommunityByCategory(category, page)
+    ): ResultResponse<List<CommunityByCategoryResponseDto>> {
+        val result = ResultResponse<List<CommunityByCategoryResponseDto>>()
+        communityService.getCommunityByCategory(category, page).suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
-    override suspend fun getCommunitiesHome(): List<CommunityByCategoryResponseDto> {
-        return communityService.getCommunitiesHome()
+    override suspend fun getCommunitiesHome(): ResultResponse<List<CommunityByCategoryResponseDto>> {
+        val result = ResultResponse<List<CommunityByCategoryResponseDto>>()
+        communityService.getCommunitiesHome().suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
     override suspend fun postCommunitySave(
@@ -52,8 +105,14 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         category: String,
         title: String,
         content: String
-    ): CommunityDefaultResponseDto {
-        return communityService.postCommunitySave(images, category, title, content)
+    ): ResultResponse<CommunityDefaultResponseDto> {
+        val result = ResultResponse<CommunityDefaultResponseDto>()
+        communityService.postCommunitySave(images, category, title, content).suspendMapSuccess{
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
-
 }

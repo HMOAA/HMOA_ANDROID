@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MemberLoginResponseDto(
-    val authToken: String,
-    val existedMember: Boolean,
-    val rememberedToken: String
+    var authToken: String,
+    var existedMember: Boolean,
+    var rememberedToken: String
 )

@@ -1,7 +1,6 @@
 package com.hmoa.core_model
 
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityPhotoDefaultResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import org.junit.Test
@@ -19,23 +18,10 @@ class testDataWithEnumConstants {
             CommunityByCategoryResponseDto(Category.시향기.name, 1, 1, liked = true, heartCount = 1, title = "시향기")
         val communityByCategoryResponseDto2 =
             CommunityByCategoryResponseDto(Category.추천.name, 1, 1, liked = true, heartCount = 1, title = "추천")
-        val communityDefaultResponseDto = CommunityDefaultResponseDto(
-            "사용자1",
-            Category.자유.name,
-            communityPhotoDefaultResponseDto,
-            "구찌 알케미스트 어쩌구 추천",
-            1,
-            1,
-            "myProfileImgUrl",
-            "profileImgUrl",
-            "00:00:00",
-            "향수 추천",
-            true
-        )
+
 
         Assertions.assertEquals("시향기", communityByCategoryResponseDto.category)
         Assertions.assertEquals("추천", communityByCategoryResponseDto2.category)
-        Assertions.assertEquals("자유", communityDefaultResponseDto.category)
 
     }
 

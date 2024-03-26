@@ -1,12 +1,18 @@
 package com.hmoa.core_datastore.Member
 
+import ResultResponse
 import android.util.Log
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_network.service.MemberService
+import com.skydoves.sandwich.suspendMapSuccess
+import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
@@ -42,8 +48,15 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun updateJoin(request: JoinUpdateRequestDto): MemberResponseDto {
-        return memberService.updateJoin(request)
+    override suspend fun updateJoin(request: JoinUpdateRequestDto): ResultResponse<MemberResponseDto> {
+        var result = ResultResponse<MemberResponseDto>()
+        memberService.updateJoin(request).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.errorCode = response.code()
+            result.errorMessage = response.message()
+        }
+        return result
     }
 
     override suspend fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any> {

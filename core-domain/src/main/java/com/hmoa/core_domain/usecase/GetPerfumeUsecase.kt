@@ -22,7 +22,7 @@ class GetPerfumeUsecase @Inject constructor(
             baseNote = perfumeInfo1.baseNote,
             heartNote = perfumeInfo1.heartNote,
             topNote = perfumeInfo1.topNote,
-            likedCount = perfumeInfo1.heartNum.toString(),
+            likedCount = perfumeInfo1.heartNum,
             liked = perfumeInfo1.liked,
             notePhotos = perfumeInfo1.notePhotos,
             perfumeId = perfumeInfo1.perfumeId.toString(),

@@ -38,7 +38,7 @@ fun SetUpNavGraph(
         )
 
         /** authentication 모듈 */
-        loginScreen(onSignupClick = navController::navigateToSignup)
+        loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToMain)
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
         pickNicknameScreen(
             onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,
@@ -84,10 +84,12 @@ fun SetUpNavGraph(
             onBrandClick = {},
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
             onSimilarPerfumeClick = {},
+            onSpecificCommentClick = { commentId, isEditable -> }
         )
         perfumeComment(
             onBackClick = {},
             onAddCommentClick = {},
+            onSpecificCommentClick = { commentId, isEditable -> }
         )
     }
 }

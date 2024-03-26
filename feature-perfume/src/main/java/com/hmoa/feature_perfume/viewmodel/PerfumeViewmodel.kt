@@ -1,10 +1,14 @@
-package com.hmoa.feature_perfume
+package com.hmoa.feature_perfume.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.usecase.*
+import com.hmoa.core_domain.repository.PerfumeRepository
+import com.hmoa.core_domain.usecase.GetPerfumeUsecase
+import com.hmoa.core_domain.usecase.UpdatePerfumeAgeUseCase
+import com.hmoa.core_domain.usecase.UpdatePerfumeGenderUseCase
+import com.hmoa.core_domain.usecase.UpdatePerfumeWeatherUseCase
 import com.hmoa.core_model.PerfumeGender
 import com.hmoa.core_model.Weather
 import com.hmoa.core_model.data.Perfume
@@ -22,7 +26,7 @@ class PerfumeViewmodel @Inject constructor(
     private val updatePerfumeGender: UpdatePerfumeGenderUseCase,
     private val updatePerfumeWeather: UpdatePerfumeWeatherUseCase,
     private val getPerfume: GetPerfumeUsecase,
-    private val updatePerfumeLike: UpdatePerfumeLikeUseCase
+    private val perfumeRepository: PerfumeRepository
 ) : ViewModel() {
     private val perfumeState = MutableStateFlow<Perfume?>(null)
     private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
@@ -111,10 +115,49 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun updateLike(like: Boolean, perfumeId: Int) {
-        viewModelScope.launch {
-            updatePerfumeLike(like, perfumeId)
+        when (like) {
+            true -> {
+                viewModelScope.launch { putPerfumeLike(like, perfumeId) }
+
+            }
+
+            false -> {
+                viewModelScope.launch { deletePerfumeLike(like, perfumeId) }
+            }
         }
     }
+
+    suspend fun putPerfumeLike(like: Boolean, perfumeId: Int) {
+        flow { emit(perfumeRepository.putPerfumeLike(perfumeId.toString())) }.asResult().collectLatest { result ->
+            when (result) {
+                is Result.Success -> {
+                    perfumeState.value?.liked = like
+                    perfumeState.value?.likedCount = perfumeState.value?.likedCount!!.plus(1)
+                }
+
+                is Result.Loading -> {}
+                is Result.Error -> {}
+            }
+        }
+    }
+
+    suspend fun deletePerfumeLike(like: Boolean, perfumeId: Int) {
+        viewModelScope.launch {
+            flow { emit(perfumeRepository.deletePerfumeLike(perfumeId.toString())) }.asResult()
+                .collectLatest { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            perfumeState.value?.liked = like
+                            perfumeState.value?.likedCount = perfumeState.value?.likedCount!!.minus(1)
+                        }
+
+                        is Result.Loading -> {}
+                        is Result.Error -> {}
+                    }
+                }
+        }
+    }
+
 
     sealed interface PerfumeUiState {
         data object Loading : PerfumeUiState

@@ -25,41 +25,42 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.BottomNavItem
+import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.R
 
 @Composable
 fun MainBottomBar(
-    initValue : Int,
+    initValue : BottomScreen,
     onClickHome: () -> Unit,
     onClickHPedia: () -> Unit,
     onClickLike: () -> Unit,
     onClickMyPage: () -> Unit
 ) {
-    var selectedNavIdx by remember{mutableIntStateOf(initValue)}
+    var selectedScreen by remember{mutableStateOf(initValue)}
 
     val bottomNavItems = listOf(
         BottomNavItem(
-            name = "Home",
+            name = BottomScreen.Home,
             route = onClickHome,
-            icon = if(selectedNavIdx == 0) painterResource(R.drawable.ic_nav_home_selected)
+            icon = if(selectedScreen.name == "Home") painterResource(R.drawable.ic_nav_home_selected)
             else painterResource(R.drawable.ic_home)
         ),
         BottomNavItem(
-            name = "HPedia",
+            name = BottomScreen.HPedia,
             route = onClickHPedia,
-            icon = if (selectedNavIdx == 1) painterResource(R.drawable.ic_nav_hpedia_selected)
+            icon = if (selectedScreen.name == "HPedia") painterResource(R.drawable.ic_nav_hpedia_selected)
             else painterResource(R.drawable.ic_hpedia)
         ),
         BottomNavItem(
-            name = "Like",
+            name = BottomScreen.Like,
             route = onClickLike,
-            icon = if (selectedNavIdx == 2) painterResource(R.drawable.ic_nav_like_selected)
+            icon = if (selectedScreen.name == "Like") painterResource(R.drawable.ic_nav_like_selected)
             else painterResource(R.drawable.ic_heart)
         ),
         BottomNavItem(
-            name = "My",
+            name = BottomScreen.MyPage,
             route = onClickMyPage,
-            icon = if (selectedNavIdx == 3) painterResource(R.drawable.ic_nav_my_page_selected)
+            icon = if (selectedScreen.name == "MyPage") painterResource(R.drawable.ic_nav_my_page_selected)
             else painterResource(R.drawable.ic_person)
         ),
     )
@@ -73,7 +74,7 @@ fun MainBottomBar(
                     selected = false,
                     onClick = {
                         item.route()
-                        selectedNavIdx = bottomNavItems.indexOf(item)
+                        selectedScreen = item.name
                     },
                     icon = {
                         Column(
@@ -88,8 +89,8 @@ fun MainBottomBar(
 
                             Spacer(Modifier.height(5.dp))
 
-                            if (bottomNavItems[selectedNavIdx] == item) {
-                                Text(text = item.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White)
+                            if (selectedScreen == item.name) {
+                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White)
                             }
                         }
                     }
@@ -102,5 +103,5 @@ fun MainBottomBar(
 @Preview
 @Composable
 fun MainBottomBarPreview() {
-    MainBottomBar(0, {}, {}, {}, {})
+    MainBottomBar(BottomScreen.Home, {}, {}, {}, {})
 }

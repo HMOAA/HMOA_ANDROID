@@ -21,7 +21,7 @@ fun SetUpNavGraph(
     NavHost(navController = navController, startDestination = startDestination) {
 
         /** authentication 모듈 */
-        loginScreen(onSignupClick = navController::navigateToSignup)
+        loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToMain)
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
         pickNicknameScreen(
             onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,

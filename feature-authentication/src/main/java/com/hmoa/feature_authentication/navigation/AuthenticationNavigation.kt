@@ -17,10 +17,11 @@ fun NavController.navigateToSignup() = navigate(SIGNUP_ROUTE)
 fun NavController.navigateToPickNickname() = navigate(PICKNICKNAME_ROUTE)
 fun NavController.navigateToPickPersonalInfo() = navigate(PICKPERSONALINFO_ROUTE)
 fun NavGraphBuilder.loginScreen(
-    onSignupClick: () -> Unit
+    onSignupClick: () -> Unit,
+    onHomeClick: () -> Unit
 ) {
     composable(route = LOGIN_ROUTE) {
-        LoginRoute(onSignupClick)
+        LoginRoute(onSignupClick, onHomeClick)
     }
 }
 

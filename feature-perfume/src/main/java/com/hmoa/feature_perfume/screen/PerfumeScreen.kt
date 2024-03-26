@@ -148,7 +148,7 @@ fun PerfumeContent(
         Column(modifier = Modifier.padding(16.dp)) {
             PerfumeInfo(
                 isLikedPerfume = false,
-                heartCount = 2310,
+                heartCount = data.likedCount,
                 perfumeKoreanName = data.perfumeKoreanName,
                 perfumeEnglishName = data.perfumeEnglishName,
                 perfumeVolume = data.perfumeVolume,

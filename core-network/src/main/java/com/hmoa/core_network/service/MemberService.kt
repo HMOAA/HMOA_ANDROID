@@ -4,7 +4,10 @@ import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
 import com.hmoa.core_model.request.SexRequestDto
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.MemberResponseDto
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
@@ -31,7 +34,7 @@ interface MemberService {
     suspend fun postExistsNickname(@Body request: NickNameRequestDto): ApiResponse<Boolean>
 
     @PATCH("/member/join")
-    suspend fun updateJoin(@Body request: JoinUpdateRequestDto): MemberResponseDto
+    suspend fun updateJoin(@Body request: JoinUpdateRequestDto): ApiResponse<MemberResponseDto>
 
     @PATCH("/member/nickname")
     suspend fun updateNickname(@Body request: NickNameRequestDto): DataResponseDto<Any>
@@ -40,7 +43,7 @@ interface MemberService {
     suspend fun getPerfumeComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
 
     @GET("/member/perfumeHearts")
-    suspend fun getPerfumeFavoriteComments(@Query("page") page : Int) : List<CommunityCommentDefaultResponseDto>
+    suspend fun getPerfumeFavoriteComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
 
     @FormUrlEncoded
     @POST("/member/profile-photo")

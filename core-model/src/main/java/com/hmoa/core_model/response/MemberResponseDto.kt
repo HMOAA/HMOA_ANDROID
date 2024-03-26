@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MemberResponseDto(
-    val age: Int,
-    val memberId: Int,
-    val memberImageUrl: String,
-    val nickname: String,
+    var age: Int,
+    var memberId: Int,
+    var memberImageUrl: String,
+    var nickname: String,
     var provider: String,
-    val sex: Boolean
+    var sex: Boolean
 ) {
     init {
         provider = when (provider) {

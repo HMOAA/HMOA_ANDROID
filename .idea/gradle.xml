@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/core-repository" />
             <option value="$PROJECT_DIR$/feature-authentication" />
             <option value="$PROJECT_DIR$/feature-community" />
+            <option value="$PROJECT_DIR$/feature-hpedia" />
             <option value="$PROJECT_DIR$/feature-main" />
             <option value="$PROJECT_DIR$/feature-perfume" />
             <option value="$PROJECT_DIR$/feature-userInfo" />

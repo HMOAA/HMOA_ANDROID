@@ -7,10 +7,12 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MainRepository
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class HomeViewModel @Inject constructor(
     private val mainRepository: MainRepository
 ) : ViewModel() {

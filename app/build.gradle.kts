@@ -62,6 +62,7 @@ dependencies {
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
 
+    implementation(project(":feature-home"))
     implementation(project(":feature-authentication"))
     implementation(project(":feature-userInfo"))
     implementation(project(":feature-community"))

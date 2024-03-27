@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.MainTopBar
 
@@ -33,7 +34,7 @@ fun MainScreen(
         scaffoldState = scaffoldState,
         topBar = { MainTopBar({}, {}, {}, true) },
         drawerContent = { Text(text = "drawerContent") },
-        bottomBar = { MainBottomBar({}, {
+        bottomBar = { MainBottomBar(BottomScreen.Home,{}, {
             onNavCommunity()
         }, {}, {}) }
     ) {

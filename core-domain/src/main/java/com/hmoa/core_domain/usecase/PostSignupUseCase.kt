@@ -1,5 +1,6 @@
 package com.hmoa.core_domain.usecase
 
+import ResultResponse
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.response.MemberResponseDto
@@ -9,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class PostSignupUseCase @Inject constructor(private val memberRepository: MemberRepository) {
-    suspend operator fun invoke(age: Int, sex: Boolean, nickname: String): Flow<MemberResponseDto> {
+    suspend operator fun invoke(age: Int, sex: Boolean, nickname: String): Flow<ResultResponse<MemberResponseDto>> {
         while (true) {
             val result = memberRepository.updateJoin(JoinUpdateRequestDto(age, nickname, sex))
             return flow {

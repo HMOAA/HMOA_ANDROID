@@ -55,8 +55,8 @@ class LoginViewModel @Inject constructor(
             .collectLatest {
                 when (it) {
                     is Result.Success -> {
-                        val authToken = it.data.authToken
-                        val rememberedToken = it.data.rememberedToken
+                        val authToken = it.data.data!!.authToken
+                        val rememberedToken = it.data.data!!.rememberedToken
                         saveAuthAndRememberedToken(authToken, rememberedToken)
                         _isAbleToGoHome.update { true }
                     }
@@ -76,11 +76,16 @@ class LoginViewModel @Inject constructor(
                 .collectLatest {
                     when (it) {
                         is Result.Success -> {
-                            checkIsExistedMember(it.data)
+                            val authToken = it.data.data!!.authToken
+                            val rememberedToken = it.data.data!!.rememberedToken
+                            checkIsExistedMember(it.data.data!!)
+                            saveAuthAndRememberedToken(authToken, rememberedToken)
                         }
 
                         is Result.Loading -> {}
-                        is Result.Error -> {}
+                        is Result.Error -> {
+                            it.exception
+                        }
                     }
                 }
         }

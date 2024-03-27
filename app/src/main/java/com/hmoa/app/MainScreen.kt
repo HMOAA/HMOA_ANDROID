@@ -33,11 +33,9 @@ fun MainScreen(
         scaffoldState = scaffoldState,
         topBar = { MainTopBar({}, {}, {}, true) },
         drawerContent = { Text(text = "drawerContent") },
-        bottomBar = {
-            MainBottomBar(BottomScreen.Home, {
-                onNavCommunity()
-            }, {}, {}, {})
-        }
+        bottomBar = { MainBottomBar(BottomScreen.Home,{}, {
+            onNavCommunity()
+        }, {}, {}) }
     ) {
         Column(
             modifier = Modifier

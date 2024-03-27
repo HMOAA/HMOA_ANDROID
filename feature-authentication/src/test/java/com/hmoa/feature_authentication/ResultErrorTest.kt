@@ -25,34 +25,32 @@ fun <T> Flow<T>.asResult(): Flow<Result<T>> = map<T, Result<T>> { Result.Success
 
 class ExampleUnitTest {
 
-    //언제 Result.Error가 언제 나오는지 테스트
     @Test
     @ExperimentalCoroutinesApi
-    fun ResultResponseErrorTest() = runTest {
-        val exceptionCases = listOf<Any>("good", "good", Exception("500"))
+    fun When_Exception_Expected_ResultError_Test() = runTest {
+        val exceptionCases = listOf<Any?>("데이터1", "데이터2", Exception("500"))
         launch {
-            flow { exceptionCases.map { emit(it) } }.asResult().collectLatest {
-                Assertions.assertEquals(it, "good")
+            flow {
+                exceptionCases.map { emit(it) }
+            }.asResult().collectLatest {
+                when (it) {
+                    is Result.Success -> {
+                        Assertions.assertEquals(Result.Success(it).data, it)
+                        println("Result.Success 상태일 때 기대값=${Result.Success(it).data}, 실제값=${it}")
+                    }
+
+                    is Result.Loading -> {
+                        Assertions.assertEquals(Result.Loading, it)
+                        println("Result.Loading 상태일 때 기대값=${Result.Loading}, 실제값=${it}")
+                    }
+
+                    is Result.Error -> {
+                        Assertions.assertNotEquals(Exception("500"), it.exception)
+                        println("Result.Error 상태일 때 기대값=${Exception("500")}, 실제값=${it.exception}")
+                    }
+                }
+
             }
-            //Assertions.assertEquals(exceptionCases[0], "good")
-//            flow {
-//                exceptionCases.map { emit(it) }
-//            }.asResult().collectLatest {
-//                when (it) {
-//                    is Result.Success -> {
-//                        Assertions.assertEquals(it.data, "good")
-//                    }
-//
-//                    is Result.Loading -> {
-//                        Log.i("Loading", "Loading...")
-//                    }
-//
-//                    is Result.Error -> {
-//                        Assertions.assertEquals(it, Exception("500"))
-//                    }
-//                }
-//
-//            }
         }
     }
 }

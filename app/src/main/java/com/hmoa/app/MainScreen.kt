@@ -44,7 +44,7 @@ fun MainScreen(
                 .fillMaxHeight()
                 .fillMaxWidth()
         ) {
-
+            //TODO("네비게이션이 들어가야 할 거 같음")
         }
     }
 }

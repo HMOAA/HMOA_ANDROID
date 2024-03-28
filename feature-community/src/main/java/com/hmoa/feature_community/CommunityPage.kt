@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.FloatingActionBtn
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.TypeBadge
@@ -205,6 +206,7 @@ fun CommunityPage(
                     Spacer(Modifier.height(13.dp))
 
                     MainBottomBar(
+                        initValue = BottomScreen.HPedia,
                         onClickHome = onNavHome,
                         onClickHPedia = onNavHPedia,
                         onClickLike = onNavLike,

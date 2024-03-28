@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
+import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
@@ -130,6 +131,7 @@ fun CommunityHome(
                     }
                 }
                 MainBottomBar(
+                    initValue = BottomScreen.HPedia,
                     onClickHome = onNavHome,
                     onClickHPedia = onNavHPedia,
                     onClickLike = onNavLike,

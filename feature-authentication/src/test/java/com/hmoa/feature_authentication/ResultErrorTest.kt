@@ -38,7 +38,6 @@ class ExampleUnitTest {
                         emit(it)
                     }
                 }
-
             }.asResult().collectLatest {
                 when (it) {
                     is Result.Success -> {

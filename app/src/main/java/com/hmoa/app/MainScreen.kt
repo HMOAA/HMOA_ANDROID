@@ -33,16 +33,18 @@ fun MainScreen(
         scaffoldState = scaffoldState,
         topBar = { MainTopBar({}, {}, {}, true) },
         drawerContent = { Text(text = "drawerContent") },
-        bottomBar = { MainBottomBar(BottomScreen.Home,{}, {
-            onNavCommunity()
-        }, {}, {}) }
+        bottomBar = {
+            MainBottomBar(BottomScreen.Home, {
+                onNavCommunity()
+            }, {}, {}, {})
+        }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
         ) {
-
+            //TODO("네비게이션이 들어가야 할 거 같음")
         }
     }
 }

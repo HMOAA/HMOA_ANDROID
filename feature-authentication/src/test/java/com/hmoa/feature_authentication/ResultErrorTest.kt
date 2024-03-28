@@ -21,14 +21,21 @@ sealed interface Result<out T> {
 
 fun <T> Flow<T>.asResult(): Flow<Result<T>> = map<T, Result<T>> { Result.Success(it) }
     .onStart { emit(Result.Loading) }
-    .catch { emit(Result.Error(it)) }
+    .catch {
+        emit(Result.Error(it))
+    }
+
+class ResponseException(override var message: String) : Throwable() {
+
+}
+
 
 class ExampleUnitTest {
 
     @Test
     @ExperimentalCoroutinesApi
     fun When_Exception_Expected_ResultError_Test() = runTest {
-        val exceptionCases = listOf<Any?>("data", Exception("500"))
+        val exceptionCases = listOf<Any?>("data", ResponseException("500"))
         launch {
             flow {
                 exceptionCases.map {
@@ -38,7 +45,6 @@ class ExampleUnitTest {
                         emit(it)
                     }
                 }
-
             }.asResult().collectLatest {
                 when (it) {
                     is Result.Success -> {

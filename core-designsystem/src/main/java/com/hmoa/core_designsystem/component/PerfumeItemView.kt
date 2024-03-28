@@ -13,9 +13,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PerfumeItemView(imageUrl: String, perfumeName: String, brandName: String, width: Int, height: Int) {
+fun PerfumeItemView(imageUrl: String, perfumeName: String, brandName: String, width: Int, height: Int, imageBackgroundColor:Color) {
     Column(modifier = Modifier.padding(end = 8.dp).width(88.dp)) {
-        ImageView(imageUrl = imageUrl, backgroundColor = Color.White, width = width, height = height)
+        ImageView(imageUrl = imageUrl, backgroundColor = imageBackgroundColor, width = width, height = height)
         Text(
             text = brandName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
             modifier = Modifier.padding(end = 4.dp)

@@ -179,7 +179,7 @@ fun PerfumeContent(
             LazyRow {
                 items(data.similarPerfumes) { it ->
                     Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
-                        PerfumeItemView(it.perfumeImgUrl, it.perfumeName, it.brandName, 88, 88)
+                        PerfumeItemView(it.perfumeImgUrl, it.perfumeName, it.brandName, 88, 88, Color.White)
                     }
                 }
             }

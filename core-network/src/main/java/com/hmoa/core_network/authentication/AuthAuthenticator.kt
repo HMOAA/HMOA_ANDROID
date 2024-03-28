@@ -32,7 +32,6 @@ class AuthAuthenticator @Inject constructor(
             refreshTokenManager.refreshTokens(RememberedLoginRequestDto(rememberedToken))
                 .suspendOnError {
                     if (this.response.code() == 401) {
-                        //TODO("로그인 화면으로 이동")
                         isAvailableToSendNewRequest = false
                     }
                 }

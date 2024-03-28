@@ -29,7 +29,7 @@ class LoginRepositoryImpl @Inject constructor(
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
         provider: Provider
-    ): MemberLoginResponseDto {
+    ): ResultResponse<MemberLoginResponseDto> {
         return loginRemoteDataStore.postOAuth(accessToken, provider)
     }
 

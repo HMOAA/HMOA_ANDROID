@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.LoginRepository
-import com.hmoa.core_domain.usecase.PostKakaoTokenUseCase
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
 import com.hmoa.core_model.Provider
@@ -29,7 +28,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val application: Application,
     private val saveKakaoToken: SaveKakaoTokenUseCase,
-    private val postSocialToken: PostKakaoTokenUseCase,
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
@@ -51,36 +49,21 @@ class LoginViewModel @Inject constructor(
     }
 
     suspend fun postKakaoAccessToken(token: String) {
-        postSocialToken(token).asResult()
-            .collectLatest {
-                when (it) {
-                    is Result.Success -> {
-                        val authToken = it.data.authToken
-                        val rememberedToken = it.data.rememberedToken
-                        saveAuthAndRememberedToken(authToken, rememberedToken)
-                        _isAbleToGoHome.update { true }
-                    }
-
-                    is Result.Loading -> {}//TODO("로딩화면")
-                    is Result.Error -> {
-                        it
-                        it.exception
-                    }//TODO()
-                }
-            }
-    }
-
-    fun postKakaoLogin(token: String) {
         viewModelScope.launch {
             flow { emit(loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.KAKAO)) }.asResult()
                 .collectLatest {
                     when (it) {
                         is Result.Success -> {
-                            checkIsExistedMember(it.data)
+                            val authToken = it.data.data!!.authToken
+                            val rememberedToken = it.data.data!!.rememberedToken
+                            checkIsExistedMember(it.data.data!!)
+                            saveAuthAndRememberedToken(authToken, rememberedToken)
                         }
 
                         is Result.Loading -> {}
-                        is Result.Error -> {}
+                        is Result.Error -> {
+                            it.exception
+                        }
                     }
                 }
         }

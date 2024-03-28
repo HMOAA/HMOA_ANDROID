@@ -1,7 +1,6 @@
 package com.hmoa.app
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,12 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.MainTopBar
 
 @Composable
 fun MainRoute(
-    onNavCommunity : () -> Unit
+    onNavCommunity: () -> Unit
 ) {
     MainScreen(
         onNavCommunity = onNavCommunity
@@ -33,13 +33,15 @@ fun MainScreen(
         scaffoldState = scaffoldState,
         topBar = { MainTopBar({}, {}, {}, true) },
         drawerContent = { Text(text = "drawerContent") },
-        bottomBar = { MainBottomBar({}, {
+        bottomBar = { MainBottomBar(BottomScreen.Home,{}, {
             onNavCommunity()
         }, {}, {}) }
     ) {
-        Column(modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+        ) {
 
         }
     }

@@ -4,7 +4,7 @@ import android.media.Image
 import androidx.compose.ui.graphics.painter.Painter
 
 data class BottomNavItem (
-    val name:String,
+    val name:BottomScreen,
     val route:()->Unit,
     val icon: Painter
 )

@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ImageView(imageUrl: String, width: Int, height: Int, backgroundColor: Color) {
+fun ImageView(imageUrl: String?, width: Int, height: Int, backgroundColor: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         com.skydoves.landscapist.glide.GlideImage(
-            imageModel = imageUrl,
+            imageModel = imageUrl?: "",
             modifier = Modifier.width(width.dp).height(height.dp).background(color = backgroundColor),
         )
     }

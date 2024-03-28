@@ -28,15 +28,22 @@ class ExampleUnitTest {
     @Test
     @ExperimentalCoroutinesApi
     fun When_Exception_Expected_ResultError_Test() = runTest {
-        val exceptionCases = listOf<Any?>("데이터1", "데이터2", Exception("500"))
+        val exceptionCases = listOf<Any?>("data", Exception("500"))
         launch {
             flow {
-                exceptionCases.map { emit(it) }
+                exceptionCases.map {
+                    if (it is Exception) {
+                        throw it
+                    } else {
+                        emit(it)
+                    }
+                }
+
             }.asResult().collectLatest {
                 when (it) {
                     is Result.Success -> {
                         Assertions.assertEquals(Result.Success(it).data, it)
-                        println("Result.Success 상태일 때 기대값=${Result.Success(it).data}, 실제값=${it}")
+                        println("Result.Success 상태일 때 기대값=${Result.Success(it).data}, 실제값=${it.data}")
                     }
 
                     is Result.Loading -> {
@@ -45,8 +52,8 @@ class ExampleUnitTest {
                     }
 
                     is Result.Error -> {
-                        Assertions.assertNotEquals(Exception("500"), it.exception)
-                        println("Result.Error 상태일 때 기대값=${Exception("500")}, 실제값=${it.exception}")
+                        Assertions.assertNotEquals(Result.Error(it.exception), it.exception)
+                        println("Result.Error 상태일 때 기대값=${Result.Error(it.exception)}, 실제값=${it.exception}")
                     }
                 }
 

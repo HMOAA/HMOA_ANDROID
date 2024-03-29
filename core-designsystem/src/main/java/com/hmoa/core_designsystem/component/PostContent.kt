@@ -137,9 +137,6 @@ fun PostContent(
                 onClick = { onChangeBottomSheetState(true) }
             ) {
                 Icon(
-                    modifier = Modifier
-                        .width(5.dp)
-                        .height(16.dp),
                     painter = painterResource(R.drawable.three_dot_menu_vertical),
                     contentDescription = "Menu Button",
                     tint = CustomColor.gray2
@@ -173,8 +170,8 @@ fun PostContent(
                 fontSize = 12.sp,
                 fontColor = Color.Black,
                 selected = isLiked,
-                selectedIcon = painterResource(R.drawable.ic_heart_filled),
-                unSelectedIcon = painterResource(R.drawable.ic_heart),
+                selectedIcon = painterResource(R.drawable.ic_heart_selectable_selected),
+                unSelectedIcon = painterResource(R.drawable.ic_heart_selectable_not_selected),
                 iconColor = Color.Black,
                 selectedColor = CustomColor.gray1,
                 unSelectedColor = CustomColor.gray1

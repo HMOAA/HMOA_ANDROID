@@ -77,23 +77,21 @@ class CommunityPostViewModel @Inject constructor(
             } else {
                 val images = pictures.value.toTypedArray()
 
-                try{
-                    _isLoading.update{false}
-                    val result = repository.postCommunitySave(
-                        images = images,
-                        category = category.value.name,
-                        title = title.value,
-                        content = content.value
-                    )
-                    if (result.exception is Exception) {
-                        throw result.exception!!
-                    } else {
-                        result.data!!
-                    }
-                    _isLoading.update{true}
-                } catch (e : Exception) {
-                    _errState.update{ e.message ?: "" }
+                _isLoading.update{false}
+                val result = repository.postCommunitySave(
+                    images = images,
+                    category = category.value.name,
+                    title = title.value,
+                    content = content.value
+                )
+
+                if (result.exception is Exception) {
+                    throw result.exception!!
+                } else {
+                    result.data!!
                 }
+
+                _isLoading.update{true}
             }
         }
     }

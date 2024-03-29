@@ -22,8 +22,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.putCommunityComment(commentId, dto).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -33,8 +32,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.deleteCommunityComment(commentId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -47,8 +45,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.putCommunityCommentLiked(commentId, dto).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -58,8 +55,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.deleteCommunityCommentLiked(commentId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -72,8 +68,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.getCommunityComments(communityId, page).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -86,8 +81,7 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.postCommunityComment(communityId, dto).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }

@@ -19,8 +19,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getCommunity(communityId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -36,8 +35,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.postCommunityUpdate(images, deleteCommunityPhotoIds, title, content, communityId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -47,9 +45,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.deleteCommunity(communityId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
-        }
+            result.exception = Exception(this.statusCode.toString())        }
         return result
     }
 
@@ -58,8 +54,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.putCommunityLike(communityId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -69,8 +64,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.deleteCommunity(communityId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -83,8 +77,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getCommunityByCategory(category, page).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -94,8 +87,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getCommunitiesHome().suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }
@@ -110,8 +102,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.postCommunitySave(images, category, title, content).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.toString())
         }
         return result
     }

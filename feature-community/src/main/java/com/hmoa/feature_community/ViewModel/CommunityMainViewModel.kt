@@ -42,18 +42,13 @@ class CommunityMainViewModel @Inject constructor(
         val result = repository.getCommunityByCategory(type.name, page)
         if (result.exception is Exception) {
             throw result.exception!!
-        } else {
-            result.data
         }
+        result.data
     }.asResult().map{
         when (it) {
             is Result.Loading -> CommunityMainUiState.Loading
             is Result.Success -> {
-                if (it.data == null){
-                    CommunityMainUiState.Error
-                } else {
-                    CommunityMainUiState.Community(it.data!!)
-                }
+                CommunityMainUiState.Community(it.data!!)
             }
             is Result.Error -> CommunityMainUiState.Error
         }

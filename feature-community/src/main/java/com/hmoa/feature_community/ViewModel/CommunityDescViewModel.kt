@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.ViewModel
 
+import ResultResponse
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -54,39 +55,27 @@ class CommunityDescViewModel @Inject constructor(
     private val _profile = MutableStateFlow<String?>(null)
     val profile get() = _profile.asStateFlow()
 
-    init{
-        viewModelScope.launch{
-            Log.d("TAG TEST", "view model init")
-            getUserInfo().asResult()
-                .map{ result ->
-                    when(result) {
-                        Result.Loading -> _profile.update{null}
-                        is Result.Success -> {
-                            _profile.update { result.data.profile }
-                        }
-                        is Result.Error -> _errState.update{ result.exception.toString() }
-                    }
-                }
+    private val communityFlow = flow {
+        val result = communityRepository.getCommunity(id.value)
+        if (result.exception is Exception) {
+            throw result.exception!!
+        } else {
+            emit(result.data!!)
         }
-    }
+    }.asResult()
+
+    private val commentFlow = flow{
+        val result = communityCommentRepository.getCommunityComments(id.value, page.value)
+        if (result.exception is Exception) {
+            throw result.exception!!
+        } else {
+            emit(result.data!!)
+        }
+    }.asResult()
 
     val uiState : StateFlow<CommunityDescUiState> = combine(
-        flow{
-            val result = communityRepository.getCommunity(id.value)
-            if (result.exception is Exception) {
-                throw result.exception!!
-            } else {
-                emit(result.data!!)
-            }
-        }.asResult(),
-        flow{
-            val result = communityCommentRepository.getCommunityComments(id.value, page.value)
-            if (result.exception is Exception) {
-                throw result.exception!!
-            } else {
-                emit(result.data!!)
-            }
-        }.asResult()
+        communityFlow,
+        commentFlow
     ){ communityResult, commentsResult ->
         when {
             communityResult is Result.Error || commentsResult is Result.Error -> CommunityDescUiState.Error

@@ -39,11 +39,12 @@ class CommunityMainViewModel @Inject constructor(
     val errState get() = _errState.asStateFlow()
 
     val uiState : StateFlow<CommunityMainUiState> = type.combine(page){ type, page ->
-        val response = repository.getCommunityByCategory(type.name, page)
-        if (response.data == null) {
-            _errState.update{"${response.errorCode} : ${response.errorMessage}"}
+        val result = repository.getCommunityByCategory(type.name, page)
+        if (result.exception is Exception) {
+            throw result.exception!!
+        } else {
+            result.data
         }
-        response.data
     }.asResult().map{
         when (it) {
             is Result.Loading -> CommunityMainUiState.Loading

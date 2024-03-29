@@ -85,8 +85,10 @@ class CommunityPostViewModel @Inject constructor(
                         title = title.value,
                         content = content.value
                     )
-                    if (result.data == null) {
-                        _errState.update{"${result.errorCode} : ${result.errorMessage}"}
+                    if (result.exception is Exception) {
+                        throw result.exception!!
+                    } else {
+                        result.data!!
                     }
                     _isLoading.update{true}
                 } catch (e : Exception) {

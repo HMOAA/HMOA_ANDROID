@@ -316,8 +316,8 @@ fun CommunityDescriptionPage(
                             Log.d("TEST TAG", "comment : ${comment}")
                             Comment(
                                 profile = comment.profileImg,
-                                nickname = comment.nickname,
-                                dateDiff = comment.createAt,
+                                nickname = comment.author,
+                                dateDiff = comment.time,
                                 comment = comment.content,
                                 isFirst = false,
                                 viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),

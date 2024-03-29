@@ -53,8 +53,7 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.updateJoin(request).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.errorCode = response.code()
-            result.errorMessage = response.message()
+            result.exception = Exception(this.statusCode.code.toString())
         }
         return result
     }

@@ -179,7 +179,7 @@ fun PerfumeContent(
             LazyRow {
                 items(data.similarPerfumes) { it ->
                     Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
-                        SimilarPerfumeView(it.perfumeImgUrl, it.perfumeName, it.brandName)
+                        PerfumeItemView(it.perfumeImgUrl, it.perfumeName, it.brandName, 88, 88, Color.White)
                     }
                 }
             }
@@ -518,17 +518,3 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
     }
 }
 
-@Composable
-fun SimilarPerfumeView(imageUrl: String, perfumeName: String, brandName: String) {
-    Column(modifier = Modifier.padding(end = 8.dp).width(88.dp)) {
-        ImageView(imageUrl = imageUrl, backgroundColor = Color.White, width = 88, height = 88)
-        Text(
-            text = brandName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-            modifier = Modifier.padding(end = 4.dp)
-        )
-        Text(
-            text = perfumeName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-            modifier = Modifier.padding(end = 4.dp), softWrap = true
-        )
-    }
-}

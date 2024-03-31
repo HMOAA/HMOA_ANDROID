@@ -13,6 +13,7 @@ import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,11 +21,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.checkerframework.checker.units.qual.s
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,11 +47,8 @@ class CommunityDescViewModel @Inject constructor(
     private val _id = MutableStateFlow(-1)
     val id get() = _id.asStateFlow()
 
-    private val _isLiked = MutableStateFlow(false)
+    private val _isLiked = MutableStateFlow<Boolean>(false)
     val isLiked get() = _isLiked.asStateFlow()
-
-    private val _isWritten = MutableStateFlow(false)
-    val isWritten = _isWritten.asStateFlow()
 
     private val _page = MutableStateFlow(0)
     val page get() = _page.asStateFlow()
@@ -55,15 +56,27 @@ class CommunityDescViewModel @Inject constructor(
     private val _profile = MutableStateFlow<String?>(null)
     val profile get() = _profile.asStateFlow()
 
-    private val communityFlow = flow {
-        val result = communityRepository.getCommunity(id.value)
-        if (result.exception is Exception) {
-            throw result.exception!!
-        } else {
-            emit(result.data!!)
-        }
-    }.asResult()
+    private val _flag = MutableStateFlow(false)
+    val flag get() = _flag.asStateFlow()
 
+    //community flow
+    private val communityFlow = combine(_flag, _id){ flag, id ->
+        fetchLike(isLiked.value)
+        flow{
+            val result= communityRepository.getCommunity(id)
+            if (result.exception is Exception) {
+                throw result.exception!!
+            } else {
+                _isLiked.update{result.data!!.liked}
+                emit(result.data!!)
+            }
+            _flag.update{false}
+        }
+    }.flatMapLatest{
+        flow -> flow.asResult()
+    }
+
+    //comment flow
     private val commentFlow = flow{
         val result = communityCommentRepository.getCommunityComments(id.value, page.value)
         if (result.exception is Exception) {
@@ -73,6 +86,7 @@ class CommunityDescViewModel @Inject constructor(
         }
     }.asResult()
 
+    //ui state
     val uiState : StateFlow<CommunityDescUiState> = combine(
         communityFlow,
         commentFlow
@@ -81,6 +95,7 @@ class CommunityDescViewModel @Inject constructor(
             communityResult is Result.Error || commentsResult is Result.Error -> CommunityDescUiState.Error
             communityResult is Result.Loading || commentsResult is Result.Loading -> CommunityDescUiState.Loading
             else -> {
+                Log.d("TAG TEST", "community : ${communityResult}")
                 CommunityDescUiState.CommunityDesc(
                     (communityResult as Result.Success).data,
                     (commentsResult as Result.Success).data,
@@ -135,6 +150,34 @@ class CommunityDescViewModel @Inject constructor(
     //id 설정
     fun setId(id: Int) {
         _id.update{ id }
+    }
+
+    //좋아요 local update
+    fun updateLike(){
+        Log.d("TAG TEST", "1. update like : ${isLiked.value}")
+        _flag.update{true}
+        Log.d("TAG TEST", "2. flag update : ${flag.value}")
+    }
+
+    //좋아요 remote update
+    private suspend fun fetchLike(liked : Boolean){
+        viewModelScope.launch{
+            if (flag.value) {
+                if (liked) {
+                    communityRepository.deleteCommunityLike(id.value)
+                } else {
+                    communityRepository.putCommunityLike(id.value)
+                }
+                _isLiked.update{ !liked }
+            }
+        }
+    }
+
+    fun postInfo(){
+        viewModelScope.launch{
+            communityCommentRepository.putCommunityCommentLiked(id.value)
+            communityRepository.putCommunityLike(id.value)
+        }
     }
 }
 

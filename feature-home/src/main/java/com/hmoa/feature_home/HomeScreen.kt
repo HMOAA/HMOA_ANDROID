@@ -167,7 +167,6 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
     Row(modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(totalHeight.dp)) {
         Column(modifier = Modifier.padding(end = 8.dp)) {
             ImageWithTitleView(
-                perfumeId = firstMenu.perfumeList[0].perfumeId,
                 title = firstMenu.perfumeList[0].brandName,
                 onItemClick = { onPerfumeClick(firstMenu.perfumeList[0].perfumeId) },
                 imageUrl = firstMenu.perfumeList[0].imgUrl,
@@ -178,7 +177,6 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
             )
             Spacer(modifier = Modifier.padding(top = 8.dp))
             ImageWithTitleView(
-                perfumeId = firstMenu.perfumeList[1].perfumeId,
                 title = firstMenu.perfumeList[1].brandName,
                 onItemClick = { onPerfumeClick(firstMenu.perfumeList[1].perfumeId) },
                 imageUrl = firstMenu.perfumeList[1].imgUrl,
@@ -191,7 +189,6 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         Column {
             Row {
                 ImageWithTitleView(
-                    perfumeId = firstMenu.perfumeList[2].perfumeId,
                     title = firstMenu.perfumeList[2].brandName,
                     onItemClick = { onPerfumeClick(firstMenu.perfumeList[2].perfumeId) },
                     imageUrl = firstMenu.perfumeList[2].imgUrl,
@@ -202,7 +199,6 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
                 )
                 Spacer(modifier = Modifier.padding(end = 8.dp))
                 ImageWithTitleView(
-                    perfumeId = firstMenu.perfumeList[3].perfumeId,
                     title = firstMenu.perfumeList[3].brandName,
                     onItemClick = { onPerfumeClick(firstMenu.perfumeList[3].perfumeId) },
                     imageUrl = firstMenu.perfumeList[3].imgUrl,
@@ -214,7 +210,6 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
             }
             Spacer(modifier = Modifier.padding(top = 8.dp))
             ImageWithTitleView(
-                perfumeId = firstMenu.perfumeList[4].perfumeId,
                 title = firstMenu.perfumeList[4].brandName,
                 onItemClick = { onPerfumeClick(firstMenu.perfumeList[4].perfumeId) },
                 imageUrl = firstMenu.perfumeList[4].imgUrl,
@@ -262,9 +257,8 @@ fun BottomMenuView(
 
 @Composable
 fun ImageWithTitleView(
-    perfumeId: Int,
     title: String,
-    onItemClick: (perfumeId: Int) -> Unit,
+    onItemClick: () -> Unit,
     imageUrl: String?,
     containerWidth: Float,
     containerHeight: Float,
@@ -272,7 +266,7 @@ fun ImageWithTitleView(
     height: Float
 ) {
     Box(
-        modifier = Modifier.clickable { onItemClick(perfumeId) }.fillMaxWidth(containerWidth)
+        modifier = Modifier.clickable { onItemClick() }.fillMaxWidth(containerWidth)
             .fillMaxHeight(containerHeight), contentAlignment = Alignment.BottomStart
     ) {
         ImageView(

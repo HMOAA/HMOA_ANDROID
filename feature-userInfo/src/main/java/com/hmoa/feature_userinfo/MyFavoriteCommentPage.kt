@@ -99,7 +99,8 @@ fun MyFavoriteCommentPage(
                                     comment = comment.content,
                                     isFirst = false,
                                     viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
-                                    onNavCommunity = onNavCommunity
+                                    onNavCommunity = onNavCommunity,
+                                    onOpenBottomDialog = {/** 여기도 Bottom Dialog 사용하려면 사용합시다 */}
                                 )
                             }
                         }

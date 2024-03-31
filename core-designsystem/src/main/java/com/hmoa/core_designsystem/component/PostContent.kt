@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,6 +57,7 @@ fun PostContent(
     content : String,
     heartCount : String,
     isLiked : Boolean,
+    onChangeLike : () -> Unit,
     pictures : List<String>
 ){
     val nicknameTextStyle = TextStyle(
@@ -73,6 +76,11 @@ fun PostContent(
         fontSize = 16.sp,
         color = Color.Black
     )
+    val viewNumberTextStyle = TextStyle(
+        fontSize = 14.sp,
+        color = Color.Black
+    )
+
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp),
@@ -94,15 +102,19 @@ fun PostContent(
             //profile
             GlideImage(
                 imageModel = profile,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier
+                    .size(28.dp)
                     .clip(CircleShape),
                 contentDescription = "Profile",
                 loading = {
-                    /** loading 화면을 따로 받을 수 있다면 추가 */
+                    CircularProgressIndicator(
+                        color = CustomColor.gray2
+                    )
                 },
                 failure = {
                     Box(
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier
+                            .size(28.dp)
                             .clip(CircleShape)
                             .background(color = Color.White, shape = CircleShape)
                     ){
@@ -162,19 +174,30 @@ fun PostContent(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ){
-            TypeBadge(
-                roundedCorner = 20.dp,
-                type = heartCount,
-                fontSize = 12.sp,
-                fontColor = Color.Black,
-                selected = isLiked,
-                selectedIcon = painterResource(R.drawable.ic_heart_selectable_selected),
-                unSelectedIcon = painterResource(R.drawable.ic_heart_selectable_not_selected),
-                iconColor = Color.Black,
-                selectedColor = CustomColor.gray1,
-                unSelectedColor = CustomColor.gray1
+
+            IconButton(
+                modifier = Modifier.size(20.dp),
+                onClick = {
+                    Log.d("TAG TEST", "click like : ${isLiked}")
+                    onChangeLike()
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.ic_heart_filled),
+                    tint = if(isLiked) CustomColor.red else CustomColor.gray2,
+                    contentDescription = "Like"
+                )
+            }
+
+            Spacer(Modifier.width(5.dp))
+
+            Text(
+                text = heartCount,
+                style = viewNumberTextStyle
             )
         }
 
@@ -204,6 +227,7 @@ fun TestPostContent(){
             content = "곧 있으면 여자친구 생일이라 향수를 선물해주고 싶은데, 요즘 20대 여성이 사용할 만한 향수 추천해주세요. 가격대는 10~20만원정도로 생각하고 있습니다.",
             heartCount = "10",
             isLiked = false,
+            onChangeLike = {},
             onChangeBottomSheetState = {
                 isOpen = it
             },

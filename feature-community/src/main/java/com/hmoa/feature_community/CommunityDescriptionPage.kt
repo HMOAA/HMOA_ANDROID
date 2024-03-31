@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -52,43 +53,50 @@ fun CommunityDescriptionRoute(
     onNavBack : () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
-    if (_id != null) {
+    val id = _id ?: -1
+    viewModel.setId(id)
 
-        Log.d("TAG TEST", "${_id}")
-        viewModel.setId(_id)
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val profile = viewModel.profile.collectAsStateWithLifecycle()
+    val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
+    val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
+    var type by remember{mutableStateOf("Post")}
 
-        val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-        val profile = viewModel.profile.collectAsStateWithLifecycle()
-        val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
-        val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
-
-        CommunityDescriptionPage(
-            isOpenBottomOptions = isOpenBottomOptions.value,
-            changeBottomOptionState = {
-                viewModel.updateBottomOptionsState(it)
-            },
-            isLiked = isLiked.value,
-            uiState = uiState.value,
-            profile = profile.value,
-            onNavBack = onNavBack,
-            onClickReport = {
-                viewModel.reportCommunity()
-            },
-            onPostComment = {
-                viewModel.postComment(it)
-            },
-            onDeleteCommunity = {
-                viewModel.delCommunity()
-            },
-            onNavCommunityEdit = {
-                onNavCommunityEdit(_id)
-            }
-        )
-
-    } else {
-        /** 여기 id가 null일 때 */
-        Log.d("TAG TEST", "id is NULL")
-    }
+    CommunityDescriptionPage(
+        isOpenBottomOptions = isOpenBottomOptions.value,
+        changeBottomOptionState = {
+            viewModel.updateBottomOptionsState(it)
+        },
+        type = type,
+        onChangeType = {
+            type = it
+        },
+        isLiked = isLiked.value,
+        onChangeLike = {
+            viewModel.updateLike()
+        },
+        uiState = uiState.value,
+        profile = profile.value,
+        onNavBack = onNavBack,
+        onReportCommunity = {
+            viewModel.reportCommunity()
+        },
+        onReportComment = {
+            /** 여기서 Comment 신고하기 */
+        },
+        onPostComment = {
+            viewModel.postComment(it)
+        },
+        onDeleteCommunity = {
+            viewModel.delCommunity()
+        },
+        onDeleteComment = {
+            /** 여기서 Comment 삭제 */
+        },
+        onNavCommunityEdit = {
+            onNavCommunityEdit(id)
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,12 +104,17 @@ fun CommunityDescriptionRoute(
 fun CommunityDescriptionPage(
     isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
+    type : String,
+    onChangeType : (String) -> Unit,
     uiState : CommunityDescUiState,
     isLiked : Boolean,
+    onChangeLike : () -> Unit,
     profile : String?,
-    onClickReport : () -> Unit,
+    onReportCommunity : () -> Unit,
+    onReportComment: () -> Unit,
     onPostComment : (String) -> Unit,
     onDeleteCommunity : () -> Unit,
+    onDeleteComment : () -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityEdit : () -> Unit,
 ){
@@ -143,9 +156,6 @@ fun CommunityDescriptionPage(
 
             val community = uiState.community
             val commentList = uiState.comments.comments
-            Log.d("TAG TEST", "community : ${community}")
-
-            Log.d("TAG TEST", "comments : ${commentList}")
 
             if (isOpenBottomOptions) {
                 ModalBottomSheet(
@@ -167,8 +177,13 @@ fun CommunityDescriptionPage(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        /** 게시글 수정 화면으로 이동 */
-                                        onNavCommunityEdit()
+                                        //게시글일 경우
+                                        if (type == "post") {
+                                            /** 게시글 수정 화면으로 이동 */
+                                            onNavCommunityEdit()
+                                        } else {
+                                            /** 댓글 수정 어떻게 해야하나> */
+                                        }
                                     },
                                 text = "수정",
                                 textAlign = TextAlign.Center,
@@ -181,8 +196,15 @@ fun CommunityDescriptionPage(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        /** 커뮤니티 삭제 */
-                                        onDeleteCommunity()
+                                        //post 일 경우
+                                        if (type == "post") {
+                                            /** 커뮤니티 삭제 */
+                                            onDeleteCommunity()
+                                        }
+                                        //댓글 일 경우
+                                        else {
+                                            onDeleteComment()
+                                        }
                                     },
                                 text = "삭제",
                                 textAlign = TextAlign.Center,
@@ -206,8 +228,15 @@ fun CommunityDescriptionPage(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        /** 신고 이벤트 */
-                                        onClickReport()
+                                        //게시글
+                                        if (type == "post"){
+                                            /** 신고 이벤트 */
+                                            onReportCommunity()
+                                        }
+                                        //댓글
+                                        else {
+                                            onReportComment()
+                                        }
                                     },
                                 text = "신고하기",
                                 textAlign = TextAlign.Center,
@@ -279,6 +308,7 @@ fun CommunityDescriptionPage(
                                 ),
                             onChangeBottomSheetState = {
                                 changeBottomOptionState(it)
+                                onChangeType("post")
                             },
                             profile = community.category,
                             nickname = community.author,
@@ -287,6 +317,7 @@ fun CommunityDescriptionPage(
                             content = community.content,
                             heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
                             isLiked = isLiked,
+                            onChangeLike = onChangeLike,
                             pictures = uiState.photoList
                         )
                     }
@@ -294,7 +325,8 @@ fun CommunityDescriptionPage(
                     Spacer(Modifier.height(32.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ){
                         Text(
                             text = "답변",
@@ -321,7 +353,11 @@ fun CommunityDescriptionPage(
                                 comment = comment.content,
                                 isFirst = false,
                                 viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
-                                onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */}
+                                onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
+                                onOpenBottomDialog = {
+                                    changeBottomOptionState(true)
+                                    onChangeType("comment")
+                                }
                             )
                             if (index != commentList.size - 1) {
                                 Spacer(Modifier.height(15.dp))
@@ -369,12 +405,17 @@ fun TestCommunityDescriptionPage(){
         changeBottomOptionState = {
             isOpenBottomOptions = it
         },
+        type = "post",
+        onChangeType = {},
         uiState = CommunityDescUiState.Loading,
         profile = null,
         isLiked = false,
+        onChangeLike = {},
         onNavBack = {},
-        onClickReport = {},
+        onReportComment = {},
+        onReportCommunity = {},
         onDeleteCommunity = {},
+        onDeleteComment = {},
         onNavCommunityEdit = {},
         onPostComment = {}
     )

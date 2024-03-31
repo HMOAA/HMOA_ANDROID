@@ -34,7 +34,7 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataStore
     }
 
     override suspend fun deleteCommunityLike(communityId: Int): ResultResponse<DataResponseDto<Nothing>> {
-        return communityDataStore.deleteCommunity(communityId)
+        return communityDataStore.deleteCommunityLike(communityId)
     }
 
     override suspend fun getCommunityByCategory(

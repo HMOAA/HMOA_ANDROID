@@ -42,6 +42,8 @@ class LoginViewModel @Inject constructor(
         Log.i(TAG, "카카오계정으로 로그인 성공 ${token}")
         saveKakoAccessToken(token)
         postKakaoAccessToken(token)
+        //TODO("401에러, 토큰 만료로 인해서 다시 사용하던 화면으로 돌아가야 하는 경우 어떻게 해야함?")
+
     }
 
     fun saveKakoAccessToken(token: String) {

@@ -1,6 +1,5 @@
 package com.hmoa.feature_community.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.CommunityRepository
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityPostViewModel @Inject constructor(
-    private val repository : CommunityRepository
+    private val repository: CommunityRepository
 ) : ViewModel() {
 
     //loading 여부 (true : 완료 / false : api event 처리 중)
@@ -43,40 +42,41 @@ class CommunityPostViewModel @Inject constructor(
     val errState get() = _errState.asStateFlow()
 
     //category 설정
-    fun setCategory (newCategory : String) {
-        when(newCategory){
-            "시향기" -> _category.update{ Category.시향기 }
-            "추천" -> _category.update {Category.추천}
-            "자유" -> _category.update {Category.자유}
+    fun setCategory(newCategory: String) {
+        when (newCategory) {
+            "시향기" -> _category.update { Category.시향기 }
+            "추천" -> _category.update { Category.추천 }
+            "자유" -> _category.update { Category.자유 }
         }
     }
 
     //title update
-    fun updateTitle (title : String) {
-        _title.update{ title }
+    fun updateTitle(title: String) {
+        _title.update { title }
     }
 
     //content update
-    fun updateContent(content : String) {
-        _content.update{ content }
+    fun updateContent(content: String) {
+        _content.update { content }
     }
 
     //사진 udpate
-    fun updatePictures(newPictures : ArrayList<File>){
-        _pictures.update{ newPictures }
+    fun updatePictures(newPictures: ArrayList<File>) {
+        _pictures.update { newPictures }
     }
 
     //게시글 게시
-    fun postCommunity(){
-        viewModelScope.launch{
+    fun postCommunity() {
+        viewModelScope.launch {
             //content, title 모두 isNotEmpty일 때
-            if (content.value != ""){
-                _errState.update{"내용을 입력해주세요"}
+            if (content.value != "") {
+                _errState.update { "내용을 입력해주세요" }
             } else if (title.value != "") {
-                _errState.update {"제목을 입력해주세요"}
+                _errState.update { "제목을 입력해주세요" }
             } else {
                 val images = pictures.value.toTypedArray()
 
+<<<<<<< HEAD
                 _isLoading.update{false}
                 val result = repository.postCommunitySave(
                     images = images,
@@ -89,6 +89,22 @@ class CommunityPostViewModel @Inject constructor(
                     throw result.exception!!
                 } else {
                     result.data!!
+=======
+                try {
+                    _isLoading.update { false }
+                    val result = repository.postCommunitySave(
+                        images = images,
+                        category = category.value.name,
+                        title = title.value,
+                        content = content.value
+                    )
+                    if (result.data == null) {
+                        //_errState.update{"${result.errorCode} : ${result.errorMessage}"}
+                    }
+                    _isLoading.update { true }
+                } catch (e: Exception) {
+                    _errState.update { e.message ?: "" }
+>>>>>>> 4a7cc794a1805240581dbde0930f9487360688b7
                 }
 
                 _isLoading.update{true}

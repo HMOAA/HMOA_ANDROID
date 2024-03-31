@@ -8,22 +8,14 @@ import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityPhotoDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityEditViewModel @Inject constructor(
-    private val repository : CommunityRepository,
+    private val repository: CommunityRepository,
 ) : ViewModel() {
 
     //가져올 게시글 id
@@ -63,7 +55,7 @@ class CommunityEditViewModel @Inject constructor(
     val errState get() = _errState.asStateFlow()
 
     //ui state
-    val uiState : StateFlow<CommunityEditUiState> = combine(
+    val uiState: StateFlow<CommunityEditUiState> = combine(
         title,
         content,
         category,
@@ -76,60 +68,68 @@ class CommunityEditViewModel @Inject constructor(
     )
 
     //id 기반 데이터 받아오기
-    private fun getCommunityDescription(id : Int){
-        viewModelScope.launch{
-            flow{
+    private fun getCommunityDescription(id: Int) {
+        viewModelScope.launch {
+            flow {
                 val result = repository.getCommunity(id)
+<<<<<<< HEAD
                 if (result.exception is Exception) {
                     throw result.exception!!
                 } else {
                     emit(result.data!!)
+=======
+                if (result.data == null) {
+                    //_errState.update {"${result.errorCode} : ${result.errorMessage}"}
+                    return@flow
+>>>>>>> 4a7cc794a1805240581dbde0930f9487360688b7
                 }
             }.asResult()
-                .map{ result ->
-                when (result) {
-                    is Result.Loading -> {
-                        _isLoading.update {false}
-                    }
-                    is Result.Error -> {
-                        _errState.update { "Error : ${result.exception}" }
-                    }
-                    is Result.Success -> {
-                        val data = result.data
-                        _title.update{ data.title }
-                        _content.update { data.content }
-                        _category.update {
-                            val category = when(it?.name) {
-                                "시향기" -> Category.시향기
-                                "추천" -> Category.추천
-                                "자유" -> Category.자유
-                                else -> {
-                                    //불가능
-                                    throw IllegalArgumentException("올바르지 않은 Category")
-                                }
-                            }
-                            category
+                .map { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            _isLoading.update { false }
                         }
-                        _pictures.update{ data.communityPhotos}
-                        _isLoading.update{true}
+
+                        is Result.Error -> {
+                            _errState.update { "Error : ${result.exception}" }
+                        }
+
+                        is Result.Success -> {
+                            val data = result.data
+                            _title.update { data.title }
+                            _content.update { data.content }
+                            _category.update {
+                                val category = when (it?.name) {
+                                    "시향기" -> Category.시향기
+                                    "추천" -> Category.추천
+                                    "자유" -> Category.자유
+                                    else -> {
+                                        //불가능
+                                        throw IllegalArgumentException("올바르지 않은 Category")
+                                    }
+                                }
+                                category
+                            }
+                            _pictures.update { data.communityPhotos }
+                            _isLoading.update { true }
+                        }
                     }
                 }
-            }
         }
     }
 
     //title update
-    fun updateTitle(title : String){
-        _title.update{ title }
+    fun updateTitle(title: String) {
+        _title.update { title }
     }
 
     //content update
-    fun updateContent(content : String) {
-        _content.update{ content }
+    fun updateContent(content: String) {
+        _content.update { content }
     }
 
     //id setting
-    fun setId(id : Int) {
+    fun setId(id: Int) {
         _id.update { id }
 
         //id 기반으로 정보를 가져옴
@@ -138,18 +138,18 @@ class CommunityEditViewModel @Inject constructor(
 
     /** 사진 추가, 게시글 수정 어케하는 지 잘 모르겠네... */
     //picture 추가
-    fun addPictures(newPicture : String){
+    fun addPictures(newPicture: String) {
         /** add pictrues 리스트에 newPicture uri 추가 */
     }
 
-    fun delPictures(delPicture : Int){
+    fun delPictures(delPicture: Int) {
         /** del pictures 리스트에 삭제할 picture의 id 추가 */
     }
 
     //게시글 수정
-    fun updateCommunity(){
-        viewModelScope.launch{
-            if (id.value != null){
+    fun updateCommunity() {
+        viewModelScope.launch {
+            if (id.value != null) {
                 repository.postCommunityUpdate(
                     images = addPictures.value,
                     title = title.value,
@@ -158,7 +158,7 @@ class CommunityEditViewModel @Inject constructor(
                     deleteCommunityPhotoIds = delPictures.value
                 )
             } else {
-                _errState.update{ "id is null" }
+                _errState.update { "id is null" }
             }
         }
     }
@@ -167,9 +167,9 @@ class CommunityEditViewModel @Inject constructor(
 sealed interface CommunityEditUiState {
     data object Loading : CommunityEditUiState
     data class Community(
-        val title : String,
-        val content : String,
-        val category : Category?,
-        val pictures : List<CommunityPhotoDefaultResponseDto>,
+        val title: String,
+        val content: String,
+        val category: Category?,
+        val pictures: List<CommunityPhotoDefaultResponseDto>,
     ) : CommunityEditUiState
 }

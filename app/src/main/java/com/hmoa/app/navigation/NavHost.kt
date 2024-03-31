@@ -8,6 +8,7 @@ import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.homeScreen
 import com.hmoa.feature_home.navigateToHome
+import com.hmoa.feature_perfume.navigation.navigateToPerfume
 import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeScreen
@@ -23,7 +24,7 @@ fun SetUpNavGraph(
             onNavCommunity = navController::navigateToCommunityRoute, navController = navController
         )
         /** home 모듈 */
-        homeScreen(onPerfumeClick = {navController::navigateToHome}, onAllPerfumeClick = {})
+        homeScreen(onPerfumeClick = {perfumeId -> navController.navigateToPerfume(perfumeId)}, onAllPerfumeClick = {})
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToMain)

@@ -61,7 +61,7 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
 
     override suspend fun deleteCommunityLike(communityId: Int): ResultResponse<DataResponseDto<Nothing>> {
         val result = ResultResponse<DataResponseDto<Nothing>>()
-        communityService.deleteCommunity(communityId).suspendMapSuccess{
+        communityService.deleteCommunityLike(communityId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
             result.exception = Exception(this.statusCode.toString())

@@ -72,16 +72,10 @@ class CommunityEditViewModel @Inject constructor(
         viewModelScope.launch {
             flow {
                 val result = repository.getCommunity(id)
-<<<<<<< HEAD
                 if (result.exception is Exception) {
                     throw result.exception!!
                 } else {
                     emit(result.data!!)
-=======
-                if (result.data == null) {
-                    //_errState.update {"${result.errorCode} : ${result.errorMessage}"}
-                    return@flow
->>>>>>> 4a7cc794a1805240581dbde0930f9487360688b7
                 }
             }.asResult()
                 .map { result ->

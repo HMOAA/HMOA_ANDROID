@@ -40,7 +40,7 @@ class CommunityDescViewModel @Inject constructor(
     private val _id = MutableStateFlow(-1)
     val id get() = _id.asStateFlow()
 
-    private val _isLiked = MutableStateFlow<Boolean>(false)
+    private val _isLiked = MutableStateFlow(false)
     val isLiked get() = _isLiked.asStateFlow()
 
     private val _page = MutableStateFlow(0)
@@ -147,9 +147,7 @@ class CommunityDescViewModel @Inject constructor(
 
     //좋아요 local update
     fun updateLike(){
-        Log.d("TAG TEST", "1. update like : ${isLiked.value}")
         _flag.update{true}
-        Log.d("TAG TEST", "2. flag update : ${flag.value}")
     }
 
     //좋아요 remote update
@@ -157,9 +155,19 @@ class CommunityDescViewModel @Inject constructor(
         viewModelScope.launch{
             if (flag.value) {
                 if (liked) {
-                    communityRepository.deleteCommunityLike(id.value)
+                    val result = communityRepository.deleteCommunityLike(id.value)
+                    if (result.exception is Exception) {
+                        _errState.update{result.exception.toString()}
+                        _flag.update{false}
+                        return@launch
+                    }
                 } else {
-                    communityRepository.putCommunityLike(id.value)
+                    val result = communityRepository.putCommunityLike(id.value)
+                    if (result.exception is Exception) {
+                        _errState.update{result.exception.toString()}
+                        _flag.update{false}
+                        return@launch
+                    }
                 }
                 _isLiked.update{ !liked }
             }

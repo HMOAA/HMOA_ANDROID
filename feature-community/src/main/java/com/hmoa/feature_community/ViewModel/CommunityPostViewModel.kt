@@ -1,5 +1,9 @@
 package com.hmoa.feature_community.ViewModel
 
+import android.net.Uri
+import android.util.Log
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.CommunityRepository
@@ -17,10 +21,6 @@ class CommunityPostViewModel @Inject constructor(
     private val repository: CommunityRepository
 ) : ViewModel() {
 
-    //loading 여부 (true : 완료 / false : api event 처리 중)
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading get() = _isLoading.asStateFlow()
-
     //게시글 타입
     private val _category = MutableStateFlow(Category.추천)
     val category get() = _category.asStateFlow()
@@ -34,7 +34,7 @@ class CommunityPostViewModel @Inject constructor(
     val content get() = _content.asStateFlow()
 
     //사진 배열
-    private val _pictures = MutableStateFlow<ArrayList<File>>(arrayListOf())
+    private val _pictures = MutableStateFlow<List<Uri>>(listOf())
     val pictures get() = _pictures.asStateFlow()
 
     //error state
@@ -60,9 +60,23 @@ class CommunityPostViewModel @Inject constructor(
         _content.update { content }
     }
 
-    //사진 udpate
-    fun updatePictures(newPictures: ArrayList<File>) {
-        _pictures.update { newPictures }
+    //사진 update
+    fun updatePictures(newPictures: List<Uri>) {
+        _pictures.update {
+            val result = arrayListOf<Uri>()
+            newPictures.forEach{
+                result.add(it)
+            }
+            result
+        }
+    }
+
+    //사진 삭제
+    fun deletePicture(idx : Int){
+        _pictures.update {
+            val data = it
+            data.minus(it[idx])
+        }
     }
 
     //게시글 게시
@@ -74,12 +88,12 @@ class CommunityPostViewModel @Inject constructor(
             } else if (title.value != "") {
                 _errState.update { "제목을 입력해주세요" }
             } else {
-                val images = pictures.value.toTypedArray()
-
-<<<<<<< HEAD
-                _isLoading.update{false}
+                val images = arrayListOf<File>()
+                pictures.value.forEach{ picture ->
+                    images.add(picture.toFile())
+                }
                 val result = repository.postCommunitySave(
-                    images = images,
+                    images = images.toTypedArray(),
                     category = category.value.name,
                     title = title.value,
                     content = content.value
@@ -89,25 +103,7 @@ class CommunityPostViewModel @Inject constructor(
                     throw result.exception!!
                 } else {
                     result.data!!
-=======
-                try {
-                    _isLoading.update { false }
-                    val result = repository.postCommunitySave(
-                        images = images,
-                        category = category.value.name,
-                        title = title.value,
-                        content = content.value
-                    )
-                    if (result.data == null) {
-                        //_errState.update{"${result.errorCode} : ${result.errorMessage}"}
-                    }
-                    _isLoading.update { true }
-                } catch (e: Exception) {
-                    _errState.update { e.message ?: "" }
->>>>>>> 4a7cc794a1805240581dbde0930f9487360688b7
                 }
-
-                _isLoading.update{true}
             }
         }
     }

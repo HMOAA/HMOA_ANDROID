@@ -27,7 +27,6 @@ class CommunityMainViewModel @Inject constructor(
     private val _errState = MutableStateFlow("")
     val errState get() = _errState.asStateFlow()
 
-<<<<<<< HEAD
     val uiState : StateFlow<CommunityMainUiState> = type.combine(page){ type, page ->
         val result = repository.getCommunityByCategory(type.name, page)
         if (result.exception is Exception) {
@@ -39,25 +38,7 @@ class CommunityMainViewModel @Inject constructor(
             is Result.Loading -> CommunityMainUiState.Loading
             is Result.Success -> {
                 CommunityMainUiState.Community(it.data!!)
-=======
-    val uiState: StateFlow<CommunityMainUiState> = type.combine(page) { type, page ->
-        val response = repository.getCommunityByCategory(type.name, page)
-        if (response.data == null) {
-            //_errState.update{"${response.errorCode} : ${response.errorMessage}"}
-        }
-        response.data
-    }.asResult().map {
-        when (it) {
-            is Result.Loading -> CommunityMainUiState.Loading
-            is Result.Success -> {
-                if (it.data == null) {
-                    CommunityMainUiState.Error
-                } else {
-                    CommunityMainUiState.Community(it.data!!)
-                }
->>>>>>> 4a7cc794a1805240581dbde0930f9487360688b7
             }
-
             is Result.Error -> CommunityMainUiState.Error
         }
     }.stateIn(

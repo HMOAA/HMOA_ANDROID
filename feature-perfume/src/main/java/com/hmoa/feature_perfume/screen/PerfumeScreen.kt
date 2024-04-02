@@ -73,7 +73,9 @@ fun PerfumeScreen(
     viewModel: PerfumeViewmodel = hiltViewModel(),
     perfumeId: Int,
 ) {
-    viewModel.initializePerfume(perfumeId)
+    LaunchedEffect(true) {
+        viewModel.initializePerfume(perfumeId)
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(

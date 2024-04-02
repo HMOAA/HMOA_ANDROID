@@ -22,7 +22,10 @@ fun NavGraphBuilder.perfumeScreen(
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
-    composable(route = PERFUME_ROUTE, arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })) {
+    composable(
+        route = "${PERFUME_ROUTE}/{perfumeId}",
+        arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })
+    ) {
         val perfumeId = it.arguments?.getInt("perfumeId")
         PerfumeRoute(
             onBrandClick = { brandId -> onBrandClick(brandId) },

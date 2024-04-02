@@ -1,11 +1,15 @@
 package com.hmoa.core_network.authentication
 
+import android.util.Log
 import com.hmoa.core_database.TokenManager
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Request
 import okhttp3.Response
@@ -28,11 +32,12 @@ class AuthAuthenticator @Inject constructor(
             response.close()
             return null
         }
-        runBlocking {
+        CoroutineScope(Dispatchers.IO).launch {
             refreshTokenManager.refreshTokens(RememberedLoginRequestDto(rememberedToken))
                 .suspendOnError {
                     if (this.response.code() == 401) {
                         isAvailableToSendNewRequest = false
+                        Log.d("AuthAuthenticator", "토큰 리프레싱 실패")
                     }
                 }
                 .suspendOnSuccess {
@@ -40,6 +45,7 @@ class AuthAuthenticator @Inject constructor(
                         val refreshedAuthToken = tokenManager.getAuthToken().firstOrNull()
                         newRequest = response.request.addRefreshAuthToken(refreshedAuthToken)
                         isAvailableToSendNewRequest = true
+                        Log.d("AuthAuthenticator", "토큰 리프레싱 성공")
                     }
                 }
         }

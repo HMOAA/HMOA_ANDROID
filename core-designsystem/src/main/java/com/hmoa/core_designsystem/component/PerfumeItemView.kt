@@ -44,7 +44,7 @@ fun PerfumeItemView(
             modifier = Modifier.padding(end = 4.dp, top = 8.dp)
         )
         Text(
-            text = perfumeName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+            text = perfumeName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
             modifier = Modifier.padding(end = 4.dp), softWrap = true
         )
     }

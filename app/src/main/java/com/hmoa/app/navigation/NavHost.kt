@@ -24,7 +24,7 @@ fun SetUpNavGraph(
             onNavCommunity = navController::navigateToCommunityRoute, navController = navController
         )
         /** home 모듈 */
-        homeScreen(onPerfumeClick = {perfumeId -> navController.navigateToPerfume(perfumeId)}, onAllPerfumeClick = {})
+        homeScreen(onPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) }, onAllPerfumeClick = {})
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToMain)
@@ -67,8 +67,8 @@ fun SetUpNavGraph(
 
         /** perfume 모듈 */
         perfumeScreen(
-            onBackClick = {},
-            onHomeClick = {},
+            onBackClick = navController::navigateToBack,
+            onHomeClick = navController::navigateToHome,
             onCommentAddClick = {},
             onBrandClick = {},
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },

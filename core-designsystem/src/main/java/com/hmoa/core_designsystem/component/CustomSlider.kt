@@ -43,7 +43,7 @@ fun CustomSlider(value: Float = 0f, onValueChangedFinished: (value: Float) -> Un
             sliderPosition.value = it
         },
         modifier = Modifier.fillMaxWidth(),
-        valueRange = 0f..50f,
+        valueRange = 10f..50f,
         steps = 10,
         onValueChangeFinished = {
             onValueChangedFinished(sliderPosition.value)

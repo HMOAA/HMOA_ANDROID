@@ -10,7 +10,7 @@ interface PerfumeService {
     @GET("/perfume/{perfumeId}")
     suspend fun getPerfumeTopDetail(@Path("perfumeId") perfumeId: String): PerfumeDetailResponseDto
 
-    @GET("/perfume/{perfumeId}/2")
+    @POST("/perfume/{perfumeId}/2")
     suspend fun getPerfumeBottomDetail(@Path("perfumeId") perfumeId: String): PerfumeDetailSecondResponseDto
 
     @POST("/perfume/{perfumeId}/age")

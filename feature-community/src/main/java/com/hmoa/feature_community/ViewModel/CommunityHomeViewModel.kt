@@ -7,19 +7,13 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityHomeViewModel @Inject constructor(
-    private val repository : CommunityRepository
+    private val repository: CommunityRepository
 ) : ViewModel() {
 
     private val _community = MutableStateFlow(emptyList<CommunityByCategoryResponseDto>())
@@ -28,12 +22,12 @@ class CommunityHomeViewModel @Inject constructor(
     private val _errState = MutableStateFlow("")
     val errState get() = _errState.asStateFlow()
 
-    init{
-        viewModelScope.launch{
+    init {
+        viewModelScope.launch {
             _community.update {
                 val result = repository.getCommunitiesHome()
                 if (result.data == null) {
-                    _errState.update {"${result.errorCode} ${result.errorMessage}"}
+                    //_errState.update {"${result.errorCode} ${result.errorMessage}"}
                     return@launch
                 }
                 result.data!!
@@ -41,15 +35,17 @@ class CommunityHomeViewModel @Inject constructor(
         }
     }
 
-    val uiState : StateFlow<CommunityHomeUiState> = community.asResult()
-        .map{ result ->
+    val uiState: StateFlow<CommunityHomeUiState> = community.asResult()
+        .map { result ->
             when (result) {
                 is Result.Loading -> {
                     CommunityHomeUiState.Loading
                 }
+
                 is Result.Success -> {
                     CommunityHomeUiState.Community(result.data)
                 }
+
                 is Result.Error -> {
                     CommunityHomeUiState.Error
                 }
@@ -65,7 +61,8 @@ class CommunityHomeViewModel @Inject constructor(
 sealed interface CommunityHomeUiState {
     data object Loading : CommunityHomeUiState
     data class Community(
-        val communities : List<CommunityByCategoryResponseDto>
+        val communities: List<CommunityByCategoryResponseDto>
     ) : CommunityHomeUiState
+
     data object Error : CommunityHomeUiState
 }

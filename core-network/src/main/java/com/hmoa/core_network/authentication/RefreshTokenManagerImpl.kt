@@ -1,5 +1,6 @@
 package com.hmoa.core_network.authentication
 
+import com.google.gson.GsonBuilder
 import com.hmoa.core_database.TokenManager
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.TokenResponseDto
@@ -13,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -46,6 +48,8 @@ class RefreshTokenManagerImpl @Inject constructor(private val tokenManager: Toke
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttp)
-            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create()).build()
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .build()
     }
 }

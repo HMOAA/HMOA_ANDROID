@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -72,7 +73,9 @@ fun PerfumeScreen(
     viewModel: PerfumeViewmodel = hiltViewModel(),
     perfumeId: Int,
 ) {
-    viewModel.initializePerfume(perfumeId)
+    LaunchedEffect(true) {
+        viewModel.initializePerfume(perfumeId)
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
@@ -179,7 +182,16 @@ fun PerfumeContent(
             LazyRow {
                 items(data.similarPerfumes) { it ->
                     Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
-                        PerfumeItemView(it.perfumeImgUrl, it.perfumeName, it.brandName, 88, 88, Color.White)
+                        PerfumeItemView(
+                            it.perfumeImgUrl,
+                            it.perfumeName,
+                            it.brandName,
+                            88,
+                            88,
+                            0.1f,
+                            0.1f,
+                            Color.White
+                        )
                     }
                 }
             }
@@ -253,7 +265,13 @@ fun PerfumeVolumeView(volume: Int, color: Color) {
 fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: String) {
     Row(modifier = Modifier.border(border = BorderStroke(width = 1.dp, color = CustomColor.gray3))) {
         Column(modifier = Modifier.width(68.dp).height(68.dp)) {
-            ImageView(imageUrl = imageUrl, backgroundColor = Color.White, width = 60, height = 60)
+            ImageView(
+                imageUrl = imageUrl,
+                backgroundColor = Color.White,
+                width = 0.16f,
+                height = 0.16f,
+                contentScale = ContentScale.Fit
+            )
         }
         Column(
             modifier = Modifier.fillMaxWidth().height(68.dp).background(color = Color.Black).padding(start = 10.dp),
@@ -288,7 +306,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: Array<String>) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ImageView(item, 180, 60, Color.White)
+                    ImageView(item, 0.3f, 0.15f, Color.White, contentScale = ContentScale.Fit)
                     Text("ㅇㅇㅇ", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium))
                     Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
                     Text(

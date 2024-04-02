@@ -8,9 +8,10 @@ const val HOME_ROUTE = "home_route"
 
 fun NavController.navigateToHome() = navigate(HOME_ROUTE)
 fun NavGraphBuilder.homeScreen(
-    onPerfumeClick: (perfumeId: Int) -> Unit
+    onPerfumeClick: (perfumeId: Int) -> Unit,
+    onAllPerfumeClick: (screenId:AllPerfumeScreenId) -> Unit
 ) {
     composable(route = HOME_ROUTE) {
-        HomeRoute(onPerfumeClick = { onPerfumeClick(it) })
+        HomeRoute(onPerfumeClick = { onPerfumeClick(it) }, onAllPerfumeClick = {onAllPerfumeClick(it)})
     }
 }

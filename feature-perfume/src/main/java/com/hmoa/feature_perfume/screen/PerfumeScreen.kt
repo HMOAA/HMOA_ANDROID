@@ -147,8 +147,20 @@ fun PerfumeContent(
             menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_home),
             onMenuClick = { onHomeClick() }
         )
-        Column(modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2)) { }
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            ImageView(
+                data.perfumeImageUrl,
+                width = 0.8f,
+                height = 0.8f,
+                backgroundColor = CustomColor.gray2,
+                contentScale = ContentScale.Fit
+            )
+        }
+        Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
             PerfumeInfo(
                 isLikedPerfume = false,
                 heartCount = data.likedCount,
@@ -178,7 +190,10 @@ fun PerfumeContent(
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
                 modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
             )
-            Spacer(modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp))
+            Spacer(
+                modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp)
+                    .border(width = 2.dp, color = CustomColor.gray2)
+            )
             LazyRow {
                 items(data.similarPerfumes) { it ->
                     Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
@@ -188,8 +203,8 @@ fun PerfumeContent(
                             it.brandName,
                             88,
                             88,
-                            0.1f,
-                            0.1f,
+                            1f,
+                            1f,
                             Color.White
                         )
                     }
@@ -225,7 +240,7 @@ fun PerfumeInfo(
     Text(
         perfumeKoreanName,
         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-        modifier = Modifier.padding(bottom = 8.dp)
+        modifier = Modifier.padding(bottom = 8.dp, top = 8.dp)
     )
     Text(
         perfumeEnglishName,
@@ -264,13 +279,17 @@ fun PerfumeVolumeView(volume: Int, color: Color) {
 @Composable
 fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: String) {
     Row(modifier = Modifier.border(border = BorderStroke(width = 1.dp, color = CustomColor.gray3))) {
-        Column(modifier = Modifier.width(68.dp).height(68.dp)) {
+        Column(
+            modifier = Modifier.width(68.dp).height(68.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             ImageView(
                 imageUrl = imageUrl,
                 backgroundColor = Color.White,
-                width = 0.16f,
-                height = 0.16f,
-                contentScale = ContentScale.Fit
+                width = 0.9f,
+                height = 1f,
+                contentScale = ContentScale.FillWidth
             )
         }
         Column(
@@ -306,8 +325,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: Array<String>) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ImageView(item, 0.3f, 0.15f, Color.White, contentScale = ContentScale.Fit)
-                    Text("ㅇㅇㅇ", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium))
+                    ImageView(item, 1f, 1f, Color.White, contentScale = ContentScale.Fit)
                     Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
                     Text(
                         notes[index],
@@ -334,8 +352,8 @@ fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData
         modifier = Modifier.padding(vertical = 16.dp)
     )
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 50.dp)
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
     ) {
         VoteView(
             weatherData?.spring ?: 0,
@@ -377,8 +395,8 @@ fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData:
         modifier = Modifier.padding(vertical = 16.dp)
     )
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 66.dp)
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
     ) {
         VoteView(
             genderData?.man ?: 0,
@@ -411,30 +429,34 @@ fun PerfumeAgeView(
     onInitializeAgeClick: () -> Unit,
     ageData: PerfumeAgeResponseDto?
 ) {
-    Text(
-        "연령대",
-        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
-        modifier = Modifier.padding(top = 16.dp)
-    )
-    Row(modifier = Modifier.padding(6.dp).fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        Icon(
-            painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_initialize),
-            contentDescription = null,
-            modifier = Modifier.height(12.dp).clickable { onInitializeAgeClick() }
-        )
-    }
-    CustomSlider(ageData?.age?.toFloat() ?: 0f, { onAgeDragFinish(it) })
-    Row(
-        modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            "10대", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
-            modifier = Modifier.padding(11.dp)
-        )
-        Text(
-            "50대 이상", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal)
-        )
+    Column(modifier = Modifier.background(color = Color.White)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                "연령대",
+                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+            )
+            Icon(
+                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_initialize),
+                contentDescription = null,
+                modifier = Modifier.height(12.dp).clickable { onInitializeAgeClick() }
+            )
+        }
+        CustomSlider(ageData?.age?.toFloat() ?: 0f, { onAgeDragFinish(it) })
+        Row(
+            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                "10대", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+                modifier = Modifier.padding(11.dp)
+            )
+            Text(
+                "50대 이상", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal)
+            )
+        }
     }
 }
 
@@ -461,7 +483,7 @@ fun CommentView(
     when (commentInfo.commentCount) {
         0 -> Text(
             "해당 제품에 대한 의견을 남겨주세요",
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = CustomColor.gray3),
             modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
             textAlign = TextAlign.Center
         )
@@ -504,7 +526,7 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().height(82.dp).background(color = Color.Black)
+        modifier = Modifier.fillMaxWidth().height(82.dp).background(color = Color.Black).padding(horizontal = 24.dp)
     ) {
         Column(
             modifier = Modifier.clickable {
@@ -525,12 +547,13 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
         ) {
             Icon(
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_add_coment),
-                contentDescription = null
+                contentDescription = null,
+                tint = Color.White
             )
             Text(
-                "댓글달기",
+                "댓글작성",
                 modifier = Modifier.padding(start = 8.dp),
-                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp)
+                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp, color = Color.White)
             )
         }
     }

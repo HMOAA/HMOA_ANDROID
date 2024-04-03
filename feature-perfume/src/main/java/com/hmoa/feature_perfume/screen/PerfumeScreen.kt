@@ -2,10 +2,8 @@ package com.hmoa.feature_perfume.screen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -147,8 +145,20 @@ fun PerfumeContent(
             menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_home),
             onMenuClick = { onHomeClick() }
         )
-        Column(modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2)) { }
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            ImageView(
+                data.perfumeImageUrl,
+                width = 1f,
+                height = 1f,
+                backgroundColor = CustomColor.gray2,
+                contentScale = ContentScale.Fit
+            )
+        }
+        Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
             PerfumeInfo(
                 isLikedPerfume = false,
                 heartCount = data.likedCount,
@@ -158,10 +168,20 @@ fun PerfumeContent(
                 perfumeVolumes = data.perfumeVolumeList,
                 price = data.price
             )
-            Column(modifier = Modifier.clickable { onBrandClick(data.brandId) }) {
+            Spacer(
+                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+            )
+            Column(
+                modifier = Modifier.clickable { onBrandClick(data.brandId) }.padding(horizontal = 16.dp)
+                    .padding(top = 48.dp)
+            ) {
                 BrandCard(data.brandImgUrl, data.brandEnglishName, data.brandKoreanName)
             }
-            TastingNoteView(notes = arrayOf(data.topNote, data.heartNote, data.baseNote), imageUrls = data.notePhotos)
+            TastingNoteView(
+                notes = arrayOf(data.topNote, data.heartNote, data.baseNote),
+                imageUrls = data.notePhotos,
+                noteTitle = listOf("TOP", "HEART", "BASE")
+            )
             PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
             PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
             PerfumeAgeView(
@@ -169,16 +189,22 @@ fun PerfumeContent(
                 onInitializeAgeClick = { onInitializeAgeClick() },
                 age
             )
-            CommentView(
-                data.commentInfo,
-                onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
-                onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) })
+            if (data.commentInfo != null) {
+                CommentView(
+                    data.commentInfo!!,
+                    onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
+                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) })
+
+            }
             Text(
                 "같은 브랜드의 제품",
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
                 modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
             )
-            Spacer(modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp))
+            Spacer(
+                modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp).fillMaxWidth().height(1.dp)
+                    .background(color = CustomColor.gray2)
+            )
             LazyRow {
                 items(data.similarPerfumes) { it ->
                     Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
@@ -188,8 +214,8 @@ fun PerfumeContent(
                             it.brandName,
                             88,
                             88,
-                            0.1f,
-                            0.1f,
+                            1f,
+                            1f,
                             Color.White
                         )
                     }
@@ -206,7 +232,7 @@ fun PerfumeInfo(
     heartCount: Int,
     perfumeEnglishName: String,
     perfumeKoreanName: String,
-    price: Int,
+    price: String,
     perfumeVolumes: Array<Int>,
     perfumeVolume: Int
 ) {
@@ -225,7 +251,7 @@ fun PerfumeInfo(
     Text(
         perfumeKoreanName,
         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-        modifier = Modifier.padding(bottom = 8.dp)
+        modifier = Modifier.padding(bottom = 8.dp, top = 8.dp)
     )
     Text(
         perfumeEnglishName,
@@ -238,7 +264,7 @@ fun PerfumeInfo(
         style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
         modifier = Modifier.padding(top = 16.dp)
     )
-    LazyRow(modifier = Modifier.padding(bottom = 48.dp)) {
+    LazyRow(modifier = Modifier.padding(bottom = 16.dp)) {
         items(perfumeVolumes) { it ->
             val color = if (it == perfumeVolume) Color.Black else CustomColor.gray3
             PerfumeVolumeView(it, color)
@@ -264,13 +290,17 @@ fun PerfumeVolumeView(volume: Int, color: Color) {
 @Composable
 fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: String) {
     Row(modifier = Modifier.border(border = BorderStroke(width = 1.dp, color = CustomColor.gray3))) {
-        Column(modifier = Modifier.width(68.dp).height(68.dp)) {
+        Column(
+            modifier = Modifier.width(68.dp).height(68.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             ImageView(
                 imageUrl = imageUrl,
                 backgroundColor = Color.White,
-                width = 0.16f,
-                height = 0.16f,
-                contentScale = ContentScale.Fit
+                width = 0.9f,
+                height = 1f,
+                contentScale = ContentScale.FillWidth
             )
         }
         Column(
@@ -292,29 +322,41 @@ fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: Strin
 }
 
 @Composable
-fun TastingNoteView(notes: Array<String>, imageUrls: Array<String>) {
+fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: List<String>) {
     Text(
         "테이스팅 노트",
         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-        modifier = Modifier.padding(bottom = 8.dp).padding(top = 48.dp)
+        modifier = Modifier.padding(bottom = 16.dp).padding(top = 48.dp)
     )
     Column {
-        LazyRow {
-            itemsIndexed(imageUrls) { index, item ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ImageView(item, 0.3f, 0.15f, Color.White, contentScale = ContentScale.Fit)
-                    Text("ㅇㅇㅇ", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium))
-                    Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
+        imageUrls.forEachIndexed { index, item ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(modifier = Modifier.width(180.dp).padding(end = 8.dp)) {
+                    ImageView(item, 1f, 1f, Color.White, contentScale = ContentScale.FillWidth)
                     Text(
-                        notes[index],
-                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-                        modifier = Modifier.padding(start = 8.dp)
+                        noteTitle[index],
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                        ),
+                        modifier = Modifier.fillMaxWidth().height(60.dp).padding(top = 24.dp)
                     )
                 }
+                Spacer(
+                    modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3)
+                        .widthIn(min = 12.dp)
+                )
+                Text(
+                    notes[index],
+                    style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
         }
 
@@ -334,8 +376,8 @@ fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData
         modifier = Modifier.padding(vertical = 16.dp)
     )
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 50.dp)
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
     ) {
         VoteView(
             weatherData?.spring ?: 0,
@@ -377,8 +419,8 @@ fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData:
         modifier = Modifier.padding(vertical = 16.dp)
     )
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 66.dp)
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
     ) {
         VoteView(
             genderData?.man ?: 0,
@@ -411,30 +453,40 @@ fun PerfumeAgeView(
     onInitializeAgeClick: () -> Unit,
     ageData: PerfumeAgeResponseDto?
 ) {
-    Text(
-        "연령대",
-        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
-        modifier = Modifier.padding(top = 16.dp)
-    )
-    Row(modifier = Modifier.padding(6.dp).fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        Icon(
-            painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_initialize),
-            contentDescription = null,
-            modifier = Modifier.height(12.dp).clickable { onInitializeAgeClick() }
-        )
-    }
-    CustomSlider(ageData?.age?.toFloat() ?: 0f, { onAgeDragFinish(it) })
-    Row(
-        modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            "10대", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
-            modifier = Modifier.padding(11.dp)
-        )
-        Text(
-            "50대 이상", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal)
-        )
+    Column(modifier = Modifier.background(color = Color.White)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                "연령대",
+                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+            )
+            Icon(
+                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_initialize),
+                contentDescription = null,
+                modifier = Modifier.height(12.dp).clickable { onInitializeAgeClick() }
+            )
+        }
+        CustomSlider(ageData?.age ?: 0f, { onAgeDragFinish(it) })
+        Row(
+            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                "10대", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+                modifier = Modifier.padding(11.dp)
+            )
+            if (ageData?.writed == true) {
+                Text(
+                    "평균 ${ageData.age}세", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+                    modifier = Modifier.padding(11.dp)
+                )
+            }
+            Text(
+                "50대 이상", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal)
+            )
+        }
     }
 }
 
@@ -461,25 +513,23 @@ fun CommentView(
     when (commentInfo.commentCount) {
         0 -> Text(
             "해당 제품에 대한 의견을 남겨주세요",
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = CustomColor.gray3),
             modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
             textAlign = TextAlign.Center
         )
 
         else -> {
-            LazyColumn {
-                items(commentInfo.comments.subList(0, 3)) {
-                    CommentItem(
-                        count = it.heartCount,
-                        isCommentLiked = it.liked,
-                        userImgUrl = it.profileImg,
-                        userName = it.nickname,
-                        content = it.content,
-                        createdDate = it.createdAt.toInt(),
-                        onReportClick = {},
-                        onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
-                    )
-                }
+            commentInfo.comments.forEach {
+                CommentItem(
+                    count = it.heartCount,
+                    isCommentLiked = it.liked,
+                    userImgUrl = it.profileImg ?: "",
+                    userName = it.nickname,
+                    content = it.content,
+                    createdDate = it.createdAt ?: "",
+                    onReportClick = {},
+                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
+                )
             }
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 Button(
@@ -504,7 +554,7 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().height(82.dp).background(color = Color.Black)
+        modifier = Modifier.fillMaxWidth().height(82.dp).background(color = Color.Black).padding(horizontal = 24.dp)
     ) {
         Column(
             modifier = Modifier.clickable {
@@ -525,12 +575,13 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
         ) {
             Icon(
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_add_coment),
-                contentDescription = null
+                contentDescription = null,
+                tint = Color.White
             )
             Text(
-                "댓글달기",
+                "댓글작성",
                 modifier = Modifier.padding(start = 8.dp),
-                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp)
+                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp, color = Color.White)
             )
         }
     }

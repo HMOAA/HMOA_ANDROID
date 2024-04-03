@@ -8,7 +8,7 @@ import retrofit2.http.*
 
 interface PerfumeCommentService {
 
-    @GET("perfume/{perfumeId}/comments")
+    @GET("perfume/{perfumeId}/comments/cursor")
     suspend fun getPerfumeCommentsLatest(
         @Field("page") page: String,
         @Path("perfumeId") perfumeId: Int

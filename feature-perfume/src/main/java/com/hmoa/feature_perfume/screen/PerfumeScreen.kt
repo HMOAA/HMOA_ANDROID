@@ -169,7 +169,13 @@ fun PerfumeContent(
                 perfumeVolumes = data.perfumeVolumeList,
                 price = data.price
             )
-            Column(modifier = Modifier.clickable { onBrandClick(data.brandId) }) {
+            Spacer(
+                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+            )
+            Column(
+                modifier = Modifier.clickable { onBrandClick(data.brandId) }.padding(horizontal = 16.dp)
+                    .padding(top = 48.dp)
+            ) {
                 BrandCard(data.brandImgUrl, data.brandEnglishName, data.brandKoreanName)
             }
             TastingNoteView(
@@ -197,8 +203,8 @@ fun PerfumeContent(
                 modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
             )
             Spacer(
-                modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp)
-                    .border(width = 2.dp, color = CustomColor.gray2)
+                modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp).fillMaxWidth().height(1.dp)
+                    .background(color = CustomColor.gray2)
             )
             LazyRow {
                 items(data.similarPerfumes) { it ->
@@ -227,7 +233,7 @@ fun PerfumeInfo(
     heartCount: Int,
     perfumeEnglishName: String,
     perfumeKoreanName: String,
-    price: Int,
+    price: String,
     perfumeVolumes: Array<Int>,
     perfumeVolume: Int
 ) {
@@ -259,7 +265,7 @@ fun PerfumeInfo(
         style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
         modifier = Modifier.padding(top = 16.dp)
     )
-    LazyRow(modifier = Modifier.padding(bottom = 48.dp)) {
+    LazyRow(modifier = Modifier.padding(bottom = 16.dp)) {
         items(perfumeVolumes) { it ->
             val color = if (it == perfumeVolume) Color.Black else CustomColor.gray3
             PerfumeVolumeView(it, color)
@@ -321,7 +327,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
     Text(
         "테이스팅 노트",
         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-        modifier = Modifier.padding(bottom = 8.dp).padding(top = 48.dp)
+        modifier = Modifier.padding(bottom = 16.dp).padding(top = 48.dp)
     )
     Column {
         imageUrls.forEachIndexed { index, item ->
@@ -338,12 +344,15 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         ),
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                        modifier = Modifier.fillMaxWidth().height(60.dp).padding(top = 24.dp)
                     )
                 }
-                Spacer(modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3))
+                Spacer(
+                    modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3)
+                        .requiredWidthIn(min = 12.dp)
+                )
                 Text(
                     notes[index],
                     style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
@@ -460,7 +469,7 @@ fun PerfumeAgeView(
                 modifier = Modifier.height(12.dp).clickable { onInitializeAgeClick() }
             )
         }
-        CustomSlider(ageData?.age?.toFloat() ?: 0f, { onAgeDragFinish(it) })
+        CustomSlider(ageData?.age ?: 0f, { onAgeDragFinish(it) })
         Row(
             modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -469,6 +478,12 @@ fun PerfumeAgeView(
                 "10대", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
                 modifier = Modifier.padding(11.dp)
             )
+            if (ageData?.writed == true) {
+                Text(
+                    "평균 ${ageData.age}세", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+                    modifier = Modifier.padding(11.dp)
+                )
+            }
             Text(
                 "50대 이상", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal)
             )
@@ -506,7 +521,7 @@ fun CommentView(
 
         else -> {
             LazyColumn {
-                items(commentInfo.comments.subList(0, 3)) {
+                items(commentInfo.comments) {
                     CommentItem(
                         count = it.heartCount,
                         isCommentLiked = it.liked,

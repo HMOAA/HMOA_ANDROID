@@ -142,10 +142,10 @@ fun PerfumeCommentContent(
                         CommentItem(
                             count = it.heartCount,
                             isCommentLiked = it.liked,
-                            userImgUrl = it.profileImg,
+                            userImgUrl = it.profileImg ?: "",
                             userName = it.nickname,
                             content = it.content,
-                            createdDate = it.createdAt.toInt(),
+                            createdDate = it.createdAt ?: "",
                             onReportClick = { showReportModal(it.id.toString()) },
                             onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
                         )

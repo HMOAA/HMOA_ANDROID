@@ -2,7 +2,6 @@ package com.hmoa.feature_perfume.screen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
@@ -351,7 +350,6 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
                 }
                 Spacer(
                     modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3)
-                        .requiredWidthIn(min = 12.dp)
                 )
                 Text(
                     notes[index],
@@ -520,19 +518,17 @@ fun CommentView(
         )
 
         else -> {
-            LazyColumn {
-                items(commentInfo.comments) {
-                    CommentItem(
-                        count = it.heartCount,
-                        isCommentLiked = it.liked,
-                        userImgUrl = it.profileImg,
-                        userName = it.nickname,
-                        content = it.content,
-                        createdDate = it.createdAt.toInt(),
-                        onReportClick = {},
-                        onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
-                    )
-                }
+            commentInfo.comments.forEach {
+                CommentItem(
+                    count = it.heartCount,
+                    isCommentLiked = it.liked,
+                    userImgUrl = it.profileImg ?: "",
+                    userName = it.nickname,
+                    content = it.content,
+                    createdDate = it.createdAt ?: "",
+                    onReportClick = {},
+                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
+                )
             }
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 Button(

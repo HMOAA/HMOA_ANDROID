@@ -152,8 +152,8 @@ fun PerfumeContent(
         ) {
             ImageView(
                 data.perfumeImageUrl,
-                width = 0.8f,
-                height = 0.8f,
+                width = 1f,
+                height = 1f,
                 backgroundColor = CustomColor.gray2,
                 contentScale = ContentScale.Fit
             )
@@ -350,6 +350,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
                 }
                 Spacer(
                     modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3)
+                        .widthIn(min = 12.dp)
                 )
                 Text(
                     notes[index],

@@ -138,7 +138,7 @@ fun PerfumeCommentContent(
                     sortType = sortType
                 )
                 LazyColumn {
-                    items(data?.comments ?: listOf()) {
+                    items(data?.comments ?: emptyArray()) {
                         CommentItem(
                             count = it.heartCount,
                             isCommentLiked = it.liked,

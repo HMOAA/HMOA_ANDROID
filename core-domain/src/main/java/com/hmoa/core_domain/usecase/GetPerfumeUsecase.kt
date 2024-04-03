@@ -2,6 +2,8 @@ package com.hmoa.core_domain.usecase
 
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.data.Perfume
+import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
+import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -33,12 +35,22 @@ class GetPerfumeUsecase @Inject constructor(
             sortType = perfumeInfo1.sortType,
             perfumeVolumeList = perfumeInfo1.volume ?: emptyArray(),
             perfumeVolume = perfumeInfo1.priceVolume,
-            commentInfo = perfumeInfo2.commentInfo,
+            commentInfo = PerfumeCommentGetResponseDto(
+                commentCount = perfumeInfo2.commentInfo?.commentCount ?: 0,
+                comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.commentInfo?.comments ?: emptyArray())
+            ),
             similarPerfumes = perfumeInfo2.similarPerfumes ?: emptyArray()
         )
         return flow {
             emit(result)
         }
+    }
+
+
+    fun get3CommentAHeadOfCommentCounts(commentCounts: Array<PerfumeCommentResponseDto>): Array<PerfumeCommentResponseDto> {
+        if (commentCounts.size < 3) return commentCounts
+        else return arrayOf(commentCounts[0], commentCounts[1], commentCounts[2])
+
     }
 
     fun mapIndexToTastingNoteImageUrl(index: Int): String {

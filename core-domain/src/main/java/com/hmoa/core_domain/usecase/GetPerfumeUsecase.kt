@@ -27,7 +27,7 @@ class GetPerfumeUsecase @Inject constructor(
             notePhotos = perfumeInfo1.notePhotos.map { mapIndexToTastingNoteImageUrl(it.toInt()) },
             perfumeId = perfumeInfo1.perfumeId.toString(),
             perfumeImageUrl = perfumeInfo1.perfumeImageUrl,
-            price = perfumeInfo1.price,
+            price = "%,d".format(perfumeInfo1.price),
             review = perfumeInfo1.review,
             singleNote = perfumeInfo1.singleNote,
             sortType = perfumeInfo1.sortType,
@@ -40,7 +40,6 @@ class GetPerfumeUsecase @Inject constructor(
             emit(result)
         }
     }
-
 
     fun mapIndexToTastingNoteImageUrl(index: Int): String {
         val imageUrl = when (index) {

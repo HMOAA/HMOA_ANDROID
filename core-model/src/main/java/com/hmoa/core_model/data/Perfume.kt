@@ -19,7 +19,7 @@ data class Perfume(
     val notePhotos: List<String>,
     val perfumeId: String,
     val perfumeImageUrl: String,
-    val price: Int,
+    val price: String,
     val review: PerfumeReviewResponseDto?,
     val singleNote: Array<String>?,
     val sortType: Int,

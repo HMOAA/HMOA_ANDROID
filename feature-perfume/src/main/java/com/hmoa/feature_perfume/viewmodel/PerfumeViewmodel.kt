@@ -110,7 +110,7 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun onBackAgeToZero() {
-        val result = PerfumeAgeResponseDto(age = 0, writed = true)
+        val result = PerfumeAgeResponseDto(age = 0f, writed = true)
         ageState.update { result }
     }
 

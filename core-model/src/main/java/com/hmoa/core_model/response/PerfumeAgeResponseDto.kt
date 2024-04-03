@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PerfumeAgeResponseDto(
-    var age: Int,
+    var age: Float,
     var writed: Boolean
 )

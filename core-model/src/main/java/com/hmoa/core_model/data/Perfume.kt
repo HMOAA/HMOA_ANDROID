@@ -16,7 +16,7 @@ data class Perfume(
     val topNote: String,
     var likedCount: Int,
     var liked: Boolean,
-    val notePhotos: Array<String>,
+    val notePhotos: List<String>,
     val perfumeId: String,
     val perfumeImageUrl: String,
     val price: Int,

@@ -45,7 +45,10 @@ fun NavGraphBuilder.perfumeComment(
     onAddCommentClick: (perfumeId: Int?) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
-    composable(route = PERFUME_COMMENT_ROUTE, arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })) {
+    composable(
+        route = "${PERFUME_COMMENT_ROUTE}/{perfumeId}",
+        arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })
+    ) {
         val perfumeId = it.arguments?.getInt("perfumeId")
         PerfumeCommentScreen(
             onBackClick = { onBackClick() },

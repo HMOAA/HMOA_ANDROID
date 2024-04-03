@@ -19,9 +19,9 @@ data class PerfumeDetailResponseDto(
     val perfumeImageUrl: String,
     val price: Int,
     val priceVolume: Int,
-    val review: PerfumeReviewResponseDto,
+    val review: PerfumeReviewResponseDto?,
     val singleNote: Array<String>?,
     val sortType: Int,
     val topNote: String,
-    val volume: Array<Int>
+    val volume: Array<Int>,
 )

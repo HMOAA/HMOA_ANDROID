@@ -34,7 +34,7 @@ class GetPerfumeUsecase @Inject constructor(
             perfumeVolumeList = perfumeInfo1.volume,
             perfumeVolume = perfumeInfo1.priceVolume,
             commentInfo = perfumeInfo2.commentInfo,
-            similarPerfumes = perfumeInfo2.similarPerfumes
+            similarPerfumes = perfumeInfo2.similarPerfumes ?: emptyArray()
         )
         return flow {
             emit(result)

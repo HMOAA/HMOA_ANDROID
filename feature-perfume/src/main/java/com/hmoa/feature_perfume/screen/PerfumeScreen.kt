@@ -181,10 +181,13 @@ fun PerfumeContent(
                 onInitializeAgeClick = { onInitializeAgeClick() },
                 age
             )
-            CommentView(
-                data.commentInfo,
-                onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
-                onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) })
+            if (data.commentInfo != null) {
+                CommentView(
+                    data.commentInfo!!,
+                    onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
+                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) })
+
+            }
             Text(
                 "같은 브랜드의 제품",
                 style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),

@@ -23,13 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.CommentItem
 import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.SortType
-import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
+import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.viewmodel.PerfumeCommentViewmodel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +46,7 @@ fun PerfumeCommentScreen(
     viewModel: PerfumeCommentViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val latestPerfumeComments = viewModel.getPagingLatestPerfumeComments.collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
@@ -54,7 +57,7 @@ fun PerfumeCommentScreen(
             is PerfumeCommentViewmodel.PerfumeCommentUiState.Loading -> {}
             is PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData -> {
                 PerfumeCommentContent(
-                    data = (uiState as PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData).sortedComments,
+                    data = latestPerfumeComments,
                     sortType = (uiState as PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData).sortType,
                     onBackClick = { onBackClick() },
                     onSortLikeClick = { viewModel.onClickSortLike() },
@@ -74,7 +77,7 @@ fun PerfumeCommentScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PerfumeCommentContent(
-    data: PerfumeCommentGetResponseDto?,
+    data: LazyPagingItems<PerfumeCommentResponseDto>,
     sortType: SortType,
     onBackClick: () -> Unit,
     onSortLikeClick: () -> Unit,
@@ -124,16 +127,19 @@ fun PerfumeCommentContent(
                 modifier = Modifier.padding(16.dp)
             ) {
                 CommentAndSortText(
-                    commentCount = data?.commentCount ?: 0,
+                    commentCount = data.itemCount,
                     onSortLikeClick = { onSortLikeClick() },
                     onSortLatestClick = { onSortLatestClick() },
                     sortType = sortType
                 )
-                LazyColumn {
-                    items(items = data?.comments ?: emptyList()) {
+                LazyColumn(
+                    userScrollEnabled = true,
+                ) {
+
+                    items(items = data.itemSnapshotList) {
                         CommentItem(
-                            count = it.heartCount,
-                            isCommentLiked = it.liked,
+                            count = it?.heartCount ?: 0,
+                            isCommentLiked = it!!.liked,
                             userImgUrl = it.profileImg ?: "",
                             userName = it.nickname,
                             content = it.content,
@@ -142,6 +148,7 @@ fun PerfumeCommentContent(
                             onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
                         )
                     }
+
                 }
             }
             BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })

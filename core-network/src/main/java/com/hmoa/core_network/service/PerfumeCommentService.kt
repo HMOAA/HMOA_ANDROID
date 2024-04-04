@@ -11,6 +11,7 @@ interface PerfumeCommentService {
     @GET("perfume/{perfumeId}/comments/cursor")
     suspend fun getPerfumeCommentsLatest(
         @Field("page") page: String,
+        @Field("cursor") cursor: String,
         @Path("perfumeId") perfumeId: Int
     ): PerfumeCommentGetResponseDto
 

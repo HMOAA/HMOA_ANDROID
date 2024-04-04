@@ -5,8 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -25,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.PagingSource.LoadResult.Page
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.CommentItem
@@ -47,11 +44,6 @@ fun PerfumeCommentScreen(
     viewModel: PerfumeCommentViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val result = Page(
-        data = listOf(),
-        prevKey = null,
-        nextKey = null
-    )
 
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
@@ -93,7 +85,6 @@ fun PerfumeCommentContent(
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     val scope = CoroutineScope(Dispatchers.IO)
-    val verticalScrollState = rememberScrollState()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
@@ -117,8 +108,9 @@ fun PerfumeCommentContent(
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().verticalScroll(verticalScrollState)
-                .background(color = Color.White)
+            modifier = Modifier.fillMaxWidth()
+                .background(color = Color.White),
+            verticalArrangement = Arrangement.Top
         ) {
             TopBar(
                 title = "댓글",
@@ -132,13 +124,13 @@ fun PerfumeCommentContent(
                 modifier = Modifier.padding(16.dp)
             ) {
                 CommentAndSortText(
-                    commentCount = 0,
+                    commentCount = data?.commentCount ?: 0,
                     onSortLikeClick = { onSortLikeClick() },
                     onSortLatestClick = { onSortLatestClick() },
                     sortType = sortType
                 )
                 LazyColumn {
-                    items(data?.comments ?: emptyArray()) {
+                    items(items = data?.comments ?: emptyList()) {
                         CommentItem(
                             count = it.heartCount,
                             isCommentLiked = it.liked,
@@ -169,17 +161,19 @@ fun CommentAndSortText(
 
     Row(
         verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp)
+        modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp).fillMaxWidth()
     ) {
-        Text(
-            "댓글",
-            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-            modifier = Modifier.padding(end = 4.dp)
-        )
-        Text(
-            "+${commentCount}",
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "댓글",
+                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+                modifier = Modifier.padding(end = 4.dp)
+            )
+            Text(
+                "+${commentCount}",
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
+            )
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 "좋아요순",

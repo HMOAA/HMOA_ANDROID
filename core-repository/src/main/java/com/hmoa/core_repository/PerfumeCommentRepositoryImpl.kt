@@ -10,8 +10,8 @@ import javax.inject.Inject
 class PerfumeCommentRepositoryImpl @Inject constructor(private val perfumeCommentDataStore: PerfumeCommentDataStore) :
     com.hmoa.core_domain.repository.PerfumeCommentRepository {
     override suspend fun getPerfumeCommentsLatest(
-        page: String,
-        cursor: String,
+        page: Int,
+        cursor: Int,
         perfumeId: Int
     ): PerfumeCommentGetResponseDto {
         return perfumeCommentDataStore.getPerfumeCommentsLatest(page, cursor, perfumeId)

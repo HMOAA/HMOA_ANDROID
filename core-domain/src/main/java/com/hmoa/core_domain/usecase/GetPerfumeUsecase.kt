@@ -37,7 +37,7 @@ class GetPerfumeUsecase @Inject constructor(
             perfumeVolume = perfumeInfo1.priceVolume,
             commentInfo = PerfumeCommentGetResponseDto(
                 commentCount = perfumeInfo2.commentInfo?.commentCount ?: 0,
-                comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.commentInfo?.comments ?: emptyArray())
+                comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.commentInfo?.comments ?: emptyList())
             ),
             similarPerfumes = perfumeInfo2.similarPerfumes ?: emptyArray()
         )
@@ -47,9 +47,9 @@ class GetPerfumeUsecase @Inject constructor(
     }
 
 
-    fun get3CommentAHeadOfCommentCounts(commentCounts: Array<PerfumeCommentResponseDto>): Array<PerfumeCommentResponseDto> {
-        if (commentCounts.size < 3) return commentCounts
-        else return arrayOf(commentCounts[0], commentCounts[1], commentCounts[2])
+    fun get3CommentAHeadOfCommentCounts(commentCounts: List<PerfumeCommentResponseDto>): List<PerfumeCommentResponseDto> {
+        if (commentCounts.size < 3) return commentCounts.toList()
+        else return listOf(commentCounts[0], commentCounts[1], commentCounts[2])
 
     }
 

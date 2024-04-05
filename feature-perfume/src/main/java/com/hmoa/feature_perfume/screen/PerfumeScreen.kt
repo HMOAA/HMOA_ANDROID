@@ -152,8 +152,8 @@ fun PerfumeContent(
         ) {
             ImageView(
                 data.perfumeImageUrl,
-                width = 0.7f,
-                height = 0.7f,
+                width = 0.6f,
+                height = 0.6f,
                 backgroundColor = CustomColor.gray2,
                 contentScale = ContentScale.FillWidth
             )

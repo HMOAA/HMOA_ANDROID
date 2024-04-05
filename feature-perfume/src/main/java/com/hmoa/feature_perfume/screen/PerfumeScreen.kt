@@ -152,10 +152,10 @@ fun PerfumeContent(
         ) {
             ImageView(
                 data.perfumeImageUrl,
-                width = 1f,
-                height = 1f,
+                width = 0.7f,
+                height = 0.7f,
                 backgroundColor = CustomColor.gray2,
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.FillWidth
             )
         }
         Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {

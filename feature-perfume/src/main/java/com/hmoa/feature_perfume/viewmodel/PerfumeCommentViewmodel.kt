@@ -115,7 +115,7 @@ class PerfumeCommentViewmodel @Inject constructor(
         handle[TARGET_ID] = id
     }
 
-    fun savePerfumetId(id: String) {
+    fun savePerfumeId(id: String) {
         handle[PERFUME_ID] = id
     }
 

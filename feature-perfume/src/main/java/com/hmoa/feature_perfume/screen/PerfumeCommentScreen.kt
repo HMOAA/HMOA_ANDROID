@@ -12,6 +12,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +48,10 @@ fun PerfumeCommentScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val latestPerfumeComments = viewModel.getPagingLatestPerfumeComments.collectAsLazyPagingItems()
+
+    LaunchedEffect(true){
+        viewModel.savePerfumeId(perfumeId.toString())
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),

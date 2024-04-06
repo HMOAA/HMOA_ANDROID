@@ -59,12 +59,6 @@ fun CommentItem(
                 )
             }
             Row {
-                Icon(
-                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_kebab),
-                    contentDescription = "아이콘",
-                    modifier = Modifier.size(23.dp).padding(2.dp).clickable { onReportClick() },
-                    tint = CustomColor.gray2
-                )
                 TypeBadge(
                     roundedCorner = 20.dp,
                     type = "${count}",
@@ -75,7 +69,12 @@ fun CommentItem(
                     fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
                     selected = isCommentLiked,
                     unSelectedColor = CustomColor.gray1,
-                    selectedColor = Color.Black
+                )
+                Icon(
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.three_dot_menu_vertical),
+                    contentDescription = "아이콘",
+                    modifier = Modifier.size(23.dp).padding(2.dp).clickable { onReportClick() },
+                    tint = CustomColor.gray2
                 )
             }
         }

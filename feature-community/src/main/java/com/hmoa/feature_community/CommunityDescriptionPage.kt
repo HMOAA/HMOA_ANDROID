@@ -6,29 +6,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -47,11 +33,11 @@ import com.hmoa.feature_community.ViewModel.CommunityDescViewModel
 
 @Composable
 fun CommunityDescriptionRoute(
-    _id : Int?,
+    _id: Int?,
     onNavCommunityEdit: (Int) -> Unit,
-    onNavBack : () -> Unit,
-    viewModel : CommunityDescViewModel = hiltViewModel()
-){
+    onNavBack: () -> Unit,
+    viewModel: CommunityDescViewModel = hiltViewModel()
+) {
     if (_id != null) {
 
         Log.d("TAG TEST", "${_id}")
@@ -94,17 +80,17 @@ fun CommunityDescriptionRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityDescriptionPage(
-    isOpenBottomOptions : Boolean,
-    changeBottomOptionState : (Boolean) -> Unit,
-    uiState : CommunityDescUiState,
-    isLiked : Boolean,
-    profile : String?,
-    onClickReport : () -> Unit,
-    onPostComment : (String) -> Unit,
-    onDeleteCommunity : () -> Unit,
-    onNavBack : () -> Unit,
-    onNavCommunityEdit : () -> Unit,
-){
+    isOpenBottomOptions: Boolean,
+    changeBottomOptionState: (Boolean) -> Unit,
+    uiState: CommunityDescUiState,
+    isLiked: Boolean,
+    profile: String?,
+    onClickReport: () -> Unit,
+    onPostComment: (String) -> Unit,
+    onDeleteCommunity: () -> Unit,
+    onNavBack: () -> Unit,
+    onNavCommunityEdit: () -> Unit,
+) {
     /** Text Style 정의 */
     val categoryTextStyle = TextStyle(
         fontSize = 14.sp,
@@ -131,14 +117,15 @@ fun CommunityDescriptionPage(
         color = CustomColor.red
     )
 
-    when(uiState) {
+    when (uiState) {
         CommunityDescUiState.Loading -> {
-            Column(){
+            Column() {
                 Text(
                     text = "Loading"
                 )
             }
         }
+
         is CommunityDescUiState.CommunityDesc -> {
 
             val community = uiState.community
@@ -153,7 +140,7 @@ fun CommunityDescriptionPage(
                     containerColor = Color.White,
                     scrimColor = Color.Black.copy(alpha = 0.3f),
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
@@ -234,7 +221,7 @@ fun CommunityDescriptionPage(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color.White)
-            ){
+            ) {
                 TopBar(
                     title = "Community",
                     navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -250,7 +237,7 @@ fun CommunityDescriptionPage(
                             state = rememberScrollState(),
                             orientation = Orientation.Vertical
                         )
-                ){
+                ) {
                     Spacer(Modifier.height(16.dp))
 
                     Text(
@@ -268,7 +255,7 @@ fun CommunityDescriptionPage(
                                 color = CustomColor.gray1,
                                 shape = RoundedCornerShape(size = 10.dp)
                             )
-                    ){
+                    ) {
                         PostContent(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -295,7 +282,7 @@ fun CommunityDescriptionPage(
 
                     Row(
                         modifier = Modifier.fillMaxWidth()
-                    ){
+                    ) {
                         Text(
                             text = "답변",
                             style = infoTextStyle
@@ -311,8 +298,8 @@ fun CommunityDescriptionPage(
 
                     Spacer(Modifier.height(21.dp))
 
-                    if (commentList.isNotEmpty()){
-                        commentList.forEachIndexed{ index, comment ->
+                    if (commentList.isNotEmpty()) {
+                        commentList.forEachIndexed { index, comment ->
                             Log.d("TEST TAG", "comment : ${comment}")
                             Comment(
                                 profile = comment.profileImg,
@@ -321,7 +308,7 @@ fun CommunityDescriptionPage(
                                 comment = comment.content,
                                 isFirst = false,
                                 viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
-                                onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */}
+                                onNavCommunity = { /** 여기서는 아무 event도 없이 처리 */ }
                             )
                             if (index != commentList.size - 1) {
                                 Spacer(Modifier.height(15.dp))
@@ -350,8 +337,9 @@ fun CommunityDescriptionPage(
                 Spacer(Modifier.height(7.dp))
             }
         }
+
         CommunityDescUiState.Error -> {
-            Column{
+            Column {
                 Text(
                     text = "Data is Error"
                 )
@@ -362,8 +350,8 @@ fun CommunityDescriptionPage(
 
 @Preview
 @Composable
-fun TestCommunityDescriptionPage(){
-    var isOpenBottomOptions by remember{mutableStateOf(false)}
+fun TestCommunityDescriptionPage() {
+    var isOpenBottomOptions by remember { mutableStateOf(false) }
     CommunityDescriptionPage(
         isOpenBottomOptions = isOpenBottomOptions,
         changeBottomOptionState = {

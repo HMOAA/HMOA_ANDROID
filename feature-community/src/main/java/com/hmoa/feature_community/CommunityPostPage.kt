@@ -2,26 +2,13 @@ package com.hmoa.feature_community
 
 import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -36,10 +23,10 @@ import com.hmoa.feature_community.ViewModel.CommunityPostViewModel
 
 @Composable
 fun CommunityPostRoute(
-    onNavBack : () -> Unit,
-    _category : String?,
-    viewModel : CommunityPostViewModel = hiltViewModel()
-){
+    onNavBack: () -> Unit,
+    _category: String?,
+    viewModel: CommunityPostViewModel = hiltViewModel()
+) {
 
     if (_category != null) {
         //category set
@@ -72,17 +59,17 @@ fun CommunityPostRoute(
 
 @Composable
 fun PostCommunityPage(
-    title : String,
-    onTitleChanged : (String) -> Unit,
-    content : String,
-    onContentChanged : (String) -> Unit,
+    title: String,
+    onTitleChanged: (String) -> Unit,
+    content: String,
+    onContentChanged: (String) -> Unit,
     //Floating Button에서 받아와야 함
-    category : Category,
+    category: Category,
     //뒤로가기
-    onNavBack : () -> Unit,
+    onNavBack: () -> Unit,
     //해당 게시글 Post
-    onPostCommunity : () -> Unit,
-){
+    onPostCommunity: () -> Unit,
+) {
 
     val sideTopBarTextStyle = TextStyle(
         fontSize = 16.sp,
@@ -111,7 +98,7 @@ fun PostCommunityPage(
 
     Column(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         //unique top bar
         Row(
             modifier = Modifier
@@ -119,9 +106,9 @@ fun PostCommunityPage(
                 .height(60.dp)
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Text(
-                modifier = Modifier.clickable{
+                modifier = Modifier.clickable {
                     onNavBack()
                 },
                 text = "취소",
@@ -138,7 +125,7 @@ fun PostCommunityPage(
             Spacer(Modifier.weight(1f))
 
             Text(
-                modifier = Modifier.clickable{
+                modifier = Modifier.clickable {
                     onPostCommunity()
                     onNavBack()
                 },
@@ -160,7 +147,7 @@ fun PostCommunityPage(
                 .height(45.dp)
                 .padding(start = 33.dp, end = 15.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Text(
                 text = "제목:",
                 style = titleTextIntroTextStyle
@@ -184,11 +171,11 @@ fun PostCommunityPage(
                 maxLines = 1,
                 singleLine = true,
                 cursorBrush = SolidColor(CustomColor.gray3)
-            ){
+            ) {
 
                 Log.d("TEST TAG", "title : ${title}")
                 //placeholder
-                if (title.isEmpty()){
+                if (title.isEmpty()) {
                     Text(
                         text = "제목을 입력해주세요",
                         style = placeholderTextStyle
@@ -213,7 +200,7 @@ fun PostCommunityPage(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 33.dp, vertical = 27.dp)
-        ){
+        ) {
             //content input
             BasicTextField(
                 modifier = Modifier.fillMaxSize(),
@@ -222,10 +209,10 @@ fun PostCommunityPage(
                     onContentChanged(it)
                 },
                 textStyle = contentInputTextStyle,
-            ){
+            ) {
                 Log.d("TAG TEST", "content : ${content}")
                 //placeholder
-                if (content.isEmpty()){
+                if (content.isEmpty()) {
                     Text(
                         text = "내용을 입력해주세요",
                         style = placeholderTextStyle
@@ -239,7 +226,7 @@ fun PostCommunityPage(
          * 글이 길어지게 된다면 Scroll을 사용해서 사진은 최하단에 맞춰 추가 */
         Box(
 
-        ){
+        ) {
 
         }
 
@@ -252,10 +239,10 @@ fun PostCommunityPage(
 
 @Preview(showBackground = true)
 @Composable
-fun TestPostCommunityPage(){
+fun TestPostCommunityPage() {
 
-    var title by remember{mutableStateOf("")}
-    var content by remember{mutableStateOf("")}
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
 
     PostCommunityPage(
         title = title,
@@ -271,7 +258,7 @@ fun TestPostCommunityPage(){
 
         },
         onPostCommunity = {
-            
+
         }
     )
 }

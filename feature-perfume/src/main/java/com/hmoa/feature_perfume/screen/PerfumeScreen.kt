@@ -528,7 +528,8 @@ fun CommentView(
                     content = it.content,
                     createdDate = it.createdAt ?: "",
                     onReportClick = {},
-                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
+                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed)},
+                    onCommentLikedClick = {}
                 )
             }
             Column(modifier = Modifier.padding(top = 8.dp)) {

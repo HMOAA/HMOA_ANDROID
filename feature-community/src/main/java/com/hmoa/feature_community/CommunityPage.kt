@@ -2,16 +2,7 @@ package com.hmoa.feature_community
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
@@ -32,17 +23,16 @@ import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.feature_community.R
 import com.hmoa.feature_community.ViewModel.CommunityMainUiState
 import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
 
 @Composable
 fun CommunityPageRoute(
-    onNavBack : () -> Unit,
-    onNavCommunityDescription : (Int) -> Unit,
-    onNavPost : (String) -> Unit,
-    viewModel : CommunityMainViewModel = hiltViewModel()
-){
+    onNavBack: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
+    onNavPost: (String) -> Unit,
+    viewModel: CommunityMainViewModel = hiltViewModel()
+) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val type = viewModel.type.collectAsStateWithLifecycle()
@@ -61,25 +51,26 @@ fun CommunityPageRoute(
 
 @Composable
 fun CommunityPage(
-    uiState : CommunityMainUiState,
-    type : Category,
-    onTypeChanged : (Category) -> Unit,
-    onNavBack : () -> Unit,
+    uiState: CommunityMainUiState,
+    type: Category,
+    onTypeChanged: (Category) -> Unit,
+    onNavBack: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
-    onNavPost : (String) -> Unit,
-){
-    when(uiState) {
+    onNavPost: (String) -> Unit,
+) {
+    when (uiState) {
         is CommunityMainUiState.Loading -> {
 
         }
+
         is CommunityMainUiState.Community -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
-            ){
+            ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
-                ){
+                ) {
                     TopBar(
                         title = "Community",
                         navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -113,7 +104,7 @@ fun CommunityPage(
                             .height(44.dp)
                             .padding(start = 32.dp),
                         verticalAlignment = Alignment.CenterVertically
-                    ){
+                    ) {
                         TypeBadge(
                             onClickItem = {
                                 onTypeChanged(Category.추천)
@@ -159,8 +150,8 @@ fun CommunityPage(
                             .background(color = CustomColor.gray2)
                     )
 
-                    LazyColumn{
-                        items(uiState.communities){community ->
+                    LazyColumn {
+                        items(uiState.communities) { community ->
                             PostListItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -172,7 +163,7 @@ fun CommunityPage(
                                     onNavCommunityDescription(community.communityId)
                                 },
                                 postType = community.category,
-                                postTitle =community.title,
+                                postTitle = community.title,
                             )
                         }
                     }
@@ -184,6 +175,7 @@ fun CommunityPage(
                 )
             }
         }
+
         is CommunityMainUiState.Error -> {
 
         }
@@ -192,7 +184,7 @@ fun CommunityPage(
 
 @Preview(showBackground = true)
 @Composable
-fun TestCommunity(){
+fun TestCommunity() {
     var type = Category.시향기
     val testList = listOf(
         CommunityByCategoryResponseDto(

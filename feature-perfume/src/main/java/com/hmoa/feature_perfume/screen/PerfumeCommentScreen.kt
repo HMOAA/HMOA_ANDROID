@@ -150,7 +150,8 @@ fun PerfumeCommentContent(
                             content = it.content,
                             createdDate = it.createdAt ?: "",
                             onReportClick = { showReportModal(it.id.toString()) },
-                            onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
+                            onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
+                            onCommentLikedClick = {}
                         )
                     }
 

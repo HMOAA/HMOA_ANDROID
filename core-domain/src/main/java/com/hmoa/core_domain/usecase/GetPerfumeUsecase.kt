@@ -37,7 +37,8 @@ class GetPerfumeUsecase @Inject constructor(
             perfumeVolume = perfumeInfo1.priceVolume,
             commentInfo = PerfumeCommentGetResponseDto(
                 commentCount = perfumeInfo2.commentInfo?.commentCount ?: 0,
-                comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.commentInfo?.comments ?: emptyList())
+                comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.commentInfo?.comments ?: emptyList()),
+                lastPage = perfumeInfo2.commentInfo?.lastPage!!
             ),
             similarPerfumes = perfumeInfo2.similarPerfumes ?: emptyArray()
         )

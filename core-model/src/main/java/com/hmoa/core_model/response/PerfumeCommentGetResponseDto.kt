@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PerfumeCommentGetResponseDto(
     val commentCount: Int,
-    val comments: List<PerfumeCommentResponseDto>
+    val comments: List<PerfumeCommentResponseDto>,
+    val lastPage: Boolean
 )

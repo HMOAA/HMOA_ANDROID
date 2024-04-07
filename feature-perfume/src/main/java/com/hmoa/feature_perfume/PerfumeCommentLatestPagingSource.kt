@@ -5,7 +5,7 @@ import androidx.paging.PagingState
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 
-class PerfumeCommentPagingSource(
+class PerfumeCommentLatestPagingSource(
     private val perfumeCommentRepository: PerfumeCommentRepository,
     private val page: Int,
     private val perfumeId: Int,

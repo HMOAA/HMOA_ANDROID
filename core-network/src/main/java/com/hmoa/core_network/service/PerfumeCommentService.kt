@@ -10,9 +10,9 @@ interface PerfumeCommentService {
 
     @GET("perfume/{perfumeId}/comments/cursor")
     suspend fun getPerfumeCommentsLatest(
-        @Field("page") page: Int,
-        @Field("cursor") cursor: Int,
-        @Path("perfumeId") perfumeId: Int
+        @Path("perfumeId") perfumeId: Int,
+        @Query("page") page: Int,
+        @Query("cursor") cursor: Int,
     ): PerfumeCommentGetResponseDto
 
     @POST("perfume/{perfumeId}/comments")

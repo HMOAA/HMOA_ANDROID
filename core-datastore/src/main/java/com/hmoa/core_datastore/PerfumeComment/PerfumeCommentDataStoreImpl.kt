@@ -14,7 +14,7 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         cursor: Int,
         perfumeId: Int
     ): PerfumeCommentGetResponseDto {
-        return perfumeCommentService.getPerfumeCommentsLatest(page, cursor, perfumeId)
+        return perfumeCommentService.getPerfumeCommentsLatest(page = page, cursor = cursor, perfumeId = perfumeId)
     }
 
     override suspend fun postPerfumeComment(perfumeId: Int, dto: PerfumeCommentRequestDto): PerfumeCommentResponseDto {

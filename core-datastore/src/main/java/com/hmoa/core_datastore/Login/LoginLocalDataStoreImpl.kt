@@ -31,15 +31,15 @@ class LoginLocalDataStoreImpl @Inject constructor(
         return token
     }
 
-    override suspend fun saveAuthToken(token: String) {
+    override fun saveAuthToken(token: String) {
         tokenManager.saveAuthToken(token)
     }
 
-    override suspend fun saveRememberedToken(token: String) {
+    override fun saveRememberedToken(token: String) {
         tokenManager.saveRememberedToken(token)
     }
 
-    override suspend fun saveKakaoAccessToken(token: String) {
+    override fun saveKakaoAccessToken(token: String) {
         tokenManager.saveKakaoAccessToken(token)
     }
 

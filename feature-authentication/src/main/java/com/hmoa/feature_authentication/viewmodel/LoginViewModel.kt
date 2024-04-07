@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun saveKakoAccessToken(token: String) {
-        suspend { saveKakaoToken(token) }
+        saveKakaoToken(token)
     }
 
     suspend fun postKakaoAccessToken(token: String) {

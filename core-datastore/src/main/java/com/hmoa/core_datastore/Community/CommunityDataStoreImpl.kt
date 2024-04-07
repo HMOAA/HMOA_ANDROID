@@ -1,6 +1,9 @@
 package com.hmoa.core_datastore.Community
 
 import ResultResponse
+import android.util.Log
+import com.hmoa.core_datastore.Mapper.transformMultipartBody
+import com.hmoa.core_datastore.Mapper.transformToMultipartBody
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
@@ -99,9 +102,16 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         content: String
     ): ResultResponse<CommunityDefaultResponseDto> {
         val result = ResultResponse<CommunityDefaultResponseDto>()
-        communityService.postCommunitySave(images, category, title, content).suspendMapSuccess {
+        communityService.postCommunitySave(
+            images.transformToMultipartBody(),
+            category.transformMultipartBody("category"),
+            title.transformMultipartBody("title"),
+            content.transformMultipartBody("content")
+        ).suspendMapSuccess {
+            Log.d("TAG TEST", "success : ${result.data}")
             result.data = this
         }.suspendOnError {
+            Log.d("TAG TEST", "failed : ${result.exception}")
             result.exception = Exception(this.statusCode.code.toString())
         }
         return result

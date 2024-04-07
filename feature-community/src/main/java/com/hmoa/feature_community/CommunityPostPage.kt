@@ -2,6 +2,7 @@ package com.hmoa.feature_community
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -90,8 +91,10 @@ fun CommunityPostRoute(
     val content = viewModel.content.collectAsStateWithLifecycle()
     val category = viewModel.category.collectAsStateWithLifecycle()
     val pictures = viewModel.pictures.collectAsStateWithLifecycle()
+    val errState = viewModel.errState.collectAsStateWithLifecycle()
 
     PostCommunityPage(
+        errState = errState.value,
         title = title.value,
         onTitleChanged = {
             viewModel.updateTitle(it)
@@ -119,6 +122,7 @@ fun CommunityPostRoute(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun PostCommunityPage(
+    errState : String?,
     title : String,
     onTitleChanged : (String) -> Unit,
     content : String,
@@ -138,11 +142,10 @@ fun PostCommunityPage(
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = {uris ->
+            Log.d("TAG TEST", "uris : ${uris}")
             onUpdatePictures(uris)
         }
     )
-
-
 
     //pager state
     val state = rememberPagerState(
@@ -151,6 +154,8 @@ fun PostCommunityPage(
     )
 
     val scrollableState = rememberScrollState()
+
+    val context = LocalContext.current
 
     val sideTopBarTextStyle = TextStyle(
         fontSize = 16.sp,
@@ -177,202 +182,210 @@ fun PostCommunityPage(
         color = CustomColor.gray3
     )
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        //unique top bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                modifier = Modifier.clickable{
-                    onNavBack()
-                },
-                text = "취소",
-                style = sideTopBarTextStyle
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Text(
-                text = category.name,
-                style = mainTopBarTextStyle
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Text(
-                modifier = Modifier.clickable{
-                    onPostCommunity()
-                    onNavBack()
-                },
-                text = "확인",
-                style = sideTopBarTextStyle
-            )
-        }
-
-        HorizontalDivider(
-            Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = Color.Black
-        )
-
-        //title input
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(45.dp)
-                .padding(start = 33.dp, end = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text = "제목:",
-                style = titleTextIntroTextStyle
-            )
-
-            Spacer(Modifier.width(6.dp))
-
-            BasicTextField(
-                modifier = Modifier.weight(1f),
-                value = title,
-                onValueChange = {
-                    //글자 수 제한 20
-                    if (title.length < 20) {
-                        onTitleChanged(it)
-                    }
-                },
-                onTextLayout = {
-
-                },
-                textStyle = titleInputTextStyle,
-                maxLines = 1,
-                singleLine = true,
-                cursorBrush = SolidColor(CustomColor.gray3)
+    when(errState) {
+        null -> {
+            Column(
+                modifier = Modifier.fillMaxSize()
             ){
-                //placeholder
-                if (title.isEmpty()){
+                //unique top bar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Text(
-                        text = "제목을 입력해주세요",
-                        style = placeholderTextStyle
+                        modifier = Modifier.clickable{
+                            onNavBack()
+                        },
+                        text = "취소",
+                        style = sideTopBarTextStyle
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Text(
+                        text = category.name,
+                        style = mainTopBarTextStyle
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Text(
+                        modifier = Modifier.clickable{
+                            if (title.isNotEmpty() && content.isNotEmpty()){
+                                onPostCommunity()
+                                onNavBack()
+                            } else {
+                                Toast.makeText(context, "제목이나 내용을 빈 칸 없이 채워주세요",Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        text = "확인",
+                        style = sideTopBarTextStyle
                     )
                 }
-                it()
-            }
 
-            Text(
-                text = "${title.length}/20",
-                style = titleInputTextStyle
-            )
-        }
+                HorizontalDivider(
+                    Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = Color.Black
+                )
 
-        HorizontalDivider(
-            Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = Color.Black
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(horizontal = 33.dp, vertical = 27.dp)
-                .scrollable(state = scrollableState, orientation = Orientation.Horizontal)
-        ){
-            //content input
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                value = content,
-                onValueChange = {
-                    onContentChanged(it)
-                },
-                textStyle = contentInputTextStyle,
-            ){
-                //placeholder
-                if (content.isEmpty()){
+                //title input
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .padding(start = 33.dp, end = 15.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Text(
-                        text = "내용을 입력해주세요",
-                        style = placeholderTextStyle
+                        text = "제목:",
+                        style = titleTextIntroTextStyle
                     )
-                }
-                it()
-            }
 
-            if(pictures.isNotEmpty()){
+                    Spacer(Modifier.width(6.dp))
 
-                Spacer(Modifier.height(10.dp))
-
-                HorizontalPager(
-                    modifier = Modifier.size(274.dp),
-                    state = state
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
+                    BasicTextField(
+                        modifier = Modifier.weight(1f),
+                        value = title,
+                        onValueChange = {
+                            //글자 수 제한 20
+                            if (title.length < 20) {
+                                onTitleChanged(it)
+                            }
+                        },
+                        textStyle = titleInputTextStyle,
+                        maxLines = 1,
+                        singleLine = true,
+                        cursorBrush = SolidColor(CustomColor.gray3)
                     ){
-                        //image view
-                        ImageView(
-                            imageUrl = pictures[it].toString(),
-                            width = 274,
-                            height = 274,
-                            backgroundColor = CustomColor.gray1
-                        )
+                        //placeholder
+                        if (title.isEmpty()){
+                            Text(
+                                text = "제목을 입력해주세요",
+                                style = placeholderTextStyle
+                            )
+                        }
+                        it()
+                    }
 
-                        //삭제 버튼
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 15.dp, end = 15.dp),
-                            horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.Top
-                        ){
-                            IconButton(
-                                modifier = Modifier.size(24.dp),
-                                onClick = {
-                                    onDeletePictures(it)
-                                }
-                            ) {
-                                Icon(
-                                    modifier = Modifier.fillMaxSize(),
-                                    imageVector = Icons.Filled.Close,
-                                    contentDescription = "Delete Button",
-                                    tint = CustomColor.red
+                    Text(
+                        text = "${title.length}/20",
+                        style = titleInputTextStyle
+                    )
+                }
+
+                HorizontalDivider(
+                    Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = Color.Black
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 33.dp, vertical = 27.dp)
+                        .scrollable(state = scrollableState, orientation = Orientation.Horizontal)
+                ){
+                    //content input
+                    BasicTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        value = content,
+                        onValueChange = {
+                            onContentChanged(it)
+                        },
+                        textStyle = contentInputTextStyle,
+                    ){
+                        //placeholder
+                        if (content.isEmpty()){
+                            Text(
+                                text = "내용을 입력해주세요",
+                                style = placeholderTextStyle
+                            )
+                        }
+                        it()
+                    }
+
+                    if(pictures.isNotEmpty()){
+
+                        Spacer(Modifier.height(10.dp))
+
+                        HorizontalPager(
+                            modifier = Modifier.size(274.dp),
+                            state = state
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize()
+                            ){
+                                //image view
+                                ImageView(
+                                    imageUrl = pictures[it].toString(),
+                                    width = 274,
+                                    height = 274,
+                                    backgroundColor = CustomColor.gray1
                                 )
+
+                                //삭제 버튼
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(top = 15.dp, end = 15.dp),
+                                    horizontalArrangement = Arrangement.End,
+                                    verticalAlignment = Alignment.Top
+                                ){
+                                    IconButton(
+                                        modifier = Modifier.size(24.dp),
+                                        onClick = {
+                                            onDeletePictures(it)
+                                        }
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.fillMaxSize(),
+                                            imageVector = Icons.Filled.Close,
+                                            contentDescription = "Delete Button",
+                                            tint = CustomColor.red
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
+
+                /** keyboard 옵션으로 보이도록 View 변경해야 함 */
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    onClick = {
+                        multiplePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = CustomColor.gray1
+                    ),
+                    shape = RectangleShape
+                ){
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "사진을 추가하려면 눌러주세요!",
+                        textAlign = TextAlign.Center,
+                        color = Color.Blue,
+                        fontSize = 20.sp
+                    )
+                }
             }
         }
-        
-        /** keyboard 옵션으로 보이도록 View 변경해야 함 */
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            onClick = {
-                multiplePhotoPickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
-                )
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = CustomColor.gray1
-            ),
-            shape = RectangleShape
-        ){
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "사진을 추가하려면 눌러주세요!",
-                textAlign = TextAlign.Center,
-                color = Color.Blue,
-                fontSize = 20.sp
-            )
+        else -> {
+            /** err state에 대한 메세지를 띄우고 onNavBack() 하는 것이 좋을 듯 */
         }
     }
 }
@@ -386,6 +399,7 @@ fun TestPostCommunityPage(){
     var test by remember{ mutableStateOf("") }
 
     PostCommunityPage(
+        errState = null,
         title = title,
         onTitleChanged = {
             title = it

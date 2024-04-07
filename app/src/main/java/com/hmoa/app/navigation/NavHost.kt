@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_community.Navigation.*
-import com.hmoa.feature_home.homeScreen
 import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeScreen
@@ -21,8 +20,8 @@ fun SetUpNavGraph(
         mainScreen(
             onNavCommunity = navController::navigateToCommunityRoute
         )
-        /** home 모듈 */
-        homeScreen(onPerfumeClick = {})
+//        /** home 모듈 */
+//        homeScreen(onPerfumeClick = {})
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToMain)

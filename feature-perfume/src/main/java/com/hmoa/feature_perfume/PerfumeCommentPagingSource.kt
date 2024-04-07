@@ -1,6 +1,5 @@
 package com.hmoa.feature_perfume
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
@@ -12,11 +11,10 @@ class PerfumeCommentPagingSource(
     private val perfumeId: Int,
 ) : PagingSource<Int, PerfumeCommentResponseDto>() {
     private var commentCounts = 0
-    private var cursor = 0 //TODO("처음 요청할 때 어떤값으로 줘야 하는지 확인하기")
+    private var cursor = 0
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PerfumeCommentResponseDto> {
         val pageNumber = params.key ?: 0
-        Log.d("PerfumeCommentPagingSource", "호출됨")
         try {
             val response =
                 perfumeCommentRepository.getPerfumeCommentsLatest(
@@ -26,7 +24,6 @@ class PerfumeCommentPagingSource(
                 )
             commentCounts = response.commentCount
             cursor = response.comments.get(response.comments.lastIndex).id
-            Log.d("PerfumeCommentPagingSource", "response: ${response.comments}")
             val prevKey = if (pageNumber > 0) pageNumber - 1 else null
             val nextKey = if (response.lastPage) null else pageNumber + 1
 

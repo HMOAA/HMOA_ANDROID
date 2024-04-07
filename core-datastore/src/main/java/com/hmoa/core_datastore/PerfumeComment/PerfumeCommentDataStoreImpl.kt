@@ -22,7 +22,7 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
     }
 
     override suspend fun getPerfumeCommentsLikest(page: String, perfumeId: String): PerfumeCommentGetResponseDto {
-        return perfumeCommentService.getPerfumeCommentsLikest(page, perfumeId)
+        return perfumeCommentService.getPerfumeCommentsLikest(page = page, perfumeId = perfumeId)
     }
 
     override suspend fun deletePerfumeComments(commentId: Int): DataResponseDto<Any> {

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
@@ -29,7 +28,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.CommentItem
-import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
@@ -47,10 +45,13 @@ fun PerfumeCommentScreen(
     viewModel: PerfumeCommentViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val latestPerfumeComments = viewModel.getPagingLatestPerfumeComments.collectAsLazyPagingItems()
+    val latestPerfumeComments =
+        viewModel.getPagingLatestPerfumeComments(perfumeId)?.collectAsLazyPagingItems()
 
-    LaunchedEffect(true){
-        viewModel.savePerfumeId(perfumeId.toString())
+    LaunchedEffect(perfumeId) {
+        if (perfumeId != null) {
+            viewModel.savePerfumeId(perfumeId)
+        }
     }
 
     Column(
@@ -82,7 +83,7 @@ fun PerfumeCommentScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PerfumeCommentContent(
-    data: LazyPagingItems<PerfumeCommentResponseDto>,
+    data: LazyPagingItems<PerfumeCommentResponseDto>?,
     sortType: SortType,
     onBackClick: () -> Unit,
     onSortLikeClick: () -> Unit,
@@ -103,17 +104,10 @@ fun PerfumeCommentContent(
         scope.launch { modalSheetState.show() }
         saveReportTarget(id)
     }
-
-    ModalBottomSheetLayout(
-        sheetState = modalSheetState,
-        sheetContent = {
-            ReportModal(onOkClick = {
-                scope.launch {
-                    onReportClick()
-                    modalSheetState.hide()
-                }
-            }, onCancelClick = { scope.launch { modalSheetState.hide() } })
-        }
+    Column(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight()
+            .background(color = Color.White),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -128,11 +122,11 @@ fun PerfumeCommentContent(
             )
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 modifier = Modifier.padding(16.dp)
             ) {
                 CommentAndSortText(
-                    commentCount = data.itemCount,
+                    commentCount = data?.itemCount ?: 0,
                     onSortLikeClick = { onSortLikeClick() },
                     onSortLatestClick = { onSortLatestClick() },
                     sortType = sortType
@@ -141,7 +135,7 @@ fun PerfumeCommentContent(
                     userScrollEnabled = true,
                 ) {
 
-                    items(items = data.itemSnapshotList) {
+                    items(items = data?.itemSnapshotList ?: emptyList()) {
                         CommentItem(
                             count = it?.heartCount ?: 0,
                             isCommentLiked = it!!.liked,
@@ -157,9 +151,67 @@ fun PerfumeCommentContent(
 
                 }
             }
-            BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
         }
+        BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
     }
+
+
+//    ModalBottomSheetLayout(
+//        sheetState = modalSheetState,
+//        sheetContent = {
+//            ReportModal(onOkClick = {
+//                scope.launch {
+//                    onReportClick()
+//                    modalSheetState.hide()
+//                }
+//            }, onCancelClick = { scope.launch { modalSheetState.hide() } })
+//        }
+//    ) {
+//        Column(
+//            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+//                .background(color = Color.White),
+//            verticalArrangement = Arrangement.Top
+//        ) {
+//            TopBar(
+//                title = "댓글",
+//                iconSize = 25.dp,
+//                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+//                onNavClick = { onBackClick() },
+//            )
+//            Column(
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//                verticalArrangement = Arrangement.Center,
+//                modifier = Modifier.padding(16.dp)
+//            ) {
+//                CommentAndSortText(
+//                    commentCount = data.itemCount,
+//                    onSortLikeClick = { onSortLikeClick() },
+//                    onSortLatestClick = { onSortLatestClick() },
+//                    sortType = sortType
+//                )
+//                LazyColumn(
+//                    userScrollEnabled = true,
+//                ) {
+//
+//                    items(items = data.itemSnapshotList) {
+//                        CommentItem(
+//                            count = it?.heartCount ?: 0,
+//                            isCommentLiked = it!!.liked,
+//                            userImgUrl = it.profileImg ?: "",
+//                            userName = it.nickname,
+//                            content = it.content,
+//                            createdDate = it.createdAt ?: "",
+//                            onReportClick = { showReportModal(it.id.toString()) },
+//                            onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
+//                            onCommentLikedClick = {}
+//                        )
+//                    }
+//
+//                }
+//            }
+//            BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
+//        }
+//    }
 }
 
 @Composable
@@ -174,7 +226,7 @@ fun CommentAndSortText(
 
     Row(
         verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp).fillMaxWidth()
+        modifier = Modifier.padding(bottom = 4.dp).fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -215,12 +267,13 @@ fun BottomCommentAddBar(onAddCommentClick: () -> Unit) {
         Icon(
             painter = painterResource(R.drawable.ic_add_coment),
             contentDescription = null,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(32.dp),
+            tint = Color.White
         )
         Text(
-            "댓글달기",
+            "댓글작성",
             modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 20.sp)
+            style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 20.sp, color = Color.White)
         )
     }
 }

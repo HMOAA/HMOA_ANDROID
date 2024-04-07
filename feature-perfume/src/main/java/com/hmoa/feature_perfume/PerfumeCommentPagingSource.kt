@@ -1,5 +1,6 @@
 package com.hmoa.feature_perfume
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
@@ -8,29 +9,31 @@ import com.hmoa.core_model.response.PerfumeCommentResponseDto
 class PerfumeCommentPagingSource(
     private val perfumeCommentRepository: PerfumeCommentRepository,
     private val page: Int,
-    private val perfumeId: String?,
-    private val isNextPageExist: Boolean,
+    private val perfumeId: Int,
 ) : PagingSource<Int, PerfumeCommentResponseDto>() {
     private var commentCounts = 0
     private var cursor = 0 //TODO("처음 요청할 때 어떤값으로 줘야 하는지 확인하기")
-    private val STARTING_PAGE_INDEX = 0
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PerfumeCommentResponseDto> {
-        val position = params.key ?: STARTING_PAGE_INDEX
+        val pageNumber = params.key ?: 0
+        Log.d("PerfumeCommentPagingSource", "호출됨")
         try {
             val response =
                 perfumeCommentRepository.getPerfumeCommentsLatest(
                     page,
                     cursor = cursor,
-                    perfumeId = perfumeId!!.toInt()
+                    perfumeId = perfumeId
                 )
             commentCounts = response.commentCount
             cursor = response.comments.get(response.comments.lastIndex).id
+            Log.d("PerfumeCommentPagingSource", "response: ${response.comments}")
+            val prevKey = if (pageNumber > 0) pageNumber - 1 else null
+            val nextKey = if (response.lastPage) null else pageNumber + 1
 
             return LoadResult.Page(
                 data = response.comments,
-                prevKey = calculatePrevKey(position),
-                nextKey = calculateNextKey(isNextPageExist, position)
+                prevKey = prevKey,
+                nextKey = nextKey
             )
         } catch (e: Exception) {
             return LoadResult.Error(e)
@@ -38,26 +41,9 @@ class PerfumeCommentPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<Int, PerfumeCommentResponseDto>): Int? {
-        TODO("Not yet implemented")
-    }
-
-    fun calculatePrevKey(position: Int): Int? {
-        when (position) {
-            STARTING_PAGE_INDEX -> return null
-            else -> return position - 1
+        return state.anchorPosition?.let {
+            state.closestPageToPosition(it)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(it)?.nextKey?.minus(1)
         }
     }
-
-    fun calculateNextKey(isNextPageExist: Boolean, position: Int): Int? {
-        when (isNextPageExist) {
-            true -> return position + 1
-            false -> return null
-        }
-    }
-
-    fun getTotalPerfumeCommentCount(): Int {
-        return commentCounts
-    }
-
-
 }

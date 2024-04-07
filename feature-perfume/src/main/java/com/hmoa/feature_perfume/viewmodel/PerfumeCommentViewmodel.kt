@@ -25,7 +25,6 @@ class PerfumeCommentViewmodel @Inject constructor(
     private val handle: SavedStateHandle
 ) : ViewModel() {
     private val TARGET_ID = "targetId"
-    private val PERFUME_ID = "perfumeId"
 
     private var _sortedLikeCommentsState = MutableStateFlow<PagingData<PerfumeCommentResponseDto>?>(null)
     val sortedLikeCommentsState: StateFlow<PagingData<PerfumeCommentResponseDto>?> = _sortedLikeCommentsState
@@ -34,7 +33,7 @@ class PerfumeCommentViewmodel @Inject constructor(
     private var sortedLatestCommentsPage = MutableStateFlow<Int>(0)
     private var sortedLikeCommentsPage = MutableStateFlow<Int>(0)
     private var isSortState = MutableStateFlow<SortType>(SortType.LIKE)
-    private var sortedLatestCommentsIsNextPageExists = MutableStateFlow<Boolean>(true)
+    private var PERFUME_ID = MutableStateFlow<Int?>(null)
     val uiState: StateFlow<PerfumeCommentUiState> =
         combine(
             _sortedLikeCommentsState,
@@ -50,18 +49,23 @@ class PerfumeCommentViewmodel @Inject constructor(
             initialValue = PerfumeCommentUiState.Loading
         )
 
-    fun latestPerfumeCommentPagingSource(perfumeId: String?) = PerfumeCommentPagingSource(
+    fun latestPerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentPagingSource(
         page = sortedLatestCommentsPage.value,
         perfumeId = perfumeId,
-        isNextPageExist = sortedLatestCommentsIsNextPageExists.value,
         perfumeCommentRepository = perfumeCommentRepository
     )
 
     val PAGE_SIZE = 10
-    val getPagingLatestPerfumeComments = Pager(
-        config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
-        pagingSourceFactory = { latestPerfumeCommentPagingSource(handle.get<String>(PERFUME_ID)) }
-    ).flow.cachedIn(viewModelScope)
+    fun getPagingLatestPerfumeComments(perfumeId: Int?): Flow<PagingData<PerfumeCommentResponseDto>>? {
+        if (perfumeId != null) {
+            return Pager(
+                config = PagingConfig(pageSize = PAGE_SIZE),
+                pagingSourceFactory = { latestPerfumeCommentPagingSource(perfumeId) }
+            ).flow.cachedIn(viewModelScope)
+        } else {
+            return null
+        }
+    }
 
     fun addLatestPerfumeComments(perfumeId: Int) {
         viewModelScope.launch {
@@ -115,8 +119,8 @@ class PerfumeCommentViewmodel @Inject constructor(
         handle[TARGET_ID] = id
     }
 
-    fun savePerfumeId(id: String) {
-        handle[PERFUME_ID] = id
+    fun savePerfumeId(id: Int) {
+        PERFUME_ID.update { id }
     }
 
     sealed interface PerfumeCommentUiState {

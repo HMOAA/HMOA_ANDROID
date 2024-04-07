@@ -45,10 +45,10 @@ fun SpecificCommentContent(onBackClick: () -> Unit, data: PerfumeCommentResponse
         ProfileAndHeartView(
             count = data.heartCount,
             isCommentLiked = data.liked,
-            userImgUrl = data.profileImg,
+            userImgUrl = data.profileImg ?: "",
             userName = data.nickname,
             content = data.content,
-            createdDate = data.createdAt.toInt(),
+            createdDate = data.createdAt ?: "",
             onReportClick = {}
         )
     }
@@ -61,7 +61,7 @@ fun ProfileAndHeartView(
     userImgUrl: String,
     userName: String,
     content: String,
-    createdDate: Int,
+    createdDate: String,
     onReportClick: () -> Unit,
 ) {
     Column(
@@ -78,7 +78,7 @@ fun ProfileAndHeartView(
                     modifier = Modifier.padding(start = 8.dp)
                 )
                 Text(
-                    text = "${createdDate}일전",
+                    text = createdDate,
                     style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = CustomColor.gray3),
                     modifier = Modifier.padding(start = 8.dp)
                 )
@@ -121,7 +121,7 @@ fun SpecificCommentPreview() {
         userName = "이용인",
         userImgUrl = "",
         content = "기존에 사용하던 향이라 재구매했어요. 계절에 상관없이 사용할 수 있어서 좋아요",
-        createdDate = 10,
+        createdDate = "10일 전",
         onReportClick = {}
     )
 }

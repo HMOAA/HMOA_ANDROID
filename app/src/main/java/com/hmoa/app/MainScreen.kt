@@ -5,28 +5,37 @@ import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.MainTopBar
+import com.hmoa.feature_home.HomeRoute
+import com.hmoa.feature_perfume.navigation.navigateToPerfume
 
 @Composable
 fun MainRoute(
-    onNavCommunity: () -> Unit
+    onNavCommunity: () -> Unit,
+    navController: NavHostController
 ) {
     MainScreen(
-        onNavCommunity = onNavCommunity
+        onNavCommunity = onNavCommunity,
+        navController = navController
     )
 }
+
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
-    onNavCommunity: () -> Unit
+    onNavCommunity: () -> Unit,
+    navController: NavHostController
 ) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     Scaffold(
@@ -56,9 +65,9 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .fillMaxWidth()
+                .fillMaxWidth().padding(bottom = it.calculateBottomPadding())
         ) {
-            //TODO("네비게이션이 들어가야 할 거 같음")
+            HomeRoute({ navController.navigateToPerfume(it) }, {})
         }
     }
 }
@@ -66,5 +75,6 @@ fun MainScreen(
 @Preview
 @Composable
 fun ScaffoldDemoPreview() {
-    MainScreen({})
+    val navHostController = rememberNavController()
+    MainScreen({}, navHostController)
 }

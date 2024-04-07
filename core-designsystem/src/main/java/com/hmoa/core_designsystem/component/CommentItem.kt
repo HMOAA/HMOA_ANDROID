@@ -31,7 +31,7 @@ fun CommentItem(
     userImgUrl: String,
     userName: String,
     content: String,
-    createdDate: Int,
+    createdDate: String,
     onReportClick: () -> Unit,
     onCommentItemClick: () -> Unit
 ) {
@@ -43,7 +43,7 @@ fun CommentItem(
                         .height(28.dp)
                         .clip(CircleShape)
                         .background(color = Color.Transparent)
-                        .border(1.dp, Color.White, CircleShape)
+                        .border(1.dp, Color.Black, CircleShape)
                 ) {
                     com.skydoves.landscapist.glide.GlideImage(imageModel = userImgUrl)
                 }
@@ -53,7 +53,7 @@ fun CommentItem(
                     modifier = Modifier.padding(start = 8.dp)
                 )
                 Text(
-                    text = "${createdDate}일전",
+                    text = "${createdDate}",
                     style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = CustomColor.gray3),
                     modifier = Modifier.padding(start = 8.dp)
                 )
@@ -97,7 +97,7 @@ fun CommentItemPreview() {
         userImgUrl = "",
         userName = "임현규",
         content = "선물용으로 구매했는데, 친구가 좋아했어요",
-        createdDate = 12,
+        createdDate = "12",
         onReportClick = {},
         onCommentItemClick = {})
 }

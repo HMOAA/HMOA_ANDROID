@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PickPersonalInfoViewmodel @Inject constructor(
     private val getNickname: GetNicknameUseCase,
-    private val postSignupInfo: PostSignupUseCase,
+    private val postSignupInfo: PostSignupUseCase
 ) : ViewModel() {
     private val _birthYearState = MutableStateFlow<Int?>(null)
     var birthYearState = _birthYearState.asStateFlow()

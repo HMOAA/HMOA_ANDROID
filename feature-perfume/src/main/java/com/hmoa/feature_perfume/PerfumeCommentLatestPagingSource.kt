@@ -7,7 +7,6 @@ import com.hmoa.core_model.response.PerfumeCommentResponseDto
 
 class PerfumeCommentLatestPagingSource(
     private val perfumeCommentRepository: PerfumeCommentRepository,
-    private val page: Int,
     private val perfumeId: Int,
 ) : PagingSource<Int, PerfumeCommentResponseDto>() {
     private var commentCounts = 0
@@ -18,7 +17,7 @@ class PerfumeCommentLatestPagingSource(
         try {
             val response =
                 perfumeCommentRepository.getPerfumeCommentsLatest(
-                    page,
+                    pageNumber,
                     cursor = cursor,
                     perfumeId = perfumeId
                 )

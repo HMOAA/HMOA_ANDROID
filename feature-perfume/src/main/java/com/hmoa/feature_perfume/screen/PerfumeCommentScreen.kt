@@ -47,12 +47,14 @@ fun PerfumeCommentScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val latestPerfumeComments =
         viewModel.getPagingLatestPerfumeComments(perfumeId)?.collectAsLazyPagingItems()
+    val likePerfumeComments = viewModel.getPagingLikePerfumeComments(perfumeId)?.collectAsLazyPagingItems()
 
     LaunchedEffect(perfumeId) {
         if (perfumeId != null) {
             viewModel.savePerfumeId(perfumeId)
         }
     }
+
 
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
@@ -63,7 +65,8 @@ fun PerfumeCommentScreen(
             is PerfumeCommentViewmodel.PerfumeCommentUiState.Loading -> {}
             is PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData -> {
                 PerfumeCommentContent(
-                    data = latestPerfumeComments,
+                    latestPerfumeComments = latestPerfumeComments,
+                    likePerfumeComments = likePerfumeComments,
                     sortType = (uiState as PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData).sortType,
                     onBackClick = { onBackClick() },
                     onSortLikeClick = { viewModel.onClickSortLike() },
@@ -83,7 +86,8 @@ fun PerfumeCommentScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PerfumeCommentContent(
-    data: LazyPagingItems<PerfumeCommentResponseDto>?,
+    latestPerfumeComments: LazyPagingItems<PerfumeCommentResponseDto>?,
+    likePerfumeComments: LazyPagingItems<PerfumeCommentResponseDto>?,
     sortType: SortType,
     onBackClick: () -> Unit,
     onSortLikeClick: () -> Unit,
@@ -104,6 +108,7 @@ fun PerfumeCommentContent(
         scope.launch { modalSheetState.show() }
         saveReportTarget(id)
     }
+
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight()
             .background(color = Color.White),
@@ -126,35 +131,48 @@ fun PerfumeCommentContent(
                 modifier = Modifier.padding(16.dp)
             ) {
                 CommentAndSortText(
-                    commentCount = data?.itemCount ?: 0,
+                    commentCount = latestPerfumeComments?.itemCount ?: 0,
                     onSortLikeClick = { onSortLikeClick() },
                     onSortLatestClick = { onSortLatestClick() },
                     sortType = sortType
                 )
-                LazyColumn(
-                    userScrollEnabled = true,
-                ) {
-
-                    items(items = data?.itemSnapshotList ?: emptyList()) {
-                        CommentItem(
-                            count = it?.heartCount ?: 0,
-                            isCommentLiked = it!!.liked,
-                            userImgUrl = it.profileImg ?: "",
-                            userName = it.nickname,
-                            content = it.content,
-                            createdDate = it.createdAt ?: "",
-                            onReportClick = { showReportModal(it.id.toString()) },
-                            onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
-                            onCommentLikedClick = {}
-                        )
-                    }
-
+                when (sortType) {
+                    SortType.LATEST -> PerfumeCommentList(likePerfumeComments, {}, { id, isWrited -> })
+                    SortType.LIKE -> PerfumeCommentList(latestPerfumeComments, {}, { id, isWrited -> })
                 }
+
             }
         }
         BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
     }
 
+}
+
+@Composable
+fun PerfumeCommentList(
+    latestPerfumeComments: LazyPagingItems<PerfumeCommentResponseDto>?,
+    onShowReportModal: (id: String) -> Unit,
+    onSpecificCommentClick: (id: String, isWrited: Boolean) -> Unit
+) {
+    LazyColumn(
+        userScrollEnabled = true,
+    ) {
+
+        items(items = latestPerfumeComments?.itemSnapshotList ?: emptyList()) {
+            CommentItem(
+                count = it?.heartCount ?: 0,
+                isCommentLiked = it!!.liked,
+                userImgUrl = it.profileImg ?: "",
+                userName = it.nickname,
+                content = it.content,
+                createdDate = it.createdAt ?: "",
+                onReportClick = { onShowReportModal(it.id.toString()) },
+                onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
+                onCommentLikedClick = {}
+            )
+        }
+    }
+}
 
 //    ModalBottomSheetLayout(
 //        sheetState = modalSheetState,
@@ -212,7 +230,7 @@ fun PerfumeCommentContent(
 //            BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
 //        }
 //    }
-}
+
 
 @Composable
 fun CommentAndSortText(

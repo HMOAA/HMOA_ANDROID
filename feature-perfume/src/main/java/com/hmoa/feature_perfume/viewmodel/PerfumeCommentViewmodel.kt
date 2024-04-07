@@ -12,7 +12,8 @@ import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
-import com.hmoa.feature_perfume.PerfumeCommentPagingSource
+import com.hmoa.feature_perfume.PerfumeCommentLatestPagingSource
+import com.hmoa.feature_perfume.PerfumeCommentLikePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,14 +26,12 @@ class PerfumeCommentViewmodel @Inject constructor(
     private val handle: SavedStateHandle
 ) : ViewModel() {
     private val TARGET_ID = "targetId"
-
+    val PAGE_SIZE = 10
     private var _sortedLikeCommentsState = MutableStateFlow<PagingData<PerfumeCommentResponseDto>?>(null)
     val sortedLikeCommentsState: StateFlow<PagingData<PerfumeCommentResponseDto>?> = _sortedLikeCommentsState
     private var _sortedLatestCommentsState = MutableStateFlow<PagingData<PerfumeCommentResponseDto>?>(null)
     val sortedLatestCommentsState: StateFlow<PagingData<PerfumeCommentResponseDto>?> = _sortedLatestCommentsState
-    private var sortedLatestCommentsPage = MutableStateFlow<Int>(0)
-    private var sortedLikeCommentsPage = MutableStateFlow<Int>(0)
-    private var isSortState = MutableStateFlow<SortType>(SortType.LIKE)
+    private var isSortState = MutableStateFlow(SortType.LATEST)
     private var PERFUME_ID = MutableStateFlow<Int?>(null)
     val uiState: StateFlow<PerfumeCommentUiState> =
         combine(
@@ -49,13 +48,16 @@ class PerfumeCommentViewmodel @Inject constructor(
             initialValue = PerfumeCommentUiState.Loading
         )
 
-    fun latestPerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentPagingSource(
-        page = sortedLatestCommentsPage.value,
+    fun latestPerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentLatestPagingSource(
         perfumeId = perfumeId,
         perfumeCommentRepository = perfumeCommentRepository
     )
 
-    val PAGE_SIZE = 10
+    fun likePerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentLikePagingSource(
+        perfumeId = perfumeId,
+        perfumeCommentRepository = perfumeCommentRepository
+    )
+
     fun getPagingLatestPerfumeComments(perfumeId: Int?): Flow<PagingData<PerfumeCommentResponseDto>>? {
         if (perfumeId != null) {
             return Pager(
@@ -67,25 +69,18 @@ class PerfumeCommentViewmodel @Inject constructor(
         }
     }
 
-    fun addLatestPerfumeComments(perfumeId: Int) {
-        viewModelScope.launch {
-//            getPagingLatestPerfumeComments(perfumeId).asResult().collectLatest {
-//                when (it) {
-//                    is Result.Success -> {
-//                        _sortedLatestCommentsState.value = it.data
-//                        sortedLatestCommentsIsNextPageExists.value // TODO("마지막페이지가 존재하는지 아닌지 확인해야 함")
-//                    }
-//
-//                    is Result.Error -> {
-//
-//                    }
-//
-//                    is Result.Loading -> {
-//
-//                    }
-//                }
-//            }
+    fun getPagingLikePerfumeComments(perfumeId: Int?): Flow<PagingData<PerfumeCommentResponseDto>>? {
+        if (perfumeId != null) {
+            return Pager(
+                config = PagingConfig(pageSize = PAGE_SIZE),
+                pagingSourceFactory = { likePerfumeCommentPagingSource(perfumeId) }
+            ).flow.cachedIn(viewModelScope)
+        } else {
+            return null
         }
+    }
+
+    fun addLatestPerfumeComments(perfumeId: Int) {
     }
 
     fun addLikePerfumeComments(perfumeId: Int) {

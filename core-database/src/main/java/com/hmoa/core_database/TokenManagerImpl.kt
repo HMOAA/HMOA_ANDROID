@@ -35,19 +35,19 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         private val KAKAO_ACCESS_TOKEN_KEY = stringPreferencesKey("KAKAO_ACCESS_TOKEN")
     }
 
-    override fun getAuthToken(): Flow<String?> {
+    override suspend fun getAuthToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[AUTH_TOKEN_KEY]
         }
     }
 
-    override fun getRememberedToken(): Flow<String?> {
+    override suspend fun getRememberedToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[REMEMBERED_TOKEN_KEY]
         }
     }
 
-    override fun getKakaoAccessToken(): Flow<String?> {
+    override suspend fun getKakaoAccessToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[KAKAO_ACCESS_TOKEN_KEY]
         }

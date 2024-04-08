@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val navHostController = rememberNavController()
+
             SetUpNavGraph(navHostController, initialRoute)
         }
     }

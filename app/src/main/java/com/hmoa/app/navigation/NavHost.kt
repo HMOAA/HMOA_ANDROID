@@ -78,7 +78,7 @@ fun SetUpNavGraph(
             onSpecificCommentClick = { commentId, isEditable -> }
         )
         perfumeComment(
-            onBackClick = {},
+            onBackClick = navController::navigateToBack,
             onAddCommentClick = {},
             onSpecificCommentClick = { commentId, isEditable -> }
         )

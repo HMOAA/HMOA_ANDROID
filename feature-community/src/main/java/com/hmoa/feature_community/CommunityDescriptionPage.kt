@@ -6,14 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -26,11 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -49,7 +40,7 @@ import com.hmoa.feature_community.ViewModel.CommunityDescViewModel
 
 @Composable
 fun CommunityDescriptionRoute(
-    _id : Int?,
+    _id: Int?,
     onNavCommunityEdit: (Int) -> Unit,
     onNavBack : () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
@@ -147,14 +138,15 @@ fun CommunityDescriptionPage(
         color = CustomColor.red
     )
 
-    when(uiState) {
+    when (uiState) {
         CommunityDescUiState.Loading -> {
-            Column(){
+            Column() {
                 Text(
                     text = "Loading"
                 )
             }
         }
+
         is CommunityDescUiState.CommunityDesc -> {
 
             val community = uiState.community
@@ -166,7 +158,7 @@ fun CommunityDescriptionPage(
                     containerColor = Color.White,
                     scrimColor = Color.Black.copy(alpha = 0.3f),
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
@@ -266,7 +258,7 @@ fun CommunityDescriptionPage(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color.White)
-            ){
+            ) {
                 TopBar(
                     title = "Community",
                     navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -297,7 +289,7 @@ fun CommunityDescriptionPage(
                                 color = CustomColor.gray1,
                                 shape = RoundedCornerShape(size = 10.dp)
                             )
-                    ){
+                    ) {
                         PostContent(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -343,8 +335,8 @@ fun CommunityDescriptionPage(
 
                     Spacer(Modifier.height(21.dp))
 
-                    if (commentList.isNotEmpty()){
-                        commentList.forEachIndexed{ index, comment ->
+                    if (commentList.isNotEmpty()) {
+                        commentList.forEachIndexed { index, comment ->
                             Log.d("TEST TAG", "comment : ${comment}")
                             Comment(
                                 profile = comment.profileImg,
@@ -386,8 +378,9 @@ fun CommunityDescriptionPage(
                 Spacer(Modifier.height(7.dp))
             }
         }
+
         CommunityDescUiState.Error -> {
-            Column{
+            Column {
                 Text(
                     text = "Data is Error"
                 )
@@ -398,8 +391,8 @@ fun CommunityDescriptionPage(
 
 @Preview
 @Composable
-fun TestCommunityDescriptionPage(){
-    var isOpenBottomOptions by remember{mutableStateOf(false)}
+fun TestCommunityDescriptionPage() {
+    var isOpenBottomOptions by remember { mutableStateOf(false) }
     CommunityDescriptionPage(
         isOpenBottomOptions = isOpenBottomOptions,
         changeBottomOptionState = {

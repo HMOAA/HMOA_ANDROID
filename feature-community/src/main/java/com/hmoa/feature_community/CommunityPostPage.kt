@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -56,9 +57,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -133,10 +136,10 @@ fun PostCommunityPage(
     onUpdatePictures : (List<Uri>) -> Unit,
     onDeletePictures : (Int) -> Unit,
     //뒤로가기
-    onNavBack : () -> Unit,
+    onNavBack: () -> Unit,
     //해당 게시글 Post
-    onPostCommunity : () -> Unit,
-){
+    onPostCommunity: () -> Unit,
+) {
 
     //갤러리에서 사진 가져오기
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
@@ -325,9 +328,10 @@ fun PostCommunityPage(
                                 //image view
                                 ImageView(
                                     imageUrl = pictures[it].toString(),
-                                    width = 274,
-                                    height = 274,
-                                    backgroundColor = CustomColor.gray1
+                                    width = 274f,
+                                    height = 274f,
+                                    backgroundColor = CustomColor.gray1,
+                                    contentScale = ContentScale.Crop
                                 )
 
                                 //삭제 버튼
@@ -392,7 +396,7 @@ fun PostCommunityPage(
 
 @Preview(showBackground = true)
 @Composable
-fun TestPostCommunityPage(){
+fun TestPostCommunityPage() {
 
     var title by remember{mutableStateOf("")}
     var content by remember{mutableStateOf("")}

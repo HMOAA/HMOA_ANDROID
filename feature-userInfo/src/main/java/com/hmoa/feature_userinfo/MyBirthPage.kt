@@ -6,9 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +26,7 @@ fun MyBirthRoute(
 ) {
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    var showDialog by remember{mutableStateOf(false)}
+    var showDialog by remember { mutableStateOf(false) }
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle()
 
     MyBirthPage(
@@ -50,18 +48,19 @@ fun MyBirthRoute(
 
 @Composable
 fun MyBirthPage(
-    uiState : UserInfoUiState,
-    isEnabled : Boolean,
-    showDialog : Boolean,
-    onChangeDialogState : () -> Unit,
-    onUpdateBirth : (Int) -> Unit,
-    onSaveBirth : () -> Unit,
+    uiState: UserInfoUiState,
+    isEnabled: Boolean,
+    showDialog: Boolean,
+    onChangeDialogState: () -> Unit,
+    onUpdateBirth: (Int) -> Unit,
+    onSaveBirth: () -> Unit,
     onNavBack: () -> Unit
 ) {
     when (uiState) {
         is UserInfoUiState.Loading -> {
 
         }
+
         is UserInfoUiState.UserInfo -> {
             if (showDialog) {
                 YearPickerDialog(

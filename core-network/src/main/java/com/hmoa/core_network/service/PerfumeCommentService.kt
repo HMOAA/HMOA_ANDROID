@@ -10,8 +10,9 @@ interface PerfumeCommentService {
 
     @GET("perfume/{perfumeId}/comments/cursor")
     suspend fun getPerfumeCommentsLatest(
-        @Field("page") page: String,
-        @Path("perfumeId") perfumeId: Int
+        @Path("perfumeId") perfumeId: Int,
+        @Query("page") page: Int,
+        @Query("cursor") cursor: Int,
     ): PerfumeCommentGetResponseDto
 
     @POST("perfume/{perfumeId}/comments")
@@ -22,8 +23,8 @@ interface PerfumeCommentService {
 
     @GET("perfume/{perfumeId}/comments/top")
     suspend fun getPerfumeCommentsLikest(
-        @Field("page") page: String,
-        @Path("perfumeId") perfumeId: String
+        @Path("perfumeId") perfumeId: String,
+        @Query("page") page: String,
     ): PerfumeCommentGetResponseDto
 
     @DELETE("/perfume/comments/{comments}/delete")

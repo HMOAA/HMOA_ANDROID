@@ -152,10 +152,10 @@ fun PerfumeContent(
         ) {
             ImageView(
                 data.perfumeImageUrl,
-                width = 1f,
-                height = 1f,
+                width = 0.6f,
+                height = 0.6f,
                 backgroundColor = CustomColor.gray2,
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.FillWidth
             )
         }
         Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
@@ -528,7 +528,8 @@ fun CommentView(
                     content = it.content,
                     createdDate = it.createdAt ?: "",
                     onReportClick = {},
-                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) }
+                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed)},
+                    onCommentLikedClick = {}
                 )
             }
             Column(modifier = Modifier.padding(top = 8.dp)) {

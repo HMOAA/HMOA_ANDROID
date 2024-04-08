@@ -9,8 +9,12 @@ import javax.inject.Inject
 
 class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :
     PerfumeCommentDataStore {
-    override suspend fun getPerfumeCommentsLatest(page: String, perfumeId: Int): PerfumeCommentGetResponseDto {
-        return perfumeCommentService.getPerfumeCommentsLatest(page, perfumeId)
+    override suspend fun getPerfumeCommentsLatest(
+        page: Int,
+        cursor: Int,
+        perfumeId: Int
+    ): PerfumeCommentGetResponseDto {
+        return perfumeCommentService.getPerfumeCommentsLatest(page = page, cursor = cursor, perfumeId = perfumeId)
     }
 
     override suspend fun postPerfumeComment(perfumeId: Int, dto: PerfumeCommentRequestDto): PerfumeCommentResponseDto {
@@ -18,7 +22,7 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
     }
 
     override suspend fun getPerfumeCommentsLikest(page: String, perfumeId: String): PerfumeCommentGetResponseDto {
-        return perfumeCommentService.getPerfumeCommentsLikest(page, perfumeId)
+        return perfumeCommentService.getPerfumeCommentsLikest(page = page, perfumeId = perfumeId)
     }
 
     override suspend fun deletePerfumeComments(commentId: Int): DataResponseDto<Any> {

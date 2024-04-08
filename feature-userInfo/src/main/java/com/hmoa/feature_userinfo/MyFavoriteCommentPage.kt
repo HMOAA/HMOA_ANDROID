@@ -2,12 +2,7 @@ package com.hmoa.feature_userinfo
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -23,13 +18,12 @@ import com.example.feature_userinfo.viewModel.FavoriteCommentUiState
 import com.example.feature_userinfo.viewModel.FavoriteCommentViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Comment
-import com.hmoa.feature_userinfo.viewModel.CommentUiState
 
 @Composable
 fun MyFavoriteCommentRoute(
     onNavBack: () -> Unit,
     onNavCommunity: () -> Unit,
-    viewModel : FavoriteCommentViewModel = hiltViewModel()
+    viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
 
     //comment list
@@ -57,8 +51,8 @@ fun MyFavoriteCommentRoute(
 fun MyFavoriteCommentPage(
     onNavBack: () -> Unit,
     onNavCommunity: () -> Unit, //Community로 이동?
-    uiState : FavoriteCommentUiState,
-    commentType : String,
+    uiState: FavoriteCommentUiState,
+    commentType: String,
     onAddPage: () -> Unit,
     onTypeChanged: (newType: String) -> Unit,
 ) {
@@ -73,24 +67,25 @@ fun MyFavoriteCommentPage(
             onNavClick = onNavBack //뒤로 가기
         )
 
-        when(uiState) {
+        when (uiState) {
             FavoriteCommentUiState.Loading -> {
                 /** Loading 화면 띄우기 */
             }
+
             else -> {
                 Spacer(Modifier.height(16.dp))
 
                 /** PL되면 TypeButton 2개 추가 */
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     /** PL되면 TypeButton 2개 추가 */
                 }
 
                 when (uiState) {
                     is FavoriteCommentUiState.Comments -> {
                         LazyColumn {
-                            items(uiState.comments){ comment ->
+                            items(uiState.comments) { comment ->
                                 /** Comment 클릭 시 해당 댓글이 있는 Community로 이동 */
                                 Comment(
                                     profile = comment.profileImg,
@@ -104,12 +99,14 @@ fun MyFavoriteCommentPage(
                             }
                         }
                     }
+
                     FavoriteCommentUiState.Empty -> {
                         NoDataPage(
                             mainMsg = "작성한 댓글이\n없습니다",
                             subMsg = "좋아하는 함수에 댓글을 작성해주세요"
                         )
                     }
+
                     else -> {
 
                     }

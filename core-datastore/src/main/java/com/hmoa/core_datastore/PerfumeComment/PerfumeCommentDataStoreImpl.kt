@@ -9,6 +9,10 @@ import javax.inject.Inject
 
 class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :
     PerfumeCommentDataStore {
+    override suspend fun getPerfumeComment(commentId: Int): PerfumeCommentResponseDto {
+        return perfumeCommentService.getPerfumeComment(commentId)
+    }
+
     override suspend fun getPerfumeCommentsLatest(
         page: Int,
         cursor: Int,

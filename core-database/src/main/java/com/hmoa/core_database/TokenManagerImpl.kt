@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 val Context.datastore: DataStore<Preferences> by preferencesDataStore(
@@ -34,39 +35,45 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         private val KAKAO_ACCESS_TOKEN_KEY = stringPreferencesKey("KAKAO_ACCESS_TOKEN")
     }
 
-    override fun getAuthToken(): Flow<String?> {
+    override suspend fun getAuthToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[AUTH_TOKEN_KEY]
         }
     }
 
-    override fun getRememberedToken(): Flow<String?> {
+    override suspend fun getRememberedToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[REMEMBERED_TOKEN_KEY]
         }
     }
 
-    override fun getKakaoAccessToken(): Flow<String?> {
+    override suspend fun getKakaoAccessToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[KAKAO_ACCESS_TOKEN_KEY]
         }
     }
 
-    override suspend fun saveAuthToken(token: String) {
-        dataStore.edit { preferences ->
-            preferences[AUTH_TOKEN_KEY] = token
+    override fun saveAuthToken(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStore.edit { preferences ->
+                preferences[AUTH_TOKEN_KEY] = token
+            }
         }
     }
 
-    override suspend fun saveRememberedToken(token: String) {
-        dataStore.edit { preferences ->
-            preferences[REMEMBERED_TOKEN_KEY] = token
+    override fun saveRememberedToken(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStore.edit { preferences ->
+                preferences[REMEMBERED_TOKEN_KEY] = token
+            }
         }
     }
 
-    override suspend fun saveKakaoAccessToken(token: String) {
-        dataStore.edit { preferences ->
-            preferences[KAKAO_ACCESS_TOKEN_KEY] = token
+    override fun saveKakaoAccessToken(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStore.edit { preferences ->
+                preferences[KAKAO_ACCESS_TOKEN_KEY] = token
+            }
         }
     }
 

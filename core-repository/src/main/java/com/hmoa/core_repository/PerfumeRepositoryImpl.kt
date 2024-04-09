@@ -1,5 +1,6 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Perfume.PerfumeDataStore
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.request.AgeRequestDto
@@ -9,11 +10,11 @@ import com.hmoa.core_model.response.*
 import javax.inject.Inject
 
 class PerfumeRepositoryImpl @Inject constructor(private val perfumeDataStore: PerfumeDataStore) : PerfumeRepository {
-    override suspend fun getPerfumeTopDetail(perfumeId: String): PerfumeDetailResponseDto {
+    override suspend fun getPerfumeTopDetail(perfumeId: String): ResultResponse<PerfumeDetailResponseDto> {
         return perfumeDataStore.getPerfumeTopDetail(perfumeId)
     }
 
-    override suspend fun getPerfumeBottomDetail(perfumeId: String): PerfumeDetailSecondResponseDto {
+    override suspend fun getPerfumeBottomDetail(perfumeId: String): ResultResponse<PerfumeDetailSecondResponseDto> {
         return perfumeDataStore.getPerfumeBottomDetail(perfumeId)
     }
 

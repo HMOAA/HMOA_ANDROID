@@ -2,7 +2,10 @@ package com.hmoa.feature_perfume.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.Result
+import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
+import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -15,6 +18,7 @@ class SpecificCommentViewmodel @Inject constructor(
 ) : ViewModel() {
     private val perfumeCommentState = MutableStateFlow<PerfumeCommentResponseDto?>(null)
     private val likePerfumeCommentState = MutableStateFlow<Boolean>(false)
+    private val modifiedPerfumeCommentBufferState = MutableStateFlow<PerfumeCommentRequestDto?>(null)
 
     val uiState: StateFlow<SpecificCommentUiState> =
         combine(perfumeCommentState, likePerfumeCommentState) { perfumeComment, likePerfume ->
@@ -28,12 +32,32 @@ class SpecificCommentViewmodel @Inject constructor(
 
     fun initializePerfumeComment(commentId: Int) {
         viewModelScope.launch {
-            perfumeCommentState.update { perfumeCommentRepository.getPerfumeComment(commentId) }
+            flow { emit(perfumeCommentRepository.getPerfumeComment(commentId)) }.asResult().collectLatest {
+                when (it) {
+                    is com.hmoa.core_common.Result.Loading -> {
+
+                    }
+
+                    is com.hmoa.core_common.Result.Success -> {
+                        perfumeCommentState.update { it }
+                    }
+
+                    is Result.Error -> {
+
+                    }
+                }
+            }
         }
     }
 
     fun onChangeLikePerfumceCommnet() {
 
+    }
+
+    fun onChangePerfumceCommnet(text: String) {
+        viewModelScope.launch {
+            per
+        }
     }
 
     sealed interface SpecificCommentUiState {

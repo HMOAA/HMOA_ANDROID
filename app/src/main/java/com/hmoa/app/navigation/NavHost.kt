@@ -8,10 +8,7 @@ import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.homeScreen
 import com.hmoa.feature_home.navigateToHome
-import com.hmoa.feature_perfume.navigation.navigateToPerfume
-import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
-import com.hmoa.feature_perfume.navigation.perfumeComment
-import com.hmoa.feature_perfume.navigation.perfumeScreen
+import com.hmoa.feature_perfume.navigation.*
 
 @Composable
 fun SetUpNavGraph(
@@ -73,12 +70,24 @@ fun SetUpNavGraph(
             onBrandClick = {},
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
             onSimilarPerfumeClick = {},
-            onSpecificCommentClick = { commentId, isEditable -> }
+            onSpecificCommentClick = { commentId, isEditable ->
+                navController.navigateToSpecificPerfumeComment(
+                    commentId.toInt(),
+                    isEditable
+                )
+            }
         )
         perfumeComment(
             onBackClick = navController::navigateToBack,
             onAddCommentClick = {},
-            onSpecificCommentClick = { commentId, isEditable -> }
+            onSpecificCommentClick = { commentId, isEditable ->
+                navController.navigateToSpecificPerfumeComment(
+                    commentId.toInt(),
+                    isEditable
+                )
+            }
         )
+        specificComment(onBackClick = navController::navigateToBack)
+        editMyPerfumeComment(onBackClick = navController::navigateToBack)
     }
 }

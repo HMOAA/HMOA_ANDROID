@@ -130,13 +130,6 @@ fun CommunityHome(
                         }
                     }
                 }
-                MainBottomBar(
-                    initValue = BottomScreen.HPedia,
-                    onClickHome = onNavHome,
-                    onClickHPedia = onNavHPedia,
-                    onClickLike = onNavLike,
-                    onClickMyPage = onNavMyPage
-                )
             }
         }
         is CommunityHomeUiState.Error -> {

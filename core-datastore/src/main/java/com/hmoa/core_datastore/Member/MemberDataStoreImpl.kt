@@ -1,7 +1,6 @@
 package com.hmoa.core_datastore.Member
 
 import ResultResponse
-import android.util.Log
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
@@ -41,7 +40,6 @@ class MemberDataStoreImpl @Inject constructor(
 
     override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
         var result = true
-        Log.i("postExistsNickName", "접근함")
         memberService.postExistsNickname(request).suspendOnSuccess {
             result = false
         }

@@ -12,8 +12,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -56,7 +56,7 @@ object ServiceModule {
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
         var token: String? = null
-        CoroutineScope(Dispatchers.IO).async {
+        CoroutineScope(Dispatchers.IO).launch {
             token = tokenManager.getAuthToken().firstOrNull()
         }
 
@@ -64,7 +64,7 @@ object ServiceModule {
         return Interceptor { chain ->
             with(chain) {
                 val newRequest = request().newBuilder()
-                    .addHeader("X-AUTH-TOKEN", "${token}")
+                    .header("X-AUTH-TOKEN", "${token}")
                     .build()
                 proceed(newRequest)
             }

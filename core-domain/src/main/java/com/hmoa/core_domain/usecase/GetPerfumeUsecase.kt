@@ -15,32 +15,33 @@ class GetPerfumeUsecase @Inject constructor(
         val perfumeInfo1 = perfumeRepository.getPerfumeTopDetail(perfumeId)
         val perfumeInfo2 = perfumeRepository.getPerfumeBottomDetail(perfumeId)
         val result = Perfume(
-            brandEnglishName = perfumeInfo1.brandEnglishName,
-            brandKoreanName = perfumeInfo1.brandName,
-            brandId = perfumeInfo1.brandId.toString(),
-            brandImgUrl = perfumeInfo1.brandImgUrl,
-            perfumeEnglishName = perfumeInfo1.englishName,
-            perfumeKoreanName = perfumeInfo1.koreanName,
-            baseNote = perfumeInfo1.baseNote ?: "",
-            heartNote = perfumeInfo1.heartNote ?: "",
-            topNote = perfumeInfo1.topNote ?: "",
-            likedCount = perfumeInfo1.heartNum,
-            liked = perfumeInfo1.liked,
-            notePhotos = perfumeInfo1.notePhotos?.map { mapIndexToTastingNoteImageUrl(it.toInt()) } ?: emptyList(),
-            perfumeId = perfumeInfo1.perfumeId.toString(),
-            perfumeImageUrl = perfumeInfo1.perfumeImageUrl,
-            price = "%,d".format(perfumeInfo1.price),
-            review = perfumeInfo1.review,
-            singleNote = perfumeInfo1.singleNote,
-            sortType = perfumeInfo1.sortType,
-            perfumeVolumeList = perfumeInfo1.volume ?: emptyArray(),
-            perfumeVolume = perfumeInfo1.priceVolume,
+            brandEnglishName = perfumeInfo1.data?.brandEnglishName ?: "",
+            brandKoreanName = perfumeInfo1.data?.brandName ?: "",
+            brandId = perfumeInfo1.data?.brandId.toString(),
+            brandImgUrl = perfumeInfo1.data?.brandImgUrl ?: "",
+            perfumeEnglishName = perfumeInfo1.data?.englishName ?: "",
+            perfumeKoreanName = perfumeInfo1.data?.koreanName ?: "",
+            baseNote = perfumeInfo1.data?.baseNote ?: "",
+            heartNote = perfumeInfo1.data?.heartNote ?: "",
+            topNote = perfumeInfo1.data?.topNote ?: "",
+            likedCount = perfumeInfo1.data?.heartNum ?: 0,
+            liked = perfumeInfo1.data?.liked ?: false,
+            notePhotos = perfumeInfo1.data?.notePhotos?.map { mapIndexToTastingNoteImageUrl(it.toInt()) }
+                ?: emptyList(),
+            perfumeId = perfumeInfo1.data?.perfumeId.toString(),
+            perfumeImageUrl = perfumeInfo1.data?.perfumeImageUrl ?: "",
+            price = "%,d".format(perfumeInfo1.data?.price ?: 0),
+            review = perfumeInfo1.data?.review,
+            singleNote = perfumeInfo1.data?.singleNote,
+            sortType = perfumeInfo1.data?.sortType ?: 0,
+            perfumeVolumeList = perfumeInfo1.data?.volume ?: emptyArray(),
+            perfumeVolume = perfumeInfo1.data?.priceVolume ?: 0,
             commentInfo = PerfumeCommentGetResponseDto(
-                commentCount = perfumeInfo2.commentInfo?.commentCount ?: 0,
-                comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.commentInfo?.comments ?: emptyList()),
-                lastPage = perfumeInfo2.commentInfo?.lastPage!!
+                commentCount = perfumeInfo2.data?.commentInfo?.commentCount ?: 0,
+                comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.data?.commentInfo?.comments ?: emptyList()),
+                lastPage = perfumeInfo2.data?.commentInfo?.lastPage ?: false
             ),
-            similarPerfumes = perfumeInfo2.similarPerfumes ?: emptyArray()
+            similarPerfumes = perfumeInfo2.data?.similarPerfumes ?: emptyArray()
         )
         return flow {
             emit(result)

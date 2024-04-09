@@ -5,22 +5,25 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
+import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
-class SpecificCommentViewmodel @Inject constructor(
+class EditMyPerfumeCommentViewmodel @Inject constructor(
     private val perfumeCommentRepository: PerfumeCommentRepository
 ) : ViewModel() {
     private val perfumeCommentState = MutableStateFlow<PerfumeCommentResponseDto?>(null)
     private val likePerfumeCommentState = MutableStateFlow<Boolean>(false)
+    private val isNewPerfumeCommentSubmitedState = MutableStateFlow<Boolean>(false)
 
     val uiState: StateFlow<SpecificCommentUiState> =
-        combine(perfumeCommentState, likePerfumeCommentState) { perfumeComment, likePerfume ->
-            SpecificCommentUiState.CommentData(comment = perfumeComment, isLikeComment = likePerfume)
+        combine(perfumeCommentState, likePerfumeCommentState, isNewPerfumeCommentSubmitedState) { perfumeComment, likePerfume,isNewPerfumeCommentSubmited ->
+            SpecificCommentUiState.CommentData(comment = perfumeComment, isLikeComment = likePerfume, isNewPerfumeCommentSubmited = isNewPerfumeCommentSubmited)
 
         }.stateIn(
             scope = viewModelScope,
@@ -37,9 +40,7 @@ class SpecificCommentViewmodel @Inject constructor(
                     }
 
                     is com.hmoa.core_common.Result.Success -> {
-                        perfumeCommentState.value = it.data
-                        likePerfumeCommentState.value = it.data.liked
-
+                        perfumeCommentState.update { it }
                     }
 
                     is Result.Error -> {
@@ -54,11 +55,46 @@ class SpecificCommentViewmodel @Inject constructor(
 
     }
 
+    fun onChangePerfumceComment(text: String) {
+        viewModelScope.launch {
+            perfumeCommentState.value?.content = text
+        }
+    }
+
+    fun onSubmitPerfumeComment(commentId: Int, text: String) {
+        viewModelScope.launch {
+            flow {
+                emit(
+                    perfumeCommentRepository.putPerfumeCommentModify(
+                        commentId = commentId,
+                        dto = PerfumeCommentRequestDto(content = text)
+                    )
+                )
+            }.asResult().collectLatest {
+                when (it) {
+                    is Result.Success -> {
+                        perfumeCommentState.update { it }
+                        isNewPerfumeCommentSubmitedState.update { true }
+                    }
+
+                    is Result.Error -> {
+
+                    }
+
+                    is Result.Loading -> {
+
+                    }
+                }
+            }
+        }
+    }
+
     sealed interface SpecificCommentUiState {
         data object Loading : SpecificCommentUiState
         data class CommentData(
             val comment: PerfumeCommentResponseDto?,
-            val isLikeComment: Boolean
+            val isLikeComment: Boolean,
+            val isNewPerfumeCommentSubmited:Boolean
         ) : SpecificCommentUiState
 
         data object Error : SpecificCommentUiState

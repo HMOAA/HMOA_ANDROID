@@ -33,13 +33,13 @@ class GetPerfumeUsecase @Inject constructor(
             price = "%,d".format(perfumeInfo1.data?.price ?: 0),
             review = perfumeInfo1.data?.review,
             singleNote = perfumeInfo1.data?.singleNote,
-            sortType = perfumeInfo1.data?.sortType!!,
+            sortType = perfumeInfo1.data?.sortType ?: 0,
             perfumeVolumeList = perfumeInfo1.data?.volume ?: emptyArray(),
             perfumeVolume = perfumeInfo1.data?.priceVolume ?: 0,
             commentInfo = PerfumeCommentGetResponseDto(
                 commentCount = perfumeInfo2.data?.commentInfo?.commentCount ?: 0,
                 comments = get3CommentAHeadOfCommentCounts(perfumeInfo2.data?.commentInfo?.comments ?: emptyList()),
-                lastPage = perfumeInfo2.data?.commentInfo?.lastPage!!
+                lastPage = perfumeInfo2.data?.commentInfo?.lastPage ?: false
             ),
             similarPerfumes = perfumeInfo2.data?.similarPerfumes ?: emptyArray()
         )

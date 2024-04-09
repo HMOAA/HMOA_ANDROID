@@ -1,4 +1,4 @@
-package com.hmoa.feature_community
+package com.hmoa.feature_community.Screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

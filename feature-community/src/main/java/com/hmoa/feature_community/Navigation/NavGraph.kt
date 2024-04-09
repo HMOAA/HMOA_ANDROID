@@ -6,12 +6,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.hmoa.feature_community.CommunityDescriptionRoute
-import com.hmoa.feature_community.CommunityEditRoute
-import com.hmoa.feature_community.CommunityHome
-import com.hmoa.feature_community.CommunityHomeRoute
-import com.hmoa.feature_community.CommunityPageRoute
-import com.hmoa.feature_community.CommunityPostRoute
+import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
+import com.hmoa.feature_community.Screen.CommunityEditRoute
+import com.hmoa.feature_community.Screen.CommunityHome
+import com.hmoa.feature_community.Screen.CommunityHomeRoute
+import com.hmoa.feature_community.Screen.CommunityPageRoute
+import com.hmoa.feature_community.Screen.CommunityPostRoute
 import com.hmoa.feature_community.Navigation.Route
 
 //게시글 기본 화면

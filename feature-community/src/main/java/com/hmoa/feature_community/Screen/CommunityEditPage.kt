@@ -1,4 +1,4 @@
-package com.hmoa.feature_community
+package com.hmoa.feature_community.Screen
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -277,9 +278,10 @@ fun CommunityEditPage(
                             //image view
                             ImageView(
                                 imageUrl = uiState.pictures[it].toString(),
-                                width = 274,
-                                height = 274,
-                                backgroundColor = CustomColor.gray1
+                                width = 274f,
+                                height = 274f,
+                                backgroundColor = CustomColor.gray1,
+                                contentScale = ContentScale.Fit
                             )
 
                             //삭제 버튼

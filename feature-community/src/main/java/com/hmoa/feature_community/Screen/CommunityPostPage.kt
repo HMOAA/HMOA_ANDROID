@@ -1,4 +1,4 @@
-package com.hmoa.feature_community
+package com.hmoa.feature_community.Screen
 
 import android.net.Uri
 import android.util.Log

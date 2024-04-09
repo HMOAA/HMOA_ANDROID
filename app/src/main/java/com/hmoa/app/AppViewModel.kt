@@ -16,12 +16,10 @@ class AppViewModel @Inject constructor(private val getAuthAndRememberedTokenUseC
     private var authToken: String? = null
     private var rememberedToken: String? = null
     suspend fun routeInitialScreen(): String {
-        viewModelScope.async {
-            val pair = getAuthAndRememberedTokenUseCase()
-            authToken = pair.first
-            rememberedToken = pair.second
-        }.await()
-
+        val pair = getAuthAndRememberedTokenUseCase()
+        authToken = pair.first
+        rememberedToken = pair.second
+        
         Log.d("TAG TEST", "token : ${authToken} / remember : ${rememberedToken}")
 
         if (authToken == null && rememberedToken == null) {

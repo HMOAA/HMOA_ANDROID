@@ -6,8 +6,8 @@ import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_community.Navigation.*
-import com.hmoa.feature_home.homeScreen
-import com.hmoa.feature_home.navigateToHome
+import com.hmoa.feature_home.navigation.homeScreen
+import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_perfume.navigation.*
 
 @Composable

@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,7 +31,6 @@ import com.hmoa.core_designsystem.component.CommentItem
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
-import com.hmoa.feature_perfume.navigation.PERFUME_ROUTE
 import com.hmoa.feature_perfume.viewmodel.PerfumeCommentViewmodel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -139,8 +137,15 @@ fun PerfumeCommentContent(
                     sortType = sortType
                 )
                 when (sortType) {
-                    SortType.LATEST -> PerfumeCommentList(likePerfumeComments, {}, { id, isWrited -> onSpecificCommentClick(id,isWrited)})
-                    SortType.LIKE -> PerfumeCommentList(latestPerfumeComments, {}, { id, isWrited -> onSpecificCommentClick(id,isWrited)})
+                    SortType.LATEST -> PerfumeCommentList(
+                        likePerfumeComments,
+                        {},
+                        { id, isWrited -> onSpecificCommentClick(id, isWrited) })
+
+                    SortType.LIKE -> PerfumeCommentList(
+                        latestPerfumeComments,
+                        {},
+                        { id, isWrited -> onSpecificCommentClick(id, isWrited) })
                 }
 
             }

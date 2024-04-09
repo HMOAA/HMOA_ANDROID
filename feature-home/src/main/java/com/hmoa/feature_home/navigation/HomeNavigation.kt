@@ -1,17 +1,18 @@
-package com.hmoa.feature_home
+package com.hmoa.feature_home.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.hmoa.feature_home.AllPerfumeScreenId
+import com.hmoa.feature_home.HomeRoute
 
-const val HOME_ROUTE = "home_route"
 
-fun NavController.navigateToHome() = navigate(HOME_ROUTE)
+fun NavController.navigateToHome() = navigate("${HomeRoute.Home}")
 fun NavGraphBuilder.homeScreen(
     onPerfumeClick: (perfumeId: Int) -> Unit,
-    onAllPerfumeClick: (screenId:AllPerfumeScreenId) -> Unit
+    onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit
 ) {
-    composable(route = HOME_ROUTE) {
+    composable(route = "${HomeRoute.Home}") {
         HomeRoute(onPerfumeClick = { onPerfumeClick(it) }, onAllPerfumeClick = {onAllPerfumeClick(it)})
     }
 }

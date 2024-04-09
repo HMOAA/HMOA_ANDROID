@@ -3,12 +3,9 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.hmoa.app.MainRoute
-import com.hmoa.feature_home.HOME_ROUTE
 
 const val MAIN_ROUTE = "main_route"
 fun NavController.navigateToMain() = navigate(MAIN_ROUTE)

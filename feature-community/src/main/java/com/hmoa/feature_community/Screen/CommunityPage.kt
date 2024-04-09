@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.BottomScreen
@@ -78,6 +79,9 @@ fun CommunityPage(
         }
 
         is CommunityMainUiState.Community -> {
+
+            val communities = uiState.communities.collectAsLazyPagingItems()
+
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
@@ -165,25 +169,28 @@ fun CommunityPage(
                     )
 
                     LazyColumn {
-                        items(uiState.communities) { community ->
-                            PostListItem(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .border(width = 1.dp, color = CustomColor.gray2),
-                                onPostClick = {
-                                    // 여기서 Description으로 이동
-                                    onNavCommunityDescription(community.communityId)
-                                },
-                                postType = community.category,
-                                postTitle = community.title,
-                            )
+                        items(communities.itemSnapshotList) { community ->
+                            if (community != null){
+                                PostListItem(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .border(width = 1.dp, color = CustomColor.gray2),
+                                    onPostClick = {
+                                        // 여기서 Description으로 이동
+                                        onNavCommunityDescription(community.communityId)
+                                    },
+                                    postType = community.category,
+                                    postTitle = community.title,
+                                )
+                            }
                         }
                     }
                 }
 
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .wrapContentHeight(),
                     horizontalAlignment = Alignment.End
                 ){

@@ -4,6 +4,7 @@ import ResultResponse
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
+import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import java.io.File
 
@@ -20,7 +21,7 @@ interface CommunityDataStore {
     suspend fun deleteCommunity(communityId: Int): ResultResponse<DataResponseDto<Nothing>>
     suspend fun putCommunityLike(communityId : Int) : ResultResponse<DataResponseDto<Nothing>>
     suspend fun deleteCommunityLike(communityId: Int) : ResultResponse<DataResponseDto<Nothing>>
-    suspend fun getCommunityByCategory(category: String, page: Int): ResultResponse<List<CommunityByCategoryResponseDto>>
+    suspend fun getCommunityByCategory(category: String, cursor: Int): ResultResponse<CommunityWithCursorResponseDto>
     suspend fun getCommunitiesHome(): ResultResponse<List<CommunityByCategoryResponseDto>>
     suspend fun postCommunitySave(
         images: Array<File>,

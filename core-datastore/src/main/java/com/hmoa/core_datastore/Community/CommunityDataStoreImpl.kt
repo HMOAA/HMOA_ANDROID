@@ -6,6 +6,7 @@ import com.hmoa.core_datastore.Mapper.transformMultipartBody
 import com.hmoa.core_datastore.Mapper.transformToMultipartBody
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
+import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_network.service.CommunityService
 import com.skydoves.sandwich.suspendMapSuccess
@@ -74,10 +75,10 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
 
     override suspend fun getCommunityByCategory(
         category: String,
-        page: Int
-    ): ResultResponse<List<CommunityByCategoryResponseDto>> {
-        val result = ResultResponse<List<CommunityByCategoryResponseDto>>()
-        communityService.getCommunityByCategory(category, page).suspendMapSuccess {
+        cursor: Int
+    ): ResultResponse<CommunityWithCursorResponseDto> {
+        val result = ResultResponse<CommunityWithCursorResponseDto>()
+        communityService.getCommunityByCategory(category, cursor).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
             result.exception = Exception(this.statusCode.code.toString())

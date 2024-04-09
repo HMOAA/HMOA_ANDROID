@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.app.navigation.MAIN_ROUTE
 import com.hmoa.core_domain.usecase.GetAuthAndRememberedTokenUseCase
 import com.hmoa.feature_authentication.navigation.LOGIN_ROUTE
+import com.hmoa.feature_home.HOME_ROUTE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import javax.inject.Inject
@@ -25,6 +26,6 @@ class AppViewModel @Inject constructor(private val getAuthAndRememberedTokenUseC
         if (authToken == null && rememberedToken == null) {
             return LOGIN_ROUTE
         }
-        return MAIN_ROUTE
+        return HOME_ROUTE
     }
 }

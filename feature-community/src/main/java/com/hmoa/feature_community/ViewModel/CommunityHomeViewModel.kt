@@ -26,11 +26,11 @@ class CommunityHomeViewModel @Inject constructor(
         viewModelScope.launch {
             _community.update {
                 val result = repository.getCommunitiesHome()
-                if (result.data == null) {
-                    //_errState.update {"${result.errorCode} ${result.errorMessage}"}
-                    return@launch
+                if (result.exception is Exception) {
+                    throw result.exception!!
+                } else {
+                    result.data!!
                 }
-                result.data!!
             }
         }
     }

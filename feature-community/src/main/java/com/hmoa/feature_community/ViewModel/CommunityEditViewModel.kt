@@ -1,5 +1,8 @@
 package com.hmoa.feature_community.ViewModel
 
+import android.net.Uri
+import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -22,10 +25,6 @@ class CommunityEditViewModel @Inject constructor(
     private val _id = MutableStateFlow<Int?>(null)
     val id get() = _id.asStateFlow()
 
-    //loading state
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading get() = _isLoading.asStateFlow()
-
     //title
     private val _title = MutableStateFlow("")
     val title get() = _title.asStateFlow()
@@ -39,16 +38,13 @@ class CommunityEditViewModel @Inject constructor(
     val category get() = _category.asStateFlow()
 
     //pictures
-    private val _pictures = MutableStateFlow<List<CommunityPhotoDefaultResponseDto>>(emptyList())
-    val pictures get() = _pictures.asStateFlow()
+    private val _pictures = MutableStateFlow<List<CommunityPhotoDefaultResponseDto>>(listOf())
 
     //추가할 pictures
-    private val _addPictures = MutableStateFlow<Array<File>>(arrayOf())
-    val addPictures get() = _addPictures.asStateFlow()
+    private val _newPictures = MutableStateFlow<List<Uri>>(listOf())
+    val newPictures get() = _newPictures.asStateFlow()
 
-    //삭제할 pictures
-    private val _delPictures = MutableStateFlow<Array<Int>>(arrayOf())
-    val delPictures get() = _delPictures.asStateFlow()
+    private val delPicture = mutableListOf<Uri>()
 
     //error state
     private val _errState = MutableStateFlow("")
@@ -59,7 +55,7 @@ class CommunityEditViewModel @Inject constructor(
         title,
         content,
         category,
-        pictures,
+        newPictures,
         CommunityEditUiState::Community
     ).stateIn(
         scope = viewModelScope,
@@ -67,27 +63,93 @@ class CommunityEditViewModel @Inject constructor(
         initialValue = CommunityEditUiState.Loading
     )
 
+//    asResult().map { result ->
+//        when(result) {
+//            is Result.Loading -> {
+//                CommunityEditUiState.Loading
+//            }
+//            is Result.Success -> {
+//                CommunityEditUiState::Community
+//            }
+//            is Result.Error -> {
+//                CommunityEditUiState.Error
+//            }
+//        }
+//    }.
+
+
+    //id setting
+    fun setId(id: Int) {
+        _id.update { id }
+
+        //id 기반으로 정보를 가져옴
+        getCommunityDescription(id)
+    }
+
+    //title update
+    fun updateTitle(title: String) {
+        _title.update { title }
+    }
+
+    //content update
+    fun updateContent(content: String) {
+        _content.update { content }
+    }
+
+    //사진 추가
+    fun updatePictures(newPictures: List<Uri>) {
+        _newPictures.update{
+            it.plus(newPictures)
+        }
+    }
+
+    //사진 삭제
+    fun deletePicture(uri : Uri){
+        _newPictures.update{
+            it.minus(uri)
+        }
+        delPicture.add(uri)
+    }
+
+    //게시글 수정 POST
+    fun updateCommunity() {
+        viewModelScope.launch {
+
+            val images = urisToFiles(newPictures.value)
+            val delPictureId = getDeletePictureId(delPicture)
+            if (id.value != null) {
+                repository.postCommunityUpdate(
+                    images = images.toTypedArray(),
+                    title = title.value,
+                    content = content.value,
+                    communityId = id.value!!,
+                    deleteCommunityPhotoIds = delPictureId.toTypedArray()
+                )
+            } else {
+                _errState.update { "id is null" }
+            }
+        }
+    }
+
     //id 기반 데이터 받아오기
     private fun getCommunityDescription(id: Int) {
         viewModelScope.launch {
             flow {
                 val result = repository.getCommunity(id)
-                if (result.data == null) {
-                    //_errState.update {"${result.errorCode} : ${result.errorMessage}"}
-                    return@flow
+                if (result.exception is Exception) {
+                    throw result.exception!!
+                } else {
+                    emit(result.data!!)
                 }
-                emit(result.data!!)
             }.asResult()
                 .map { result ->
                     when (result) {
                         is Result.Loading -> {
-                            _isLoading.update { false }
+                            /**여기서 uiState를 Loading 상태로 */
                         }
-
                         is Result.Error -> {
-                            _errState.update { "Error : ${result.exception}" }
+                            /**여기서 uiState를 Error 상태로 */
                         }
-
                         is Result.Success -> {
                             val data = result.data
                             _title.update { data.title }
@@ -105,56 +167,34 @@ class CommunityEditViewModel @Inject constructor(
                                 category
                             }
                             _pictures.update { data.communityPhotos }
-                            _isLoading.update { true }
+                            _newPictures.update{ data.communityPhotos.map{it.photoUrl.toUri()} }
                         }
                     }
                 }
-        }
-    }
-
-    //title update
-    fun updateTitle(title: String) {
-        _title.update { title }
-    }
-
-    //content update
-    fun updateContent(content: String) {
-        _content.update { content }
-    }
-
-    //id setting
-    fun setId(id: Int) {
-        _id.update { id }
-
-        //id 기반으로 정보를 가져옴
-        getCommunityDescription(id)
-    }
-
-    /** 사진 추가, 게시글 수정 어케하는 지 잘 모르겠네... */
-    //picture 추가
-    fun addPictures(newPicture: String) {
-        /** add pictrues 리스트에 newPicture uri 추가 */
-    }
-
-    fun delPictures(delPicture: Int) {
-        /** del pictures 리스트에 삭제할 picture의 id 추가 */
-    }
-
-    //게시글 수정
-    fun updateCommunity() {
-        viewModelScope.launch {
-            if (id.value != null) {
-                repository.postCommunityUpdate(
-                    images = addPictures.value,
-                    title = title.value,
-                    content = content.value,
-                    communityId = id.value!!,
-                    deleteCommunityPhotoIds = delPictures.value
-                )
-            } else {
-                _errState.update { "id is null" }
             }
         }
+
+    //삭제할 사진 id 계산
+    private fun getDeletePictureId(pictures : List<Uri>) : ArrayList<Int> {
+        val ids = arrayListOf<Int>()
+        val defaultUris = _pictures.value.map{it.photoUrl.toUri()}
+        pictures.forEach{ picture ->
+            if (picture in defaultUris) {
+                ids.add(_pictures.value[defaultUris.indexOf(picture)].photoId)
+            }
+        }
+        return ids
+    }
+
+    //uri >> file 변환
+    private fun urisToFiles(uris : List<Uri>) : ArrayList<File> {
+        val images = arrayListOf<File>()
+        uris.map{ picture ->
+            val path = picture.path ?: return@map
+            Log.d("TAG TEST", "path : ${path}")
+            images.add(File(path))
+        }
+        return images
     }
 }
 
@@ -164,6 +204,8 @@ sealed interface CommunityEditUiState {
         val title: String,
         val content: String,
         val category: Category?,
-        val pictures: List<CommunityPhotoDefaultResponseDto>,
+        val pictures: List<Uri>,
     ) : CommunityEditUiState
+
+    data object Error : CommunityEditUiState
 }

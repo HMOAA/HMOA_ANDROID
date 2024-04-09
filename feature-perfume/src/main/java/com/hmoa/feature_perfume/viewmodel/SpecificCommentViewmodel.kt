@@ -56,7 +56,7 @@ class SpecificCommentViewmodel @Inject constructor(
 
     fun onChangePerfumceCommnet(text: String) {
         viewModelScope.launch {
-            per
+//            per
         }
     }
 

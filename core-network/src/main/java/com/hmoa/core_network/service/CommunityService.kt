@@ -5,6 +5,8 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.skydoves.sandwich.ApiResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
 import java.io.File
 
@@ -40,13 +42,13 @@ interface CommunityService {
     @GET("/community/home")
     suspend fun getCommunitiesHome(): ApiResponse<List<CommunityByCategoryResponseDto>>
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/community/save")
     suspend fun postCommunitySave(
-        @Field("images") images: Array<File>,
-        @Field("category") category: String,
-        @Field("title") title: String,
-        @Field("content") content: String
+        @Part images: Array<MultipartBody.Part>,
+        @Part title: MultipartBody.Part,
+        @Part category: MultipartBody.Part,
+        @Part content: MultipartBody.Part
     ): ApiResponse<CommunityDefaultResponseDto>
 
 }

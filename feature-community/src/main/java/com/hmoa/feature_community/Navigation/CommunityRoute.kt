@@ -1,6 +1,6 @@
 package com.hmoa.feature_community.Navigation
 
-enum class Route {
+enum class CommunityRoute {
     CommunityGraphRoute,
     CommunityDescriptionRoute,
     CommunityEditRoute,

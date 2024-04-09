@@ -4,14 +4,15 @@ import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.*
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
 interface PerfumeService {
     @GET("/perfume/{perfumeId}")
-    suspend fun getPerfumeTopDetail(@Path("perfumeId") perfumeId: String): PerfumeDetailResponseDto
+    suspend fun getPerfumeTopDetail(@Path("perfumeId") perfumeId: String): ApiResponse<PerfumeDetailResponseDto>
 
     @POST("/perfume/{perfumeId}/2")
-    suspend fun getPerfumeBottomDetail(@Path("perfumeId") perfumeId: String): PerfumeDetailSecondResponseDto
+    suspend fun getPerfumeBottomDetail(@Path("perfumeId") perfumeId: String): ApiResponse<PerfumeDetailSecondResponseDto>
 
     @POST("/perfume/{perfumeId}/age")
     suspend fun postPerfumeAge(@Body dto: AgeRequestDto, @Path("perfumeId") perfumeId: String): PerfumeAgeResponseDto

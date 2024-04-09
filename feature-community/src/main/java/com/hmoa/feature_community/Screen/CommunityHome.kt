@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRowScopeInstance.weight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,14 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
-import com.hmoa.core_designsystem.BottomScreen
-import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityHomeUiState
@@ -39,10 +35,6 @@ fun CommunityHomeRoute(
     onNavCommunityByCategory: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
     viewModel : CommunityHomeViewModel = hiltViewModel(),
-    onNavHome : () -> Unit,
-    onNavHPedia : () -> Unit,
-    onNavLike : () -> Unit,
-    onNavMyPage : () -> Unit
 ){
     
     //ui state를 전달 >> 여기에 community list를 가지고 이를 통해 LazyColumn 이용
@@ -51,11 +43,7 @@ fun CommunityHomeRoute(
     CommunityHome(
         uiState = uiState.value,
         onNavCommunityByCategory = onNavCommunityByCategory,
-        onNavCommunityDescription = onNavCommunityDescription,
-        onNavHome = onNavHome,
-        onNavHPedia = onNavHPedia,
-        onNavLike = onNavLike,
-        onNavMyPage = onNavMyPage
+        onNavCommunityDescription = onNavCommunityDescription
     )
 }
 
@@ -64,10 +52,6 @@ fun CommunityHome(
     uiState : CommunityHomeUiState, //이거 uiState로 이전해서 uiState에서 데이터 가져오는 방식으로
     onNavCommunityByCategory : () -> Unit, //카테고리 별 Community 화면으로 이동
     onNavCommunityDescription : (Int) -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
-    onNavHome : () -> Unit,
-    onNavHPedia : () -> Unit,
-    onNavLike : () -> Unit,
-    onNavMyPage : () -> Unit
 ){
 
     when (uiState) {
@@ -75,21 +59,11 @@ fun CommunityHome(
 
         }
         is CommunityHomeUiState.Community -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ){
-                CommunityHomeContent(
-                    communities = uiState.communities
-                )
-                MainBottomBar(
-                    initValue = BottomScreen.HPedia,
-                    onClickHome = onNavHome,
-                    onClickHPedia = onNavHPedia,
-                    onClickLike = onNavLike,
-                    onClickMyPage = onNavMyPage
-                )
-            }
+            CommunityHomeContent(
+                communities = uiState.communities,
+                onNavCommunityByCategory = onNavCommunityByCategory,
+                onNavCommunityDescription = onNavCommunityDescription
+            )
         }
         is CommunityHomeUiState.Error -> {
 
@@ -99,11 +73,12 @@ fun CommunityHome(
 
 @Composable
 fun CommunityHomeContent(
-    communities : List<CommunityByCategoryResponseDto>
+    communities : List<CommunityByCategoryResponseDto>,
+    onNavCommunityByCategory : () -> Unit,
+    onNavCommunityDescription : (Int) -> Unit,
 ){
     Column(
-        modifier = Modifier.weight(1f)
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxSize()
             .padding(horizontal = 16.dp)
     ){
         Row(
@@ -129,28 +104,39 @@ fun CommunityHomeContent(
 
         Spacer(Modifier.height(16.dp))
 
-        LazyColumn(
-            modifier = Modifier.background(color = Color.White)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            items(uiState.communities){community ->
-                PostListItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .border(
-                            width = 1.dp,
-                            color = CustomColor.gray2,
-                            shape = RoundedCornerShape(10.dp)
-                        ),
-                    onPostClick = {
-                        onNavCommunityDescription(community.communityId)
-                    },
-                    postType = community.category,
-                    postTitle = community.title
-                )
-            }
+        PostList(
+            communities = communities,
+            onNavCommunityDescription = onNavCommunityDescription
+        )
+    }
+}
+
+@Composable
+fun PostList(
+    communities : List<CommunityByCategoryResponseDto>,
+    onNavCommunityDescription: (Int) -> Unit
+){
+    LazyColumn(
+        modifier = Modifier.background(color = Color.White)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        items(communities){community ->
+            PostListItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .border(
+                        width = 1.dp,
+                        color = CustomColor.gray2,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                onPostClick = {
+                    onNavCommunityDescription(community.communityId)
+                },
+                postType = community.category,
+                postTitle = community.title
+            )
         }
     }
 }

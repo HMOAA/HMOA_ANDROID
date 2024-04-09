@@ -46,22 +46,14 @@ fun NavGraphBuilder.nestedCommunityGraph(
         composable(CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
                 onNavCommunityDescription = onNavCommunityDescription,
-                onNavCommunityByCategory = onNavCommunityPage,
-                onNavHome = onNavHome,
-                onNavHPedia = onNavHPedia,
-                onNavLike = onNavLike,
-                onNavMyPage = onNavMyPage
+                onNavCommunityByCategory = onNavCommunityPage
             )
         }
         composable(route = CommunityRoute.CommunityPageRoute.name){
             CommunityPageRoute(
                 onNavBack = onNavBack,
                 onNavCommunityDescription = onNavCommunityDescription,
-                onNavPost = onNavCommunityPost,
-                onNavHome = onNavHome,
-                onNavHPedia = onNavHPedia,
-                onNavLike = onNavLike,
-                onNavMyPage = onNavMyPage
+                onNavPost = onNavCommunityPost
             )
         }
         composable(route = "${CommunityRoute.CommunityPostRoute.name}/{type}") {

@@ -138,6 +138,7 @@ fun ProfileAndHeartView(
         Text(
             text = content,
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
+            modifier = Modifier.fillMaxWidth().padding(top = 9.dp)
         )
     }
 }

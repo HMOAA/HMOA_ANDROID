@@ -1,6 +1,7 @@
 package com.hmoa.core_repository
 
 import ResultResponse
+import android.util.Log
 import com.hmoa.core_datastore.Community.CommunityDataStore
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
@@ -34,7 +35,7 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataStore
     }
 
     override suspend fun deleteCommunityLike(communityId: Int): ResultResponse<DataResponseDto<Nothing>> {
-        return communityDataStore.deleteCommunity(communityId)
+        return communityDataStore.deleteCommunityLike(communityId)
     }
 
     override suspend fun getCommunityByCategory(

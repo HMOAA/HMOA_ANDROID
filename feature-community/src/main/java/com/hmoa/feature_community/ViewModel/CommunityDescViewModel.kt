@@ -12,7 +12,15 @@ import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,51 +43,52 @@ class CommunityDescViewModel @Inject constructor(
     private val _isLiked = MutableStateFlow(false)
     val isLiked get() = _isLiked.asStateFlow()
 
-    private val _isWritten = MutableStateFlow(false)
-    val isWritten = _isWritten.asStateFlow()
-
     private val _page = MutableStateFlow(0)
     val page get() = _page.asStateFlow()
 
     private val _profile = MutableStateFlow<String?>(null)
     val profile get() = _profile.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            Log.d("TAG TEST", "view model init")
-            getUserInfo().asResult()
-                .map { result ->
-                    when (result) {
-                        Result.Loading -> _profile.update { null }
-                        is Result.Success -> {
-                            _profile.update { result.data.profile }
-                        }
+    private val _flag = MutableStateFlow(false)
+    val flag get() = _flag.asStateFlow()
 
-                        is Result.Error -> _errState.update { result.exception.toString() }
-                    }
-                }
+    //community flow
+    private val communityFlow = combine(_flag, _id){ flag, id ->
+        fetchLike(isLiked.value)
+        flow{
+            val result= communityRepository.getCommunity(id)
+            if (result.exception is Exception) {
+                throw result.exception!!
+            } else {
+                _isLiked.update{result.data!!.liked}
+                emit(result.data!!)
+            }
+            _flag.update{false}
         }
+    }.flatMapLatest{
+        flow -> flow.asResult()
     }
 
-    val uiState: StateFlow<CommunityDescUiState> = combine(
-        flow {
-            val result = communityRepository.getCommunity(id.value)
+    //comment flow
+    private val commentFlow = flow{
+        val result = communityCommentRepository.getCommunityComments(id.value, page.value)
+        if (result.exception is Exception) {
+            throw result.exception!!
+        } else {
+            emit(result.data!!)
+        }
+    }.asResult()
 
-            emit(result.data!!)
-        }.asResult(),
-        flow {
-            val result = communityCommentRepository.getCommunityComments(id.value, page.value)
-            if (result.data == null) {
-                //_errState.update { "${result.errorCode} : ${result.errorMessage}"}
-                return@flow
-            }
-            emit(result.data!!)
-        }.asResult()
-    ) { communityResult, commentsResult ->
+    //ui state
+    val uiState : StateFlow<CommunityDescUiState> = combine(
+        communityFlow,
+        commentFlow
+    ){ communityResult, commentsResult ->
         when {
             communityResult is Result.Error || commentsResult is Result.Error -> CommunityDescUiState.Error
             communityResult is Result.Loading || commentsResult is Result.Loading -> CommunityDescUiState.Loading
             else -> {
+                Log.d("TAG TEST", "community : ${communityResult}")
                 CommunityDescUiState.CommunityDesc(
                     (communityResult as Result.Success).data,
                     (commentsResult as Result.Success).data,
@@ -134,6 +143,42 @@ class CommunityDescViewModel @Inject constructor(
     //id 설정
     fun setId(id: Int) {
         _id.update { id }
+    }
+
+    //좋아요 local update
+    fun updateLike(){
+        _flag.update{true}
+    }
+
+    //좋아요 remote update
+    private suspend fun fetchLike(liked : Boolean){
+        viewModelScope.launch{
+            if (flag.value) {
+                if (liked) {
+                    val result = communityRepository.deleteCommunityLike(id.value)
+                    if (result.exception is Exception) {
+                        _errState.update{result.exception.toString()}
+                        _flag.update{false}
+                        return@launch
+                    }
+                } else {
+                    val result = communityRepository.putCommunityLike(id.value)
+                    if (result.exception is Exception) {
+                        _errState.update{result.exception.toString()}
+                        _flag.update{false}
+                        return@launch
+                    }
+                }
+                _isLiked.update{ !liked }
+            }
+        }
+    }
+
+    fun postInfo(){
+        viewModelScope.launch{
+            communityCommentRepository.putCommunityCommentLiked(id.value)
+            communityRepository.putCommunityLike(id.value)
+        }
     }
 }
 

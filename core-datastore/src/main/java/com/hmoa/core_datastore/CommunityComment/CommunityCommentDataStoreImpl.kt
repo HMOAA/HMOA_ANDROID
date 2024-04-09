@@ -36,11 +36,10 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
     }
 
     override suspend fun putCommunityCommentLiked(
-        commentId: Int,
-        dto: CommunityCommentDefaultRequestDto
-    ): ResultResponse<DataResponseDto<Any>> {
+        commentId: Int
+    ): ResultResponse<DataResponseDto<Any>>  {
         val result = ResultResponse<DataResponseDto<Any>>()
-        communityCommentService.putCommunityCommentLiked(commentId, dto).suspendMapSuccess {
+        communityCommentService.putCommunityCommentLiked(commentId).suspendMapSuccess{
             result.data = this
         }.suspendOnError {
             result.exception = Exception(this.statusCode.code.toString())

@@ -1,6 +1,7 @@
 package com.hmoa.app
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,11 +44,25 @@ fun MainScreen(
         topBar = { MainTopBar({}, {}, {}, true) },
         drawerContent = { Text(text = "drawerContent") },
         bottomBar = {
-            MainBottomBar(BottomScreen.Home, {
-                onNavCommunity()
-            }, {}, {}, {})
+            MainBottomBar(
+                initValue = BottomScreen.Home,
+                onClickHome = {
+                    Log.d("TAG TEST", "Bottom Nav Home Click")
+                },
+                onClickHPedia = {
+                    Log.d("TAG TEST", "Bottom Nav HPedia Click")
+                    onNavCommunity()
+                },
+                onClickLike = {
+                    Log.d("TAG TEST", "Bottom Nav Like Click")
+                },
+                onClickMyPage = {
+                    Log.d("TAG TEST", "Bottom Nav MyPage Click")
+                }
+            )
         }
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxHeight()

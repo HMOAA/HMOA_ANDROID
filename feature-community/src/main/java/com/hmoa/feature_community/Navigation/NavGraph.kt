@@ -1,36 +1,32 @@
 package com.hmoa.feature_community.Navigation
 
-import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
 import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
 import com.hmoa.feature_community.Screen.CommunityEditRoute
-import com.hmoa.feature_community.Screen.CommunityHome
 import com.hmoa.feature_community.Screen.CommunityHomeRoute
 import com.hmoa.feature_community.Screen.CommunityPageRoute
 import com.hmoa.feature_community.Screen.CommunityPostRoute
-import com.hmoa.feature_community.Navigation.Route
 
 //게시글 기본 화면
-fun NavController.navigateToCommunityRoute() = navigate(Route.CommunityGraphRoute.name)
+fun NavController.navigateToCommunityRoute() = navigate(CommunityRoute.CommunityGraphRoute.name)
 
 //홈 화면
-fun NavController.navigateToCommunityPage() = navigate(Route.CommunityPageRoute.name)
+fun NavController.navigateToCommunityPage() = navigate(CommunityRoute.CommunityPageRoute.name)
 
 //카테고리 별 화면
-fun NavController.navigateToCommunityHome() = navigate(Route.CommunityHomeRoute.name)
+fun NavController.navigateToCommunityHome() = navigate(CommunityRoute.CommunityHomeRoute.name)
 
 //게시글 등록 화면
-fun NavController.navigateToCommunityPostRoute(type : String) = navigate("${Route.CommunityPostRoute.name}/${type}")
+fun NavController.navigateToCommunityPostRoute(type : String) = navigate("${CommunityRoute.CommunityPostRoute.name}/${type}")
 
 //게시글 수정 화면
-fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${Route.CommunityEditRoute.name}/${id}")
+fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${CommunityRoute.CommunityEditRoute.name}/${id}")
 
 //게시글 상세 화면
-fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${Route.CommunityDescriptionRoute.name}/${id}")
+fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}")
 
 fun NavGraphBuilder.nestedCommunityGraph(
     onNavHome : () -> Unit,
@@ -44,10 +40,10 @@ fun NavGraphBuilder.nestedCommunityGraph(
     onNavCommunityDescription : (Int) -> Unit
 ){
     navigation(
-        startDestination = Route.CommunityHomeRoute.name,
-        route = Route.CommunityGraphRoute.name
+        startDestination = CommunityRoute.CommunityHomeRoute.name,
+        route = CommunityRoute.CommunityGraphRoute.name
     ){
-        composable(Route.CommunityHomeRoute.name) {
+        composable(CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
                 onNavCommunityDescription = onNavCommunityDescription,
                 onNavCommunityByCategory = onNavCommunityPage,
@@ -57,7 +53,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavMyPage = onNavMyPage
             )
         }
-        composable(route = Route.CommunityPageRoute.name){
+        composable(route = CommunityRoute.CommunityPageRoute.name){
             CommunityPageRoute(
                 onNavBack = onNavBack,
                 onNavCommunityDescription = onNavCommunityDescription,
@@ -68,7 +64,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavMyPage = onNavMyPage
             )
         }
-        composable(route = "${Route.CommunityPostRoute.name}/{type}") {
+        composable(route = "${CommunityRoute.CommunityPostRoute.name}/{type}") {
             val type = it.arguments?.getString("type")
 
             CommunityPostRoute(
@@ -76,7 +72,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 _category = type
             )
         }
-        composable(route = "${Route.CommunityEditRoute.name}/{id}"){
+        composable(route = "${CommunityRoute.CommunityEditRoute.name}/{id}"){
             val id = it.arguments?.getString("id") ?: "0"
 
             CommunityEditRoute(
@@ -84,7 +80,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavBack = onNavBack
             )
         }
-        composable(route = "${Route.CommunityDescriptionRoute.name}/{id}") {
+        composable(route = "${CommunityRoute.CommunityDescriptionRoute.name}/{id}") {
             val id = it.arguments?.getString("id")?: "0"
 
             CommunityDescriptionRoute (

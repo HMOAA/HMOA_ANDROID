@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -207,9 +208,10 @@ fun PostContent(
                         //image view
                         ImageView(
                             imageUrl = pictures[it],
-                            width = 274,
-                            height = 274,
-                            backgroundColor = CustomColor.gray1
+                            width = 274f,
+                            height = 274f,
+                            backgroundColor = CustomColor.gray1,
+                            contentScale = ContentScale.Crop
                         )
                     }
                     Row(

@@ -18,23 +18,26 @@ fun SetUpNavGraph(
     navController: NavHostController,
     startDestination: String
 ) {
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
 
-        mainScreen(
-            onNavCommunity = navController::navigateToCommunityRoute, navController = navController
-        )
+//        mainScreen(
+//            onNavCommunity = navController::navigateToCommunityRoute, navController = navController
+//        )
         /** home 모듈 */
         homeScreen(onPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) }, onAllPerfumeClick = {})
 
         /** authentication 모듈 */
-        loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToMain)
+        loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
         pickNicknameScreen(
             onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,
             onSignupClick = navController::navigateToSignup
         )
         pickPersonalInfoScreen(
-            onHomeClick = navController::navigateToMain,
+            onHomeClick = navController::navigateToHome,
             onPickNicknameClick = navController::navigateToPickNickname
         )
 

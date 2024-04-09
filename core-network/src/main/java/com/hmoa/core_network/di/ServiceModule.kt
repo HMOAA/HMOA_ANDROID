@@ -64,7 +64,7 @@ object ServiceModule {
         return Interceptor { chain ->
             with(chain) {
                 val newRequest = request().newBuilder()
-                    .addHeader("X-AUTH-TOKEN", "${token}")
+                    .header("X-AUTH-TOKEN", "${token}")
                     .build()
                 proceed(newRequest)
             }

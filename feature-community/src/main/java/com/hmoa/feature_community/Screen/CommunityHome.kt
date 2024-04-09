@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRowScopeInstance.weight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -78,58 +79,9 @@ fun CommunityHome(
                 modifier = Modifier
                     .fillMaxSize()
             ){
-                Column(
-                    modifier = Modifier.weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ){
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom
-                    ){
-                        Text(
-                            text = "Community",
-                            fontSize = 16.sp,
-                            color = Color.Black
-                        )
-
-                        Text(
-                            modifier = Modifier.clickable{
-                                onNavCommunityByCategory()
-                            },
-                            text = "전체보기",
-                            fontSize = 12.sp,
-                            color = Color.Black
-                        )
-                    }
-
-                    Spacer(Modifier.height(16.dp))
-
-                    LazyColumn(
-                        modifier = Modifier.background(color = Color.White)
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ){
-                        items(uiState.communities){community ->
-                            PostListItem(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .border(
-                                        width = 1.dp,
-                                        color = CustomColor.gray2,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ),
-                                onPostClick = {
-                                    onNavCommunityDescription(community.communityId)
-                                },
-                                postType = community.category,
-                                postTitle = community.title
-                            )
-                        }
-                    }
-                }
+                CommunityHomeContent(
+                    communities = uiState.communities
+                )
                 MainBottomBar(
                     initValue = BottomScreen.HPedia,
                     onClickHome = onNavHome,
@@ -145,34 +97,60 @@ fun CommunityHome(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun TestCommunityHome(){
-    val testList = listOf(
-        CommunityByCategoryResponseDto(
-            category = "시향기",
-            commentCount = 0,
-            communityId = 0,
-            heartCount = 10,
-            liked = true,
-            title = "여자친구한테 선물할 향수 뭐가 좋을까요?"
-        ),
-        CommunityByCategoryResponseDto(
-            category = "시향기",
-            commentCount = 0,
-            communityId = 0,
-            heartCount = 10,
-            liked = true,
-            title = "여자친구한테 선물할 향수 뭐가 좋을까요?"
-        )
-    )
-    CommunityHome(
-        uiState = CommunityHomeUiState.Loading,
-        onNavCommunityDescription = {},
-        onNavCommunityByCategory = {},
-        onNavHome = {},
-        onNavHPedia = {},
-        onNavLike = {},
-        onNavMyPage = {}
-    )
+fun CommunityHomeContent(
+    communities : List<CommunityByCategoryResponseDto>
+){
+    Column(
+        modifier = Modifier.weight(1f)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ){
+            Text(
+                text = "Community",
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+
+            Text(
+                modifier = Modifier.clickable{
+                    onNavCommunityByCategory()
+                },
+                text = "전체보기",
+                fontSize = 12.sp,
+                color = Color.Black
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(
+            modifier = Modifier.background(color = Color.White)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ){
+            items(uiState.communities){community ->
+                PostListItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .border(
+                            width = 1.dp,
+                            color = CustomColor.gray2,
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    onPostClick = {
+                        onNavCommunityDescription(community.communityId)
+                    },
+                    postType = community.category,
+                    postTitle = community.title
+                )
+            }
+        }
+    }
 }

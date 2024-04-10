@@ -44,7 +44,7 @@ fun CustomSlider(value: Float = 0f, onValueChangedFinished: (value: Float) -> Un
         },
         modifier = Modifier.fillMaxWidth(),
         valueRange = 10f..50f,
-        steps = 1,
+        steps = 0,
         onValueChangeFinished = {
             onValueChangedFinished(sliderPosition.value)
         },
@@ -75,7 +75,7 @@ fun CustomSlider(value: Float = 0f, onValueChangedFinished: (value: Float) -> Un
         },
         track = {
             SliderDefaults.Track(
-                sliderPositions = it,
+                sliderState = it,
                 colors = customSliderColors(),
                 modifier = Modifier.border(
                     BorderStroke(0.dp, color = Color.Transparent),

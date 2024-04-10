@@ -71,10 +71,10 @@ fun SetUpNavGraph(
         perfumeScreen(
             onBackClick = navController::navigateToBack,
             onHomeClick = navController::navigateToHome,
-            onCommentAddClick = {},
+            onCommentAddClick = {perfumeId ->  navController.navigateToCreateNewperfumeComment(perfumeId)},
             onBrandClick = {},
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
-            onSimilarPerfumeClick = {},
+            onSimilarPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) },
             onSpecificCommentClick = { commentId, isEditable ->
                 navController.navigateToSpecificPerfumeComment(
                     commentId.toInt(),
@@ -84,7 +84,7 @@ fun SetUpNavGraph(
         )
         perfumeComment(
             onBackClick = navController::navigateToBack,
-            onAddCommentClick = {},
+            onAddCommentClick = {perfumeId ->  navController.navigateToCreateNewperfumeComment(perfumeId)},
             onSpecificCommentClick = { commentId, isEditable ->
                 navController.navigateToSpecificPerfumeComment(
                     commentId.toInt(),
@@ -94,5 +94,6 @@ fun SetUpNavGraph(
         )
         specificComment(onBackClick = navController::navigateToBack)
         editMyPerfumeComment(onBackClick = navController::navigateToBack)
+        createNewPerfumeComment(onBackClick = navController::navigateToBack)
     }
 }

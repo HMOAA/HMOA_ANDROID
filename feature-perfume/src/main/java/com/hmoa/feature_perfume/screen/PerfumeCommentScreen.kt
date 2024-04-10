@@ -37,11 +37,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
+fun PerfumeCommentRoute(
+    onBackClick: () -> Unit,
+    onAddCommentClick: (perfumeId: Int) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    perfumeId: Int?
+){
+    if(perfumeId != null){
+        PerfumeCommentScreen(onBackClick = {onBackClick()},
+            onAddCommentClick = {onAddCommentClick(it)},
+            onSpecificCommentClick = {commentId, isEditable -> onSpecificCommentClick(commentId, isEditable)},
+            perfumeId = perfumeId)
+    }
+}
+
+@Composable
 fun PerfumeCommentScreen(
     onBackClick: () -> Unit,
-    onAddCommentClick: (perfumeId: Int?) -> Unit,
+    onAddCommentClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
-    perfumeId: Int?,
+    perfumeId: Int,
     viewModel: PerfumeCommentViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,9 +65,7 @@ fun PerfumeCommentScreen(
     val likePerfumeComments = viewModel.getPagingLikePerfumeComments(perfumeId)?.collectAsLazyPagingItems()
 
     LaunchedEffect(perfumeId) {
-        if (perfumeId != null) {
-            viewModel.savePerfumeId(perfumeId)
-        }
+        viewModel.savePerfumeId(perfumeId)
     }
 
 

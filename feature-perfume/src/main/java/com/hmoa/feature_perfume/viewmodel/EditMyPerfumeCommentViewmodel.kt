@@ -19,11 +19,20 @@ class EditMyPerfumeCommentViewmodel @Inject constructor(
 ) : ViewModel() {
     private val perfumeCommentState = MutableStateFlow<PerfumeCommentResponseDto?>(null)
     private val likePerfumeCommentState = MutableStateFlow<Boolean>(false)
-    private val isNewPerfumeCommentSubmitedState = MutableStateFlow<Boolean>(false)
+    private val _isNewPerfumeCommentSubmitedState = MutableStateFlow<Boolean>(false)
+    val isNewPerfumeCommentSubmitedState: StateFlow<Boolean> = _isNewPerfumeCommentSubmitedState
 
     val uiState: StateFlow<SpecificCommentUiState> =
-        combine(perfumeCommentState, likePerfumeCommentState, isNewPerfumeCommentSubmitedState) { perfumeComment, likePerfume,isNewPerfumeCommentSubmited ->
-            SpecificCommentUiState.CommentData(comment = perfumeComment, isLikeComment = likePerfume, isNewPerfumeCommentSubmited = isNewPerfumeCommentSubmited)
+        combine(
+            perfumeCommentState,
+            likePerfumeCommentState,
+            _isNewPerfumeCommentSubmitedState
+        ) { perfumeComment, likePerfume, isNewPerfumeCommentSubmited ->
+            SpecificCommentUiState.CommentData(
+                comment = perfumeComment,
+                isLikeComment = likePerfume,
+                isNewPerfumeCommentSubmited = isNewPerfumeCommentSubmited
+            )
 
         }.stateIn(
             scope = viewModelScope,
@@ -74,7 +83,7 @@ class EditMyPerfumeCommentViewmodel @Inject constructor(
                 when (it) {
                     is Result.Success -> {
                         perfumeCommentState.update { it }
-                        isNewPerfumeCommentSubmitedState.update { true }
+                        _isNewPerfumeCommentSubmitedState.update { true }
                     }
 
                     is Result.Error -> {
@@ -94,7 +103,7 @@ class EditMyPerfumeCommentViewmodel @Inject constructor(
         data class CommentData(
             val comment: PerfumeCommentResponseDto?,
             val isLikeComment: Boolean,
-            val isNewPerfumeCommentSubmited:Boolean
+            val isNewPerfumeCommentSubmited: Boolean
         ) : SpecificCommentUiState
 
         data object Error : SpecificCommentUiState

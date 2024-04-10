@@ -4,5 +4,6 @@ enum class PerfumeRoute {
     Perfume,
     PerfumeComment,
     SpecificPerfumeComment,
-    EditMyPerfumeComment
+    EditMyPerfumeComment,
+    CreateNewPerfumeComment
 }

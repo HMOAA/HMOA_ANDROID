@@ -37,7 +37,7 @@ import com.hmoa.feature_perfume.viewmodel.PerfumeViewmodel
 fun PerfumeRoute(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onCommentAddClick: () -> Unit,
+    onCommentAddClick: (perfumdId:Int) -> Unit,
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
@@ -49,7 +49,7 @@ fun PerfumeRoute(
         PerfumeScreen(
             onBackClick = { onBackClick() },
             onHomeClick = { onHomeClick() },
-            onCommentAddClick = { onCommentAddClick() },
+            onCommentAddClick = { onCommentAddClick(it) },
             onBrandClick = { onBrandClick(it) },
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
@@ -63,7 +63,7 @@ fun PerfumeRoute(
 fun PerfumeScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onCommentAddClick: () -> Unit,
+    onCommentAddClick: (perfumeId: Int) -> Unit,
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
@@ -88,7 +88,7 @@ fun PerfumeScreen(
                     onBackClick = { onBackClick() },
                     onHomeClick = { onHomeClick() },
                     onLikeClick = { viewModel.updateLike(it, perfumeId) },
-                    onCommentAddClick = { onCommentAddClick() },
+                    onCommentAddClick = { onCommentAddClick(perfumeId) },
                     onBrandClick = { onBrandClick(it) },
                     onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
                     onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },

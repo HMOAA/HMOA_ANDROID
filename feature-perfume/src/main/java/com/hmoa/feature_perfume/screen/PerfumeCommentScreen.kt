@@ -137,8 +137,15 @@ fun PerfumeCommentContent(
                     sortType = sortType
                 )
                 when (sortType) {
-                    SortType.LATEST -> PerfumeCommentList(likePerfumeComments, {}, { id, isWrited -> })
-                    SortType.LIKE -> PerfumeCommentList(latestPerfumeComments, {}, { id, isWrited -> })
+                    SortType.LATEST -> PerfumeCommentList(
+                        likePerfumeComments,
+                        {},
+                        { id, isWrited -> onSpecificCommentClick(id, isWrited) })
+
+                    SortType.LIKE -> PerfumeCommentList(
+                        latestPerfumeComments,
+                        {},
+                        { id, isWrited -> onSpecificCommentClick(id, isWrited) })
                 }
 
             }
@@ -152,7 +159,7 @@ fun PerfumeCommentContent(
 fun PerfumeCommentList(
     latestPerfumeComments: LazyPagingItems<PerfumeCommentResponseDto>?,
     onShowReportModal: (id: String) -> Unit,
-    onSpecificCommentClick: (id: String, isWrited: Boolean) -> Unit
+    onSpecificCommentClick: (id: String, isWrited: Boolean) -> Unit,
 ) {
     LazyColumn(
         userScrollEnabled = true,
@@ -241,6 +248,7 @@ fun CommentAndSortText(
 ) {
     val likeColor = if (sortType == SortType.LIKE) Color.Black else CustomColor.gray2
     val latestColor = if (sortType == SortType.LATEST) Color.Black else CustomColor.gray2
+
 
     Row(
         verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween,

@@ -7,9 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DrawerValue
+import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -19,8 +19,8 @@ import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.feature_community.Navigation.CommunityRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
-import com.hmoa.feature_home.HOME_ROUTE
-import com.hmoa.feature_home.navigateToHome
+import com.hmoa.feature_home.navigation.HomeRoute
+import com.hmoa.feature_home.navigation.navigateToHome
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 
@@ -29,10 +29,11 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
     private lateinit var initialRoute: String
     private val needBottomBarScreens = listOf(
-        HOME_ROUTE,
+        HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
         CommunityRoute.CommunityPageRoute.name
     )
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             var isBottomBarVisible = true
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
-            navBackStackEntry.value?.destination?.route?.let{ route ->
+            navBackStackEntry.value?.destination?.route?.let { route ->
                 isBottomBarVisible = route in needBottomBarScreens
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
@@ -69,10 +70,10 @@ class MainActivity : AppCompatActivity() {
                 topBar = {
                     /** top bar도 비슷하게 처리할까요? */
                 },
-            ){
+            ) {
                 Box(
                     modifier = Modifier.padding(bottom = it.calculateBottomPadding())
-                ){
+                ) {
                     SetUpNavGraph(navHostController, initialRoute)
                 }
             }

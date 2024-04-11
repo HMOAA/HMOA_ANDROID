@@ -125,13 +125,6 @@ fun PostContent(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ){
-            Icon(
-                painter = painterResource(R.drawable.question_ic),
-                contentDescription = "Question Icon"
-            )
-
-            Spacer(Modifier.width(8.dp))
-
             //profile
             GlideImage(
                 imageModel = profile,
@@ -191,10 +184,22 @@ fun PostContent(
 
         Spacer(Modifier.height(8.dp))
 
-        Text(
-            text = title,
-            style = titleTextStyle
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(
+                painter = painterResource(R.drawable.question_ic),
+                contentDescription = "Question Icon"
+            )
+
+            Spacer(Modifier.width(8.dp))
+
+            Text(
+                text = title,
+                style = titleTextStyle
+            )
+        }
 
         Spacer(Modifier.height(15.dp))
 
@@ -204,7 +209,7 @@ fun PostContent(
         )
 
         if(pictures.isNotEmpty()){
-            Spacer(Modifier.height(5.dp))
+            Spacer(Modifier.height(17.dp))
 
             HorizontalPager(
                 modifier = Modifier

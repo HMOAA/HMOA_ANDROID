@@ -5,11 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import androidx.paging.cachedIn
-import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.core_common.Result
-import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
@@ -29,31 +25,35 @@ class CommunityMainViewModel @Inject constructor(
     private val _type = MutableStateFlow(Category.추천)
     val type get() = _type.asStateFlow()
 
+    private var _communities = MutableStateFlow<PagingData<CommunityByCategoryResponseDto>?>(null)
+
     private val _errState = MutableStateFlow("")
     val errState get() = _errState.asStateFlow()
 
-    val uiState : StateFlow<CommunityMainUiState> = combine(type){
-        Pager(
-            config = PagingConfig(PAGE_SIZE),
-            pagingSourceFactory = {getCommunityPaging(type.value.name)}
-        ).flow.cachedIn(viewModelScope)
-    }.asResult().map{
-        when (it) {
-            is Result.Loading -> CommunityMainUiState.Loading
-            is Result.Success -> {
-                CommunityMainUiState.Community(it.data)
-            }
-            is Result.Error -> CommunityMainUiState.Error
-        }
+    val uiState : StateFlow<CommunityMainUiState> = combine(
+        _communities,
+        type
+    ) { communities, type ->
+        CommunityMainUiState.Community(
+            communities
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = CommunityMainUiState.Loading
     )
 
+    fun communityPagingSource() : Flow<PagingData<CommunityByCategoryResponseDto>> = Pager(
+        config = PagingConfig(pageSize = PAGE_SIZE),
+        pagingSourceFactory = {
+            getCommunityPaging(type.value.name)
+        }
+    ).flow.cachedIn(viewModelScope)
+
     //category 정보 변경
     fun updateCategory(category: Category) {
         _type.update { category }
+        _communities.update{ null }
     }
 
     private fun getCommunityPaging(category : String) = CommunityPagingSource(
@@ -65,7 +65,7 @@ class CommunityMainViewModel @Inject constructor(
 sealed interface CommunityMainUiState {
     data object Loading : CommunityMainUiState
     data class Community(
-        val communities: Flow<PagingData<CommunityByCategoryResponseDto>>
+        val communities: PagingData<CommunityByCategoryResponseDto>?
     ) : CommunityMainUiState
 
     data object Error : CommunityMainUiState

@@ -5,25 +5,22 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
-import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.FloatingActionBtn
-import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -44,6 +41,7 @@ fun CommunityPageRoute(
 
     CommunityPage(
         uiState = uiState.value,
+        communities = viewModel.communityPagingSource().collectAsLazyPagingItems(),
         type = type.value,
         onTypeChanged = {
             viewModel.updateCategory(it)
@@ -57,6 +55,7 @@ fun CommunityPageRoute(
 @Composable
 fun CommunityPage(
     uiState: CommunityMainUiState,
+    communities : LazyPagingItems<CommunityByCategoryResponseDto>,
     type: Category,
     onTypeChanged: (Category) -> Unit,
     onNavBack: () -> Unit,
@@ -69,9 +68,6 @@ fun CommunityPage(
         }
 
         is CommunityMainUiState.Community -> {
-
-            val communities = uiState.communities.collectAsLazyPagingItems()
-
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd

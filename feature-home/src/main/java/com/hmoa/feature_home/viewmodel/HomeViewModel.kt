@@ -1,4 +1,4 @@
-package com.hmoa.feature_home
+package com.hmoa.feature_home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

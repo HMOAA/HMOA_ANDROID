@@ -361,6 +361,8 @@ fun CommunityDescriptionPage(
                             text = "아직 작성한 댓글이 없습니다",
                             style = noDataTextStyle
                         )
+
+                        Spacer(Modifier.height(30.dp))
                     }
                 }
                 CommentInputBar(

@@ -337,7 +337,6 @@ fun CommunityDescriptionPage(
 
                     if (commentList.isNotEmpty()) {
                         commentList.forEachIndexed { index, comment ->
-                            Log.d("TEST TAG", "comment : ${comment}")
                             Comment(
                                 profile = comment.profileImg,
                                 nickname = comment.author,
@@ -387,29 +386,4 @@ fun CommunityDescriptionPage(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun TestCommunityDescriptionPage() {
-    var isOpenBottomOptions by remember { mutableStateOf(false) }
-    CommunityDescriptionPage(
-        isOpenBottomOptions = isOpenBottomOptions,
-        changeBottomOptionState = {
-            isOpenBottomOptions = it
-        },
-        type = "post",
-        onChangeType = {},
-        uiState = CommunityDescUiState.Loading,
-        profile = null,
-        isLiked = false,
-        onChangeLike = {},
-        onNavBack = {},
-        onReportComment = {},
-        onReportCommunity = {},
-        onDeleteCommunity = {},
-        onDeleteComment = {},
-        onNavCommunityEdit = {},
-        onPostComment = {}
-    )
 }

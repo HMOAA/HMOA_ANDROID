@@ -1,16 +1,25 @@
 package com.hmoa.core_designsystem.component
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -40,12 +50,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -73,6 +88,10 @@ fun PostContent(
         initialPage = 0,
         pageCount = { pictures.size }
     )
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.toFloat()
+    val screenHeight = configuration.screenHeightDp.toFloat()
 
     val nicknameTextStyle = TextStyle(
         fontSize = 14.sp,
@@ -188,45 +207,33 @@ fun PostContent(
             Spacer(Modifier.height(5.dp))
 
             HorizontalPager(
-                modifier = Modifier.width(274.dp)
+                modifier = Modifier
+                    .width(274.dp)
                     .height(304.dp)
                     .align(Alignment.CenterHorizontally)
                     .background(color = Color.Black),
                 state = state
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
+                ExpandableImage(
+                    picture = pictures[it],
+                    width = screenWidth,
+                    height = screenHeight
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ){
-                    Box(
-                        modifier = Modifier.size(274.dp)
-                            .background(color = CustomColor.gray1)
-                            .clickable{
-                                /** 사진 선택 시 사진 확대해서 볼 수 있도록 */
-                            },
-                        contentAlignment = Alignment.Center
-                    ){
-                        //image view
-                        ImageView(
-                            imageUrl = pictures[it],
-                            width = 274f,
-                            height = 274f,
-                            backgroundColor = CustomColor.gray1,
-                            contentScale = ContentScale.Crop
+                    pictures.forEach{picture ->
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(color = if (picture == pictures[it]) Color.Black else CustomColor.gray4)
                         )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                            .height(30.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ){
-                        pictures.forEach{picture ->
-                            Box(
-                                modifier = Modifier.size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(color = if(picture == pictures[it]) Color.Black else CustomColor.gray4)
-                            )
-                        }
                     }
                 }
             }
@@ -243,7 +250,6 @@ fun PostContent(
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
-                    Log.d("TAG TEST", "click like : ${isLiked}")
                     onChangeLike()
                 }
             ) {
@@ -267,33 +273,74 @@ fun PostContent(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun TestPostContent(){
+fun ExpandableImage(
+    width : Float,
+    height : Float,
+    picture : String
+){
 
-    var isOpen by remember{mutableStateOf(false)}
+    var showDialog by remember{mutableStateOf(false)}
+
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = { showDialog = false }
+        ) {
+            Box(
+                modifier = Modifier.width(width.dp + 32.dp)
+                    .height(height.dp),
+                contentAlignment = Alignment.Center
+            ){
+                ImageView(
+                    imageUrl = picture,
+                    width = 1f,
+                    height = 1f,
+                    backgroundColor = Color.Black,
+                    contentScale = ContentScale.Fit
+                )
+                Row(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(start = 16.dp, top = 19.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.Start
+                ){
+                    IconButton(
+                        modifier = Modifier.size(24.dp),
+                        onClick = {showDialog = false}
+                    ){
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Dialog",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize()
     ){
-        PostContent(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .border(width = 1.dp, color = CustomColor.gray3, shape = RoundedCornerShape(10.dp)),
-            profile = "",
-            nickname = "향수 러버",
-            dateDiff = "10일 전",
-            title = "여자친구한테 선물할 향수 뭐가 좋을까요?",
-            content = "곧 있으면 여자친구 생일이라 향수를 선물해주고 싶은데, 요즘 20대 여성이 사용할 만한 향수 추천해주세요. 가격대는 10~20만원정도로 생각하고 있습니다.",
-            heartCount = "10",
-            isLiked = false,
-            onChangeLike = {},
-            onChangeBottomSheetState = {
-                isOpen = it
-            },
-            pictures = listOf()
-        )
+                .size(274.dp)
+                .background(color = CustomColor.gray1)
+                .pointerInput(Unit) {
+                    detectTapGestures {
+                        showDialog = !showDialog
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ){
+            //image view
+            ImageView(
+                imageUrl = picture,
+                width = 274f,
+                height = 274f,
+                backgroundColor = CustomColor.gray1,
+                contentScale = ContentScale.Crop
+            )
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.hmoa.core_domain.repository
 
 import ResultResponse
-import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto
@@ -21,7 +20,7 @@ interface CommunityRepository {
     suspend fun deleteCommunity(communityId: Int): ResultResponse<DataResponseDto<Nothing>>
     suspend fun putCommunityLike(communityId : Int) : ResultResponse<DataResponseDto<Nothing>>
     suspend fun deleteCommunityLike(communityId: Int) : ResultResponse<DataResponseDto<Nothing>>
-    suspend fun getCommunityByCategory(category: String, cursor: Int): ResultResponse<CommunityWithCursorResponseDto>
+    suspend fun getCommunityByCategory(category: String, cursor: Int): CommunityWithCursorResponseDto
     suspend fun getCommunitiesHome(): ResultResponse<List<CommunityByCategoryResponseDto>>
     suspend fun postCommunitySave(
         images: Array<File>,

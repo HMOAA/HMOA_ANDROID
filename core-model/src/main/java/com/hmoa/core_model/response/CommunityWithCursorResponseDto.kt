@@ -1,6 +1,9 @@
 package com.hmoa.core_model.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CommunityWithCursorResponseDto(
-    val communities : List<CommunityByCategoryResponseDto>,
+    val communites : List<CommunityByCategoryResponseDto>,
     val lastPage : Boolean
 )

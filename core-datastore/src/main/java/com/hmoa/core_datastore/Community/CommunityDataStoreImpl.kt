@@ -76,14 +76,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
     override suspend fun getCommunityByCategory(
         category: String,
         cursor: Int
-    ): ResultResponse<CommunityWithCursorResponseDto> {
-        val result = ResultResponse<CommunityWithCursorResponseDto>()
-        communityService.getCommunityByCategory(category, cursor).suspendMapSuccess {
-            result.data = this
-        }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
-        }
-        return result
+    ): CommunityWithCursorResponseDto {
+        return communityService.getCommunityByCategory(category, cursor)
     }
 
     override suspend fun getCommunitiesHome(): ResultResponse<List<CommunityByCategoryResponseDto>> {

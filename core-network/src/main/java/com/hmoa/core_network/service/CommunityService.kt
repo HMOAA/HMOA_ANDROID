@@ -1,13 +1,11 @@
 package com.hmoa.core_network.service
 
-import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.*
 import java.io.File
 
@@ -38,7 +36,7 @@ interface CommunityService {
     suspend fun getCommunityByCategory(
         @Query("category") category: String,
         @Query("cursor") cursor: Int
-    ): ApiResponse<CommunityWithCursorResponseDto>
+    ): CommunityWithCursorResponseDto
 
     @GET("/community/home")
     suspend fun getCommunitiesHome(): ApiResponse<List<CommunityByCategoryResponseDto>>

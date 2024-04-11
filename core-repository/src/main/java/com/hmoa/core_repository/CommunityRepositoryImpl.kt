@@ -1,9 +1,7 @@
 package com.hmoa.core_repository
 
 import ResultResponse
-import android.util.Log
 import com.hmoa.core_datastore.Community.CommunityDataStore
-import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto
@@ -42,7 +40,7 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataStore
     override suspend fun getCommunityByCategory(
         category: String,
         cursor: Int
-    ): ResultResponse<CommunityWithCursorResponseDto> {
+    ): CommunityWithCursorResponseDto {
         return communityDataStore.getCommunityByCategory(category, cursor)
     }
 

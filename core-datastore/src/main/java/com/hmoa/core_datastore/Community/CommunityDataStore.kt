@@ -21,7 +21,7 @@ interface CommunityDataStore {
     suspend fun deleteCommunity(communityId: Int): ResultResponse<DataResponseDto<Nothing>>
     suspend fun putCommunityLike(communityId : Int) : ResultResponse<DataResponseDto<Nothing>>
     suspend fun deleteCommunityLike(communityId: Int) : ResultResponse<DataResponseDto<Nothing>>
-    suspend fun getCommunityByCategory(category: String, cursor: Int): ResultResponse<CommunityWithCursorResponseDto>
+    suspend fun getCommunityByCategory(category: String, cursor: Int): CommunityWithCursorResponseDto
     suspend fun getCommunitiesHome(): ResultResponse<List<CommunityByCategoryResponseDto>>
     suspend fun postCommunitySave(
         images: Array<File>,

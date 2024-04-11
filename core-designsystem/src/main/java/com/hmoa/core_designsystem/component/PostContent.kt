@@ -210,32 +210,36 @@ fun PostContent(
                 modifier = Modifier
                     .width(274.dp)
                     .height(304.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .background(color = Color.Black),
+                    .align(Alignment.CenterHorizontally),
                 state = state
             ) {
-                ExpandableImage(
-                    picture = pictures[it],
-                    width = screenWidth,
-                    height = screenHeight
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(30.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Column(
+                    modifier = Modifier.fillMaxSize()
                 ){
-                    pictures.forEach{picture ->
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(color = if (picture == pictures[it]) Color.Black else CustomColor.gray4)
-                        )
+                    ExpandableImage(
+                        picture = pictures[it],
+                        width = screenWidth,
+                        height = screenHeight
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ){
+                        pictures.forEach{picture ->
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(color = if (picture == pictures[it]) Color.Black else CustomColor.gray4)
+                            )
+                        }
                     }
                 }
+
             }
         }
 
@@ -319,28 +323,24 @@ fun ExpandableImage(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
+    Box(
+        modifier = Modifier
+            .size(274.dp)
+            .background(color = CustomColor.gray1)
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    showDialog = !showDialog
+                }
+            },
+        contentAlignment = Alignment.Center
     ){
-        Box(
-            modifier = Modifier
-                .size(274.dp)
-                .background(color = CustomColor.gray1)
-                .pointerInput(Unit) {
-                    detectTapGestures {
-                        showDialog = !showDialog
-                    }
-                },
-            contentAlignment = Alignment.Center
-        ){
-            //image view
-            ImageView(
-                imageUrl = picture,
-                width = 274f,
-                height = 274f,
-                backgroundColor = CustomColor.gray1,
-                contentScale = ContentScale.Crop
-            )
-        }
+        //image view
+        ImageView(
+            imageUrl = picture,
+            width = 1f,
+            height = 1f,
+            backgroundColor = CustomColor.gray1,
+            contentScale = ContentScale.Fit
+        )
     }
 }

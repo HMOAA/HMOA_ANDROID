@@ -65,11 +65,6 @@ fun Comment(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White)
-            .border(
-                width = 0.5.dp,
-                color = CustomColor.gray2,
-                shape = RoundedCornerShape(size = 10.dp)
-            )
             .clickable {
                 onNavCommunity()
             }

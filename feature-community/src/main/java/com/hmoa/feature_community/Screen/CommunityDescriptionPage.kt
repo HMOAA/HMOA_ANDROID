@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -224,7 +225,7 @@ fun CommunityDescriptionPage(
                                     .fillMaxWidth()
                                     .clickable {
                                         //게시글
-                                        if (type == "post"){
+                                        if (type == "post") {
                                             /** 신고 이벤트 */
                                             onReportCommunity()
                                         }
@@ -279,40 +280,26 @@ fun CommunityDescriptionPage(
                         text = uiState.community.category,
                         style = categoryTextStyle
                     )
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(18.dp))
 
-                    Column(
+                    PostContent(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .border(
-                                width = 1.dp,
-                                color = CustomColor.gray1,
-                                shape = RoundedCornerShape(size = 10.dp)
-                            )
-                    ) {
-                        PostContent(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .border(
-                                    width = 1.dp,
-                                    color = CustomColor.gray3,
-                                    shape = RoundedCornerShape(10.dp)
-                                ),
-                            onChangeBottomSheetState = {
-                                changeBottomOptionState(it)
-                                onChangeType("post")
-                            },
-                            profile = community.category,
-                            nickname = community.author,
-                            dateDiff = community.time,
-                            title = community.title,
-                            content = community.content,
-                            heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
-                            isLiked = isLiked,
-                            onChangeLike = onChangeLike,
-                            pictures = uiState.photoList
-                        )
-                    }
+                            .fillMaxWidth(),
+                        onChangeBottomSheetState = {
+                            changeBottomOptionState(it)
+                            onChangeType("post")
+                        },
+                        profile = community.category,
+                        nickname = community.author,
+                        dateDiff = community.time,
+                        title = community.title,
+                        content = community.content,
+                        heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
+                        isLiked = isLiked,
+                        onChangeLike = onChangeLike,
+                        pictures = uiState.photoList
+                    )
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
 
                     Spacer(Modifier.height(32.dp))
 
@@ -352,6 +339,8 @@ fun CommunityDescriptionPage(
                             )
                             if (index != commentList.size - 1) {
                                 Spacer(Modifier.height(15.dp))
+
+                                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
                             }
                         }
                     } else {

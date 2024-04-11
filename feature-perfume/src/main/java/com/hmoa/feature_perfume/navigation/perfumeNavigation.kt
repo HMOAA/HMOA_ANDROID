@@ -5,10 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.hmoa.feature_perfume.screen.EditMyPerfumeCommentRoute
-import com.hmoa.feature_perfume.screen.PerfumeCommentScreen
-import com.hmoa.feature_perfume.screen.PerfumeRoute
-import com.hmoa.feature_perfume.screen.SpecificCommentRoute
+import com.hmoa.feature_perfume.screen.*
 
 fun NavController.navigateToPerfume(perfumeId: Int) = navigate("${PerfumeRoute.Perfume.name}/$perfumeId")
 fun NavController.navigateToPerfumeComment(perfumeId: Int) = navigate("${PerfumeRoute.PerfumeComment.name}/$perfumeId")
@@ -18,11 +15,13 @@ fun NavController.navigateToSpecificPerfumeComment(commentId: Int, isEditable: B
         false -> navigate("${PerfumeRoute.SpecificPerfumeComment.name}/${commentId}")
     }
 }
+fun NavController.navigateToCreateNewperfumeComment(perfumeId: Int) = navigate("${PerfumeRoute.CreateNewPerfumeComment.name}/$perfumeId")
+
 
 fun NavGraphBuilder.perfumeScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onCommentAddClick: () -> Unit,
+    onCommentAddClick: (perfumeId: Int) -> Unit,
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
@@ -37,7 +36,7 @@ fun NavGraphBuilder.perfumeScreen(
             onBrandClick = { brandId -> onBrandClick(brandId) },
             onBackClick = { onBackClick() },
             onHomeClick = { onHomeClick() },
-            onCommentAddClick = { onCommentAddClick() },
+            onCommentAddClick = { onCommentAddClick(it) },
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
             perfumeId = perfumeId,
@@ -48,7 +47,7 @@ fun NavGraphBuilder.perfumeScreen(
 
 fun NavGraphBuilder.perfumeComment(
     onBackClick: () -> Unit,
-    onAddCommentClick: (perfumeId: Int?) -> Unit,
+    onAddCommentClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     composable(
@@ -56,9 +55,9 @@ fun NavGraphBuilder.perfumeComment(
         arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })
     ) {
         val perfumeId = it.arguments?.getInt("perfumeId")
-        PerfumeCommentScreen(
+        PerfumeCommentRoute(
             onBackClick = { onBackClick() },
-            onAddCommentClick = { onAddCommentClick(perfumeId) },
+            onAddCommentClick = { onAddCommentClick(it) },
             perfumeId = perfumeId,
             onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
         )
@@ -84,5 +83,15 @@ fun NavGraphBuilder.editMyPerfumeComment(onBackClick: () -> Unit) {
     ) {
         val commentId = it.arguments?.getInt("commentId")
         EditMyPerfumeCommentRoute(onBackClick = { onBackClick() }, commentId = commentId)
+    }
+}
+
+fun NavGraphBuilder.createNewPerfumeComment(onBackClick: () -> Unit){
+    composable(
+        route = "${PerfumeRoute.CreateNewPerfumeComment.name}/{perfumeId}",
+        arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })
+    ){
+        val perfumeId = it.arguments?.getInt("perfumeId")
+        CreateNewPerfumeCommentRoute(onBackClick = {onBackClick()}, perfumeId = perfumeId)
     }
 }

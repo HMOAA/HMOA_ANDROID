@@ -10,6 +10,7 @@ class CommunityPagingSource(
     private val category : String,
 ) : PagingSource<Int, CommunityByCategoryResponseDto>() {
 
+    private var communityCount = 0
     private var cursor = 0
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CommunityByCategoryResponseDto> {
@@ -20,17 +21,13 @@ class CommunityPagingSource(
                     category = category,
                     cursor = cursor
                 )
-            if (response.exception is Exception){
-                throw response.exception!!
-            }
-            val result = response.data!!
-            cursor = result.communities.last().communityId
-
+            communityCount = response.communites.size
+            cursor = response.communites.last().communityId
             val prevKey = if (pageNumber > 0) pageNumber - 1 else null
-            val nextKey = if (result.lastPage) null else pageNumber + 1
+            val nextKey = if (response.lastPage) null else pageNumber + 1
 
             return LoadResult.Page(
-                data = result.communities,
+                data = response.communites,
                 prevKey = prevKey,
                 nextKey = nextKey
             )

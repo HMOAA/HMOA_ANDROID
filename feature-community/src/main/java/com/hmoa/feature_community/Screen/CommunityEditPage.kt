@@ -1,4 +1,4 @@
-package com.hmoa.feature_community
+package com.hmoa.feature_community.Screen
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -281,7 +281,7 @@ fun CommunityEditPage(
                                 width = 274f,
                                 height = 274f,
                                 backgroundColor = CustomColor.gray1,
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Fit
                             )
 
                             //삭제 버튼

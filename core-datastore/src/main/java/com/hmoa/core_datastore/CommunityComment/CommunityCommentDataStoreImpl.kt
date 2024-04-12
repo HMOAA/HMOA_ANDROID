@@ -60,14 +60,8 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
     override suspend fun getCommunityComments(
         communityId: Int,
         page: Int
-    ): ResultResponse<CommunityCommentAllResponseDto> {
-        val result = ResultResponse<CommunityCommentAllResponseDto>()
-        communityCommentService.getCommunityComments(communityId, page).suspendMapSuccess {
-            result.data = this
-        }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
-        }
-        return result
+    ): CommunityCommentAllResponseDto {
+        return communityCommentService.getCommunityComments(communityId, page)
     }
 
     override suspend fun postCommunityComment(

@@ -27,14 +27,14 @@ interface CommunityCommentService {
 
     @DELETE("/community/comment/{commentId}/like")
     suspend fun deleteCommunityCommentLiked(
-        @Path(value = "commentId") commentId: Int
+        @Path("commentId") commentId: Int
     ): ApiResponse<DataResponseDto<Any>>
 
     @POST("/community/comment/{communityId}/findAll")
     suspend fun getCommunityComments(
-        @Path(value = "communityId") communityId: Int,
+        @Path("communityId") communityId: Int,
         @Query("page") page: Int
-    ): ApiResponse<CommunityCommentAllResponseDto>
+    ): CommunityCommentAllResponseDto
 
     @POST("/community/comment/{communityId}/save")
     suspend fun postCommunityComment(

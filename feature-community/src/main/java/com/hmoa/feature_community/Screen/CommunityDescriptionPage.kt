@@ -2,10 +2,7 @@ package com.hmoa.feature_community.Screen
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,22 +17,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.ItemSnapshotList
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.CommentInputBar
 import com.hmoa.core_designsystem.component.PostContent
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityDescUiState
 import com.hmoa.feature_community.ViewModel.CommunityDescViewModel
 
@@ -53,7 +52,8 @@ fun CommunityDescriptionRoute(
     val profile = viewModel.profile.collectAsStateWithLifecycle()
     val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
-    var type by remember{mutableStateOf("Post")}
+    val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
+    var type by remember{mutableStateOf("post")}
 
     CommunityDescriptionPage(
         isOpenBottomOptions = isOpenBottomOptions.value,
@@ -69,6 +69,7 @@ fun CommunityDescriptionRoute(
             viewModel.updateLike()
         },
         uiState = uiState.value,
+        commentList = comments,
         profile = profile.value,
         onNavBack = onNavBack,
         onReportCommunity = {
@@ -79,6 +80,7 @@ fun CommunityDescriptionRoute(
         },
         onPostComment = {
             viewModel.postComment(it)
+            comments.refresh()
         },
         onDeleteCommunity = {
             viewModel.delCommunity()
@@ -92,7 +94,6 @@ fun CommunityDescriptionRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityDescriptionPage(
     isOpenBottomOptions : Boolean,
@@ -100,6 +101,7 @@ fun CommunityDescriptionPage(
     type : String,
     onChangeType : (String) -> Unit,
     uiState : CommunityDescUiState,
+    commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     isLiked : Boolean,
     onChangeLike : () -> Unit,
     profile : String?,
@@ -126,18 +128,6 @@ fun CommunityDescriptionPage(
         fontSize = 12.sp,
         color = Color.Black
     )
-    val noDataTextStyle = TextStyle(
-        fontSize = 20.sp,
-        color = Color.Black
-    )
-    val dialogDefaultTextStyle = TextStyle(
-        fontSize = 20.sp,
-        color = CustomColor.blue
-    )
-    val dialogRedTextStyle = TextStyle(
-        fontSize = 20.sp,
-        color = CustomColor.red
-    )
 
     when (uiState) {
         CommunityDescUiState.Loading -> {
@@ -151,110 +141,19 @@ fun CommunityDescriptionPage(
         is CommunityDescUiState.CommunityDesc -> {
 
             val community = uiState.community
-            val commentList = uiState.comments.comments
 
-            if (isOpenBottomOptions) {
-                ModalBottomSheet(
-                    onDismissRequest = { changeBottomOptionState(false) },
-                    containerColor = Color.White,
-                    scrimColor = Color.Black.copy(alpha = 0.3f),
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                color = Color.Transparent,
-                                shape = RoundedCornerShape(size = 20.dp)
-                            )
-                            .padding(vertical = 16.dp)
-                    ) {
-                        if (community.writed) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        //게시글일 경우
-                                        if (type == "post") {
-                                            /** 게시글 수정 화면으로 이동 */
-                                            onNavCommunityEdit()
-                                        } else {
-                                            /** 댓글 수정 어떻게 해야하나> */
-                                        }
-                                    },
-                                text = "수정",
-                                textAlign = TextAlign.Center,
-                                style = dialogDefaultTextStyle
-                            )
+            BottomOptionDialog(
+                isOpenBottomOptions = isOpenBottomOptions,
+                changeBottomOptionState = changeBottomOptionState,
+                isWritten = community.writed,
+                type = type,
+                onDeleteComment = onDeleteComment,
+                onDeleteCommunity = onDeleteCommunity,
+                onReportCommunity = onReportCommunity,
+                onReportComment = onReportComment,
+                onNavCommunityEdit = onNavCommunityEdit
+            )
 
-                            Spacer(Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        //post 일 경우
-                                        if (type == "post") {
-                                            /** 커뮤니티 삭제 */
-                                            onDeleteCommunity()
-                                        }
-                                        //댓글 일 경우
-                                        else {
-                                            onDeleteComment()
-                                        }
-                                    },
-                                text = "삭제",
-                                textAlign = TextAlign.Center,
-                                style = dialogDefaultTextStyle
-                            )
-
-                            Spacer(Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        changeBottomOptionState(false)
-                                    },
-                                text = "취소",
-                                textAlign = TextAlign.Center,
-                                style = dialogRedTextStyle
-                            )
-                        } else {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        //게시글
-                                        if (type == "post") {
-                                            /** 신고 이벤트 */
-                                            onReportCommunity()
-                                        }
-                                        //댓글
-                                        else {
-                                            onReportComment()
-                                        }
-                                    },
-                                text = "신고하기",
-                                textAlign = TextAlign.Center,
-                                style = dialogDefaultTextStyle
-                            )
-
-                            Spacer(Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        changeBottomOptionState(false)
-                                    },
-                                text = "취소",
-                                textAlign = TextAlign.Center,
-                                style = dialogRedTextStyle
-                            )
-                        }
-                    }
-                }
-            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -315,44 +214,18 @@ fun CommunityDescriptionPage(
                         Spacer(Modifier.width(4.dp))
 
                         Text(
-                            text = "+${commentList.size}",
+                            text = "+${commentList.itemCount}",
                             style = commentSizeTextStyle
                         )
                     }
 
                     Spacer(Modifier.height(21.dp))
 
-                    if (commentList.isNotEmpty()) {
-                        commentList.forEachIndexed { index, comment ->
-                            Comment(
-                                profile = comment.profileImg,
-                                nickname = comment.author,
-                                dateDiff = comment.time,
-                                comment = comment.content,
-                                isFirst = false,
-                                viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
-                                onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
-                                onOpenBottomDialog = {
-                                    changeBottomOptionState(true)
-                                    onChangeType("comment")
-                                }
-                            )
-                            if (index != commentList.size - 1) {
-                                Spacer(Modifier.height(15.dp))
-
-                                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                            }
-                        }
-                    } else {
-                        Spacer(Modifier.height(40.dp))
-
-                        Text(
-                            text = "아직 작성한 댓글이 없습니다",
-                            style = noDataTextStyle
-                        )
-
-                        Spacer(Modifier.height(30.dp))
-                    }
+                    Comments(
+                        commentList = commentList.itemSnapshotList,
+                        changeBottomOptionState = changeBottomOptionState,
+                        onChangeType = onChangeType
+                    )
                 }
                 CommentInputBar(
                     modifier = Modifier
@@ -374,6 +247,179 @@ fun CommunityDescriptionPage(
                 Text(
                     text = "Data is Error"
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun Comments(
+    commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
+    changeBottomOptionState : (Boolean) -> Unit,
+    onChangeType: (String) -> Unit,
+){
+    val noDataTextStyle = TextStyle(
+        fontSize = 20.sp,
+        color = Color.Black
+    )
+
+    Log.d("TAG TEST", "Comments : ${commentList}")
+    if (commentList.isNotEmpty()) {
+        commentList.reversed().forEachIndexed { index, comment ->
+            if (comment != null){
+                Comment(
+                    profile = comment.profileImg,
+                    nickname = comment.author,
+                    dateDiff = comment.time,
+                    comment = comment.content,
+                    isFirst = false,
+                    viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
+                    onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
+                    onOpenBottomDialog = {
+                        changeBottomOptionState(true)
+                        onChangeType("comment")
+                    }
+                )
+                if (index != commentList.size - 1) {
+                    Spacer(Modifier.height(15.dp))
+
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                }
+            }
+        }
+    } else {
+        Spacer(Modifier.height(40.dp))
+
+        Text(
+            text = "아직 작성한 댓글이 없습니다",
+            style = noDataTextStyle
+        )
+
+        Spacer(Modifier.height(30.dp))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomOptionDialog(
+    isOpenBottomOptions : Boolean,
+    changeBottomOptionState : (Boolean) -> Unit,
+    isWritten : Boolean,
+    type : String,
+    onDeleteComment: () -> Unit,
+    onDeleteCommunity: () -> Unit,
+    onReportCommunity: () -> Unit,
+    onReportComment: () -> Unit,
+    onNavCommunityEdit : () -> Unit
+){
+    val dialogDefaultTextStyle = TextStyle(
+        fontSize = 20.sp,
+        color = CustomColor.blue
+    )
+    val dialogRedTextStyle = TextStyle(
+        fontSize = 20.sp,
+        color = CustomColor.red
+    )
+
+    if (isOpenBottomOptions) {
+        ModalBottomSheet(
+            onDismissRequest = { changeBottomOptionState(false) },
+            containerColor = Color.White,
+            scrimColor = Color.Black.copy(alpha = 0.3f),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color.Transparent,
+                        shape = RoundedCornerShape(size = 20.dp)
+                    )
+                    .padding(vertical = 16.dp)
+            ) {
+                if (isWritten) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                //게시글일 경우
+                                if (type == "post") {
+                                    /** 게시글 수정 화면으로 이동 */
+                                    onNavCommunityEdit()
+                                } else {
+                                    /** 댓글 수정 어떻게 해야하나> */
+                                }
+                            },
+                        text = "수정",
+                        textAlign = TextAlign.Center,
+                        style = dialogDefaultTextStyle
+                    )
+
+                    Spacer(Modifier.height(16.dp))
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                //post 일 경우
+                                if (type == "post") {
+                                    /** 커뮤니티 삭제 */
+                                    onDeleteCommunity()
+                                }
+                                //댓글 일 경우
+                                else {
+                                    onDeleteComment()
+                                }
+                            },
+                        text = "삭제",
+                        textAlign = TextAlign.Center,
+                        style = dialogDefaultTextStyle
+                    )
+
+                    Spacer(Modifier.height(16.dp))
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                changeBottomOptionState(false)
+                            },
+                        text = "취소",
+                        textAlign = TextAlign.Center,
+                        style = dialogRedTextStyle
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                //게시글
+                                if (type == "post") {
+                                    /** 신고 이벤트 */
+                                    onReportCommunity()
+                                }
+                                //댓글
+                                else {
+                                    onReportComment()
+                                }
+                            },
+                        text = "신고하기",
+                        textAlign = TextAlign.Center,
+                        style = dialogDefaultTextStyle
+                    )
+
+                    Spacer(Modifier.height(16.dp))
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                changeBottomOptionState(false)
+                            },
+                        text = "취소",
+                        textAlign = TextAlign.Center,
+                        style = dialogRedTextStyle
+                    )
+                }
             }
         }
     }

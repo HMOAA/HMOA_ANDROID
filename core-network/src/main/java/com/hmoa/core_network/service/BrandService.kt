@@ -35,17 +35,17 @@ interface BrandService {
     suspend fun getPerfumesSortedChar(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): ApiResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
+    ): ApiResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
 
     @GET("/brand/perfumes/{brandId}/top")
     suspend fun getPerfumesSortedLike(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): ApiResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
+    ): ApiResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
 
     @GET("/brand/perfumes/{brandId}/update")
     suspend fun getPerfumesSortedUpdate(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): ApiResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
+    ): ApiResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
 }

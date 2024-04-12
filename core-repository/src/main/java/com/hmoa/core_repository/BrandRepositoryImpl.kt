@@ -39,21 +39,21 @@ class BrandRepositoryImpl @Inject constructor(
     override suspend fun getPerfumesSortedChar(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>> {
+    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
         return brandDataStore.getPerfumesSortedChar(brandId, pageNum)
     }
 
     override suspend fun getPerfumesSortedLike(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>> {
+    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
         return brandDataStore.getPerfumesSortedLike(brandId, pageNum)
     }
 
     override suspend fun getPerfumesSortedUpdate(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>> {
+    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
         return brandDataStore.getPerfumesSortedUpdate(brandId, pageNum)
     }
 }

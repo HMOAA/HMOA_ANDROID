@@ -15,15 +15,15 @@ interface BrandDataStore {
     suspend fun getPerfumesSortedChar(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
+    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
 
     suspend fun getPerfumesSortedLike(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
+    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
 
     suspend fun getPerfumesSortedUpdate(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
+    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
 }

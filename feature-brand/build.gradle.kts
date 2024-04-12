@@ -48,9 +48,7 @@ dependencies {
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
-
-    implementation("androidx.compose.material:material:1.2.0-beta02")
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.paging:paging-compose:3.2.0")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui:1.1.0")
     implementation("androidx.navigation:navigation-compose:2.7.0")

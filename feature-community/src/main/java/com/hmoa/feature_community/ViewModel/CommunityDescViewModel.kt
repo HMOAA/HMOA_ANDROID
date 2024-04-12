@@ -3,15 +3,20 @@ package com.hmoa.feature_community.ViewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.CommunityRepository
-import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
-import com.hmoa.core_model.response.CommunityCommentAllResponseDto
+import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
+import com.hmoa.feature_community.CommunityCommentPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,8 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CommunityDescViewModel @Inject constructor(
     private val communityRepository: CommunityRepository,
-    private val communityCommentRepository: CommunityCommentRepository,
-    getUserInfo: GetMyUserInfoUseCase,
+    private val communityCommentRepository: CommunityCommentRepository
 ) : ViewModel() {
 
     private val _isOpenBottomOptions = MutableStateFlow(false)
@@ -52,6 +56,8 @@ class CommunityDescViewModel @Inject constructor(
     private val _flag = MutableStateFlow(false)
     val flag get() = _flag.asStateFlow()
 
+    private var _communities = MutableStateFlow<PagingData<CommunityCommentWithLikedResponseDto>?>(null)
+
     //community flow
     private val communityFlow = combine(_flag, _id){ flag, id ->
         fetchLike(isLiked.value)
@@ -69,29 +75,21 @@ class CommunityDescViewModel @Inject constructor(
         flow -> flow.asResult()
     }
 
-    //comment flow
-    private val commentFlow = flow{
-        val result = communityCommentRepository.getCommunityComments(id.value, page.value)
-        if (result.exception is Exception) {
-            throw result.exception!!
-        } else {
-            emit(result.data!!)
-        }
-    }.asResult()
-
     //ui state
     val uiState : StateFlow<CommunityDescUiState> = combine(
         communityFlow,
-        commentFlow
+        _communities
     ){ communityResult, commentsResult ->
         when {
-            communityResult is Result.Error || commentsResult is Result.Error -> CommunityDescUiState.Error
-            communityResult is Result.Loading || commentsResult is Result.Loading -> CommunityDescUiState.Loading
+            communityResult is Result.Error-> {
+                CommunityDescUiState.Error
+            }
+            communityResult is Result.Loading -> CommunityDescUiState.Loading
             else -> {
-                Log.d("TAG TEST", "community : ${communityResult}")
+                Log.d("TAG TEST", "comment : ${commentsResult}")
                 CommunityDescUiState.CommunityDesc(
                     (communityResult as Result.Success).data,
-                    (commentsResult as Result.Success).data,
+                    commentsResult,
                 )
             }
         }
@@ -128,14 +126,15 @@ class CommunityDescViewModel @Inject constructor(
             val requestDto = CommunityCommentDefaultRequestDto(
                 content = comment
             )
-
             try {
                 communityCommentRepository.postCommunityComment(
                     communityId = id.value,
                     dto = requestDto
                 )
             } catch (e: Exception) {
-                _errState.update { e.message.toString() }
+                _errState.update {
+                    e.message.toString()
+                }
             }
         }
     }
@@ -149,6 +148,13 @@ class CommunityDescViewModel @Inject constructor(
     fun updateLike(){
         _flag.update{true}
     }
+
+    fun commentPagingSource() : Flow<PagingData<CommunityCommentWithLikedResponseDto>> = Pager(
+        config = PagingConfig(pageSize = PAGE_SIZE),
+        pagingSourceFactory = {
+            getCommentPaging(id = id.value)
+        }
+    ).flow.cachedIn(viewModelScope)
 
     //좋아요 remote update
     private suspend fun fetchLike(liked : Boolean){
@@ -174,19 +180,17 @@ class CommunityDescViewModel @Inject constructor(
         }
     }
 
-    fun postInfo(){
-        viewModelScope.launch{
-            communityCommentRepository.putCommunityCommentLiked(id.value)
-            communityRepository.putCommunityLike(id.value)
-        }
-    }
+    private fun getCommentPaging(id : Int) = CommunityCommentPagingSource(
+        communityCommentRepository = communityCommentRepository,
+        id = id
+    )
 }
 
 sealed interface CommunityDescUiState {
     data object Loading : CommunityDescUiState
     data class CommunityDesc(
         val community: CommunityDefaultResponseDto,
-        val comments: CommunityCommentAllResponseDto
+        val comments: PagingData<CommunityCommentWithLikedResponseDto>?
     ) : CommunityDescUiState {
         val photoList = community.communityPhotos.map {
             it.photoUrl
@@ -194,13 +198,4 @@ sealed interface CommunityDescUiState {
     }
 
     data object Error : CommunityDescUiState
-}
-
-sealed interface UserInfoState {
-    data object Loading : UserInfoState
-    data class User(
-        val profile: String,
-    ) : UserInfoState
-
-    data object Error : UserInfoState
 }

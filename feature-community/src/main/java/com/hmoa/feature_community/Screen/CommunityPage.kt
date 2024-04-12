@@ -31,6 +31,7 @@ import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
 @Composable
 fun CommunityPageRoute(
     onNavBack : () -> Unit,
+    onNavSearch : () -> Unit,
     onNavCommunityDescription : (Int) -> Unit,
     onNavPost : (String) -> Unit,
     viewModel : CommunityMainViewModel = hiltViewModel()
@@ -47,6 +48,7 @@ fun CommunityPageRoute(
             viewModel.updateCategory(it)
         },
         onNavBack = onNavBack,
+        onNavSearch = onNavSearch,
         onNavCommunityDescription = onNavCommunityDescription,
         onNavPost = onNavPost
     )
@@ -59,6 +61,7 @@ fun CommunityPage(
     type: Category,
     onTypeChanged: (Category) -> Unit,
     onNavBack: () -> Unit,
+    onNavSearch : () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
     onNavPost : (String) -> Unit
 ){
@@ -79,12 +82,8 @@ fun CommunityPage(
                         title = "Community",
                         navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
                         onNavClick = onNavBack,
-                    )
-                    ContentDivider()
-                    /** search bar (여기서는 Search 모듈을 사용해야 하지 않을까?) */
-                    Spacer(
-                        modifier = Modifier
-                            .height(60.dp)
+                        menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
+                        onMenuClick = onNavSearch
                     )
                     ContentDivider()
                     CommunityMainTypes(

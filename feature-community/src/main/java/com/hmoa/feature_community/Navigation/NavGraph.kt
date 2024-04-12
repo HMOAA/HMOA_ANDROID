@@ -9,6 +9,7 @@ import com.hmoa.feature_community.Screen.CommunityEditRoute
 import com.hmoa.feature_community.Screen.CommunityHomeRoute
 import com.hmoa.feature_community.Screen.CommunityPageRoute
 import com.hmoa.feature_community.Screen.CommunityPostRoute
+import com.hmoa.feature_community.Screen.CommunitySearchRoute
 
 //게시글 기본 화면
 fun NavController.navigateToCommunityRoute() = navigate(CommunityRoute.CommunityGraphRoute.name)
@@ -28,16 +29,16 @@ fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${Community
 //게시글 상세 화면
 fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}")
 
+//게시글 검색 화면
+fun NavController.navigateToCommunitySearchRoute() = navigate(CommunityRoute.CommunitySearchRoute.name)
+
 fun NavGraphBuilder.nestedCommunityGraph(
-    onNavHome : () -> Unit,
-    onNavHPedia : () -> Unit,
-    onNavLike : () -> Unit,
-    onNavMyPage : () -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityPage : () -> Unit,
     onNavCommunityPost : (String) -> Unit,
     onNavCommunityEdit : (Int) -> Unit,
-    onNavCommunityDescription : (Int) -> Unit
+    onNavCommunityDescription : (Int) -> Unit,
+    onNavCommunitySearch : () -> Unit,
 ){
     navigation(
         startDestination = CommunityRoute.CommunityHomeRoute.name,
@@ -52,6 +53,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
         composable(route = CommunityRoute.CommunityPageRoute.name){
             CommunityPageRoute(
                 onNavBack = onNavBack,
+                onNavSearch = onNavCommunitySearch,
                 onNavCommunityDescription = onNavCommunityDescription,
                 onNavPost = onNavCommunityPost
             )
@@ -80,6 +82,9 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavCommunityEdit = onNavCommunityEdit,
                 onNavBack = onNavBack
             )
+        }
+        composable(route = CommunityRoute.CommunitySearchRoute.name){
+            CommunitySearchRoute()
         }
     }
 }

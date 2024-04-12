@@ -1,6 +1,9 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Brand.BrandDataStore
+import com.hmoa.core_model.response.BrandDefaultResponseDto
+import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import java.io.File
 import javax.inject.Inject
@@ -9,7 +12,7 @@ class BrandRepositoryImpl @Inject constructor(
     private val brandDataStore: BrandDataStore
 ) : com.hmoa.core_domain.repository.BrandRepository {
 
-    override suspend fun getBrand(brandId: Int): DataResponseDto<Any> {
+    override suspend fun getBrand(brandId: Int): ResultResponse<DataResponseDto<BrandDefaultResponseDto>> {
         return brandDataStore.getBrand(brandId)
     }
 
@@ -33,15 +36,24 @@ class BrandRepositoryImpl @Inject constructor(
         return brandDataStore.postBrand(image, brandName, englishName)
     }
 
-    override suspend fun getPerfumesSortedChar(brandId: Int, pageNum: Int): DataResponseDto<Any> {
+    override suspend fun getPerfumesSortedChar(
+        brandId: Int,
+        pageNum: Int
+    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>> {
         return brandDataStore.getPerfumesSortedChar(brandId, pageNum)
     }
 
-    override suspend fun getPerfumesSortedTop(brandId: Int, pageNum: Int): DataResponseDto<Any> {
-        return brandDataStore.getPerfumesSortedTop(brandId, pageNum)
+    override suspend fun getPerfumesSortedLike(
+        brandId: Int,
+        pageNum: Int
+    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>> {
+        return brandDataStore.getPerfumesSortedLike(brandId, pageNum)
     }
 
-    override suspend fun getPerfumesSortedUpdate(brandId: Int, pageNum: Int): DataResponseDto<Any> {
+    override suspend fun getPerfumesSortedUpdate(
+        brandId: Int,
+        pageNum: Int
+    ): ResultResponse<DataResponseDto<BrandPerfumeBriefResponseDto>> {
         return brandDataStore.getPerfumesSortedUpdate(brandId, pageNum)
     }
 }

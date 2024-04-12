@@ -1,12 +1,15 @@
 package com.hmoa.core_network.service
 
+import com.hmoa.core_model.response.BrandDefaultResponseDto
+import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 import java.io.File
 
 interface BrandService {
     @GET("/brand/{brandId}")
-    suspend fun getBrand(@Path(value = "brandId") brandId: Int): DataResponseDto<Any>
+    suspend fun getBrand(@Path(value = "brandId") brandId: Int): ApiResponse<DataResponseDto<BrandDefaultResponseDto>>
 
     @PUT("/brand/{brandId}/like")
     suspend fun putBrandLike(@Path(value = "brandId") brandId: Int): DataResponseDto<Any>
@@ -32,17 +35,17 @@ interface BrandService {
     suspend fun getPerfumesSortedChar(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): DataResponseDto<Any>
+    ): ApiResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
 
     @GET("/brand/perfumes/{brandId}/top")
-    suspend fun getPerfumesSortedTop(
+    suspend fun getPerfumesSortedLike(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): DataResponseDto<Any>
+    ): ApiResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
 
     @GET("/brand/perfumes/{brandId}/update")
     suspend fun getPerfumesSortedUpdate(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): DataResponseDto<Any>
+    ): ApiResponse<DataResponseDto<BrandPerfumeBriefResponseDto>>
 }

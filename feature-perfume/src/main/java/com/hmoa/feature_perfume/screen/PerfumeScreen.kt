@@ -246,7 +246,7 @@ fun PerfumeInfo(
         fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
         selected = isLikedPerfume,
         unSelectedColor = CustomColor.gray1,
-        selectedColor = Color.Black
+        selectedColor = CustomColor.gray1
     )
     Text(
         perfumeKoreanName,

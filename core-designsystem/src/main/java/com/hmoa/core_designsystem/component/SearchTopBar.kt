@@ -48,7 +48,6 @@ fun SearchTopBar(
 ){
 
     TopAppBar(
-        modifier = Modifier.padding(16.dp),
         title = {
             BasicTextField(
                 modifier = Modifier
@@ -79,6 +78,8 @@ fun SearchTopBar(
             }
         },
         navigationIcon = {
+            Spacer(Modifier.width(16.dp))
+
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = onNavBack
@@ -94,7 +95,7 @@ fun SearchTopBar(
 
             if (searchWord.isNotEmpty()){
                 IconButton(
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(20.dp)
                         .background(color = CustomColor.gray2, shape = CircleShape)
                         .clip(CircleShape),
                     onClick = onClearWord
@@ -105,21 +106,21 @@ fun SearchTopBar(
                         tint = Color.White
                     )
                 }
-
-                Spacer(Modifier.width(8.dp))
             }
-
-            IconButton(
-                modifier = Modifier.size(20.dp),
-                onClick = onClickSearch
-            ){
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.ic_search),
-                    contentDescription = "Search Button",
-                    tint = CustomColor.gray3
-                )
+            else {
+                IconButton(
+                    modifier = Modifier.size(20.dp),
+                    onClick = onClickSearch
+                ){
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(R.drawable.ic_search),
+                        contentDescription = "Search Button",
+                        tint = CustomColor.gray3
+                    )
+                }
             }
+            Spacer(Modifier.width(16.dp))
         }
     )
 
@@ -134,7 +135,7 @@ fun TestSearchBar(){
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White),
+            .background(color = Color.DarkGray),
         contentAlignment = Alignment.Center
     ){
         SearchTopBar(

@@ -67,6 +67,7 @@ dependencies {
     implementation(project(":feature-userInfo"))
     implementation(project(":feature-community"))
     implementation(project(":feature-perfume"))
+    implementation(project(":feature-brand"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))

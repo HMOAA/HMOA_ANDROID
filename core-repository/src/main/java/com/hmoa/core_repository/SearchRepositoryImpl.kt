@@ -1,5 +1,6 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_model.response.*
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class SearchRepositoryImpl @Inject constructor(
         return searchDataStore.getBrandStory(page, searchWord)
     }
 
-    override suspend fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto> {
+    override suspend fun getCommunity(page: Int, searchWord: String): ResultResponse<List<CommunityByCategoryResponseDto>> {
         return searchDataStore.getCommunity(page, searchWord)
     }
 

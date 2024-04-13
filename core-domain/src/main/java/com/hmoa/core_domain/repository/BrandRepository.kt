@@ -2,7 +2,7 @@ package com.hmoa.core_domain.repository
 
 import ResultResponse
 import com.hmoa.core_model.response.BrandDefaultResponseDto
-import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
+import com.hmoa.core_model.response.BrandPerfumeBriefPagingResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import java.io.File
 
@@ -15,15 +15,15 @@ interface BrandRepository {
     suspend fun getPerfumesSortedChar(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto>
 
     suspend fun getPerfumesSortedLike(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto>
 
     suspend fun getPerfumesSortedUpdate(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto>
 }

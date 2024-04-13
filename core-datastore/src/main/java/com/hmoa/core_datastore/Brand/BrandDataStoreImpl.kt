@@ -2,7 +2,7 @@ package com.hmoa.core_datastore.Brand
 
 import ResultResponse
 import com.hmoa.core_model.response.BrandDefaultResponseDto
-import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
+import com.hmoa.core_model.response.BrandPerfumeBriefPagingResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_network.service.BrandService
 import com.skydoves.sandwich.suspendMapSuccess
@@ -46,8 +46,8 @@ class BrandDataStoreImpl @Inject constructor(
     override suspend fun getPerfumesSortedChar(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
-        val result = ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>()
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto> {
+        val result = ResultResponse<BrandPerfumeBriefPagingResponseDto>()
         brandService.getPerfumesSortedChar(brandId, pageNum).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
@@ -59,8 +59,8 @@ class BrandDataStoreImpl @Inject constructor(
     override suspend fun getPerfumesSortedLike(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
-        val result = ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>()
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto> {
+        val result = ResultResponse<BrandPerfumeBriefPagingResponseDto>()
         brandService.getPerfumesSortedLike(brandId, pageNum).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
@@ -72,8 +72,8 @@ class BrandDataStoreImpl @Inject constructor(
     override suspend fun getPerfumesSortedUpdate(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
-        val result = ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>()
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto> {
+        val result = ResultResponse<BrandPerfumeBriefPagingResponseDto>()
         brandService.getPerfumesSortedUpdate(brandId, pageNum).suspendMapSuccess {
             result.data = this
         }.suspendOnError {

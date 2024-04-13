@@ -3,7 +3,7 @@ package com.hmoa.core_repository
 import ResultResponse
 import com.hmoa.core_datastore.Brand.BrandDataStore
 import com.hmoa.core_model.response.BrandDefaultResponseDto
-import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
+import com.hmoa.core_model.response.BrandPerfumeBriefPagingResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import java.io.File
 import javax.inject.Inject
@@ -39,21 +39,21 @@ class BrandRepositoryImpl @Inject constructor(
     override suspend fun getPerfumesSortedChar(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto> {
         return brandDataStore.getPerfumesSortedChar(brandId, pageNum)
     }
 
     override suspend fun getPerfumesSortedLike(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto> {
         return brandDataStore.getPerfumesSortedLike(brandId, pageNum)
     }
 
     override suspend fun getPerfumesSortedUpdate(
         brandId: Int,
         pageNum: Int
-    ): ResultResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>> {
+    ): ResultResponse<BrandPerfumeBriefPagingResponseDto> {
         return brandDataStore.getPerfumesSortedUpdate(brandId, pageNum)
     }
 }

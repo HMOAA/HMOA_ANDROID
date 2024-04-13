@@ -1,7 +1,7 @@
 package com.hmoa.core_network.service
 
 import com.hmoa.core_model.response.BrandDefaultResponseDto
-import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
+import com.hmoa.core_model.response.BrandPerfumeBriefPagingResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
@@ -35,17 +35,17 @@ interface BrandService {
     suspend fun getPerfumesSortedChar(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): ApiResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
+    ): ApiResponse<BrandPerfumeBriefPagingResponseDto>
 
     @GET("/brand/perfumes/{brandId}/top")
     suspend fun getPerfumesSortedLike(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): ApiResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
+    ): ApiResponse<BrandPerfumeBriefPagingResponseDto>
 
     @GET("/brand/perfumes/{brandId}/update")
     suspend fun getPerfumesSortedUpdate(
         @Path(value = "brandId") brandId: Int,
         @Field("pageNum") pageNum: Int
-    ): ApiResponse<DataResponseDto<Array<BrandPerfumeBriefResponseDto>>>
+    ): ApiResponse<BrandPerfumeBriefPagingResponseDto>
 }

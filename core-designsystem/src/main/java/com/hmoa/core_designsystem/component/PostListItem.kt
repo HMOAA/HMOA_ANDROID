@@ -65,7 +65,8 @@ fun PostListItem(
             Text(
                 text = postTitle,
                 fontSize = 16.sp,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
             )
         }
     }

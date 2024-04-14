@@ -52,12 +52,18 @@ fun BrandSearchScreen(
         verticalArrangement = Arrangement.Top
     ) {
         when (brands?.loadState?.prepend) {
-            LoadState.Loading -> {}
+            LoadState.Loading -> {
+                Text(text = "로딩 중입니다")
+            }
+
             is LoadState.NotLoading -> {
                 BrandSearchContent(brands, onBrandClick = { onBrandClick(it) }, onBackClick = { onBackClick() })
             }
 
-            is LoadState.Error -> {}
+            is LoadState.Error -> {
+                Text(text = "에러가 발생했습니다")
+            }
+
             null -> {}
         }
     }

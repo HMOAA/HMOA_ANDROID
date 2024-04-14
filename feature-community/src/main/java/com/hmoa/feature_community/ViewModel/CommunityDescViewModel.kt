@@ -156,6 +156,28 @@ class CommunityDescViewModel @Inject constructor(
         }
     ).flow.cachedIn(viewModelScope)
 
+    fun updateCommentLike(
+        id : Int,
+        liked : Boolean
+    ) {
+        viewModelScope.launch{
+            if (liked) {
+                val result = communityCommentRepository.putCommunityCommentLiked(id)
+                if (result.exception is Exception){
+                    _errState.update{ result.exception.toString()}
+                    return@launch
+                }
+            } else {
+                val result = communityCommentRepository.deleteCommunityCommentLiked(id)
+                if (result.exception is Exception){
+                    _errState.update{ result.exception.toString() }
+                    return@launch
+                }
+            }
+
+        }
+    }
+
     //좋아요 remote update
     private suspend fun fetchLike(liked : Boolean){
         viewModelScope.launch{

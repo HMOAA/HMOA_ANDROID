@@ -57,7 +57,9 @@ fun Comment(
     dateDiff : String,
     comment : String,
     isFirst : Boolean,
-    viewNumber : String? = null,
+    isSelected : Boolean,
+    onChangeSelect : () -> Unit,
+    heartCount : Int,
     onOpenBottomDialog : () -> Unit,
     onNavCommunity : () -> Unit,
 ){
@@ -152,44 +154,33 @@ fun Comment(
 
             Spacer(Modifier.weight(1f))
 
-            if (viewNumber != null){
-                Box(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .height(22.dp)
-                        .background(
-                            color = CustomColor.gray1,
-                            shape = RoundedCornerShape(size = 20.dp)
-                        )
-                        .padding(horizontal = 6.dp, vertical = 3.dp),
-                    contentAlignment = Alignment.CenterStart
+            Row(
+                modifier = Modifier.width(40.dp)
+                    .height(40.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                IconButton(
+                    modifier = Modifier.size(16.dp),
+                    onClick = onChangeSelect
                 ){
-                    Row(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .wrapContentWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-                        Icon(
-                            modifier = Modifier.size(14.dp),
-                            painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
-                            contentDescription = "Favorite Button"
-                        )
-
-                        if (viewNumber != "1"){
-                            Spacer(Modifier.width(2.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 2.dp),
-                                text = viewNumber,
-                                fontSize = 12.sp,
-                                lineHeight = 12.sp,
-                                color = Color.Black
-                            )
-                        }
-                    }
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
+                        tint = if (isSelected) CustomColor.red else CustomColor.gray2,
+                        contentDescription = "Comment Like Button"
+                    )
                 }
+
+                Spacer(Modifier.width(8.dp))
+
+                Text(
+                    text = if (heartCount <= 999) heartCount.toString() else "999+",
+                    color = Color.Black,
+                    fontSize = 12.sp
+                )
             }
+
             Spacer(Modifier.width(8.dp))
 
             IconButton(
@@ -225,7 +216,9 @@ fun TestComment(){
         dateDiff = "2일 전",
         comment = "아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ",
         isFirst = true,
-        viewNumber = "999+",
+        isSelected = false,
+        onChangeSelect = {},
+        heartCount = 10,
         onOpenBottomDialog = {},
         onNavCommunity = {},
     )

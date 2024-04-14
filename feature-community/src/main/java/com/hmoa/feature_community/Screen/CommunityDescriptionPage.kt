@@ -82,6 +82,10 @@ fun CommunityDescriptionRoute(
             viewModel.postComment(it)
             comments.refresh()
         },
+        onChangeCommentLike = { commentId , isSelected ->
+            viewModel.updateCommentLike(commentId, isSelected)
+            comments.refresh()
+        },
         onDeleteCommunity = {
             viewModel.delCommunity()
         },
@@ -108,6 +112,7 @@ fun CommunityDescriptionPage(
     onReportCommunity : () -> Unit,
     onReportComment: () -> Unit,
     onPostComment : (String) -> Unit,
+    onChangeCommentLike : (Int, Boolean) -> Unit,
     onDeleteCommunity : () -> Unit,
     onDeleteComment : () -> Unit,
     onNavBack : () -> Unit,
@@ -224,7 +229,8 @@ fun CommunityDescriptionPage(
                     Comments(
                         commentList = commentList.itemSnapshotList,
                         changeBottomOptionState = changeBottomOptionState,
-                        onChangeType = onChangeType
+                        onChangeType = onChangeType,
+                        onChangeCommentLike = onChangeCommentLike
                     )
                 }
                 CommentInputBar(
@@ -257,23 +263,28 @@ fun Comments(
     commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
     changeBottomOptionState : (Boolean) -> Unit,
     onChangeType: (String) -> Unit,
+    onChangeCommentLike : (Int, Boolean) -> Unit
 ){
     val noDataTextStyle = TextStyle(
         fontSize = 20.sp,
         color = Color.Black
     )
 
-    Log.d("TAG TEST", "Comments : ${commentList}")
     if (commentList.isNotEmpty()) {
         commentList.reversed().forEachIndexed { index, comment ->
             if (comment != null){
+
                 Comment(
                     profile = comment.profileImg,
                     nickname = comment.author,
                     dateDiff = comment.time,
                     comment = comment.content,
                     isFirst = false,
-                    viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
+                    isSelected = comment.liked,
+                    onChangeSelect = {
+                        onChangeCommentLike(comment.commentId, !comment.liked)
+                    },
+                    heartCount = comment.heartCount,
                     onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
                     onOpenBottomDialog = {
                         changeBottomOptionState(true)

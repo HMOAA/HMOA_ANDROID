@@ -40,12 +40,12 @@ interface BrandService {
     @GET("/brand/perfumes/{brandId}/top")
     suspend fun getPerfumesSortedLike(
         @Path(value = "brandId") brandId: Int,
-        @Field("pageNum") pageNum: Int
+        @Query("pageNum") pageNum: Int
     ): ApiResponse<BrandPerfumeBriefPagingResponseDto>
 
     @GET("/brand/perfumes/{brandId}/update")
     suspend fun getPerfumesSortedUpdate(
         @Path(value = "brandId") brandId: Int,
-        @Field("pageNum") pageNum: Int
+        @Query("pageNum") pageNum: Int
     ): ApiResponse<BrandPerfumeBriefPagingResponseDto>
 }

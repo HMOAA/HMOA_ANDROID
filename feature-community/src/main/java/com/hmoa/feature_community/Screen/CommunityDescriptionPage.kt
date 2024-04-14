@@ -147,17 +147,18 @@ fun CommunityDescriptionPage(
 
             val community = uiState.community
 
-            BottomOptionDialog(
-                isOpenBottomOptions = isOpenBottomOptions,
-                changeBottomOptionState = changeBottomOptionState,
-                isWritten = community.writed,
-                type = type,
-                onDeleteComment = onDeleteComment,
-                onDeleteCommunity = onDeleteCommunity,
-                onReportCommunity = onReportCommunity,
-                onReportComment = onReportComment,
-                onNavCommunityEdit = onNavCommunityEdit
-            )
+            if(isOpenBottomOptions){
+                BottomOptionDialog(
+                    changeBottomOptionState = changeBottomOptionState,
+                    isWritten = community.writed,
+                    type = type,
+                    onDeleteComment = onDeleteComment,
+                    onDeleteCommunity = onDeleteCommunity,
+                    onReportCommunity = onReportCommunity,
+                    onReportComment = onReportComment,
+                    onNavCommunityEdit = onNavCommunityEdit
+                )
+            }
 
             Column(
                 modifier = Modifier
@@ -313,7 +314,6 @@ fun Comments(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomOptionDialog(
-    isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
     isWritten : Boolean,
     type : String,
@@ -332,100 +332,112 @@ fun BottomOptionDialog(
         color = CustomColor.red
     )
 
-    if (isOpenBottomOptions) {
-        ModalBottomSheet(
-            onDismissRequest = { changeBottomOptionState(false) },
-            containerColor = Color.White,
-            scrimColor = Color.Black.copy(alpha = 0.3f),
+    ModalBottomSheet(
+        onDismissRequest = { changeBottomOptionState(false) },
+        containerColor = Color.White,
+        scrimColor = Color.Black.copy(alpha = 0.3f),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = Color.Transparent,
+                    shape = RoundedCornerShape(size = 20.dp)
+                )
+                .padding(vertical = 16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = Color.Transparent,
-                        shape = RoundedCornerShape(size = 20.dp)
-                    )
-                    .padding(vertical = 16.dp)
-            ) {
-                if (isWritten) {
+            if (isWritten) {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            //게시글일 경우
+                            if (type == "post") {
+                                onNavCommunityEdit()
+                            } else {
+                                /** 댓글 수정 어떻게 해야하나> */
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                //게시글일 경우
-                                if (type == "post") {
-                                    /** 게시글 수정 화면으로 이동 */
-                                    onNavCommunityEdit()
-                                } else {
-                                    /** 댓글 수정 어떻게 해야하나> */
-                                }
-                            },
+                        modifier = Modifier.fillMaxSize(),
                         text = "수정",
                         textAlign = TextAlign.Center,
                         style = dialogDefaultTextStyle
                     )
+                }
 
-                    Spacer(Modifier.height(16.dp))
-
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            //post 일 경우
+                            if (type == "post") {
+                                onDeleteCommunity()
+                            }
+                            //댓글 일 경우
+                            else {
+                                onDeleteComment()
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                //post 일 경우
-                                if (type == "post") {
-                                    /** 커뮤니티 삭제 */
-                                    onDeleteCommunity()
-                                }
-                                //댓글 일 경우
-                                else {
-                                    onDeleteComment()
-                                }
-                            },
+                        modifier = Modifier.fillMaxSize(),
                         text = "삭제",
                         textAlign = TextAlign.Center,
                         style = dialogDefaultTextStyle
                     )
-
-                    Spacer(Modifier.height(16.dp))
-
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            changeBottomOptionState(false)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                changeBottomOptionState(false)
-                            },
+                        modifier = Modifier.fillMaxSize(),
                         text = "취소",
                         textAlign = TextAlign.Center,
                         style = dialogRedTextStyle
                     )
-                } else {
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            //게시글
+                            if (type == "post") {
+                                onReportCommunity()
+                            }
+                            //댓글
+                            else {
+                                onReportComment()
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                //게시글
-                                if (type == "post") {
-                                    /** 신고 이벤트 */
-                                    onReportCommunity()
-                                }
-                                //댓글
-                                else {
-                                    onReportComment()
-                                }
-                            },
+                        modifier = Modifier.fillMaxSize(),
                         text = "신고하기",
                         textAlign = TextAlign.Center,
                         style = dialogDefaultTextStyle
                     )
-
-                    Spacer(Modifier.height(16.dp))
-
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            changeBottomOptionState(false)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                changeBottomOptionState(false)
-                            },
+                        modifier = Modifier.fillMaxSize(),
                         text = "취소",
                         textAlign = TextAlign.Center,
                         style = dialogRedTextStyle

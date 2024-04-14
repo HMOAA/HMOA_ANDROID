@@ -1,15 +1,17 @@
 package com.hmoa.core_network.service
 
 import com.hmoa.core_model.response.*
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.Field
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface SearchService {
     @GET("/search/brand")
     suspend fun getBrand(searchWord: String): BrandSearchResponseDto
 
     @GET("/search/brandAll")
-    suspend fun getBrandAll(@Field("consonant") consonant: Int): List<BrandDefaultResponseDto>
+    suspend fun getBrandAll(@Query("consonant") consonant: Int): ApiResponse<List<BrandDefaultResponseDto>>
 
     @GET("/search/brandStory")
     suspend fun getBrandStory(

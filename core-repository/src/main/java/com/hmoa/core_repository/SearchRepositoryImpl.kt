@@ -1,5 +1,6 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_model.response.*
 import javax.inject.Inject
@@ -12,7 +13,7 @@ class SearchRepositoryImpl @Inject constructor(
         return searchDataStore.getBrand(searchWord)
     }
 
-    override suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
+    override suspend fun getBrandAll(consonant: Int): ResultResponse<List<BrandDefaultResponseDto>> {
         return searchDataStore.getBrandAll(consonant)
     }
 

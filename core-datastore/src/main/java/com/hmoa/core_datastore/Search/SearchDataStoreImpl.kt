@@ -1,7 +1,10 @@
 package com.hmoa.core_datastore.Search
 
+import ResultResponse
 import com.hmoa.core_model.response.*
 import com.hmoa.core_network.service.SearchService
+import com.skydoves.sandwich.suspendMapSuccess
+import com.skydoves.sandwich.suspendOnError
 import javax.inject.Inject
 
 class SearchDataStoreImpl @Inject constructor(
@@ -11,8 +14,14 @@ class SearchDataStoreImpl @Inject constructor(
         return searchService.getBrand(searchWord)
     }
 
-    override suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
-        return searchService.getBrandAll(consonant)
+    override suspend fun getBrandAll(consonant: Int): ResultResponse<List<BrandDefaultResponseDto>> {
+        val result = ResultResponse<List<BrandDefaultResponseDto>>()
+        searchService.getBrandAll(consonant).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getBrandStory(

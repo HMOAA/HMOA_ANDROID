@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
+import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToHome
@@ -73,7 +74,7 @@ fun SetUpNavGraph(
             onBackClick = navController::navigateToBack,
             onHomeClick = navController::navigateToHome,
             onCommentAddClick = { perfumeId -> navController.navigateToCreateNewperfumeComment(perfumeId) },
-            onBrandClick = {},
+            onBrandClick = { brandId -> navController.navigateToBrand(brandId) },
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
             onSimilarPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) },
             onSpecificCommentClick = { commentId, isEditable ->
@@ -97,6 +98,9 @@ fun SetUpNavGraph(
         editMyPerfumeComment(onBackClick = navController::navigateToBack)
         createNewPerfumeComment(onBackClick = navController::navigateToBack)
         /**brand 모듈*/
-        brandScreen(onBackClck = navController::navigateToBack, onHomeClick = { navController.navigateToHome() })
+        brandScreen(
+            onBackClck = navController::navigateToBack,
+            onHomeClick = { navController.navigateToHome() },
+            onPerfumeClick = { navController.navigateToPerfume(it) })
     }
 }

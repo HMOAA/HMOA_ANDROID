@@ -6,21 +6,23 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 
-fun NavController.navigateToBrand(brandId: Int) = navigate("${BrandRoute.Brand.name}/$brandId")
+fun NavController.navigateToBrand(brandId: String) = navigate("${BrandRoute.Brand.name}/${brandId}")
 
 fun NavGraphBuilder.brandScreen(
     onBackClck: () -> Unit,
-    onHomeClick: () -> Unit
+    onHomeClick: () -> Unit,
+    onPerfumeClick: (perfumeId: Int) -> Unit
 ) {
     composable(
         route = "${BrandRoute.Brand.name}/{brandId}",
         arguments = listOf(navArgument("brandId") { type = NavType.IntType })
     ) {
-        val brandId = it.arguments?.getString("brandId")
+        val brandId = it.arguments?.getInt("brandId")
         com.hmoa.feature_brand.screen.BrandRoute(
-            brandId = brandId?.toInt(),
+            brandId = brandId,
             onBackClick = { onBackClck() },
-            onHomeClick = { onHomeClick() }
+            onHomeClick = { onHomeClick() },
+            onPerfumeClick = { onPerfumeClick(it) }
         )
     }
 }

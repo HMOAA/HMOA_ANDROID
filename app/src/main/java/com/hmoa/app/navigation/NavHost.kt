@@ -22,9 +22,6 @@ fun SetUpNavGraph(
         startDestination = startDestination
     ) {
 
-//        mainScreen(
-//            onNavCommunity = navController::navigateToCommunityRoute, navController = navController
-//        )
         /** home 모듈 */
         homeScreen(onPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) }, onAllPerfumeClick = {})
 
@@ -97,6 +94,7 @@ fun SetUpNavGraph(
         specificComment(onBackClick = navController::navigateToBack)
         editMyPerfumeComment(onBackClick = navController::navigateToBack)
         createNewPerfumeComment(onBackClick = navController::navigateToBack)
+
         /**brand 모듈*/
         brandScreen(
             onBackClck = navController::navigateToBack,

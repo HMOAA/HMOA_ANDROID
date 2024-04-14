@@ -14,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.navigateToBack
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.MainBottomBar
+import com.hmoa.feature_brand.navigation.navigateToBrand
+import com.hmoa.feature_brand.screen.BrandSearchRoute
 import com.hmoa.feature_community.Navigation.CommunityRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_home.navigation.HomeRoute
@@ -65,7 +68,10 @@ class MainActivity : AppCompatActivity() {
                 },
                 scaffoldState = scaffoldState,
                 drawerContent = {
-                    /** Drawer Content */
+                    BrandSearchRoute(
+                        onBrandClick = { navHostController.navigateToBrand(it.toString()) },
+                        onBackClick = navHostController::navigateToBack
+                    )
                 },
                 topBar = {
                     /** top bar도 비슷하게 처리할까요? */

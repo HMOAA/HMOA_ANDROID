@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/core-network" />
             <option value="$PROJECT_DIR$/core-repository" />
             <option value="$PROJECT_DIR$/feature-authentication" />
+            <option value="$PROJECT_DIR$/feature-brand" />
             <option value="$PROJECT_DIR$/feature-community" />
             <option value="$PROJECT_DIR$/feature-home" />
             <option value="$PROJECT_DIR$/feature-main" />

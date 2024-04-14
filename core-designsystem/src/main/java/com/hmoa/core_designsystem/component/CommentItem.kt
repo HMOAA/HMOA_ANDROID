@@ -85,7 +85,6 @@ fun CommentItem(
                 overflow = TextOverflow.Clip
             )
         }
-        Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2))
     }
 }
 

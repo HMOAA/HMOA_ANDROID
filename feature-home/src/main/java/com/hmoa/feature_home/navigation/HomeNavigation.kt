@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.hmoa.feature_home.AllPerfumeScreenId
-import com.hmoa.feature_home.HomeRoute
+import com.hmoa.feature_home.screen.HomeRoute
 
 
 fun NavController.navigateToHome() = navigate("${HomeRoute.Home}")

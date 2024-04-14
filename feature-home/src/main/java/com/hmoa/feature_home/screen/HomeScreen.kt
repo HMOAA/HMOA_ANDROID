@@ -1,4 +1,4 @@
-package com.hmoa.feature_home
+package com.hmoa.feature_home.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +27,8 @@ import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
+import com.hmoa.feature_home.AllPerfumeScreenId
+import com.hmoa.feature_home.viewmodel.HomeViewModel
 
 @Composable
 fun HomeRoute(

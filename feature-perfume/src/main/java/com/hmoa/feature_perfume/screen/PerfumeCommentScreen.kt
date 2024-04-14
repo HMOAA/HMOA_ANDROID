@@ -42,12 +42,14 @@ fun PerfumeCommentRoute(
     onAddCommentClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
     perfumeId: Int?
-){
-    if(perfumeId != null){
-        PerfumeCommentScreen(onBackClick = {onBackClick()},
-            onAddCommentClick = {onAddCommentClick(it)},
-            onSpecificCommentClick = {commentId, isEditable -> onSpecificCommentClick(commentId, isEditable)},
-            perfumeId = perfumeId)
+) {
+    if (perfumeId != null) {
+        PerfumeCommentScreen(
+            onBackClick = { onBackClick() },
+            onAddCommentClick = { onAddCommentClick(it) },
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
+            perfumeId = perfumeId
+        )
     }
 }
 
@@ -250,8 +252,6 @@ fun PerfumeCommentList(
 //            BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
 //        }
 //    }
-
-
 @Composable
 fun CommentAndSortText(
     commentCount: Int,

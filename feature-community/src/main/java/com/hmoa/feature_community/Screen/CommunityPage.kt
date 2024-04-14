@@ -187,6 +187,8 @@ fun CommunityPagePostList(
                     },
                     postType = community.category,
                     postTitle = community.title,
+                    heartCount = community.heartCount,
+                    commentCount = community.commentCount
                 )
             }
         }

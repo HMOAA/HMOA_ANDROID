@@ -87,6 +87,8 @@ fun CommunitySearchPage(
                             onPostClick = { onNavCommunityDesc(community.communityId) },
                             postType = community.category,
                             postTitle = community.title,
+                            heartCount = community.heartCount,
+                            commentCount = community.commentCount
                         )
 
                         if (community != uiState.result[uiState.result.lastIndex]){

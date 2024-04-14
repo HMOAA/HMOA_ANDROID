@@ -49,7 +49,7 @@ class BrandViewmodel @Inject constructor(private val brandRepository: BrandRepos
                     }
 
                     is Result.Success -> {
-                        brandState.update { it }
+                        brandState.value = it.data.data?.data
                     }
 
                     is Result.Error -> {

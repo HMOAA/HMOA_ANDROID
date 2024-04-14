@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -39,9 +41,18 @@ import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
 import com.hmoa.feature_brand.viewmodel.BrandViewmodel
 
 @Composable
-fun BrandRoute(brandId: Int?, onBackClick: () -> Unit, onHomeClick: () -> Unit) {
+fun BrandRoute(
+    brandId: Int?,
+    onBackClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onPerfumeClick: (perfumeId: Int) -> Unit
+) {
     if (brandId != null) {
-        BrandScreen(brandId, onBackClick = { onBackClick() }, onHomeClick = { onHomeClick() })
+        BrandScreen(
+            brandId,
+            onBackClick = { onBackClick() },
+            onHomeClick = { onHomeClick() },
+            onPerfumeClick = { onPerfumeClick(it) })
     }
 }
 
@@ -50,6 +61,7 @@ fun BrandScreen(
     brandId: Int,
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
+    onPerfumeClick: (perfumeId: Int) -> Unit,
     viewModel: BrandViewmodel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -63,7 +75,7 @@ fun BrandScreen(
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         when (uiState) {
             is BrandViewmodel.BrandUiState.Loading -> {}
@@ -76,8 +88,8 @@ fun BrandScreen(
                     onHomeClick = { onHomeClick() },
                     onSortLikeClick = { viewModel.onClickSortLike() },
                     onSortLatestClick = { viewModel.onClickSortLatest() },
-                    sortType = (uiState as BrandViewmodel.BrandUiState.Data).sortType
-
+                    sortType = (uiState as BrandViewmodel.BrandUiState.Data).sortType,
+                    onPerfumeClick = { onPerfumeClick(it) }
                 )
             }
 
@@ -95,11 +107,9 @@ fun BrandContent(
     onHomeClick: () -> Unit,
     onSortLikeClick: () -> Unit,
     onSortLatestClick: () -> Unit,
+    onPerfumeClick: (perfumeId: Int) -> Unit,
     sortType: SortType
 ) {
-    val likeColor = if (sortType == SortType.LIKE) Color.Black else CustomColor.gray2
-    val latestColor = if (sortType == SortType.LATEST) Color.Black else CustomColor.gray2
-
     TopBar(
         title = brandData?.brandName ?: "",
         iconSize = 25.dp,
@@ -108,35 +118,33 @@ fun BrandContent(
         menuIcon = painterResource(R.drawable.ic_home),
         onMenuClick = { onHomeClick() }
     )
-    BrandView(
-        koreanTitle = brandData?.brandName ?: "",
-        englishTitle = brandData?.englishName ?: "",
-        imageUrl = brandData?.brandImageUrl ?: ""
-    )
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            "좋아요순",
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
-            modifier = Modifier.padding(end = 4.dp).clickable { onSortLikeClick() },
-            color = likeColor
-        )
-        Text(
-            "최신순",
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
-            modifier = Modifier.padding(end = 4.dp).clickable { onSortLatestClick() },
-            color = latestColor
-        )
-    }
-    when (sortType) {
-        SortType.LATEST -> PerfumeGridView(perfumes = latestPerfumes)
-        SortType.LIKE -> PerfumeGridView(perfumes = likePerfumes)
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        when (sortType) {
+            SortType.LATEST -> PerfumeGridView(
+                perfumes = latestPerfumes,
+                onSortLikeClick = { onSortLikeClick() },
+                onSortLatestClick = { onSortLatestClick() },
+                sortType = sortType,
+                brandData = brandData,
+                onPerfumeClick = { onPerfumeClick(it) }
+            )
+
+            SortType.LIKE -> PerfumeGridView(
+                perfumes = likePerfumes,
+                onSortLikeClick = { onSortLikeClick() },
+                onSortLatestClick = { onSortLatestClick() },
+                sortType = sortType,
+                brandData = brandData,
+                onPerfumeClick = { onPerfumeClick(it) }
+            )
+        }
     }
 }
 
 @Composable
 fun BrandView(koreanTitle: String, englishTitle: String, imageUrl: String) {
     Column(
-        modifier = Modifier.height(200.dp).background(Color.Black).padding(16.dp),
+        modifier = Modifier.height(200.dp).background(Color.Black).padding(16.dp).fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -157,13 +165,15 @@ fun BrandView(koreanTitle: String, englishTitle: String, imageUrl: String) {
             modifier = Modifier.fillMaxWidth().background(Color.Black)
         ) {
             Column(
-                modifier = Modifier.border(BorderStroke(width = 2.dp, color = CustomColor.gray3)),
+                modifier = Modifier.border(BorderStroke(width = 2.dp, color = CustomColor.gray3))
+                    .width(100.dp).height(100.dp).background(Color.White),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom,
             ) {
                 ImageView(
                     imageUrl,
-                    width = 0.25f,
-                    height = 0.7f,
+                    width = 0.9f,
+                    height = 1f,
                     backgroundColor = Color.White,
                     contentScale = ContentScale.FillWidth,
                 )
@@ -173,10 +183,48 @@ fun BrandView(koreanTitle: String, englishTitle: String, imageUrl: String) {
 }
 
 @Composable
-fun PerfumeGridView(perfumes: LazyPagingItems<BrandPerfumeBriefResponseDto>?) {
+fun PerfumeGridView(
+    perfumes: LazyPagingItems<BrandPerfumeBriefResponseDto>?,
+    onSortLikeClick: () -> Unit,
+    onSortLatestClick: () -> Unit,
+    onPerfumeClick: (perfumeId: Int) -> Unit,
+    sortType: SortType,
+    brandData: BrandDefaultResponseDto?,
+) {
+    val likeColor = if (sortType == SortType.LIKE) Color.Black else CustomColor.gray2
+    val latestColor = if (sortType == SortType.LATEST) Color.Black else CustomColor.gray2
+
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(150.dp)
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.Center
     ) {
+        item(span = { GridItemSpan(2) }, content = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                BrandView(
+                    koreanTitle = brandData?.brandName ?: "",
+                    englishTitle = brandData?.englishName ?: "",
+                    imageUrl = brandData?.brandImageUrl ?: ""
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        "좋아요순",
+                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
+                        modifier = Modifier.padding(end = 4.dp).clickable { onSortLikeClick() },
+                        color = likeColor
+                    )
+                    Text(
+                        "최신순",
+                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
+                        modifier = Modifier.clickable { onSortLatestClick() },
+                        color = latestColor
+                    )
+                }
+            }
+        })
         items(perfumes?.itemSnapshotList ?: emptyList()) {
             PerfumeWithCountItemView(
                 imageUrl = it?.perfumeImgUrl ?: "",
@@ -188,9 +236,11 @@ fun PerfumeGridView(perfumes: LazyPagingItems<BrandPerfumeBriefResponseDto>?) {
                 imageHeight = 1f,
                 imageBackgroundColor = Color.White,
                 heartCount = it?.heartCount ?: 0,
-                isLikedPerfume = it?.liked ?: false
+                isLikedPerfume = it?.liked ?: false,
+                onPerfumeClick = { onPerfumeClick(it!!.perfumeId) }
             )
         }
+
     }
 }
 
@@ -205,9 +255,13 @@ fun PerfumeWithCountItemView(
     imageHeight: Float,
     imageBackgroundColor: Color,
     heartCount: Int,
-    isLikedPerfume: Boolean
+    isLikedPerfume: Boolean,
+    onPerfumeClick: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(end = 8.dp).width(containerWidth.dp)) {
+    Column(
+        modifier = Modifier.padding(horizontal = 4.dp).padding(bottom = 30.dp).clickable { onPerfumeClick() },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Column(
             modifier = Modifier.width(containerWidth.dp).height(containerHeight.dp)
                 .background(imageBackgroundColor)
@@ -225,13 +279,12 @@ fun PerfumeWithCountItemView(
             )
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.width(containerWidth.dp).padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
-                modifier = Modifier.padding(end = 4.dp)
             )
             TypeBadge(
                 roundedCorner = 20.dp,
@@ -247,8 +300,10 @@ fun PerfumeWithCountItemView(
             )
         }
         Text(
-            text = perfumeName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
-            modifier = Modifier.padding(end = 4.dp).padding(bottom = 2.dp), softWrap = true
+            text = perfumeName,
+            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light, textAlign = TextAlign.End),
+            modifier = Modifier.width(containerWidth.dp).padding(end = 4.dp).padding(bottom = 2.dp),
+            softWrap = true
         )
     }
 }
@@ -269,7 +324,8 @@ fun BrandContentPreview() {
                 imageHeight = 1f,
                 imageBackgroundColor = Color.White,
                 heartCount = 10,
-                isLikedPerfume = false
+                isLikedPerfume = false,
+                onPerfumeClick = {}
             )
             PerfumeWithCountItemView(
                 imageUrl = "",
@@ -281,7 +337,8 @@ fun BrandContentPreview() {
                 imageHeight = 1f,
                 imageBackgroundColor = Color.White,
                 heartCount = 10,
-                isLikedPerfume = true
+                isLikedPerfume = true,
+                onPerfumeClick = {}
             )
         }
     }

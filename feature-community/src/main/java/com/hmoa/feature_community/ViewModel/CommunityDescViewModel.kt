@@ -47,9 +47,6 @@ class CommunityDescViewModel @Inject constructor(
     private val _isLiked = MutableStateFlow(false)
     val isLiked get() = _isLiked.asStateFlow()
 
-    private val _page = MutableStateFlow(0)
-    val page get() = _page.asStateFlow()
-
     private val _profile = MutableStateFlow<String?>(null)
     val profile get() = _profile.asStateFlow()
 
@@ -174,7 +171,6 @@ class CommunityDescViewModel @Inject constructor(
                     return@launch
                 }
             }
-
         }
     }
 

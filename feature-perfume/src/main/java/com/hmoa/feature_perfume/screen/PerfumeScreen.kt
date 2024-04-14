@@ -42,7 +42,7 @@ fun PerfumeRoute(
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
-    perfumeId: Int?,
+    perfumeId: String?,
 ) {
 
     if (perfumeId != null) {
@@ -53,7 +53,7 @@ fun PerfumeRoute(
             onBrandClick = { onBrandClick(it) },
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
-            perfumeId = perfumeId,
+            perfumeId = perfumeId.toInt(),
             onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
         )
     }

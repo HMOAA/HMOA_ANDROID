@@ -55,8 +55,13 @@ fun CommunityDescriptionRoute(
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     var type by remember{mutableStateOf("post")}
+    var flag by remember{mutableStateOf(false)}
 
     CommunityDescriptionPage(
+        flag = flag,
+        onFlagChange = {
+            flag = it
+        },
         isOpenBottomOptions = isOpenBottomOptions.value,
         changeBottomOptionState = {
             viewModel.updateBottomOptionsState(it)
@@ -103,6 +108,8 @@ fun CommunityDescriptionRoute(
 
 @Composable
 fun CommunityDescriptionPage(
+    flag : Boolean,
+    onFlagChange : (Boolean) -> Unit,
     isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
     type : String,
@@ -153,6 +160,7 @@ fun CommunityDescriptionPage(
         is CommunityDescUiState.CommunityDesc -> {
 
             val community = uiState.community
+            onFlagChange(true)
 
             if(isOpenBottomOptions){
                 BottomOptionDialog(
@@ -237,6 +245,7 @@ fun CommunityDescriptionPage(
                     Spacer(Modifier.height(21.dp))
 
                     Comments(
+                        flag = flag,
                         commentList = commentList.itemSnapshotList,
                         changeBottomOptionState = changeBottomOptionState,
                         onChangeType = onChangeType,
@@ -273,6 +282,7 @@ fun CommunityDescriptionPage(
 
 @Composable
 fun Comments(
+    flag : Boolean,
     commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
     changeBottomOptionState : (Boolean) -> Unit,
     onChangeType: (String) -> Unit,
@@ -287,7 +297,6 @@ fun Comments(
     if (commentList.isNotEmpty()) {
         commentList.reversed().forEachIndexed { index, comment ->
             if (comment != null){
-
                 Comment(
                     profile = comment.profileImg,
                     nickname = comment.author,
@@ -308,20 +317,22 @@ fun Comments(
                 )
                 if (index != commentList.size - 1) {
                     Spacer(Modifier.height(15.dp))
-
                     HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
                 }
             }
         }
     } else {
-        Spacer(Modifier.height(40.dp))
-
-        Text(
-            text = "아직 작성한 댓글이 없습니다",
-            style = noDataTextStyle
-        )
-
-        Spacer(Modifier.height(30.dp))
+        if (flag){
+            /** Loading Component를 여기서도 띄우는 것이 좋겠다 */
+            Text(text = "댓글 갱신 중~")
+        } else {
+            Spacer(Modifier.height(40.dp))
+            Text(
+                text = "아직 작성한 댓글이 없습니다",
+                style = noDataTextStyle
+            )
+            Spacer(Modifier.height(30.dp))
+        }
     }
 }
 

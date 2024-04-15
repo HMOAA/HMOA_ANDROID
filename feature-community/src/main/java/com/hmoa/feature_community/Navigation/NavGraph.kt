@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
 import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
 import com.hmoa.feature_community.Screen.CommunityEditRoute
 import com.hmoa.feature_community.Screen.CommunityHomeRoute
@@ -32,6 +33,9 @@ fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${Co
 //게시글 검색 화면
 fun NavController.navigateToCommunitySearchRoute() = navigate(CommunityRoute.CommunitySearchRoute.name)
 
+//댓글 수정 화면
+fun NavController.navigateToCommunityCommentEditRoute(commentId : Int) = navigate("${CommunityRoute.CommunityCommentEditRoute.name}/${commentId}")
+
 fun NavGraphBuilder.nestedCommunityGraph(
     onNavBack : () -> Unit,
     onNavCommunityPage : () -> Unit,
@@ -39,6 +43,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
     onNavCommunityEdit : (Int) -> Unit,
     onNavCommunityDescription : (Int) -> Unit,
     onNavCommunitySearch : () -> Unit,
+    onNavCommunityCommentEdit : (Int) -> Unit
 ){
     navigation(
         startDestination = CommunityRoute.CommunityHomeRoute.name,
@@ -80,6 +85,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
             CommunityDescriptionRoute (
                 _id = id.toInt(),
                 onNavCommunityEdit = onNavCommunityEdit,
+                onNavCommentEdit = onNavCommunityCommentEdit,
                 onNavBack = onNavBack
             )
         }
@@ -87,6 +93,13 @@ fun NavGraphBuilder.nestedCommunityGraph(
             CommunitySearchRoute(
                 onNavBack = onNavBack,
                 onNavCommunityDesc = onNavCommunityDescription
+            )
+        }
+        composable(route = "${CommunityRoute.CommunityCommentEditRoute.name}/{commentId}") {
+            val id = it.arguments?.getString("commentId")?.toInt()
+            CommunityCommentEditRoute(
+                _commentId = id,
+                onNavBack = onNavBack
             )
         }
     }

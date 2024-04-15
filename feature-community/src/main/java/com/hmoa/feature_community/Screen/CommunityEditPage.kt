@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_designsystem.component.ImageView
+import com.hmoa.core_designsystem.component.TopBarWithEvent
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_community.ViewModel.CommunityEditUiState
 import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
@@ -92,9 +93,7 @@ fun CommunityEditPage(
     onContentChanged : (String) -> Unit,
     onUpdatePictures : (List<Uri>) -> Unit,
     onDeletePictures : (Uri) -> Unit,
-    //뒤로가기
     onNavBack : () -> Unit,
-    //해당 게시글 Post
     onPostCommunity : () -> Unit,
 ){
     //갤러리에서 사진 가져오기
@@ -107,14 +106,6 @@ fun CommunityEditPage(
 
     val scrollableState = rememberScrollState()
 
-    val sideTopBarTextStyle = TextStyle(
-        fontSize = 16.sp,
-        color = Color.Black
-    )
-    val mainTopBarTextStyle = TextStyle(
-        fontSize = 18.sp,
-        color = Color.Black
-    )
     val titleTextIntroTextStyle = TextStyle(
         fontSize = 16.sp,
         color = Color.Black
@@ -146,40 +137,14 @@ fun CommunityEditPage(
             Column(
                 modifier = Modifier.fillMaxSize()
             ){
-                //unique top bar
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        modifier = Modifier.clickable{
-                            onNavBack()
-                        },
-                        text = "취소",
-                        style = sideTopBarTextStyle
-                    )
-
-                    Spacer(Modifier.weight(1f))
-
-                    Text(
-                        text = uiState.category!!.name,
-                        style = mainTopBarTextStyle
-                    )
-
-                    Spacer(Modifier.weight(1f))
-
-                    Text(
-                        modifier = Modifier.clickable{
-                            onPostCommunity()
-                            onNavBack()
-                        },
-                        text = "확인",
-                        style = sideTopBarTextStyle
-                    )
-                }
+                TopBarWithEvent(
+                    onCancelClick = onNavBack,
+                    onConfirmClick = {
+                        onPostCommunity()
+                        onNavBack()
+                    },
+                    title = uiState.category!!.name
+                )
 
                 HorizontalDivider(
                     Modifier.fillMaxWidth(),

@@ -8,4 +8,5 @@ enum class CommunityRoute {
     CommunityPageRoute,
     CommunityPostRoute,
     CommunitySearchRoute,
+    CommunityCommentEditRoute,
 }

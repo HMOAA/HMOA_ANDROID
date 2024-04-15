@@ -43,6 +43,7 @@ import com.hmoa.feature_community.ViewModel.CommunityDescViewModel
 fun CommunityDescriptionRoute(
     _id: Int?,
     onNavCommunityEdit: (Int) -> Unit,
+    onNavCommentEdit : (Int) -> Unit,
     onNavBack : () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
@@ -95,7 +96,8 @@ fun CommunityDescriptionRoute(
         },
         onNavCommunityEdit = {
             onNavCommunityEdit(id)
-        }
+        },
+        onNavCommentEdit = onNavCommentEdit
     )
 }
 
@@ -117,6 +119,7 @@ fun CommunityDescriptionPage(
     onDeleteComment : (Int) -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityEdit : () -> Unit,
+    onNavCommentEdit : (Int) -> Unit
 ){
     val scrollState = rememberScrollState()
 
@@ -160,7 +163,8 @@ fun CommunityDescriptionPage(
                     onDeleteCommunity = onDeleteCommunity,
                     onReportCommunity = onReportCommunity,
                     onReportComment = { onReportComment(commentId) },
-                    onNavCommunityEdit = onNavCommunityEdit
+                    onNavCommunityEdit = onNavCommunityEdit,
+                    onNavCommentEdit = { onNavCommentEdit(commentId) }
                 )
             }
 
@@ -331,7 +335,8 @@ fun BottomOptionDialog(
     onDeleteCommunity: () -> Unit,
     onReportCommunity: () -> Unit,
     onReportComment: () -> Unit,
-    onNavCommunityEdit : () -> Unit
+    onNavCommunityEdit : () -> Unit,
+    onNavCommentEdit : () -> Unit
 ){
     val dialogDefaultTextStyle = TextStyle(
         fontSize = 20.sp,
@@ -366,7 +371,7 @@ fun BottomOptionDialog(
                             if (type == "post") {
                                 onNavCommunityEdit()
                             } else {
-                                /** 댓글 수정 어떻게 해야하나> */
+                                onNavCommentEdit()
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically

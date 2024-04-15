@@ -9,6 +9,11 @@ import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
 interface CommunityCommentService {
+    @GET("/community/comment/{commentId}")
+    suspend fun getCommunityComment(
+        @Path("commentId") commentId : Int
+    ) : ApiResponse<CommunityCommentWithLikedResponseDto>
+
     @PUT("/community/comment/{commentId}")
     suspend fun putCommunityComment(
         @Path(value = "commentId") commentId: Int,
@@ -30,10 +35,10 @@ interface CommunityCommentService {
         @Path("commentId") commentId: Int
     ): ApiResponse<DataResponseDto<Any>>
 
-    @POST("/community/comment/{communityId}/findAll")
-    suspend fun getCommunityComments(
+    @GET("/community/comment/{communityId}/findAll/cursor")
+    suspend fun getAllCommunityComment(
         @Path("communityId") communityId: Int,
-        @Query("page") page: Int
+        @Query("cursor") cursor: Int
     ): CommunityCommentAllResponseDto
 
     @POST("/community/comment/{communityId}/save")

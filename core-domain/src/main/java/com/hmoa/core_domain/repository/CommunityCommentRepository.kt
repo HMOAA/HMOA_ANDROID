@@ -7,6 +7,10 @@ import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 
 interface CommunityCommentRepository {
+    suspend fun getCommunityComment(
+        commentId : Int
+    ) : ResultResponse<CommunityCommentWithLikedResponseDto>
+
     suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
@@ -17,7 +21,7 @@ interface CommunityCommentRepository {
     suspend fun putCommunityCommentLiked(commentId: Int): ResultResponse<DataResponseDto<Any>>
 
     suspend fun deleteCommunityCommentLiked(commentId: Int): ResultResponse<DataResponseDto<Any>>
-    suspend fun getCommunityComments(communityId: Int, page: Int): CommunityCommentAllResponseDto
+    suspend fun getAllCommunityComment(communityId: Int, cursor: Int): CommunityCommentAllResponseDto
     suspend fun postCommunityComment(
         communityId: Int,
         dto: CommunityCommentDefaultRequestDto

@@ -8,10 +8,22 @@ import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_network.service.CommunityCommentService
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
+import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class CommunityCommentDataStoreImpl @Inject constructor(private val communityCommentService: CommunityCommentService) :
     CommunityCommentDataStore {
+    override suspend fun getCommunityComment(
+        commentId : Int
+    ) : ResultResponse<CommunityCommentWithLikedResponseDto> {
+        val result = ResultResponse<CommunityCommentWithLikedResponseDto>()
+        communityCommentService.getCommunityComment(commentId).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError{
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
+    }
     override suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
@@ -57,11 +69,11 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         return result
     }
 
-    override suspend fun getCommunityComments(
+    override suspend fun getAllCommunityComment(
         communityId: Int,
-        page: Int
+        cursor: Int
     ): CommunityCommentAllResponseDto {
-        return communityCommentService.getCommunityComments(communityId, page)
+        return communityCommentService.getAllCommunityComment(communityId, cursor)
     }
 
     override suspend fun postCommunityComment(

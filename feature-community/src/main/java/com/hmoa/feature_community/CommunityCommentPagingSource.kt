@@ -17,9 +17,9 @@ class CommunityCommentPagingSource(
         val pageNumber = params.key ?: 0
         try {
             val response =
-                communityCommentRepository.getCommunityComments(
+                communityCommentRepository.getAllCommunityComment(
                     communityId = id,
-                    page = cursor
+                    cursor = cursor
                 )
             communityCount = response.commentCount
             cursor = response.comments.last().commentId

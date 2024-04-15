@@ -5,13 +5,17 @@ import com.hmoa.core_datastore.CommunityComment.CommunityCommentDataStore
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import javax.inject.Inject
 
 class CommunityCommentRepositoryImpl @Inject constructor(private val communityCommentDataStore: CommunityCommentDataStore)
     : CommunityCommentRepository {
+    override suspend fun getCommunityComment(
+        commentId : Int
+    ) : ResultResponse<CommunityCommentWithLikedResponseDto> {
+        return communityCommentDataStore.getCommunityComment(commentId)
+    }
     override suspend fun putCommunityComment(
         commentId: Int,
         dto: CommunityCommentDefaultRequestDto
@@ -32,8 +36,8 @@ class CommunityCommentRepositoryImpl @Inject constructor(private val communityCo
     override suspend fun deleteCommunityCommentLiked(commentId: Int): ResultResponse<DataResponseDto<Any>> {
         return communityCommentDataStore.deleteCommunityCommentLiked(commentId)
     }
-    override suspend fun getCommunityComments(communityId: Int, page: Int): CommunityCommentAllResponseDto {
-        return communityCommentDataStore.getCommunityComments(communityId, page)
+    override suspend fun getAllCommunityComment(communityId: Int, cursor: Int): CommunityCommentAllResponseDto {
+        return communityCommentDataStore.getAllCommunityComment(communityId, cursor)
     }
 
     override suspend fun postCommunityComment(

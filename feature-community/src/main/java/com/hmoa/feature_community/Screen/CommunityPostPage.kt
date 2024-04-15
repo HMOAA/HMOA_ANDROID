@@ -396,7 +396,6 @@ fun BottomCameraBtn(
         }
     )
 
-    /** keyboard 옵션으로 보이도록 View 변경해야 함 */
     Row(
         modifier = Modifier
             .fillMaxWidth()

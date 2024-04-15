@@ -49,7 +49,6 @@ fun CommunityDescriptionRoute(
     viewModel.setId(id)
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val profile = viewModel.profile.collectAsStateWithLifecycle()
     val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
@@ -70,13 +69,12 @@ fun CommunityDescriptionRoute(
         },
         uiState = uiState.value,
         commentList = comments,
-        profile = profile.value,
         onNavBack = onNavBack,
         onReportCommunity = {
             viewModel.reportCommunity()
         },
         onReportComment = {
-            /** 여기서 Comment 신고하기 */
+            viewModel.reportComment(it)
         },
         onPostComment = {
             viewModel.postComment(it)
@@ -88,9 +86,11 @@ fun CommunityDescriptionRoute(
         },
         onDeleteCommunity = {
             viewModel.delCommunity()
+            onNavBack()
         },
-        onDeleteComment = {
-            /** 여기서 Comment 삭제 */
+        onDeleteComment = { commentId ->
+            viewModel.delComment(commentId)
+            comments.refresh()
         },
         onNavCommunityEdit = {
             onNavCommunityEdit(id)
@@ -108,17 +108,18 @@ fun CommunityDescriptionPage(
     commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     isLiked : Boolean,
     onChangeLike : () -> Unit,
-    profile : String?,
     onReportCommunity : () -> Unit,
-    onReportComment: () -> Unit,
+    onReportComment: (Int) -> Unit,
     onPostComment : (String) -> Unit,
     onChangeCommentLike : (Int, Boolean) -> Unit,
     onDeleteCommunity : () -> Unit,
-    onDeleteComment : () -> Unit,
+    onDeleteComment : (Int) -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityEdit : () -> Unit,
 ){
     val scrollState = rememberScrollState()
+
+    var commentId by remember{mutableStateOf(0)}
 
     /** Text Style 정의 */
     val categoryTextStyle = TextStyle(
@@ -152,10 +153,10 @@ fun CommunityDescriptionPage(
                     changeBottomOptionState = changeBottomOptionState,
                     isWritten = community.writed,
                     type = type,
-                    onDeleteComment = onDeleteComment,
+                    onDeleteComment = { onDeleteComment(commentId) },
                     onDeleteCommunity = onDeleteCommunity,
                     onReportCommunity = onReportCommunity,
-                    onReportComment = onReportComment,
+                    onReportComment = { onReportComment(commentId) },
                     onNavCommunityEdit = onNavCommunityEdit
                 )
             }
@@ -231,7 +232,10 @@ fun CommunityDescriptionPage(
                         commentList = commentList.itemSnapshotList,
                         changeBottomOptionState = changeBottomOptionState,
                         onChangeType = onChangeType,
-                        onChangeCommentLike = onChangeCommentLike
+                        onChangeCommentLike = onChangeCommentLike,
+                        setCommentId = {
+                            commentId = it
+                        }
                     )
                 }
                 CommentInputBar(
@@ -240,7 +244,7 @@ fun CommunityDescriptionPage(
                         .height(48.dp)
                         .padding(horizontal = 16.dp)
                         .background(color = CustomColor.gray6, shape = RoundedCornerShape(5.dp)),
-                    profile = profile,
+                    profile = community.myProfileImgUrl,
                     onCommentApply = {
                         onPostComment(it)
                     }
@@ -264,7 +268,8 @@ fun Comments(
     commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
     changeBottomOptionState : (Boolean) -> Unit,
     onChangeType: (String) -> Unit,
-    onChangeCommentLike : (Int, Boolean) -> Unit
+    onChangeCommentLike : (Int, Boolean) -> Unit,
+    setCommentId : (Int) -> Unit,
 ){
     val noDataTextStyle = TextStyle(
         fontSize = 20.sp,
@@ -288,6 +293,7 @@ fun Comments(
                     heartCount = comment.heartCount,
                     onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
                     onOpenBottomDialog = {
+                        setCommentId(comment.commentId)
                         changeBottomOptionState(true)
                         onChangeType("comment")
                     }
@@ -348,7 +354,8 @@ fun BottomOptionDialog(
         ) {
             if (isWritten) {
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
                             //게시글일 경우
@@ -369,7 +376,8 @@ fun BottomOptionDialog(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
                             //post 일 경우
@@ -379,19 +387,21 @@ fun BottomOptionDialog(
                             //댓글 일 경우
                             else {
                                 onDeleteComment()
+                                changeBottomOptionState(false)
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         text = "삭제",
                         textAlign = TextAlign.Center,
                         style = dialogDefaultTextStyle
                     )
                 }
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
                             changeBottomOptionState(false)
@@ -399,7 +409,7 @@ fun BottomOptionDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         text = "취소",
                         textAlign = TextAlign.Center,
                         style = dialogRedTextStyle
@@ -407,7 +417,8 @@ fun BottomOptionDialog(
                 }
             } else {
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
                             //게시글
@@ -422,14 +433,15 @@ fun BottomOptionDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         text = "신고하기",
                         textAlign = TextAlign.Center,
                         style = dialogDefaultTextStyle
                     )
                 }
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
                             changeBottomOptionState(false)
@@ -437,7 +449,7 @@ fun BottomOptionDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         text = "취소",
                         textAlign = TextAlign.Center,
                         style = dialogRedTextStyle

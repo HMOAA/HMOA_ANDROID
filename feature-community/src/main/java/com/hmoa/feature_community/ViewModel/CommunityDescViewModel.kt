@@ -55,7 +55,6 @@ class CommunityDescViewModel @Inject constructor(
     val isLiked get() = _isLiked.asStateFlow()
 
     private val _flag = MutableStateFlow(false)
-    val flag get() = _flag.asStateFlow()
 
     private var _communities = MutableStateFlow<PagingData<CommunityCommentWithLikedResponseDto>?>(null)
 
@@ -217,7 +216,7 @@ class CommunityDescViewModel @Inject constructor(
     //좋아요 remote update
     private suspend fun fetchLike(liked : Boolean){
         viewModelScope.launch{
-            if (flag.value) {
+            if (_flag.value) {
                 if (liked) {
                     val result = communityRepository.deleteCommunityLike(id.value)
                     if (result.exception is Exception) {

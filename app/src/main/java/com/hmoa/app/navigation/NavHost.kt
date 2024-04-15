@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
+import com.hmoa.feature_brand.navigation.brandScreen
+import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToHome
@@ -66,8 +68,8 @@ fun SetUpNavGraph(
         perfumeScreen(
             onBackClick = navController::navigateToBack,
             onHomeClick = navController::navigateToHome,
-            onCommentAddClick = {perfumeId ->  navController.navigateToCreateNewperfumeComment(perfumeId)},
-            onBrandClick = {},
+            onCommentAddClick = { perfumeId -> navController.navigateToCreateNewperfumeComment(perfumeId) },
+            onBrandClick = { brandId -> navController.navigateToBrand(brandId) },
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
             onSimilarPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) },
             onSpecificCommentClick = { commentId, isEditable ->
@@ -79,7 +81,7 @@ fun SetUpNavGraph(
         )
         perfumeComment(
             onBackClick = navController::navigateToBack,
-            onAddCommentClick = {perfumeId ->  navController.navigateToCreateNewperfumeComment(perfumeId)},
+            onAddCommentClick = { perfumeId -> navController.navigateToCreateNewperfumeComment(perfumeId) },
             onSpecificCommentClick = { commentId, isEditable ->
                 navController.navigateToSpecificPerfumeComment(
                     commentId.toInt(),
@@ -90,5 +92,10 @@ fun SetUpNavGraph(
         specificComment(onBackClick = navController::navigateToBack)
         editMyPerfumeComment(onBackClick = navController::navigateToBack)
         createNewPerfumeComment(onBackClick = navController::navigateToBack)
+        /**brand 모듈*/
+        brandScreen(
+            onBackClck = navController::navigateToBack,
+            onHomeClick = { navController.navigateToHome() },
+            onPerfumeClick = { navController.navigateToPerfume(it) })
     }
 }

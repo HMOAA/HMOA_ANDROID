@@ -132,7 +132,7 @@ fun ProfileAndHeartView(
                 fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
                 selected = isCommentLiked,
                 unSelectedColor = CustomColor.gray1,
-                selectedColor = Color.Black
+                selectedColor = CustomColor.gray1,
             )
         }
         Text(

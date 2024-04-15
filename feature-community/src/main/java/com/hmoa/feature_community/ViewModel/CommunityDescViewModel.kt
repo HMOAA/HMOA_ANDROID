@@ -11,7 +11,9 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.CommunityRepository
+import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
+import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.feature_community.CommunityCommentPagingSource
@@ -32,23 +34,25 @@ import javax.inject.Inject
 @HiltViewModel
 class CommunityDescViewModel @Inject constructor(
     private val communityRepository: CommunityRepository,
-    private val communityCommentRepository: CommunityCommentRepository
+    private val communityCommentRepository: CommunityCommentRepository,
+    private val reportRepository : ReportRepository
 ) : ViewModel() {
 
+    //바텀 다이얼로그 state
     private val _isOpenBottomOptions = MutableStateFlow(false)
     val isOpenBottomOptions get() = _isOpenBottomOptions.asStateFlow()
 
+    //error state
     private val _errState = MutableStateFlow("")
     val errState get() = _errState.asStateFlow()
 
+    //community id
     private val _id = MutableStateFlow(-1)
     val id get() = _id.asStateFlow()
 
+    //like 여부
     private val _isLiked = MutableStateFlow(false)
     val isLiked get() = _isLiked.asStateFlow()
-
-    private val _profile = MutableStateFlow<String?>(null)
-    val profile get() = _profile.asStateFlow()
 
     private val _flag = MutableStateFlow(false)
     val flag get() = _flag.asStateFlow()
@@ -101,12 +105,7 @@ class CommunityDescViewModel @Inject constructor(
         _isOpenBottomOptions.update { state }
     }
 
-    //신고하기
-    fun reportCommunity() {
-        /** 신고하기 repository 추가되어서 이거 추가해야 함 */
-    }
-
-    //삭제
+    //커뮤니티 삭제
     fun delCommunity() {
         viewModelScope.launch {
             try {
@@ -116,6 +115,31 @@ class CommunityDescViewModel @Inject constructor(
             }
         }
     }
+
+    //커뮤니티 신고하기
+    fun reportCommunity() {
+        viewModelScope.launch{
+            try{
+                val requestDto = TargetRequestDto(targetId = id.value.toString())
+                reportRepository.reportCommunity(requestDto)
+            } catch (e : Exception) {
+                _errState.update{ e.message.toString() }
+            }
+        }
+    }
+
+    //커뮤니티 좋아요
+    fun updateLike(){
+        _flag.update{true}
+    }
+
+    //댓글 Paging
+    fun commentPagingSource() : Flow<PagingData<CommunityCommentWithLikedResponseDto>> = Pager(
+        config = PagingConfig(pageSize = PAGE_SIZE),
+        pagingSourceFactory = {
+            getCommentPaging(id = id.value)
+        }
+    ).flow.cachedIn(viewModelScope)
 
     //댓글 작성
     fun postComment(comment: String) {
@@ -136,23 +160,34 @@ class CommunityDescViewModel @Inject constructor(
         }
     }
 
-    //id 설정
-    fun setId(id: Int) {
-        _id.update { id }
-    }
-
-    //좋아요 local update
-    fun updateLike(){
-        _flag.update{true}
-    }
-
-    fun commentPagingSource() : Flow<PagingData<CommunityCommentWithLikedResponseDto>> = Pager(
-        config = PagingConfig(pageSize = PAGE_SIZE),
-        pagingSourceFactory = {
-            getCommentPaging(id = id.value)
+    //댓글 삭제
+    fun delComment(id : Int?){
+        viewModelScope.launch{
+            if (id == null) {
+                _errState.update{ "댓글 인식 오류" }
+                return@launch
+            }
+            val result = communityCommentRepository.deleteCommunityComment(id)
+            if (result.exception is Exception) {
+                _errState.update{ result.exception.toString() }
+                return@launch
+            }
         }
-    ).flow.cachedIn(viewModelScope)
+    }
 
+    //댓글 신고하기
+    fun reportComment(id : Int) {
+        viewModelScope.launch{
+            val requestDto = TargetRequestDto(id.toString())
+            try{
+                reportRepository.reportCommunityComment(requestDto)
+            } catch (e : Exception){
+                _errState.update{ e.message.toString() }
+            }
+        }
+    }
+
+    //댓글 좋아요
     fun updateCommentLike(
         id : Int,
         liked : Boolean
@@ -172,6 +207,11 @@ class CommunityDescViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    //id 설정
+    fun setId(id: Int) {
+        _id.update { id }
     }
 
     //좋아요 remote update
@@ -197,7 +237,6 @@ class CommunityDescViewModel @Inject constructor(
             }
         }
     }
-
     private fun getCommentPaging(id : Int) = CommunityCommentPagingSource(
         communityCommentRepository = communityCommentRepository,
         id = id

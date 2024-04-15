@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -121,6 +122,8 @@ fun CommunityDescriptionPage(
 
     var commentId by remember{mutableStateOf(0)}
 
+    val configuration = LocalConfiguration.current
+
     /** Text Style 정의 */
     val categoryTextStyle = TextStyle(
         fontSize = 14.sp,
@@ -191,6 +194,7 @@ fun CommunityDescriptionPage(
                     PostContent(
                         modifier = Modifier
                             .fillMaxWidth(),
+                        width = configuration.screenWidthDp.dp,
                         onChangeBottomSheetState = {
                             changeBottomOptionState(it)
                             onChangeType("post")
@@ -368,7 +372,7 @@ fun BottomOptionDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         text = "수정",
                         textAlign = TextAlign.Center,
                         style = dialogDefaultTextStyle

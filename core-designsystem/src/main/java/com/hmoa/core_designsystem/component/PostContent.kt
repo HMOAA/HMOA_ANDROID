@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -38,6 +39,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -49,6 +51,7 @@ import com.skydoves.landscapist.glide.GlideImage
 @Composable
 fun PostContent(
     modifier : Modifier = Modifier,
+    width : Dp,
     onChangeBottomSheetState : (Boolean) -> Unit,
     profile : String,
     nickname : String,
@@ -199,6 +202,7 @@ fun PostContent(
                     modifier = Modifier.fillMaxSize()
                 ){
                     ExpandableImage(
+                        modifier = Modifier.requiredWidth(width),
                         picture = pictures[it],
                         width = screenWidth,
                         height = screenHeight
@@ -261,6 +265,7 @@ fun PostContent(
 
 @Composable
 fun ExpandableImage(
+    modifier : Modifier,
     width : Float,
     height : Float,
     picture : String
@@ -273,7 +278,7 @@ fun ExpandableImage(
             onDismissRequest = { showDialog = false }
         ) {
             Box(
-                modifier = Modifier.width(width.dp + 32.dp)
+                modifier = modifier.width(width.dp)
                     .height(height.dp),
                 contentAlignment = Alignment.Center
             ){
@@ -282,7 +287,7 @@ fun ExpandableImage(
                     width = 1f,
                     height = 1f,
                     backgroundColor = Color.Black,
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.FillBounds
                 )
                 Row(
                     modifier = Modifier.fillMaxSize()

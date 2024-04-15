@@ -135,7 +135,9 @@ fun PostList(
                     onNavCommunityDescription(community.communityId)
                 },
                 postType = community.category,
-                postTitle = community.title
+                postTitle = community.title,
+                heartCount = community.heartCount,
+                commentCount = community.commentCount
             )
         }
     }

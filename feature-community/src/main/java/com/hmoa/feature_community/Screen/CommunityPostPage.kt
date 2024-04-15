@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,8 +29,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,12 +40,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -395,29 +395,29 @@ fun BottomCameraBtn(
             onUpdatePictures(uris)
         }
     )
-    /** keyboard 옵션으로 보이도록 View 변경해야 함 */
-    Button(
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
-        onClick = {
-            multiplePhotoPickerLauncher.launch(
-                PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = CustomColor.gray1
-        ),
-        shape = RectangleShape
+            .height(40.dp),
     ){
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "사진을 추가하려면 눌러주세요!",
-            textAlign = TextAlign.Center,
-            color = Color.Blue,
-            fontSize = 20.sp
-        )
+        IconButton(
+            modifier = Modifier
+                .fillMaxHeight()
+                .aspectRatio(1f),
+            onClick = {
+                multiplePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            }
+        ){
+            Icon(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_camera),
+                contentDescription = "Add Picture"
+            )
+        }
     }
 }

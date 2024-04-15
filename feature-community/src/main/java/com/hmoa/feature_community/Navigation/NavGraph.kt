@@ -4,11 +4,13 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
 import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
 import com.hmoa.feature_community.Screen.CommunityEditRoute
 import com.hmoa.feature_community.Screen.CommunityHomeRoute
 import com.hmoa.feature_community.Screen.CommunityPageRoute
 import com.hmoa.feature_community.Screen.CommunityPostRoute
+import com.hmoa.feature_community.Screen.CommunitySearchRoute
 
 //게시글 기본 화면
 fun NavController.navigateToCommunityRoute() = navigate(CommunityRoute.CommunityGraphRoute.name)
@@ -28,16 +30,20 @@ fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${Community
 //게시글 상세 화면
 fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}")
 
+//게시글 검색 화면
+fun NavController.navigateToCommunitySearchRoute() = navigate(CommunityRoute.CommunitySearchRoute.name)
+
+//댓글 수정 화면
+fun NavController.navigateToCommunityCommentEditRoute(commentId : Int) = navigate("${CommunityRoute.CommunityCommentEditRoute.name}/${commentId}")
+
 fun NavGraphBuilder.nestedCommunityGraph(
-    onNavHome : () -> Unit,
-    onNavHPedia : () -> Unit,
-    onNavLike : () -> Unit,
-    onNavMyPage : () -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityPage : () -> Unit,
     onNavCommunityPost : (String) -> Unit,
     onNavCommunityEdit : (Int) -> Unit,
-    onNavCommunityDescription : (Int) -> Unit
+    onNavCommunityDescription : (Int) -> Unit,
+    onNavCommunitySearch : () -> Unit,
+    onNavCommunityCommentEdit : (Int) -> Unit
 ){
     navigation(
         startDestination = CommunityRoute.CommunityHomeRoute.name,
@@ -52,6 +58,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
         composable(route = CommunityRoute.CommunityPageRoute.name){
             CommunityPageRoute(
                 onNavBack = onNavBack,
+                onNavSearch = onNavCommunitySearch,
                 onNavCommunityDescription = onNavCommunityDescription,
                 onNavPost = onNavCommunityPost
             )
@@ -78,6 +85,20 @@ fun NavGraphBuilder.nestedCommunityGraph(
             CommunityDescriptionRoute (
                 _id = id.toInt(),
                 onNavCommunityEdit = onNavCommunityEdit,
+                onNavCommentEdit = onNavCommunityCommentEdit,
+                onNavBack = onNavBack
+            )
+        }
+        composable(route = CommunityRoute.CommunitySearchRoute.name){
+            CommunitySearchRoute(
+                onNavBack = onNavBack,
+                onNavCommunityDesc = onNavCommunityDescription
+            )
+        }
+        composable(route = "${CommunityRoute.CommunityCommentEditRoute.name}/{commentId}") {
+            val id = it.arguments?.getString("commentId")?.toInt()
+            CommunityCommentEditRoute(
+                _commentId = id,
                 onNavBack = onNavBack
             )
         }

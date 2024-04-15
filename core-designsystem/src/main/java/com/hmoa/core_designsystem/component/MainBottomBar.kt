@@ -30,37 +30,35 @@ import com.hmoa.core_designsystem.R
 
 @Composable
 fun MainBottomBar(
-    initValue : BottomScreen,
+    initValue : String,
     onClickHome: () -> Unit,
     onClickHPedia: () -> Unit,
     onClickLike: () -> Unit,
     onClickMyPage: () -> Unit
 ) {
-    var selectedScreen by remember{mutableStateOf(initValue)}
-
     val bottomNavItems = listOf(
         BottomNavItem(
             name = BottomScreen.Home,
             route = onClickHome,
-            icon = if(selectedScreen.name == "Home") painterResource(R.drawable.ic_nav_home_selected)
+            icon = if(initValue == "Home") painterResource(R.drawable.ic_nav_home_selected)
             else painterResource(R.drawable.ic_home)
         ),
         BottomNavItem(
             name = BottomScreen.HPedia,
             route = onClickHPedia,
-            icon = if (selectedScreen.name == "HPedia") painterResource(R.drawable.ic_nav_hpedia_selected)
+            icon = if (initValue == "HPedia") painterResource(R.drawable.ic_nav_hpedia_selected)
             else painterResource(R.drawable.ic_hpedia)
         ),
         BottomNavItem(
             name = BottomScreen.Like,
             route = onClickLike,
-            icon = if (selectedScreen.name == "Like") painterResource(R.drawable.ic_nav_like_selected)
+            icon = if (initValue == "Like") painterResource(R.drawable.ic_nav_like_selected)
             else painterResource(R.drawable.ic_heart)
         ),
         BottomNavItem(
             name = BottomScreen.MyPage,
             route = onClickMyPage,
-            icon = if (selectedScreen.name == "MyPage") painterResource(R.drawable.ic_nav_my_page_selected)
+            icon = if (initValue == "MyPage") painterResource(R.drawable.ic_nav_my_page_selected)
             else painterResource(R.drawable.ic_person)
         ),
     )
@@ -74,7 +72,6 @@ fun MainBottomBar(
                     selected = false,
                     onClick = {
                         item.route()
-                        selectedScreen = item.name
                     },
                     icon = {
                         Column(
@@ -89,7 +86,7 @@ fun MainBottomBar(
 
                             Spacer(Modifier.height(5.dp))
 
-                            if (selectedScreen == item.name) {
+                            if (initValue == item.name.name) {
                                 Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White)
                             }
                         }
@@ -103,5 +100,5 @@ fun MainBottomBar(
 @Preview
 @Composable
 fun MainBottomBarPreview() {
-    MainBottomBar(BottomScreen.Home, {}, {}, {}, {})
+    MainBottomBar(BottomScreen.Home.name, {}, {}, {}, {})
 }

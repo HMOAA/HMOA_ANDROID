@@ -63,10 +63,6 @@ fun SetUpNavGraph(
             onNavCommunityEdit = navController::navigateToCommunityEditRoute,
             onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
             onNavCommunityPage = navController::navigateToCommunityPage,
-            onNavHome = { /** Home Navigation */ },
-            onNavHPedia = navController::navigateToCommunityRoute,
-            onNavLike = { /** Like Navigation */ },
-            onNavMyPage = { /** Setting Navigation */ }
         )
 
         /** perfume 모듈 */

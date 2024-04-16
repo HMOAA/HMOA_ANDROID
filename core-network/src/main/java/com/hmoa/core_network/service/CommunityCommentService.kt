@@ -22,8 +22,7 @@ interface CommunityCommentService {
 
     @PUT("/community/comment/{commentId}/like")
     suspend fun putCommunityCommentLiked(
-        @Path(value = "commentId") commentId: Int,
-        @Body dto: CommunityCommentDefaultRequestDto
+        @Path(value = "commentId") commentId: Int
     ): ApiResponse<DataResponseDto<Any>>
 
     @DELETE("/community/comment/{commentId}/like")

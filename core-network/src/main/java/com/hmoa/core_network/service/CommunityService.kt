@@ -1,10 +1,11 @@
 package com.hmoa.core_network.service
 
-import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
+import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.skydoves.sandwich.ApiResponse
+import okhttp3.MultipartBody
 import retrofit2.http.*
 import java.io.File
 
@@ -31,22 +32,22 @@ interface CommunityService {
     @DELETE("/community/{communityId}/like")
     suspend fun deleteCommunityLike(@Path("communityId") communityId: Int): ApiResponse<DataResponseDto<Nothing>>
 
-    @GET("/community/category")
+    @GET("/community/category/cursor")
     suspend fun getCommunityByCategory(
         @Query("category") category: String,
-        @Query("page") page: Int
-    ): ApiResponse<List<CommunityByCategoryResponseDto>>
+        @Query("cursor") cursor: Int
+    ): CommunityWithCursorResponseDto
 
     @GET("/community/home")
     suspend fun getCommunitiesHome(): ApiResponse<List<CommunityByCategoryResponseDto>>
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/community/save")
     suspend fun postCommunitySave(
-        @Field("images") images: Array<File>,
-        @Field("category") category: String,
-        @Field("title") title: String,
-        @Field("content") content: String
+        @Part images: Array<MultipartBody.Part>,
+        @Part title: MultipartBody.Part,
+        @Part category: MultipartBody.Part,
+        @Part content: MultipartBody.Part
     ): ApiResponse<CommunityDefaultResponseDto>
 
 }

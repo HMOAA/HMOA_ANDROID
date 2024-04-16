@@ -4,11 +4,15 @@ import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.usecase.PostKakaoTokenUseCase
+import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
+import com.hmoa.core_model.Provider
+import com.hmoa.core_model.request.OauthLoginRequestDto
+import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -16,10 +20,7 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,42 +28,65 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val application: Application,
     private val saveKakaoToken: SaveKakaoTokenUseCase,
-    private val postSocialToken: PostKakaoTokenUseCase,
+    private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
     private val context = application.applicationContext
-    private val _isPostComplete = MutableStateFlow(false)
-    var isPostComplete = _isPostComplete.asStateFlow()
+    private val _isAbleToGoHome = MutableStateFlow(false)
+    var isAbleToGoHome = _isAbleToGoHome.asStateFlow()
+    private val _isNeedToSignUp = MutableStateFlow(false)
+    var isNeedToSignUp = _isNeedToSignUp.asStateFlow()
     val scope = CoroutineScope(Dispatchers.IO)
 
     suspend fun onKakaoLoginSuccess(token: String) {
         Log.i(TAG, "카카오계정으로 로그인 성공 ${token}")
         saveKakoAccessToken(token)
         postKakaoAccessToken(token)
+        //TODO("401에러, 토큰 만료로 인해서 다시 사용하던 화면으로 돌아가야 하는 경우 어떻게 해야함?")
+
     }
 
     fun saveKakoAccessToken(token: String) {
-        suspend { saveKakaoToken(token) }
+        saveKakaoToken(token)
     }
 
     suspend fun postKakaoAccessToken(token: String) {
-        postSocialToken(token).asResult()
-            .collectLatest {
-                when (it) {
-                    is Result.Success -> {
-                        val authToken = it.data.authToken
-                        val rememberedToken = it.data.rememberedToken
-                        saveAuthAndRememberedToken(authToken, rememberedToken)
-                        _isPostComplete.update { true }
-                    }
-
-                    is Result.Loading -> {}//TODO("로딩화면")
-                    is Result.Error -> {
-                        it
-                        it.exception
-                    }//TODO()
+        viewModelScope.launch {
+            flow {
+                val result = loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.KAKAO)
+                if (result.exception is Exception) {
+                    throw result.exception!!
+                } else {
+                    emit(result.data)
                 }
-            }
+            }.asResult()
+                .collectLatest {
+                    when (it) {
+                        is Result.Success -> {
+                            val authToken = it.data!!.authToken
+                            val rememberedToken = it.data!!.rememberedToken
+                            checkIsExistedMember(it.data!!)
+                            saveAuthAndRememberedToken(authToken, rememberedToken)
+                        }
+
+                        is Result.Loading -> {}
+                        is Result.Error -> {
+                            when (it.exception.message) {
+                                "500" -> {}
+                                "404" -> {}
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    fun checkIsExistedMember(data: MemberLoginResponseDto) {
+        if (data.existedMember) {
+            _isAbleToGoHome.update { true }
+        } else {
+            _isNeedToSignUp.update { true }
+        }
     }
 
     fun handleKakaoLogin() {

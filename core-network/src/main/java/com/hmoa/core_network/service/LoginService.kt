@@ -12,7 +12,10 @@ import retrofit2.http.Path
 
 interface LoginService {
     @POST("/login/oauth2/{provider}")
-    suspend fun postOAuth(@Body dto: OauthLoginRequestDto, @Path("provider") provider: Provider): MemberLoginResponseDto
+    suspend fun postOAuth(
+        @Body dto: OauthLoginRequestDto,
+        @Path("provider") provider: Provider
+    ): ApiResponse<MemberLoginResponseDto>
 
     @POST("/login/remembered")
     suspend fun postRemembered(@Body dto: RememberedLoginRequestDto): ApiResponse<TokenResponseDto>

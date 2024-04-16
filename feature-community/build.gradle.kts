@@ -11,7 +11,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -51,7 +51,7 @@ dependencies {
     implementation(project(":core-common"))
 
     //material3
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material3:material3:1.2.0")
 
     //preview
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -63,6 +63,9 @@ dependencies {
 
     //collectAsStateWithLifecycle 함수
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
+
+    //paging
+    implementation("androidx.paging:paging-compose:3.2.0")
 
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")

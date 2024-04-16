@@ -2,9 +2,9 @@ package com.hmoa.core_repository
 
 import ResultResponse
 import com.hmoa.core_datastore.Community.CommunityDataStore
-import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
+import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import java.io.File
 import javax.inject.Inject
@@ -34,14 +34,14 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataStore
     }
 
     override suspend fun deleteCommunityLike(communityId: Int): ResultResponse<DataResponseDto<Nothing>> {
-        return communityDataStore.deleteCommunity(communityId)
+        return communityDataStore.deleteCommunityLike(communityId)
     }
 
     override suspend fun getCommunityByCategory(
         category: String,
-        page: Int
-    ): ResultResponse<List<CommunityByCategoryResponseDto>> {
-        return communityDataStore.getCommunityByCategory(category, page)
+        cursor: Int
+    ): CommunityWithCursorResponseDto {
+        return communityDataStore.getCommunityByCategory(category, cursor)
     }
 
     override suspend fun getCommunitiesHome(): ResultResponse<List<CommunityByCategoryResponseDto>> {

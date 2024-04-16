@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,59 +32,59 @@ fun CommentItem(
     userImgUrl: String,
     userName: String,
     content: String,
-    createdDate: Int,
-    onReportClick: () -> Unit
+    createdDate: String,
+    onReportClick: () -> Unit,
+    onCommentItemClick: () -> Unit,
+    onCommentLikedClick: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().height(102.dp).padding(10.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier.width(28.dp)
-                        .height(28.dp)
-                        .clip(CircleShape)
-                        .background(color = Color.Transparent)
-                        .border(1.dp, Color.White, CircleShape)
-                ) {
-                    com.skydoves.landscapist.glide.GlideImage(imageModel = userImgUrl)
+    Column {
+        Column(modifier = Modifier.fillMaxWidth().height(102.dp).padding(10.dp).clickable { onCommentItemClick() }) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier.width(28.dp)
+                            .height(28.dp)
+                            .clip(CircleShape)
+                            .background(color = Color.Transparent)
+                            .border(1.dp, Color.Transparent, CircleShape)
+                    ) {
+                        com.skydoves.landscapist.glide.GlideImage(imageModel = userImgUrl)
+                    }
+                    Text(
+                        text = userName,
+                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal),
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                    Text(
+                        text = "${createdDate}",
+                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = CustomColor.gray3),
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
                 }
-                Text(
-                    text = userName,
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal),
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-                Text(
-                    text = "${createdDate}일전",
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = CustomColor.gray3),
-                    modifier = Modifier.padding(start = 8.dp)
-                )
+                Row {
+                    LikeCountButton(
+                        onClickItem = {onCommentLikedClick()},
+                        count = count,
+                        fontSize = TextUnit(value = 14f, type = TextUnitType.Sp),
+                        fontColor = Color.Black,
+                        selected = isCommentLiked,
+                        iconSize = 18
+                    )
+                    Icon(
+                        painter = painterResource(com.hmoa.core_designsystem.R.drawable.three_dot_menu_horizontal),
+                        contentDescription = "아이콘",
+                        modifier = Modifier.size(23.dp).padding(2.dp).clickable { onReportClick() },
+                        tint = CustomColor.gray2
+                    )
+                }
             }
-            Row {
-                Icon(
-                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_kebab),
-                    contentDescription = "아이콘",
-                    modifier = Modifier.size(12.dp).padding(2.dp).clickable { onReportClick() },
-                    tint = CustomColor.gray2
-                )
-                TypeBadge(
-                    roundedCorner = 20.dp,
-                    type = "${count}",
-                    fontColor = Color.Black,
-                    unSelectedIcon = painterResource(R.drawable.ic_heart),
-                    selectedIcon = painterResource(R.drawable.ic_heart_filled),
-                    iconColor = Color.Black,
-                    fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
-                    selected = isCommentLiked,
-                    unSelectedColor = CustomColor.gray1,
-                    selectedColor = Color.Black
-                )
-            }
+            Text(
+                content,
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
+                modifier = Modifier.padding(top = 8.dp),
+                overflow = TextOverflow.Clip
+            )
         }
-        Text(
-            content,
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
-            modifier = Modifier.padding(top = 8.dp),
-            overflow = TextOverflow.Clip
-        )
     }
 }
 
@@ -96,6 +97,8 @@ fun CommentItemPreview() {
         userImgUrl = "",
         userName = "임현규",
         content = "선물용으로 구매했는데, 친구가 좋아했어요",
-        createdDate = 12,
-        onReportClick = {})
+        createdDate = "12일 전",
+        onReportClick = {},
+        onCommentItemClick = {},
+        onCommentLikedClick = {})
 }

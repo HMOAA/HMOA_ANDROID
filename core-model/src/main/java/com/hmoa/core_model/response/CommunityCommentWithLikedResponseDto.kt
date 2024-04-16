@@ -1,12 +1,15 @@
 package com.hmoa.core_model.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CommunityCommentWithLikedResponseDto(
-    val author : String,
     val commentId : Int,
     val content : String,
-    val heartCount : Int,
-    val liked : Boolean,
+    val author : String,
     val profileImg : String,
     val time : String,
-    val writed : Boolean
+    val writed : Boolean,
+    val liked : Boolean,
+    val heartCount : Int
 )

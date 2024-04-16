@@ -13,8 +13,8 @@ data class CommunityDefaultResponseDto(
     val id: Int,
     val imagesCount: Int,
     val liked : Boolean,
-    val myProfileImgUrl: String,
-    val profileImgUrl: String,
+    val myProfileImgUrl: String?,
+    val profileImgUrl: String?,
     val time: String,
     val title: String,
     val writed: Boolean

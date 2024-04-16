@@ -3,15 +3,17 @@ package com.hmoa.core_network.di
 import com.google.gson.GsonBuilder
 import com.hmoa.core_database.TokenManager
 import com.hmoa.core_network.BuildConfig
+import com.hmoa.core_network.authentication.AuthAuthenticator
 import com.hmoa.core_network.service.*
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
-import okhttp3.Authenticator
+import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,29 +39,32 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(headerInterceptor: Interceptor, authenticator: Authenticator): OkHttpClient {
+    fun provideOkHttpClient(headerInterceptor: Interceptor, authenticator: AuthAuthenticator): OkHttpClient {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
         val okHttpClientBuilder = OkHttpClient().newBuilder()
         okHttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS)
         okHttpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
+        okHttpClientBuilder.authenticator(authenticator)
         okHttpClientBuilder.addInterceptor(headerInterceptor)
         okHttpClientBuilder.addInterceptor(httpLoggingInterceptor)
-        okHttpClientBuilder.authenticator(authenticator)
         return okHttpClientBuilder.build()
     }
 
     @Singleton
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
-        val token = runBlocking {
-            tokenManager.getAuthToken().firstOrNull()
+        var token: String? = null
+        CoroutineScope(Dispatchers.IO).launch {
+            token = tokenManager.getAuthToken().firstOrNull()
         }
+
+
         return Interceptor { chain ->
             with(chain) {
                 val newRequest = request().newBuilder()
-                    .addHeader("X-AUTH-TOKEN", "${token}")
+                    .header("X-AUTH-TOKEN", "${token}")
                     .build()
                 proceed(newRequest)
             }
@@ -140,15 +145,16 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun providerCommunityService(retrofit : Retrofit) : CommunityService{
+    fun providerCommunityService(retrofit: Retrofit): CommunityService {
         return retrofit.create(CommunityService::class.java)
     }
 
     @Singleton
     @Provides
-    fun providerCommunityCommentService(retrofit : Retrofit) : CommunityCommentService {
+    fun providerCommunityCommentService(retrofit: Retrofit): CommunityCommentService {
         return retrofit.create(CommunityCommentService::class.java)
     }
+
     @Singleton
     @Provides
     fun providerReportService(retrofit: Retrofit): ReportService {

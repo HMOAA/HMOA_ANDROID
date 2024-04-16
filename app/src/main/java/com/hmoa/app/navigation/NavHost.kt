@@ -3,56 +3,49 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.example.feature_userinfo.navigateToBack
-import com.example.feature_userinfo.navigateToEditProfilePage
-import com.example.feature_userinfo.navigateToMyActivity
-import com.example.feature_userinfo.navigateToMyBirth
-import com.example.feature_userinfo.navigateToMyCommentPage
-import com.example.feature_userinfo.navigateToMyFavoriteCommentPage
-import com.example.feature_userinfo.navigateToMyGenderPage
-import com.example.feature_userinfo.navigateToMyInfoPage
-import com.example.feature_userinfo.navigateToMyPostPage
-import com.example.feature_userinfo.nestedUserInfoGraph
-import com.hmoa.feature_community.Navigation.navigateToCommunityDescriptionRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunityEditRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
-import com.hmoa.feature_community.Navigation.nestedCommunityGraph
-import com.hmoa.feature_userinfo.*
+import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
-import com.hmoa.feature_community.Navigation.navigateToCommunityHome
-import com.hmoa.feature_community.Navigation.navigateToCommunityPage
-import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
-import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
-import com.hmoa.feature_perfume.navigation.perfumeComment
-import com.hmoa.feature_perfume.navigation.perfumeScreen
+import com.hmoa.feature_brand.navigation.brandScreen
+import com.hmoa.feature_brand.navigation.navigateToBrand
+import com.hmoa.feature_community.Navigation.*
+import com.hmoa.feature_home.navigation.homeScreen
+import com.hmoa.feature_home.navigation.navigateToHome
+import com.hmoa.feature_perfume.navigation.*
 
 @Composable
 fun SetUpNavGraph(
     navController: NavHostController,
     startDestination: String
 ) {
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
 
-        mainScreen(
-            onNavCommunity = navController::navigateToCommunityRoute
-        )
+//        mainScreen(
+//            onNavCommunity = navController::navigateToCommunityRoute, navController = navController
+//        )
+        /** home 모듈 */
+        homeScreen(onPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) }, onAllPerfumeClick = {})
 
         /** authentication 모듈 */
-        loginScreen(onSignupClick = navController::navigateToSignup)
+        loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)
         signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
         pickNicknameScreen(
             onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,
             onSignupClick = navController::navigateToSignup
+        )
+        pickPersonalInfoScreen(
+            onHomeClick = navController::navigateToHome,
+            onPickNicknameClick = navController::navigateToPickNickname
         )
 
         /** user info 모듈 */
         this.nestedUserInfoGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
-            /** onNavCommunity는 Community 모듈로의 이동 */
-            onNavCommunity = navController::navigateToBack,
-            /** 여기서 게시글 수정으로 이동해야.. 하나요..? */
-            onNavEditPost = navController::navigateToBack,
+            onNavCommunity = { /** onNavCommunity는 Community 모듈로의 이동 */ },
+            onNavEditPost = { /** 여기서 게시글 수정으로 이동 */ },
             onNavEditProfile = navController::navigateToEditProfilePage,
             onNavManageMyInfo = navController::navigateToMyInfoPage,
             onNavMyActivity = navController::navigateToMyActivity,
@@ -69,25 +62,45 @@ fun SetUpNavGraph(
             onNavCommunityPost = navController::navigateToCommunityPostRoute,
             onNavCommunityEdit = navController::navigateToCommunityEditRoute,
             onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunityPage = navController::navigateToCommunityPage
+            onNavCommunityPage = navController::navigateToCommunityPage,
+            onNavHome = { /** Home Navigation */ },
+            onNavHPedia = navController::navigateToCommunityRoute,
+            onNavLike = { /** Like Navigation */ },
+            onNavMyPage = { /** Setting Navigation */ }
         )
 
-        pickPersonalInfoScreen(
-            onHomeClick = navController::navigateToMain,
-            onPickNicknameClick = navController::navigateToPickNickname
-        )
-
+        /** perfume 모듈 */
         perfumeScreen(
-            onBackClick = {},
-            onHomeClick = {},
-            onCommentAddClick = {},
-            onBrandClick = {},
+            onBackClick = navController::navigateToBack,
+            onHomeClick = navController::navigateToHome,
+            onCommentAddClick = { perfumeId -> navController.navigateToCreateNewperfumeComment(perfumeId) },
+            onBrandClick = { brandId -> navController.navigateToBrand(brandId) },
             onViewCommentAllClick = { perfumeId -> navController.navigateToPerfumeComment(perfumeId) },
-            onSimilarPerfumeClick = {},
+            onSimilarPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) },
+            onSpecificCommentClick = { commentId, isEditable ->
+                navController.navigateToSpecificPerfumeComment(
+                    commentId.toInt(),
+                    isEditable
+                )
+            }
         )
         perfumeComment(
-            onBackClick = {},
-            onAddCommentClick = {},
+            onBackClick = navController::navigateToBack,
+            onAddCommentClick = { perfumeId -> navController.navigateToCreateNewperfumeComment(perfumeId) },
+            onSpecificCommentClick = { commentId, isEditable ->
+                navController.navigateToSpecificPerfumeComment(
+                    commentId.toInt(),
+                    isEditable
+                )
+            }
         )
+        specificComment(onBackClick = navController::navigateToBack)
+        editMyPerfumeComment(onBackClick = navController::navigateToBack)
+        createNewPerfumeComment(onBackClick = navController::navigateToBack)
+        /**brand 모듈*/
+        brandScreen(
+            onBackClck = navController::navigateToBack,
+            onHomeClick = { navController.navigateToHome() },
+            onPerfumeClick = { navController.navigateToPerfume(it) })
     }
 }

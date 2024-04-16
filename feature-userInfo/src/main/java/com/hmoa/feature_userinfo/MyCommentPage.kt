@@ -98,7 +98,8 @@ fun MyCommentPage(
                                     comment = comment.content,
                                     isFirst = false,
                                     viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
-                                    onNavCommunity = onNavCommunity
+                                    onNavCommunity = onNavCommunity,
+                                    onOpenBottomDialog = {/** Bottom Dialog 띄울 거면 사용 */}
                                 )
                             }
                         }

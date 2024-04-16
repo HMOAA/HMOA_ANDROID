@@ -13,12 +13,12 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,7 +39,8 @@ fun EditProfileRoute(
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle()
 
     val getImage = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()){
+        contract = ActivityResultContracts.GetContent()
+    ) {
         viewModel.updateProfile(it!!)
     }
 
@@ -63,13 +64,13 @@ fun EditProfileRoute(
 
 @Composable
 fun EditProfilePage(
-    uiState : UserInfoUiState,
-    isDuplicated : Boolean,
-    isEnabled : Boolean,
-    onUpdateNickname : (String) -> Unit,
-    onSaveNickname : () -> Unit,
-    onSaveProfile : () -> Unit,
-    getImage : ManagedActivityResultLauncher<String, Uri?>,
+    uiState: UserInfoUiState,
+    isDuplicated: Boolean,
+    isEnabled: Boolean,
+    onUpdateNickname: (String) -> Unit,
+    onSaveNickname: () -> Unit,
+    onSaveProfile: () -> Unit,
+    getImage: ManagedActivityResultLauncher<String, Uri?>,
     onNavBack: () -> Unit,
 ) {
 
@@ -77,6 +78,7 @@ fun EditProfilePage(
         is UserInfoUiState.Loading -> {
 
         }
+
         is UserInfoUiState.UserInfo -> {
             Column(
                 modifier = Modifier

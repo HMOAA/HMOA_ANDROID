@@ -29,7 +29,7 @@ class LoginRepositoryImpl @Inject constructor(
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
         provider: Provider
-    ): MemberLoginResponseDto {
+    ): ResultResponse<MemberLoginResponseDto> {
         return loginRemoteDataStore.postOAuth(accessToken, provider)
     }
 
@@ -45,7 +45,7 @@ class LoginRepositoryImpl @Inject constructor(
         loginLocalDataStore.saveRememberedToken(token)
     }
 
-    override suspend fun saveKakaoAccessToken(token: String) {
+    override fun saveKakaoAccessToken(token: String) {
         loginLocalDataStore.saveKakaoAccessToken(token)
     }
 

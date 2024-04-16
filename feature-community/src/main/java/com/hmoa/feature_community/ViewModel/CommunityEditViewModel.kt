@@ -1,5 +1,8 @@
 package com.hmoa.feature_community.ViewModel
 
+import android.net.Uri
+import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -8,31 +11,19 @@ import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityPhotoDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityEditViewModel @Inject constructor(
-    private val repository : CommunityRepository,
+    private val repository: CommunityRepository,
 ) : ViewModel() {
 
     //가져올 게시글 id
     private val _id = MutableStateFlow<Int?>(null)
     val id get() = _id.asStateFlow()
-
-    //loading state
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading get() = _isLoading.asStateFlow()
 
     //title
     private val _title = MutableStateFlow("")
@@ -47,27 +38,24 @@ class CommunityEditViewModel @Inject constructor(
     val category get() = _category.asStateFlow()
 
     //pictures
-    private val _pictures = MutableStateFlow<List<CommunityPhotoDefaultResponseDto>>(emptyList())
-    val pictures get() = _pictures.asStateFlow()
+    private val _pictures = MutableStateFlow<List<CommunityPhotoDefaultResponseDto>>(listOf())
 
     //추가할 pictures
-    private val _addPictures = MutableStateFlow<Array<File>>(arrayOf())
-    val addPictures get() = _addPictures.asStateFlow()
+    private val _newPictures = MutableStateFlow<List<Uri>>(listOf())
+    val newPictures get() = _newPictures.asStateFlow()
 
-    //삭제할 pictures
-    private val _delPictures = MutableStateFlow<Array<Int>>(arrayOf())
-    val delPictures get() = _delPictures.asStateFlow()
+    private val delPicture = mutableListOf<Uri>()
 
     //error state
     private val _errState = MutableStateFlow("")
     val errState get() = _errState.asStateFlow()
 
     //ui state
-    val uiState : StateFlow<CommunityEditUiState> = combine(
+    val uiState: StateFlow<CommunityEditUiState> = combine(
         title,
         content,
         category,
-        pictures,
+        newPictures,
         CommunityEditUiState::Community
     ).stateIn(
         scope = viewModelScope,
@@ -75,101 +63,149 @@ class CommunityEditViewModel @Inject constructor(
         initialValue = CommunityEditUiState.Loading
     )
 
-    //id 기반 데이터 받아오기
-    private fun getCommunityDescription(id : Int){
-        viewModelScope.launch{
-            flow{
-                val result = repository.getCommunity(id)
-                if (result.data == null) {
-                    _errState.update {"${result.errorCode} : ${result.errorMessage}"}
-                    return@flow
-                }
-                emit(result.data!!)
-            }.asResult()
-                .map{ result ->
-                when (result) {
-                    is Result.Loading -> {
-                        _isLoading.update {false}
-                    }
-                    is Result.Error -> {
-                        _errState.update { "Error : ${result.exception}" }
-                    }
-                    is Result.Success -> {
-                        val data = result.data
-                        _title.update{ data.title }
-                        _content.update { data.content }
-                        _category.update {
-                            val category = when(it?.name) {
-                                "시향기" -> Category.시향기
-                                "추천" -> Category.추천
-                                "자유" -> Category.자유
-                                else -> {
-                                    //불가능
-                                    throw IllegalArgumentException("올바르지 않은 Category")
-                                }
-                            }
-                            category
-                        }
-                        _pictures.update{ data.communityPhotos}
-                        _isLoading.update{true}
-                    }
-                }
-            }
-        }
-    }
+//    asResult().map { result ->
+//        when(result) {
+//            is Result.Loading -> {
+//                CommunityEditUiState.Loading
+//            }
+//            is Result.Success -> {
+//                CommunityEditUiState::Community
+//            }
+//            is Result.Error -> {
+//                CommunityEditUiState.Error
+//            }
+//        }
+//    }.
 
-    //title update
-    fun updateTitle(title : String){
-        _title.update{ title }
-    }
-
-    //content update
-    fun updateContent(content : String) {
-        _content.update{ content }
-    }
 
     //id setting
-    fun setId(id : Int) {
+    fun setId(id: Int) {
         _id.update { id }
 
         //id 기반으로 정보를 가져옴
         getCommunityDescription(id)
     }
 
-    /** 사진 추가, 게시글 수정 어케하는 지 잘 모르겠네... */
-    //picture 추가
-    fun addPictures(newPicture : String){
-        /** add pictrues 리스트에 newPicture uri 추가 */
+    //title update
+    fun updateTitle(title: String) {
+        _title.update { title }
     }
 
-    fun delPictures(delPicture : Int){
-        /** del pictures 리스트에 삭제할 picture의 id 추가 */
+    //content update
+    fun updateContent(content: String) {
+        _content.update { content }
     }
 
-    //게시글 수정
-    fun updateCommunity(){
-        viewModelScope.launch{
-            if (id.value != null){
+    //사진 추가
+    fun updatePictures(newPictures: List<Uri>) {
+        _newPictures.update{
+            it.plus(newPictures)
+        }
+    }
+
+    //사진 삭제
+    fun deletePicture(uri : Uri){
+        _newPictures.update{
+            it.minus(uri)
+        }
+        delPicture.add(uri)
+    }
+
+    //게시글 수정 POST
+    fun updateCommunity() {
+        viewModelScope.launch {
+
+            val images = urisToFiles(newPictures.value)
+            val delPictureId = getDeletePictureId(delPicture)
+            if (id.value != null) {
                 repository.postCommunityUpdate(
-                    images = addPictures.value,
+                    images = images.toTypedArray(),
                     title = title.value,
                     content = content.value,
                     communityId = id.value!!,
-                    deleteCommunityPhotoIds = delPictures.value
+                    deleteCommunityPhotoIds = delPictureId.toTypedArray()
                 )
             } else {
-                _errState.update{ "id is null" }
+                _errState.update { "id is null" }
             }
         }
+    }
+
+    //id 기반 데이터 받아오기
+    private fun getCommunityDescription(id: Int) {
+        viewModelScope.launch {
+            flow {
+                val result = repository.getCommunity(id)
+                if (result.exception is Exception) {
+                    throw result.exception!!
+                } else {
+                    emit(result.data!!)
+                }
+            }.asResult()
+                .map { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            /**여기서 uiState를 Loading 상태로 */
+                        }
+                        is Result.Error -> {
+                            /**여기서 uiState를 Error 상태로 */
+                        }
+                        is Result.Success -> {
+                            val data = result.data
+                            _title.update { data.title }
+                            _content.update { data.content }
+                            _category.update {
+                                val category = when (it?.name) {
+                                    "시향기" -> Category.시향기
+                                    "추천" -> Category.추천
+                                    "자유" -> Category.자유
+                                    else -> {
+                                        //불가능
+                                        throw IllegalArgumentException("올바르지 않은 Category")
+                                    }
+                                }
+                                category
+                            }
+                            _pictures.update { data.communityPhotos }
+                            _newPictures.update{ data.communityPhotos.map{it.photoUrl.toUri()} }
+                        }
+                    }
+                }
+            }
+        }
+
+    //삭제할 사진 id 계산
+    private fun getDeletePictureId(pictures : List<Uri>) : ArrayList<Int> {
+        val ids = arrayListOf<Int>()
+        val defaultUris = _pictures.value.map{it.photoUrl.toUri()}
+        pictures.forEach{ picture ->
+            if (picture in defaultUris) {
+                ids.add(_pictures.value[defaultUris.indexOf(picture)].photoId)
+            }
+        }
+        return ids
+    }
+
+    //uri >> file 변환
+    private fun urisToFiles(uris : List<Uri>) : ArrayList<File> {
+        val images = arrayListOf<File>()
+        uris.map{ picture ->
+            val path = picture.path ?: return@map
+            Log.d("TAG TEST", "path : ${path}")
+            images.add(File(path))
+        }
+        return images
     }
 }
 
 sealed interface CommunityEditUiState {
     data object Loading : CommunityEditUiState
     data class Community(
-        val title : String,
-        val content : String,
-        val category : Category?,
-        val pictures : List<CommunityPhotoDefaultResponseDto>,
+        val title: String,
+        val content: String,
+        val category: Category?,
+        val pictures: List<Uri>,
     ) : CommunityEditUiState
+
+    data object Error : CommunityEditUiState
 }

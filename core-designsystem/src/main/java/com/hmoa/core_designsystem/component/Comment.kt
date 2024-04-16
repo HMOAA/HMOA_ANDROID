@@ -29,6 +29,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +57,8 @@ fun Comment(
     dateDiff : String,
     comment : String,
     isFirst : Boolean,
-    viewNumber : String,
+    viewNumber : String? = null,
+    onOpenBottomDialog : () -> Unit,
     onNavCommunity : () -> Unit,
 ){
     Column(
@@ -62,10 +67,10 @@ fun Comment(
             .background(color = Color.White)
             .border(
                 width = 0.5.dp,
-                color = Color(0xFFBBBBBB),
+                color = CustomColor.gray2,
                 shape = RoundedCornerShape(size = 10.dp)
             )
-            .clickable{
+            .clickable {
                 onNavCommunity()
             }
             .padding(horizontal = 16.dp)
@@ -83,8 +88,10 @@ fun Comment(
                 success = { imageState ->
                     imageState.drawable?.let {
                         Image(
+                            modifier = Modifier.fillMaxSize()
+                                .clip(shape = CircleShape),
                             bitmap = it.toBitmap().asImageBitmap(),
-                            contentDescription = null
+                            contentDescription = "profile"
                         )
                     }
                 },
@@ -92,17 +99,27 @@ fun Comment(
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = CustomColor.gray2
+                        )
                     }
                 },
                 failure = {
-                    Text(
-                        text = "Image Loading is Failed"
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                            .background(color = CustomColor.gray4)
+                            .clip(CircleShape)
+                    ){
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "Not have profile",
+                            tint = CustomColor.gray2
+                        )
+                    }
                 }
             )
 
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(6.dp))
 
             Text(
                 text = nickname,
@@ -112,7 +129,7 @@ fun Comment(
                 color = Color.Black
             )
 
-            Spacer(Modifier.width(2.dp))
+            Spacer(Modifier.width(7.dp))
 
             if (isFirst) {
 
@@ -140,19 +157,18 @@ fun Comment(
 
             Spacer(Modifier.weight(1f))
 
-            if (viewNumber != "not"){
+            if (viewNumber != null){
                 Box(
                     modifier = Modifier
                         .wrapContentWidth()
                         .height(22.dp)
                         .background(
-                            color = Color(0xFFF4F4F4),
+                            color = CustomColor.gray1,
                             shape = RoundedCornerShape(size = 20.dp)
                         )
                         .padding(horizontal = 6.dp, vertical = 3.dp),
                     contentAlignment = Alignment.CenterStart
                 ){
-
                     Row(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -161,7 +177,7 @@ fun Comment(
                     ){
                         Icon(
                             modifier = Modifier.size(14.dp),
-                            imageVector = Icons.Filled.Favorite,
+                            painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
                             contentDescription = "Favorite Button"
                         )
 
@@ -173,12 +189,21 @@ fun Comment(
                                 text = viewNumber,
                                 fontSize = 12.sp,
                                 lineHeight = 12.sp,
-                                fontWeight = FontWeight(300),
                                 color = Color.Black
                             )
                         }
                     }
                 }
+            }
+            Spacer(Modifier.width(8.dp))
+
+            IconButton(
+                onClick = onOpenBottomDialog
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.three_dot_menu_horizontal),
+                    contentDescription = "Bottom Dialog Status Controller"
+                )
             }
         }
 
@@ -206,6 +231,7 @@ fun TestComment(){
         comment = "아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ",
         isFirst = true,
         viewNumber = "999+",
+        onOpenBottomDialog = {},
         onNavCommunity = {},
     )
 }

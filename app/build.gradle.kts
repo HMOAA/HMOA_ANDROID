@@ -62,10 +62,12 @@ dependencies {
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
 
+    implementation(project(":feature-home"))
     implementation(project(":feature-authentication"))
     implementation(project(":feature-userInfo"))
     implementation(project(":feature-community"))
     implementation(project(":feature-perfume"))
+    implementation(project(":feature-brand"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))
@@ -83,7 +85,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version")
     kapt("androidx.hilt:hilt-compiler:$hilt_viewmodel_version")
     implementation("androidx.compose.material:material:1.2.0-beta02")
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui:1.1.0")
     implementation("androidx.navigation:navigation-compose:2.7.0")

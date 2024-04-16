@@ -15,10 +15,7 @@ interface CommunityCommentDataStore {
 
     suspend fun deleteCommunityComment(commentId: Int): ResultResponse<DataResponseDto<Any>>
 
-    suspend fun putCommunityCommentLiked(
-        commentId: Int,
-        dto: CommunityCommentDefaultRequestDto
-    ): ResultResponse<DataResponseDto<Any>>
+    suspend fun putCommunityCommentLiked(commentId: Int): ResultResponse<DataResponseDto<Any>>
 
     suspend fun deleteCommunityCommentLiked(commentId: Int): ResultResponse<DataResponseDto<Any>>
 

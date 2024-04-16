@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PerfumeDetailSecondResponseDto(
-    val commentInfo: PerfumeCommentGetResponseDto,
-    val similarPerfumes: Array<PerfumeSimilarResponseDto>
+    val commentInfo: PerfumeCommentGetResponseDto?,
+    val similarPerfumes: Array<PerfumeSimilarResponseDto>?
 )

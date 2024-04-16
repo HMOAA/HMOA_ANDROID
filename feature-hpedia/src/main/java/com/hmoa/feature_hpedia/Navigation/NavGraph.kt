@@ -11,11 +11,11 @@ import com.hmoa.feature_hpedia.Screen.HPediaSearchRoute
 
 fun NavController.navigateToHPedia() = navigate(HPediaRoute.HPediaGraphRoute.name)
 
-fun NavController.navigateToHPediaHome() = navigate(HPediaRoute.HPeidaRoute.name)
+fun NavController.navigateToHPediaHomeRoute() = navigate(HPediaRoute.HPeidaRoute.name)
 
-fun NavController.navigateToHPediaDesc(id : Int) = navigate("${HPediaRoute.HPediaDescRoute.name}/${id}")
+fun NavController.navigateToHPediaDescRoute(id : Int) = navigate("${HPediaRoute.HPediaDescRoute.name}/${id}")
 
-fun NavController.navigateToHPediaSearch(type : String) = navigate("${HPediaRoute.HPediaSearchRoute.name}/${type}")
+fun NavController.navigateToHPediaSearchRoute(type : String) = navigate("${HPediaRoute.HPediaSearchRoute.name}/${type}")
 
 fun NavGraphBuilder.nestedHPediaGraph(
     onNavBack : () -> Unit,
@@ -24,6 +24,8 @@ fun NavGraphBuilder.nestedHPediaGraph(
     onNavCommunityEdit : (Int) -> Unit,
     onNavCommunityDesc : (Int) -> Unit,
     onNavCommunityGraph : () -> Unit,
+    onNavCommunitySearch : () -> Unit,
+    onNavCommunityCommentEdit : (Int) -> Unit,
     onNavHPediaSearch : (String) -> Unit,
     onNavHPediaDesc : (Int) -> Unit,
 ){
@@ -36,7 +38,9 @@ fun NavGraphBuilder.nestedHPediaGraph(
             onNavCommunityPage = onNavCommunityPage,
             onNavCommunityPost = onNavCommunityPost,
             onNavCommunityEdit = onNavCommunityEdit,
-            onNavCommunityDescription = onNavCommunityDesc
+            onNavCommunityDescription = onNavCommunityDesc,
+            onNavCommunitySearch = onNavCommunitySearch,
+            onNavCommunityCommentEdit = onNavCommunityCommentEdit
         )
 
         composable("${HPediaRoute.HPediaSearchRoute.name}/{type}"){

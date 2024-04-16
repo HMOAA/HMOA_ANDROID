@@ -37,7 +37,7 @@ class HPediaSearchViewModel @Inject constructor(
     val topBarState get() = _topBarState.asStateFlow()
 
     //type 설정
-    fun setType(newType : String){
+    fun setType(newType : String?){
         type.update{ newType }
     }
 
@@ -67,12 +67,4 @@ class HPediaSearchViewModel @Inject constructor(
             searchWord = searchWord.value
         )
     }
-}
-
-sealed interface HPediaSearchUiState{
-    data object Loading : HPediaSearchUiState
-    data class SearchResult(
-        val result : List<Any>
-    ) : HPediaSearchUiState
-    data object Error : HPediaSearchUiState
 }

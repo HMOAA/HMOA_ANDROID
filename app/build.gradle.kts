@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":feature-community"))
     implementation(project(":feature-perfume"))
     implementation(project(":feature-brand"))
+    implementation(project(":feature-hpedia"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))

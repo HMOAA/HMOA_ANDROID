@@ -29,10 +29,6 @@ fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${Community
 fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}")
 
 fun NavGraphBuilder.nestedCommunityGraph(
-    onNavHome : () -> Unit,
-    onNavHPedia : () -> Unit,
-    onNavLike : () -> Unit,
-    onNavMyPage : () -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityPage : () -> Unit,
     onNavCommunityPost : (String) -> Unit,
@@ -40,10 +36,10 @@ fun NavGraphBuilder.nestedCommunityGraph(
     onNavCommunityDescription : (Int) -> Unit
 ){
     navigation(
-        startDestination = CommunityRoute.CommunityHomeRoute.name,
+        startDestination = CommunityRoute.CommunityPageRoute.name,
         route = CommunityRoute.CommunityGraphRoute.name
     ){
-        composable(CommunityRoute.CommunityHomeRoute.name) {
+        composable(route = CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
                 onNavCommunityDescription = onNavCommunityDescription,
                 onNavCommunityByCategory = onNavCommunityPage

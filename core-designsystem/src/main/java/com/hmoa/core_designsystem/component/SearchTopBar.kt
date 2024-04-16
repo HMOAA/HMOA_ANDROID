@@ -1,6 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,11 +16,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -108,20 +105,16 @@ fun SearchTopBar(
                 }
             }
             else {
-                IconButton(
-                    modifier = Modifier.size(20.dp),
-                    onClick = onClickSearch
-                ){
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(R.drawable.ic_search),
-                        contentDescription = "Search Button",
-                        tint = CustomColor.gray3
-                    )
-                }
+                Icon(
+                    modifier = Modifier.size(20.dp).clickable { onClickSearch() },
+                    painter = painterResource(R.drawable.ic_search),
+                    contentDescription = "Search Button",
+                    tint = CustomColor.gray3
+                )
             }
             Spacer(Modifier.width(16.dp))
-        }
+        },
+        colors = TopAppBarColors(containerColor = Color.White, actionIconContentColor = CustomColor.gray3, titleContentColor = Color.Black, scrolledContainerColor = Color.White, navigationIconContentColor = CustomColor.gray3)
     )
 
 }

@@ -32,17 +32,15 @@ fun HPediaRoute(
 ){
 
     HPediaScreen(
-        onNavBack = { /*TODO*/ },
-        onNavHPediaSearch = {},
-        onNavCommunityDesc = {},
-        onNavCommunityGraph = {}
+        onNavHPediaSearch = onNavHPediaSearch,
+        onNavCommunityDesc = onNavCommunityDesc,
+        onNavCommunityGraph = onNavCommunityGraph
     )
 
 }
 
 @Composable
 fun HPediaScreen(
-    onNavBack: () -> Unit,
     onNavHPediaSearch: (String) -> Unit,
     onNavCommunityDesc: (Int) -> Unit,
     onNavCommunityGraph: () -> Unit
@@ -58,8 +56,8 @@ fun HPediaScreen(
             onNavHPediaSearch = onNavHPediaSearch
         )
         CommunityHomeRoute(
-            onNavCommunityByCategory = { /*TODO*/ },
-            onNavCommunityDescription = {}
+            onNavCommunityGraph = onNavCommunityGraph,
+            onNavCommunityDescription = onNavCommunityDesc
         )
     }
 }
@@ -68,7 +66,6 @@ fun HPediaScreen(
 @Preview
 fun TestHPedia(){
     HPediaScreen(
-        onNavBack = {},
         onNavCommunityGraph = {},
         onNavCommunityDesc = {},
         onNavHPediaSearch = {}

@@ -6,6 +6,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun HPediaDescRoute(
     id : Int?,
+    type : String?,
     onNavBack : () -> Unit,
 ){
 

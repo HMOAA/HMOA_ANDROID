@@ -22,7 +22,8 @@ class HPediaSearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     //검색 카테고리?
-    private val type = MutableStateFlow<String?>(null)
+    private val _type = MutableStateFlow<String?>(null)
+    val type get() = _type.asStateFlow()
 
     //검색어
     private val _searchWord = MutableStateFlow("")
@@ -32,9 +33,18 @@ class HPediaSearchViewModel @Inject constructor(
     private val _topBarState = MutableStateFlow(false)
     val topBarState get() = _topBarState.asStateFlow()
 
+    //err 상태
+    private val _errState = MutableStateFlow<String?>(null)
+    val errState get() = _errState.asStateFlow()
+
+
     //type 설정
     fun setType(newType : String?){
-        type.update{ newType }
+        if (newType == null) {
+            _errState.update{ "Type is NULL" }
+        } else {
+            _type.update{ newType }
+        }
     }
 
     //상단바 상태 수정

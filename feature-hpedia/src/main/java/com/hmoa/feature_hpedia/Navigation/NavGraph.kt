@@ -2,7 +2,9 @@ package com.hmoa.feature_hpedia.Navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.hmoa.feature_community.Navigation.nestedCommunityGraph
 import com.hmoa.feature_hpedia.Screen.HPediaDescRoute
@@ -13,7 +15,7 @@ fun NavController.navigateToHPedia() = navigate(HPediaRoute.HPediaGraphRoute.nam
 
 fun NavController.navigateToHPediaHomeRoute() = navigate(HPediaRoute.HPeidaRoute.name)
 
-fun NavController.navigateToHPediaDescRoute(id : Int) = navigate("${HPediaRoute.HPediaDescRoute.name}/${id}")
+fun NavController.navigateToHPediaDescRoute(id : Int, type : String) = navigate("${HPediaRoute.HPediaDescRoute.name}/${id}/${type}")
 
 fun NavController.navigateToHPediaSearchRoute(type : String) = navigate("${HPediaRoute.HPediaSearchRoute.name}/${type}")
 
@@ -27,7 +29,7 @@ fun NavGraphBuilder.nestedHPediaGraph(
     onNavCommunitySearch : () -> Unit,
     onNavCommunityCommentEdit : (Int) -> Unit,
     onNavHPediaSearch : (String) -> Unit,
-    onNavHPediaDesc : (Int) -> Unit,
+    onNavHPediaDesc : (Int, String) -> Unit,
 ){
     navigation(
         startDestination = HPediaRoute.HPeidaRoute.name,
@@ -52,10 +54,19 @@ fun NavGraphBuilder.nestedHPediaGraph(
             )
         }
 
-        composable("${HPediaRoute.HPediaDescRoute.name}/{id}"){
-            val id = it.arguments?.getString("id")?.toInt()
+        composable(
+            route ="${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
+            arguments = listOf(
+                navArgument("id") {type = NavType.IntType},
+                navArgument("type") {type = NavType.StringType}
+            )
+        ){
+
+            val id = it.arguments?.getInt("id")
+            val type = it.arguments?.getString("type")
             HPediaDescRoute(
                 id = id,
+                type = type,
                 onNavBack = onNavBack,
             )
         }

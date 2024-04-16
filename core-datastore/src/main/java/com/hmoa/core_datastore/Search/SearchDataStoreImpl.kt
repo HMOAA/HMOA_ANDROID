@@ -10,8 +10,14 @@ import javax.inject.Inject
 class SearchDataStoreImpl @Inject constructor(
     private val searchService: SearchService
 ) : SearchDataStore {
-    override suspend fun getBrand(searchWord: String): BrandSearchResponseDto {
-        return searchService.getBrand(searchWord)
+    override suspend fun getBrand(searchWord: String): ResultResponse<List<BrandSearchResponseDto>> {
+        val result = ResultResponse<List<BrandSearchResponseDto>>()
+        searchService.getBrand(searchWord).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getBrandAll(consonant: Int): ResultResponse<List<BrandDefaultResponseDto>> {

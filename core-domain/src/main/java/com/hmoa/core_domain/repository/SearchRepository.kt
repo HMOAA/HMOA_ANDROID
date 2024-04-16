@@ -4,7 +4,7 @@ import ResultResponse
 import com.hmoa.core_model.response.*
 
 interface SearchRepository {
-    suspend fun getBrand(searchWord: String): BrandSearchResponseDto
+    suspend fun getBrand(searchWord: String): ResultResponse<List<BrandSearchResponseDto>>
     suspend fun getBrandAll(consonant: Int): ResultResponse<List<BrandDefaultResponseDto>>
     suspend fun getBrandStory(page: Int, searchWord: String): List<BrandStoryDefaultResponseDto>
     suspend fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto>

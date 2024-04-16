@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface SearchService {
     @GET("/search/brand")
-    suspend fun getBrand(searchWord: String): BrandSearchResponseDto
+    suspend fun getBrand(searchWord: String): ApiResponse<List<BrandSearchResponseDto>>
 
     @GET("/search/brandAll")
     suspend fun getBrandAll(@Query("consonant") consonant: Int): ApiResponse<List<BrandDefaultResponseDto>>

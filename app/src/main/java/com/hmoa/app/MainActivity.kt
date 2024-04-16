@@ -12,14 +12,14 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.feature_userinfo.navigateToBack
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
+import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
-import com.hmoa.feature_brand.navigation.navigateToBrand
-import com.hmoa.feature_brand.screen.BrandSearchRoute
+import com.hmoa.feature_brand.navigation.navigateToBrandSearch
 import com.hmoa.feature_community.Navigation.CommunityRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_home.navigation.HomeRoute
@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         CommunityRoute.CommunityPageRoute.name
     )
 
+    private val needTopBarScreens = HomeRoute.Home.name
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -44,12 +46,14 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val navHostController = rememberNavController()
-
             var isBottomBarVisible = true
+            var isTopBarVisible = true
+
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
                 isBottomBarVisible = route in needBottomBarScreens
+                isTopBarVisible = route in needTopBarScreens
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
@@ -67,14 +71,18 @@ class MainActivity : AppCompatActivity() {
                     }
                 },
                 scaffoldState = scaffoldState,
-                drawerContent = {
-                    BrandSearchRoute(
-                        onBrandClick = { navHostController.navigateToBrand(it.toString()) },
-                        onBackClick = navHostController::navigateToBack
-                    )
-                },
                 topBar = {
-                    /** top bar도 비슷하게 처리할까요? */
+                    if (isTopBarVisible) {
+                        HomeTopBar(
+                            title = "H M O A",
+                            onDrawerClick = { navHostController.navigateToBrandSearch() },
+                            onSearchClick = {},
+                            onNotificationClick = {},
+                            drawerIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_drawer),
+                            searchIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
+                            notificationIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_bell)
+                        )
+                    }
                 },
             ) {
                 Box(

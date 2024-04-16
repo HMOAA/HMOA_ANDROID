@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
+import com.hmoa.feature_brand.navigation.brandSearchScreen
 import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.navigation.homeScreen
@@ -99,6 +100,11 @@ fun SetUpNavGraph(
         brandScreen(
             onBackClck = navController::navigateToBack,
             onHomeClick = { navController.navigateToHome() },
-            onPerfumeClick = { navController.navigateToPerfume(it) })
+            onPerfumeClick = { navController.navigateToPerfume(it) }
+        )
+        brandSearchScreen(
+            onBackClick = navController::navigateToBack,
+            onBrandClick = { navController.navigateToBrand(it.toString()) }
+        )
     }
 }

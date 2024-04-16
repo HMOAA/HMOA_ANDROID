@@ -8,6 +8,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.SearchRepository
 import com.hmoa.core_model.data.Consonant
 import com.hmoa.core_model.response.BrandDefaultResponseDto
+import com.hmoa.core_model.response.BrandSearchResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,10 +19,15 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
     val PAGE_SIZE = 10
     private var consonantBrandMapState =
         MutableStateFlow<MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?>(null)
-    private var searchResultState = MutableStateFlow<Any?>(null)
+    private var searchWordState = MutableStateFlow<String>("")
+    private var searchResultState = MutableStateFlow<List<BrandSearchResponseDto>?>(emptyList())
     var uiState: StateFlow<BrandSearchUiState> =
-        combine(consonantBrandMapState, searchResultState) { consonantsBrands, searchResult ->
-            BrandSearchUiState.Data(consonants = consonantsBrands)
+        combine(
+            consonantBrandMapState,
+            searchWordState,
+            searchResultState
+        ) { consonantsBrands, searchWord, searchResult ->
+            BrandSearchUiState.Data(consonants = consonantsBrands, searchWord = searchWord, searchResult = searchResult)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -58,7 +64,31 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
                 }
             }
         }
+    }
 
+    fun clearWord() {
+        searchWordState.value = ""
+    }
+
+    fun searchBrandResult(word: String) {
+        searchWordState.value = word
+        viewModelScope.launch {
+            flow { emit(searchRepository.getBrand(word)) }.asResult().collectLatest {
+                when (it) {
+                    is Result.Success -> {
+                        searchResultState.value = it.data.data
+                    }
+
+                    is Result.Error -> {
+
+                    }
+
+                    is Result.Loading -> {
+
+                    }
+                }
+            }
+        }
     }
 
     fun mapNumberIntoConsonant(number: Int): Consonant? {
@@ -89,7 +119,9 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
     sealed interface BrandSearchUiState {
         data object Loading : BrandSearchUiState
         data class Data(
-            var consonants: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?
+            var consonants: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
+            var searchWord: String,
+            var searchResult: List<BrandSearchResponseDto>?
         ) : BrandSearchUiState
 
         data object Error : BrandSearchUiState

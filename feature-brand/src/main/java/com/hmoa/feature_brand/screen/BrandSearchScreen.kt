@@ -50,9 +50,9 @@ fun BrandSearchScreen(
                     consonantBrands = (uiState as BrandSearchViewmodel.BrandSearchUiState.Data).consonants,
                     onBrandClick = { onBrandClick(it) },
                     onBackClick = { onBackClick() },
-                    onClearWord = {},
+                    onClearWord = { viewModel.clearWord() },
                     onChangedWord = {},
-                    onClickSearch = {},
+                    onClickSearch = { viewModel.searchBrandResult() },
                     searchWord = ""
                 )
             }
@@ -70,7 +70,7 @@ fun BrandSearchContent(
     onBackClick: () -> Unit,
     onChangedWord: (word: String) -> Unit,
     onClearWord: () -> Unit,
-    onClickSearch: () -> Unit
+    onClickSearch: (word: String) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column {
@@ -79,7 +79,7 @@ fun BrandSearchContent(
                 searchWord = searchWord,
                 onChangeWord = { onChangedWord(it) },
                 onClearWord = { onClearWord() },
-                onClickSearch = { onClickSearch() },
+                onClickSearch = { onClickSearch(searchWord) },
                 onNavBack = { onBackClick() }
             )
         }

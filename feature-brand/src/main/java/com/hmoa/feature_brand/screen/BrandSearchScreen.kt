@@ -1,36 +1,27 @@
 package com.hmoa.feature_brand.screen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.data.Consonant
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import com.hmoa.feature_brand.viewmodel.BrandSearchViewmodel
 
@@ -45,77 +36,123 @@ fun BrandSearchScreen(
     onBackClick: () -> Unit,
     viewModel: BrandSearchViewmodel = hiltViewModel(),
 ) {
-    val brands = viewModel.getConsonantBrandsPagingSource()?.collectAsLazyPagingItems()
+    val uiState by viewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        when (brands?.loadState?.prepend) {
-            LoadState.Loading -> {
-                Text(text = "로딩 중입니다")
+        when (uiState) {
+            is BrandSearchViewmodel.BrandSearchUiState.Loading -> {}
+            is BrandSearchViewmodel.BrandSearchUiState.Data -> {
+                BrandSearchContent(
+                    consonantBrands = (uiState as BrandSearchViewmodel.BrandSearchUiState.Data).consonants,
+                    onBrandClick = { onBrandClick(it) },
+                    onBackClick = { onBackClick() },
+                    onClearWord = {},
+                    onChangedWord = {},
+                    onClickSearch = {},
+                    searchWord = ""
+                )
             }
 
-            is LoadState.NotLoading -> {
-                BrandSearchContent(brands, onBrandClick = { onBrandClick(it) }, onBackClick = { onBackClick() })
-            }
-
-            is LoadState.Error -> {
-                Text(text = "에러가 발생했습니다")
-            }
-
-            null -> {}
+            is BrandSearchViewmodel.BrandSearchUiState.Error -> {}
         }
     }
 }
 
 @Composable
 fun BrandSearchContent(
-    brands: LazyPagingItems<BrandDefaultResponseDto>?,
+    searchWord: String,
+    consonantBrands: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
     onBrandClick: (brandId: Int) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onChangedWord: (word: String) -> Unit,
+    onClearWord: () -> Unit,
+    onClickSearch: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
     Column {
-        SearchTopBar(
-            searchWord = "",
-            onChangeWord = {},
-            onClearWord = {},
-            onClickSearch = {},
-            onNavBack = { onBackClick() })
-        BrandGridView(brands = brands, onBrandClick = { onBrandClick(it) })
-    }
-}
+        Row(modifier = Modifier.padding(start = 16.dp)) {
+            SearchTopBar(
+                searchWord = searchWord,
+                onChangeWord = { onChangedWord(it) },
+                onClearWord = { onClearWord() },
+                onClickSearch = { onClickSearch() },
+                onNavBack = { onBackClick() }
+            )
+        }
 
-@Composable
-fun BrandGridView(brands: LazyPagingItems<BrandDefaultResponseDto>?, onBrandClick: (brandId: Int) -> Unit) {
-    LazyVerticalGrid(columns = GridCells.Fixed(4)) {
-        item(span = { GridItemSpan(4) }) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                TypeBadge(
-                    roundedCorner = 20.dp,
-                    type = "한글",
-                    fontColor = Color.White,
-                    fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
-                    unSelectedColor = Color.Black,
-                    selectedColor = Color.Black
+        Spacer(
+            modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray3)
+        )
+        Column(
+            modifier = Modifier.verticalScroll(scrollState).fillMaxWidth().padding(horizontal = 12.dp)
+                .padding(top = 16.dp)
+        ) {
+            Consonant.entries.forEach { consonant ->
+                BrandGridView(
+                    brands = consonantBrands?.get(consonant),
+                    onBrandClick = { onBrandClick(it) },
+                    consonant = consonant
                 )
             }
         }
-        items(brands?.itemSnapshotList ?: emptyList()) {
-            BrandItem(brand = it, onBrandClick = { onBrandClick(it) })
-        }
     }
 }
 
 @Composable
-fun BrandItem(brand: BrandDefaultResponseDto?, onBrandClick: (brandId: Int) -> Unit) {
-    Column(modifier = Modifier.clickable { onBrandClick(brand!!.brandId) }) {
+fun BrandGridView(brands: List<BrandDefaultResponseDto>?, onBrandClick: (brandId: Int) -> Unit, consonant: Consonant) {
+    val entriesPerRow = 4
+    val brandChunks = brands?.chunked(entriesPerRow)
+    val brandItemSize = LocalConfiguration.current.screenWidthDp.div(4.7)
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+            TypeBadge(
+                roundedCorner = 20.dp,
+                type = "  ${consonant.name}  ",
+                fontColor = Color.White,
+                fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
+                unSelectedColor = Color.Black,
+                selectedColor = Color.Black
+            )
+        }
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            brandChunks?.forEach { chunk ->
+                Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.Start) {
+                    chunk.forEach { brand ->
+                        BrandItem(
+                            brand = brand,
+                            onBrandClick = { onBrandClick(it) },
+                            size = brandItemSize.dp
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun BrandItem(brand: BrandDefaultResponseDto?, onBrandClick: (brandId: Int) -> Unit, size: Dp) {
+    Column(
+        modifier = Modifier.clickable { onBrandClick(brand!!.brandId) }.padding(horizontal = 4.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Column(
             modifier = Modifier.border(BorderStroke(width = 2.dp, color = CustomColor.gray9))
-                .width(100.dp).height(100.dp).background(Color.White),
+                .width(size).aspectRatio(1f).background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ImageView(
-                imageUrl = null,
+                imageUrl = brand?.brandImageUrl ?: "",
                 width = 0.9f,
                 height = 1f,
                 backgroundColor = Color.White,
@@ -124,14 +161,15 @@ fun BrandItem(brand: BrandDefaultResponseDto?, onBrandClick: (brandId: Int) -> U
         }
         Text(
             text = brand?.brandName ?: "",
-            modifier = Modifier.fillMaxWidth(),
             style = TextStyle(
                 fontWeight = FontWeight.Light,
                 fontSize = 14.sp,
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             ),
-            overflow = TextOverflow.Ellipsis
+            modifier = Modifier.width(size),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2
         )
     }
 }

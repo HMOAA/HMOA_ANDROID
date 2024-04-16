@@ -21,7 +21,7 @@ class SearchRepositoryImpl @Inject constructor(
         return searchDataStore.getBrandStory(page, searchWord)
     }
 
-    override suspend fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto> {
+    override suspend fun getCommunity(page: Int, searchWord: String): ResultResponse<List<CommunityByCategoryResponseDto>> {
         return searchDataStore.getCommunity(page, searchWord)
     }
 

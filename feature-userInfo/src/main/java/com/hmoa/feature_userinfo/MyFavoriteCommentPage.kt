@@ -93,9 +93,11 @@ fun MyFavoriteCommentPage(
                                     dateDiff = comment.createAt,
                                     comment = comment.content,
                                     isFirst = false,
-                                    viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
+                                    heartCount = comment.heartCount,
                                     onNavCommunity = onNavCommunity,
-                                    onOpenBottomDialog = {/** 여기도 Bottom Dialog 사용하려면 사용합시다 */}
+                                    onOpenBottomDialog = {/** 여기도 Bottom Dialog 사용하려면 사용합시다 */},
+                                    isSelected = comment.liked,
+                                    onChangeSelect = {}
                                 )
                             }
                         }

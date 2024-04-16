@@ -27,7 +27,7 @@ fun SearchTopBar(
     searchWord: String,
     onChangeWord: (String) -> Unit,
     onClearWord: () -> Unit,
-    onClickSearch: (String) -> Unit,
+    onClickSearch: () -> Unit,
     onNavBack: () -> Unit,
 ) {
 
@@ -92,7 +92,7 @@ fun SearchTopBar(
                 }
             } else {
                 Icon(
-                    modifier = Modifier.size(20.dp).clickable { onClickSearch(searchWord) },
+                    modifier = Modifier.size(20.dp).clickable { onClickSearch() },
                     painter = painterResource(R.drawable.ic_search),
                     contentDescription = "Search Button",
                     tint = CustomColor.gray3

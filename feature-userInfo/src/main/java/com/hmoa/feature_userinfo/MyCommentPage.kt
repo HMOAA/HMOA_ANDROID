@@ -97,9 +97,13 @@ fun MyCommentPage(
                                     dateDiff = comment.createAt,
                                     comment = comment.content,
                                     isFirst = false,
-                                    viewNumber = if (comment.heartCount > 999) "999+" else comment.heartCount.toString(),
+                                    heartCount = comment.heartCount,
                                     onNavCommunity = onNavCommunity,
-                                    onOpenBottomDialog = {/** Bottom Dialog 띄울 거면 사용 */}
+                                    onOpenBottomDialog = {/** Bottom Dialog 띄울 거면 사용 */},
+                                    isSelected = comment.liked,
+                                    onChangeSelect = {
+
+                                    }
                                 )
                             }
                         }

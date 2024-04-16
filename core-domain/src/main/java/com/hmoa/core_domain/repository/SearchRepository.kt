@@ -7,7 +7,7 @@ interface SearchRepository {
     suspend fun getBrand(searchWord: String): ResultResponse<List<BrandSearchResponseDto>>
     suspend fun getBrandAll(consonant: Int): ResultResponse<List<BrandDefaultResponseDto>>
     suspend fun getBrandStory(page: Int, searchWord: String): List<BrandStoryDefaultResponseDto>
-    suspend fun getCommunity(page: Int, searchWord: String): List<CommunityByCategoryResponseDto>
+    suspend fun getCommunity(page: Int, searchWord: String): ResultResponse<List<CommunityByCategoryResponseDto>>
     suspend fun getCommunityCategory(
         category: String,
         page: Int,

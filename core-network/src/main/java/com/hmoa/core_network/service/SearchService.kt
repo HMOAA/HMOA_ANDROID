@@ -15,36 +15,36 @@ interface SearchService {
 
     @GET("/search/brandStory")
     suspend fun getBrandStory(
-        @Field("page") page: Int,
-        @Field("searchWord") searchWord: String
+        @Query("page") page: Int,
+        @Query("searchWord") searchWord: String
     ): List<BrandStoryDefaultResponseDto>
 
     @GET("/search/community")
     suspend fun getCommunity(
-        @Field("page") page: Int,
-        @Field("searchWord") searchWord: String
-    ): List<CommunityByCategoryResponseDto>
+        @Query("page") page: Int,
+        @Query("seachWord") searchWord: String
+    ): ApiResponse<List<CommunityByCategoryResponseDto>>
 
     @GET("/search/community/category")
     suspend fun getCommunityCategory(
-        @Field("category") category: String,
-        @Field("page") page: Int,
-        @Field("searchWord") searchWord: String
+        @Query("category") category: String,
+        @Query("page") page: Int,
+        @Query("searchWord") searchWord: String
     ): List<CommunityByCategoryResponseDto>
 
     @GET("/search/note")
-    suspend fun getNote(@Field("page") page: Int, @Field("searchWord") searchWord: String): List<NoteDefaultResponseDto>
+    suspend fun getNote(@Query("page") page: Int, @Query("searchWord") searchWord: String): List<NoteDefaultResponseDto>
 
     @GET("/search/perfume")
     suspend fun getPerfume(
-        @Field("page") page: Int,
-        @Field("searchWord") searchWord: String
+        @Query("page") page: Int,
+        @Query("searchWord") searchWord: String
     ): List<PerfumeSearchResponseDto>
 
     @GET("/search/perfumeName")
     suspend fun getPerfumeName(
-        @Field("page") page: Int,
-        @Field("searchWord") searchWord: String
+        @Query("page") page: Int,
+        @Query("searchWord") searchWord: String
     ): List<PerfumeNameSearchResponseDto>
 
     @GET("/search/perfumer")

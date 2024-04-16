@@ -52,7 +52,7 @@ fun BrandSearchScreen(
                     onBackClick = { onBackClick() },
                     onClearWord = { viewModel.clearWord() },
                     onChangedWord = {},
-                    onClickSearch = { viewModel.searchBrandResult() },
+                    onClickSearch = { viewModel.searchBrandResult(it) },
                     searchWord = ""
                 )
             }

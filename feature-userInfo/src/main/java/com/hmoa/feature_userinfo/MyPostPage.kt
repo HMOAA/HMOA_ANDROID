@@ -95,7 +95,9 @@ fun MyPostPage(
                                         .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
                                     onPostClick = onNavEditPost,
                                     postType = post.category,
-                                    postTitle = post.title
+                                    postTitle = post.title,
+                                    heartCount = post.heartCount,
+                                    commentCount = post.commentCount
                                 )
                             }
                         }

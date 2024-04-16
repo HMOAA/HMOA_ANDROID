@@ -40,8 +40,14 @@ class SearchDataStoreImpl @Inject constructor(
     override suspend fun getCommunity(
         page: Int,
         searchWord: String
-    ): List<CommunityByCategoryResponseDto> {
-        return searchService.getCommunity(page, searchWord)
+    ): ResultResponse<List<CommunityByCategoryResponseDto>> {
+        val result = ResultResponse<List<CommunityByCategoryResponseDto>>()
+        searchService.getCommunity(page, searchWord).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getCommunityCategory(

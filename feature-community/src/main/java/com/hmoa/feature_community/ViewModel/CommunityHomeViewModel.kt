@@ -22,20 +22,13 @@ class CommunityHomeViewModel @Inject constructor(
     private val _errState = MutableStateFlow("")
     val errState get() = _errState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            _community.update {
-                val result = repository.getCommunitiesHome()
-                if (result.exception is Exception) {
-                    throw result.exception!!
-                } else {
-                    result.data!!
-                }
-            }
+    val uiState: StateFlow<CommunityHomeUiState> = flow{
+        val result = repository.getCommunitiesHome()
+        if (result.exception is Exception) {
+            throw result.exception!!
         }
-    }
-
-    val uiState: StateFlow<CommunityHomeUiState> = community.asResult()
+        emit(result.data!!)
+    }.asResult()
         .map { result ->
             when (result) {
                 is Result.Loading -> {

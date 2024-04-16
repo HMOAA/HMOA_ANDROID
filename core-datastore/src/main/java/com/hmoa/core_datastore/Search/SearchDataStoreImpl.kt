@@ -1,7 +1,10 @@
 package com.hmoa.core_datastore.Search
 
+import ResultResponse
 import com.hmoa.core_model.response.*
 import com.hmoa.core_network.service.SearchService
+import com.skydoves.sandwich.suspendOnError
+import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class SearchDataStoreImpl @Inject constructor(
@@ -25,8 +28,14 @@ class SearchDataStoreImpl @Inject constructor(
     override suspend fun getCommunity(
         page: Int,
         searchWord: String
-    ): List<CommunityByCategoryResponseDto> {
-        return searchService.getCommunity(page, searchWord)
+    ): ResultResponse<List<CommunityByCategoryResponseDto>> {
+        val result = ResultResponse<List<CommunityByCategoryResponseDto>>(null)
+        searchService.getCommunity(page, searchWord).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getCommunityCategory(

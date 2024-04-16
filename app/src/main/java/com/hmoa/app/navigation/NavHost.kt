@@ -24,10 +24,7 @@ fun SetUpNavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-
-//        mainScreen(
-//            onNavCommunity = navController::navigateToCommunityRoute, navController = navController
-//        )
+        
         /** home 모듈 */
         homeScreen(onPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) }, onAllPerfumeClick = {})
 

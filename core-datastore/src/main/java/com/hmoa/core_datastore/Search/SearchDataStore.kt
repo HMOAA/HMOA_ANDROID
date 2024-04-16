@@ -1,5 +1,6 @@
 package com.hmoa.core_datastore.Search
 
+import ResultResponse
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import com.hmoa.core_model.response.BrandSearchResponseDto
 import com.hmoa.core_model.response.BrandStoryDefaultResponseDto
@@ -14,7 +15,7 @@ interface SearchDataStore {
     suspend fun getBrand(searchWord : String) : BrandSearchResponseDto
     suspend fun getBrandAll(consonant : Int) : List<BrandDefaultResponseDto>
     suspend fun getBrandStory(page : Int, searchWord : String) : List<BrandStoryDefaultResponseDto>
-    suspend fun getCommunity(page : Int, searchWord : String) : List<CommunityByCategoryResponseDto>
+    suspend fun getCommunity(page : Int, searchWord : String) : ResultResponse<List<CommunityByCategoryResponseDto>>
     suspend fun getCommunityCategory(category : String, page : Int, searchWord : String) : List<CommunityByCategoryResponseDto>
     suspend fun getNote(page : Int, searchWord : String) : List<NoteDefaultResponseDto>
     suspend fun getPerfume(page : Int, searchWord : String) : List<PerfumeSearchResponseDto>

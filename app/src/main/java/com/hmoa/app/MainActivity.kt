@@ -1,6 +1,8 @@
 package com.hmoa.app
 
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,10 +12,15 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.navigateToBack
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.MainBottomBar
@@ -48,10 +55,12 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navHostController = rememberNavController()
 
+            var currentScreen by remember{ mutableStateOf(BottomScreen.Home.name) }
             var isBottomBarVisible = true
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
+                currentScreen = route
                 isBottomBarVisible = route in needBottomBarScreens
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
@@ -61,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 bottomBar = {
                     if (isBottomBarVisible) {
                         MainBottomBar(
-                            initValue = BottomScreen.Home,
+                            initValue = currentScreen,
                             onClickHome = navHostController::navigateToHome,
                             onClickHPedia = navHostController::navigateToHPedia,
                             onClickLike = { /*TODO*/ },

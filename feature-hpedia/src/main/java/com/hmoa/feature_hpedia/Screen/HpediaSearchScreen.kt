@@ -38,6 +38,7 @@ fun HPediaSearchRoute(
     onNavHPediaDesc : (Int) -> Unit,
     viewModel : HPediaSearchViewModel = hiltViewModel()
 ){
+    viewModel.setType(type)
 
     val topBarState = viewModel.topBarState.collectAsStateWithLifecycle()
     val searchWord = viewModel.searchWord.collectAsStateWithLifecycle()

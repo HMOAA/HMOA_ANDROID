@@ -21,6 +21,8 @@ import com.hmoa.feature_community.Navigation.CommunityRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_home.navigation.HomeRoute
 import com.hmoa.feature_home.navigation.navigateToHome
+import com.hmoa.feature_hpedia.Navigation.HPediaRoute
+import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 
@@ -31,7 +33,11 @@ class MainActivity : AppCompatActivity() {
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
-        CommunityRoute.CommunityPageRoute.name
+        CommunityRoute.CommunityPageRoute.name,
+        HPediaRoute.HPeidaRoute.name,
+        HPediaRoute.HPediaSearchRoute.name,
+        HPediaRoute.HPeidaRoute.name,
+        HPediaRoute.HPediaDescRoute.name
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                         MainBottomBar(
                             initValue = BottomScreen.Home,
                             onClickHome = navHostController::navigateToHome,
-                            onClickHPedia = navHostController::navigateToCommunityRoute,
+                            onClickHPedia = navHostController::navigateToHPedia,
                             onClickLike = { /*TODO*/ },
                             onClickMyPage = {}
                         )

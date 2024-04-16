@@ -10,8 +10,8 @@ import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToHome
-import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDesc
-import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearch
+import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
+import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
 import com.hmoa.feature_perfume.navigation.*
 
@@ -64,8 +64,10 @@ fun SetUpNavGraph(
             onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
             onNavCommunityPage = navController::navigateToCommunityPage,
             onNavCommunityGraph = navController::navigateToCommunityRoute,
-            onNavHPediaDesc = navController::navigateToHPediaDesc,
-            onNavHPediaSearch = navController::navigateToHPediaSearch
+            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
+            onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
+            onNavHPediaDesc = navController::navigateToHPediaDescRoute,
+            onNavHPediaSearch = navController::navigateToHPediaSearchRoute
         )
 
         /** perfume 모듈 */

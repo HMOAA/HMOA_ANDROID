@@ -7,16 +7,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.hmoa.core_domain.repository.SearchRepository
-import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.feature_community.ViewModel.CommunitySearchUiState
 import com.hmoa.feature_community.ViewModel.PAGE_SIZE
 import com.hmoa.feature_hpedia.SearchResultPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 

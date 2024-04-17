@@ -160,4 +160,10 @@ object ServiceModule {
     fun providerReportService(retrofit: Retrofit): ReportService {
         return retrofit.create(ReportService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun providerTermService(retrofit : Retrofit) : TermService{
+        return retrofit.create(TermService::class.java)
+    }
 }

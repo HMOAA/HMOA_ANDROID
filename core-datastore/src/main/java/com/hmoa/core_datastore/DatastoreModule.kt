@@ -34,6 +34,7 @@ import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_datastore.Search.SearchDataStoreImpl
 import com.hmoa.core_datastore.Signup.SignupDataStore
 import com.hmoa.core_datastore.Signup.SignupDataStoreImpl
+import com.hmoa.core_datastore.Term.TermDataStore
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -110,5 +111,9 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun provideReportDatastore(reportDataStoreImpl: ReportDataStoreImpl): ReportDataStore
+
+    @Singleton
+    @Binds
+    fun provideTermDataStore(termDataStore: TermDataStore) : TermDataStore
 
 }

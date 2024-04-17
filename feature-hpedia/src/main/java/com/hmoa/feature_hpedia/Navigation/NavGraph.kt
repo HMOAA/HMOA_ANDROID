@@ -13,7 +13,7 @@ import com.hmoa.feature_hpedia.Screen.HPediaSearchRoute
 
 fun NavController.navigateToHPedia() = navigate(HPediaRoute.HPediaGraphRoute.name)
 
-fun NavController.navigateToHPediaHomeRoute() = navigate(HPediaRoute.HPeidaRoute.name)
+fun NavController.navigateToHPediaHomeRoute() = navigate(HPediaRoute.HPedia.name)
 
 fun NavController.navigateToHPediaDescRoute(id : Int, type : String) = navigate("${HPediaRoute.HPediaDescRoute.name}/${id}/${type}")
 
@@ -32,7 +32,7 @@ fun NavGraphBuilder.nestedHPediaGraph(
     onNavHPediaDesc : (Int, String) -> Unit,
 ){
     navigation(
-        startDestination = HPediaRoute.HPeidaRoute.name,
+        startDestination = HPediaRoute.HPedia.name,
         route = HPediaRoute.HPediaGraphRoute.name
     ){
         this.nestedCommunityGraph(
@@ -71,7 +71,7 @@ fun NavGraphBuilder.nestedHPediaGraph(
             )
         }
 
-        composable(HPediaRoute.HPeidaRoute.name){
+        composable(HPediaRoute.HPedia.name){
             HPediaRoute(
                 onNavBack = onNavBack,
                 onNavHPediaSearch = onNavHPediaSearch,

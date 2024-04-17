@@ -46,13 +46,13 @@ fun NavGraphBuilder.nestedCommunityGraph(
     onNavCommunityCommentEdit : (Int) -> Unit
 ){
     navigation(
-        startDestination = CommunityRoute.CommunityHomeRoute.name,
+        startDestination = CommunityRoute.CommunityPageRoute.name,
         route = CommunityRoute.CommunityGraphRoute.name
     ){
-        composable(CommunityRoute.CommunityHomeRoute.name) {
+        composable(route = CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
                 onNavCommunityDescription = onNavCommunityDescription,
-                onNavCommunityByCategory = onNavCommunityPage
+                onNavCommunityGraph = onNavCommunityPage
             )
         }
         composable(route = CommunityRoute.CommunityPageRoute.name){

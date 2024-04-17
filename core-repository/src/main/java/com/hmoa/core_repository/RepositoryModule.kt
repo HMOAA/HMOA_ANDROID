@@ -74,4 +74,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindReportRepositoryImpl(repositoryImpl: ReportRepositoryImpl): ReportRepository
+
+    @Binds
+    @Singleton
+    fun bindTermRepositoryImpl(repositoryImpl: TermRepositoryImpl) : TermRepository
 }

@@ -1,7 +1,9 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Note.NoteDataStore
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.NoteDescResponseDto
 import javax.inject.Inject
 
 class NoteRepositoryImpl @Inject constructor(
@@ -12,7 +14,7 @@ class NoteRepositoryImpl @Inject constructor(
         return noteDataStore.getNoteAll(pageNum)
     }
 
-    override suspend fun getNote(noteId: Int): DataResponseDto<Any> {
+    override suspend fun getNote(noteId: Int): ResultResponse<DataResponseDto<NoteDescResponseDto>> {
         return noteDataStore.getNote(noteId)
     }
 

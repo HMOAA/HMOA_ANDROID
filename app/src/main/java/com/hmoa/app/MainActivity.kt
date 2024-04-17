@@ -41,10 +41,15 @@ class MainActivity : AppCompatActivity() {
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
         CommunityRoute.CommunityPageRoute.name,
-        HPediaRoute.HPeidaRoute.name,
-        HPediaRoute.HPediaSearchRoute.name,
-        HPediaRoute.HPeidaRoute.name,
-        HPediaRoute.HPediaDescRoute.name
+        HPediaRoute.HPedia.name,
+        "${HPediaRoute.HPediaSearchRoute.name}/{type}",
+        "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}"
+    )
+    private val bottomNav = listOf(
+        BottomScreen.Home.name,
+        BottomScreen.HPedia.name,
+        BottomScreen.Like.name,
+        BottomScreen.MyPage.name
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +65,13 @@ class MainActivity : AppCompatActivity() {
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
-                currentScreen = route
+                Log.d("TAG TEST", "current route : ${route}")
+                Log.d("TAG TEST", "navigation: ${bottomNav}")
+                if (route in bottomNav){
+                    currentScreen = route
+                    Log.d("TAG TEST", "current screen : ${currentScreen}")
+                }
+
                 isBottomBarVisible = route in needBottomBarScreens
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))

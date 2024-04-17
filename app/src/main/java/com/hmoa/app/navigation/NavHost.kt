@@ -26,9 +26,10 @@ fun SetUpNavGraph(
         startDestination = startDestination
     ) {
 
-
         /** home 모듈 */
-        homeScreen(onPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) }, onAllPerfumeClick = {})
+        homeScreen(onPerfumeClick = { perfumeId ->
+            navController.navigateToPerfume(perfumeId)
+        }, onAllPerfumeClick = {})
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)
@@ -85,7 +86,7 @@ fun SetUpNavGraph(
                     commentId.toInt(),
                     isEditable
                 )
-            }
+            },
         )
         perfumeComment(
             onBackClick = navController::navigateToBack,

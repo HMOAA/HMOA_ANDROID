@@ -82,6 +82,7 @@ fun HPediaSearchScreen(
             .background(color = Color.White)
     ){
         HPediaEventTopBar(
+            type = type,
             topBarState = topBarState,
             onChagneTopBarState = onChagneTopBarState,
             searchWord = searchWord,
@@ -102,6 +103,7 @@ fun HPediaSearchScreen(
 
 @Composable
 fun HPediaEventTopBar(
+    type : String,
     topBarState : Boolean,
     onChagneTopBarState : (Boolean) -> Unit,
     searchWord : String,
@@ -120,7 +122,7 @@ fun HPediaEventTopBar(
         )
     } else {
         TopBar(
-            title = "type",
+            title = type,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             onNavClick = onNavBack,
             menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),

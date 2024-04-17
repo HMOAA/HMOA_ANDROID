@@ -37,7 +37,7 @@ import com.hmoa.feature_perfume.viewmodel.PerfumeViewmodel
 fun PerfumeRoute(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onCommentAddClick: (perfumdId:Int) -> Unit,
+    onCommentAddClick: (perfumdId: Int) -> Unit,
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
@@ -95,7 +95,7 @@ fun PerfumeScreen(
                     onInitializeAgeClick = { viewModel.onBackAgeToZero() },
                     onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
                     onViewCommentAllClick = { onViewCommentAllClick(it) },
-                    onSimilarPerfumeClick = { onSimilarPerfumeClick(perfumeId) },
+                    onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
                     data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
                     weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
                     gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
@@ -528,7 +528,7 @@ fun CommentView(
                     content = it.content,
                     createdDate = it.createdAt ?: "",
                     onReportClick = {},
-                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed)},
+                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
                     onCommentLikedClick = {}
                 )
             }

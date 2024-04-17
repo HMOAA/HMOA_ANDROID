@@ -8,7 +8,6 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.SearchRepository
 import com.hmoa.core_model.data.Consonant
 import com.hmoa.core_model.response.BrandDefaultResponseDto
-import com.hmoa.core_model.response.BrandSearchResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -20,7 +19,7 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
     private var consonantBrandMapState =
         MutableStateFlow<MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?>(null)
     private var searchWordState = MutableStateFlow<String>("")
-    private var searchResultState = MutableStateFlow<List<BrandSearchResponseDto>?>(emptyList())
+    private var searchResultState = MutableStateFlow<MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?>(null)
     var uiState: StateFlow<BrandSearchUiState> =
         combine(
             consonantBrandMapState,
@@ -54,9 +53,6 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
                             val newMap = consonantBrandMapState.value?.toMutableMap() ?: mutableMapOf()
                             newMap[mapNumberIntoConsonant(i)] = it.data.data
                             consonantBrandMapState.value = newMap
-                            Log.d("BrandSearchViewModel Key", mapNumberIntoConsonant(i).toString())
-                            Log.d("BrandSearchViewModel Value", it.data.data.toString())
-                            Log.d("BrandSearchViewModel MapState", newMap.toString())
                         }
 
                         else -> {}
@@ -72,15 +68,21 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
 
     fun searchBrandResult(word: String) {
         searchWordState.value = word
+        searchResultState.value = mutableMapOf()
         viewModelScope.launch {
             flow { emit(searchRepository.getBrand(word)) }.asResult().collectLatest {
                 when (it) {
                     is Result.Success -> {
-                        searchResultState.value = it.data.data
+                        it.data.data?.forEach {
+                            val newMap = searchResultState.value?.toMutableMap()
+                                ?: mutableMapOf()
+                            newMap[mapNumberIntoConsonant(it.consonant)] = it.brandList
+                            searchResultState.value = newMap
+                        }
                     }
 
                     is Result.Error -> {
-
+                        
                     }
 
                     is Result.Loading -> {
@@ -121,7 +123,7 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
         data class Data(
             var consonants: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
             var searchWord: String,
-            var searchResult: List<BrandSearchResponseDto>?
+            var searchResult: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
         ) : BrandSearchUiState
 
         data object Error : BrandSearchUiState

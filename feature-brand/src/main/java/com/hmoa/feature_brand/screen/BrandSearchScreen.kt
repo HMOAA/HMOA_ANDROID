@@ -51,9 +51,10 @@ fun BrandSearchScreen(
                     onBrandClick = { onBrandClick(it) },
                     onBackClick = { onBackClick() },
                     onClearWord = { viewModel.clearWord() },
-                    onChangedWord = {},
+                    onChangedWord = { viewModel.searchBrandResult(it) },
                     onClickSearch = { viewModel.searchBrandResult(it) },
-                    searchWord = ""
+                    searchWord = (uiState as BrandSearchViewmodel.BrandSearchUiState.Data).searchWord,
+                    searchResult = (uiState as BrandSearchViewmodel.BrandSearchUiState.Data).searchResult
                 )
             }
 
@@ -66,13 +67,14 @@ fun BrandSearchScreen(
 fun BrandSearchContent(
     searchWord: String,
     consonantBrands: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
+    searchResult: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
     onBrandClick: (brandId: Int) -> Unit,
     onBackClick: () -> Unit,
     onChangedWord: (word: String) -> Unit,
     onClearWord: () -> Unit,
     onClickSearch: (word: String) -> Unit
 ) {
-    val scrollState = rememberScrollState()
+    var scrollState = rememberScrollState()
     Column {
         Row(modifier = Modifier.padding(start = 16.dp)) {
             SearchTopBar(
@@ -88,15 +90,25 @@ fun BrandSearchContent(
             modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray3)
         )
         Column(
-            modifier = Modifier.verticalScroll(scrollState).fillMaxWidth().padding(horizontal = 12.dp)
-                .padding(top = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                .padding(top = 16.dp).verticalScroll(scrollState)
         ) {
-            Consonant.entries.forEach { consonant ->
-                BrandGridView(
-                    brands = consonantBrands?.get(consonant),
-                    onBrandClick = { onBrandClick(it) },
-                    consonant = consonant
-                )
+            if (searchWord == "") {
+                Consonant.entries.forEach { consonant ->
+                    BrandGridView(
+                        brands = consonantBrands?.get(consonant),
+                        onBrandClick = { onBrandClick(it) },
+                        consonant = consonant
+                    )
+                }
+            } else {
+                Consonant.entries.forEach { consonant ->
+                    BrandGridView(
+                        brands = searchResult?.get(consonant),
+                        onBrandClick = { onBrandClick(it) },
+                        consonant = consonant
+                    )
+                }
             }
         }
     }
@@ -107,30 +119,31 @@ fun BrandGridView(brands: List<BrandDefaultResponseDto>?, onBrandClick: (brandId
     val entriesPerRow = 4
     val brandChunks = brands?.chunked(entriesPerRow)
     val brandItemSize = LocalConfiguration.current.screenWidthDp.div(4.7)
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
-            TypeBadge(
-                roundedCorner = 20.dp,
-                type = "  ${consonant.name}  ",
-                fontColor = Color.White,
-                fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
-                unSelectedColor = Color.Black,
-                selectedColor = Color.Black
-            )
-        }
-
-        Column(modifier = Modifier.fillMaxWidth()) {
-            brandChunks?.forEach { chunk ->
-                Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.Start) {
-                    chunk.forEach { brand ->
-                        BrandItem(
-                            brand = brand,
-                            onBrandClick = { onBrandClick(it) },
-                            size = brandItemSize.dp
-                        )
+    if ((brands?.size ?: 0) > 0) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+                TypeBadge(
+                    roundedCorner = 20.dp,
+                    type = "  ${consonant.name}  ",
+                    fontColor = Color.White,
+                    fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
+                    unSelectedColor = Color.Black,
+                    selectedColor = Color.Black
+                )
+            }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                brandChunks?.forEach { chunk ->
+                    Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.Start) {
+                        chunk.forEach { brand ->
+                            BrandItem(
+                                brand = brand,
+                                onBrandClick = { onBrandClick(it) },
+                                size = brandItemSize.dp
+                            )
+                        }
                     }
                 }
             }

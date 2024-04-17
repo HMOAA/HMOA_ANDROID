@@ -1,6 +1,5 @@
 package com.hmoa.feature_community.Screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -59,30 +58,18 @@ fun CommunityDescriptionRoute(
 
     CommunityDescriptionPage(
         flag = flag,
-        onFlagChange = {
-            flag = it
-        },
+        onFlagChange = {flag = it},
         isOpenBottomOptions = isOpenBottomOptions.value,
-        changeBottomOptionState = {
-            viewModel.updateBottomOptionsState(it)
-        },
+        changeBottomOptionState = {viewModel.updateBottomOptionsState(it)},
         type = type,
-        onChangeType = {
-            type = it
-        },
+        onChangeType = {type = it},
         isLiked = isLiked.value,
-        onChangeLike = {
-            viewModel.updateLike()
-        },
+        onChangeLike = {viewModel.updateLike()},
         uiState = uiState.value,
         commentList = comments,
         onNavBack = onNavBack,
-        onReportCommunity = {
-            viewModel.reportCommunity()
-        },
-        onReportComment = {
-            viewModel.reportComment(it)
-        },
+        onReportCommunity = {viewModel.reportCommunity()},
+        onReportComment = {viewModel.reportComment(it)},
         onPostComment = {
             viewModel.postComment(it)
             comments.refresh()
@@ -99,9 +86,7 @@ fun CommunityDescriptionRoute(
             viewModel.delComment(commentId)
             comments.refresh()
         },
-        onNavCommunityEdit = {
-            onNavCommunityEdit(id)
-        },
+        onNavCommunityEdit = {onNavCommunityEdit(id)},
         onNavCommentEdit = onNavCommentEdit
     )
 }
@@ -133,20 +118,6 @@ fun CommunityDescriptionPage(
     var commentId by remember{mutableStateOf(0)}
 
     val configuration = LocalConfiguration.current
-
-    /** Text Style 정의 */
-    val categoryTextStyle = TextStyle(
-        fontSize = 14.sp,
-        color = CustomColor.gray2
-    )
-    val infoTextStyle = TextStyle(
-        fontSize = 16.sp,
-        color = Color.Black
-    )
-    val commentSizeTextStyle = TextStyle(
-        fontSize = 12.sp,
-        color = Color.Black
-    )
 
     when (uiState) {
         CommunityDescUiState.Loading -> {
@@ -199,7 +170,8 @@ fun CommunityDescriptionPage(
                     Text(
                         modifier = Modifier.padding(start = 16.dp),
                         text = uiState.community.category,
-                        style = categoryTextStyle
+                        fontSize = 14.sp,
+                        color = CustomColor.gray2
                     )
                     Spacer(Modifier.height(18.dp))
 
@@ -231,14 +203,16 @@ fun CommunityDescriptionPage(
                     ){
                         Text(
                             text = "답변",
-                            style = infoTextStyle
+                            fontSize = 16.sp,
+                            color = Color.Black
                         )
 
                         Spacer(Modifier.width(4.dp))
 
                         Text(
                             text = "+${commentList.itemCount}",
-                            style = commentSizeTextStyle
+                            fontSize = 12.sp,
+                            color = Color.Black
                         )
                     }
 
@@ -269,7 +243,6 @@ fun CommunityDescriptionPage(
                 Spacer(Modifier.height(7.dp))
             }
         }
-
         CommunityDescUiState.Error -> {
             Column {
                 Text(
@@ -304,9 +277,7 @@ fun Comments(
                     comment = comment.content,
                     isFirst = false,
                     isSelected = comment.liked,
-                    onChangeSelect = {
-                        onChangeCommentLike(comment.commentId, !comment.liked)
-                    },
+                    onChangeSelect = {onChangeCommentLike(comment.commentId, !comment.liked)},
                     heartCount = comment.heartCount,
                     onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
                     onOpenBottomDialog = {

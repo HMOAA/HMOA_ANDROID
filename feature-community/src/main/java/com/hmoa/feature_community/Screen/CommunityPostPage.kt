@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -380,44 +381,6 @@ fun TextFieldContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun BottomCameraBtn(
-    onUpdatePictures : (List<Uri>) -> Unit,
-){
-    //갤러리에서 사진 가져오기
-    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = {uris ->
-            onUpdatePictures(uris)
-        }
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp),
-    ){
-        IconButton(
-            modifier = Modifier
-                .fillMaxHeight()
-                .aspectRatio(1f),
-            onClick = {
-                multiplePhotoPickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
-                )
-            }
-        ){
-            Icon(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_camera),
-                contentDescription = "Add Picture"
-            )
         }
     }
 }

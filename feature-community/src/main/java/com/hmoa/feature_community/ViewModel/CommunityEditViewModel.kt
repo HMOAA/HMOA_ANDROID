@@ -47,36 +47,11 @@ class CommunityEditViewModel @Inject constructor(
     private val delPicture = mutableListOf<Uri>()
 
     //error state
-    private val _errState = MutableStateFlow("")
+    private val _errState = MutableStateFlow<String?>(null)
     val errState get() = _errState.asStateFlow()
 
-    //ui state
-    val uiState: StateFlow<CommunityEditUiState> = combine(
-        title,
-        content,
-        category,
-        newPictures,
-        CommunityEditUiState::Community
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1_000),
-        initialValue = CommunityEditUiState.Loading
-    )
-
-//    asResult().map { result ->
-//        when(result) {
-//            is Result.Loading -> {
-//                CommunityEditUiState.Loading
-//            }
-//            is Result.Success -> {
-//                CommunityEditUiState::Community
-//            }
-//            is Result.Error -> {
-//                CommunityEditUiState.Error
-//            }
-//        }
-//    }.
-
+    //loading state
+    private val _loadingState = MutableStateFlow(false)
 
     //id setting
     fun setId(id: Int) {
@@ -145,10 +120,10 @@ class CommunityEditViewModel @Inject constructor(
                 .map { result ->
                     when (result) {
                         is Result.Loading -> {
-                            /**여기서 uiState를 Loading 상태로 */
+                            _loadingState.update{ false }
                         }
                         is Result.Error -> {
-                            /**여기서 uiState를 Error 상태로 */
+                            _errState.update{ result.exception.toString() }
                         }
                         is Result.Success -> {
                             val data = result.data
@@ -168,6 +143,7 @@ class CommunityEditViewModel @Inject constructor(
                             }
                             _pictures.update { data.communityPhotos }
                             _newPictures.update{ data.communityPhotos.map{it.photoUrl.toUri()} }
+                            _loadingState.update{ true }
                         }
                     }
                 }
@@ -196,16 +172,4 @@ class CommunityEditViewModel @Inject constructor(
         }
         return images
     }
-}
-
-sealed interface CommunityEditUiState {
-    data object Loading : CommunityEditUiState
-    data class Community(
-        val title: String,
-        val content: String,
-        val category: Category?,
-        val pictures: List<Uri>,
-    ) : CommunityEditUiState
-
-    data object Error : CommunityEditUiState
 }

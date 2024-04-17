@@ -52,7 +52,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
         composable(route = CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
                 onNavCommunityDescription = onNavCommunityDescription,
-                onNavCommunityByCategory = onNavCommunityPage
+                onNavCommunityGraph = onNavCommunityPage
             )
         }
         composable(route = CommunityRoute.CommunityPageRoute.name){

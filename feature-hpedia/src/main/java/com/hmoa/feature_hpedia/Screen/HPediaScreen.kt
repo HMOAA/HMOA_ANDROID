@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,13 +49,19 @@ fun HPediaScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
-            .padding(horizontal = 16.dp),
+            .background(color = Color.White),
     ){
-        HPediaScreenTitle("HPedia")
-        SelectSearchType(
-            onNavHPediaSearch = onNavHPediaSearch
-        )
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+        ){
+            HPediaScreenTitle("HPedia")
+            SelectSearchType(
+                onNavHPediaSearch = onNavHPediaSearch
+            )
+        }
+        Spacer(Modifier.height(27.dp))
         CommunityHomeRoute(
             onNavCommunityGraph = onNavCommunityGraph,
             onNavCommunityDescription = onNavCommunityDesc

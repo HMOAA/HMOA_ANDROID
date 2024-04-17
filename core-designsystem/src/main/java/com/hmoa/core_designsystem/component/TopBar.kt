@@ -1,5 +1,6 @@
 package com.hmoa.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,16 +44,11 @@ fun TopBar(
         horizontalArrangement = Arrangement.Center
     ){
         if (navIcon != null){
-            IconButton(
-                modifier = Modifier.size(iconSize),
-                onClick = onNavClick
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = navIcon,
-                    contentDescription = "Navigation Button"
-                )
-            }
+            Icon(
+                modifier = Modifier.size(iconSize).clickable { onNavClick() },
+                painter = navIcon,
+                contentDescription = "Navigation Button"
+            )
         } else {
             Spacer(Modifier.size(iconSize))
         }
@@ -67,16 +63,11 @@ fun TopBar(
         Spacer(Modifier.weight(1f))
 
         if (menuIcon != null) {
-            IconButton(
-                modifier = Modifier.size(iconSize),
-                onClick = onMenuClick
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = menuIcon,
-                    contentDescription = "Menu Button"
-                )
-            }
+            Icon(
+                modifier = Modifier.size(iconSize).clickable { onMenuClick() },
+                painter = menuIcon,
+                contentDescription = "Menu Button"
+            )
         } else {
             Spacer(Modifier.size(iconSize))
         }

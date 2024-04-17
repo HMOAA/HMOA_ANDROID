@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -206,7 +207,8 @@ fun PerfumeContent(
                     .background(color = CustomColor.gray2)
             )
             LazyRow {
-                items(data.similarPerfumes) { it ->
+                val length = data.similarPerfumes.size
+                itemsIndexed(data.similarPerfumes) { index, it ->
                     Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
                         PerfumeItemView(
                             it.perfumeImgUrl,
@@ -218,6 +220,11 @@ fun PerfumeContent(
                             1f,
                             Color.White
                         )
+                        if (index < length) {
+                            Spacer(
+                                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                            )
+                        }
                     }
                 }
             }

@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -179,8 +179,8 @@ fun PerfumeCommentList(
     LazyColumn(
         userScrollEnabled = true,
     ) {
-
-        items(items = latestPerfumeComments?.itemSnapshotList ?: emptyList()) {
+        val length = latestPerfumeComments?.itemSnapshotList?.size ?: 0
+        itemsIndexed(items = latestPerfumeComments?.itemSnapshotList ?: emptyList()) { index, it ->
             CommentItem(
                 count = it?.heartCount ?: 0,
                 isCommentLiked = it!!.liked,
@@ -192,6 +192,11 @@ fun PerfumeCommentList(
                 onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
                 onCommentLikedClick = {}
             )
+            if (index < length) {
+                Spacer(
+                    modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                )
+            }
         }
     }
 }

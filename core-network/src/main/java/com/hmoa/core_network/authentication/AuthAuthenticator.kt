@@ -46,6 +46,7 @@ class AuthAuthenticator @Inject constructor(
                         refreshTokenManager.saveRefreshTokens(refreshedAuthToken, refreshedRememberToken)
                         newRequest = response.request.addRefreshAuthToken(refreshedAuthToken)
                         isAvailableToSendNewRequest = true
+                        Log.d("AuthAuthenticator", "토큰 리프레싱 성공")
                     }
                 }
         }

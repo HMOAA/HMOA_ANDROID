@@ -1,6 +1,7 @@
 package com.hmoa.core_database
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
@@ -31,18 +32,20 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     companion object {
         private val AUTH_TOKEN_KEY = stringPreferencesKey("AUTH_TOKEN")
-        private val REMEMBERED_TOKEN_KEY = stringPreferencesKey("REMEBERED_TOKEN")
+        private val REMEMBERED_TOKEN_KEY = stringPreferencesKey("REMEMBERED_TOKEN")
         private val KAKAO_ACCESS_TOKEN_KEY = stringPreferencesKey("KAKAO_ACCESS_TOKEN")
     }
 
     override suspend fun getAuthToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
+            Log.d("TokenManagerImpl", "getAuthToken:${preferences[AUTH_TOKEN_KEY]}")
             preferences[AUTH_TOKEN_KEY]
         }
     }
 
     override suspend fun getRememberedToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
+            Log.d("TokenManagerImpl", "getRememeberedToken:${preferences[REMEMBERED_TOKEN_KEY]}")
             preferences[REMEMBERED_TOKEN_KEY]
         }
     }
@@ -56,14 +59,16 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     override suspend fun saveAuthToken(token: String) {
         dataStore.edit { preferences ->
             preferences[AUTH_TOKEN_KEY] = token
+            Log.d("TokenManagerImpl", "let's save authToken:${token}")
+            Log.d("TokenManagerImpl", "it's saved authToken:${preferences[AUTH_TOKEN_KEY]}")
         }
     }
 
-    override fun saveRememberedToken(token: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStore.edit { preferences ->
-                preferences[REMEMBERED_TOKEN_KEY] = token
-            }
+    override suspend fun saveRememberedToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[REMEMBERED_TOKEN_KEY] = token
+            Log.d("TokenManagerImpl", "let's save rememberedToken:${token}}")
+            Log.d("TokenManagerImpl", "it's saved rememberedToken:${preferences[REMEMBERED_TOKEN_KEY]}")
         }
     }
 

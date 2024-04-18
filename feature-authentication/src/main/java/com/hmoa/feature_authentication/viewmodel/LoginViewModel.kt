@@ -65,6 +65,7 @@ class LoginViewModel @Inject constructor(
                         is Result.Success -> {
                             val authToken = it.data!!.authToken
                             val rememberedToken = it.data!!.rememberedToken
+                            Log.d("LoginViewModel", "authToken:${authToken},\n rememberedToken:${rememberedToken}")
                             saveAuthAndRememberedToken(authToken, rememberedToken)
                             checkIsExistedMember(it.data!!)
                         }
@@ -82,6 +83,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun checkIsExistedMember(data: MemberLoginResponseDto) {
+        Log.d("LoginViewModel", "checkIsExistedMember execute")
         if (data.existedMember) {
             _isAbleToGoHome.update { true }
         } else {

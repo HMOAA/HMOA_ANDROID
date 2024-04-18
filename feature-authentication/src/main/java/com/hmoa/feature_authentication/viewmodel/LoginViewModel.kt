@@ -46,7 +46,7 @@ class LoginViewModel @Inject constructor(
 
     }
 
-    fun saveKakoAccessToken(token: String) {
+    suspend fun saveKakoAccessToken(token: String) {
         saveKakaoToken(token)
     }
 
@@ -65,8 +65,8 @@ class LoginViewModel @Inject constructor(
                         is Result.Success -> {
                             val authToken = it.data!!.authToken
                             val rememberedToken = it.data!!.rememberedToken
-                            checkIsExistedMember(it.data!!)
                             saveAuthAndRememberedToken(authToken, rememberedToken)
+                            checkIsExistedMember(it.data!!)
                         }
 
                         is Result.Loading -> {}

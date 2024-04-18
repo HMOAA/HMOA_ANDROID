@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
             var isBottomBarVisible = true
             var isTopBarVisible = true
+            var isDrawerGestureEnabled = false
             fun customShape() = object : Shape {
                 override fun createOutline(
                     size: Size,
@@ -94,6 +95,7 @@ class MainActivity : AppCompatActivity() {
 
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
+                isDrawerGestureEnabled = if (isTopBarVisible) true else false
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 },
-                drawerShape = customShape(),
+                drawerGesturesEnabled = isDrawerGestureEnabled,
                 scaffoldState = scaffoldState,
                 topBar = {
                     if (isTopBarVisible) {

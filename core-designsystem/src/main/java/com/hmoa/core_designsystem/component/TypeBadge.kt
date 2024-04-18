@@ -23,30 +23,30 @@ import com.hmoa.core_designsystem.theme.CustomColor
 //여기 Component가 자세히 나와 있지 않아서 일단 감으로 합니다
 @Composable
 fun TypeBadge(
-    onClickItem : () -> Unit = {},
+    onClickItem: () -> Unit = {},
     roundedCorner: Dp,
     type: String,
     fontSize: TextUnit,
     fontColor: Color,
-    selected: Boolean,
+    selected: Boolean? = null,
     selectedIcon: Painter? = null,
-    unSelectedIcon:Painter? = null,
+    unSelectedIcon: Painter? = null,
     iconColor: Color? = null,
-    selectedColor:Color = Color.Black,
-    unSelectedColor:Color = CustomColor.gray2
+    selectedColor: Color = Color.Black,
+    unSelectedColor: Color = CustomColor.gray2
 ) {
     val fontStyle = TextStyle(
         fontSize = fontSize,
         color = fontColor
     )
-    val backgroundColor = if (selected) selectedColor else unSelectedColor
-    val icon = if (selected) selectedIcon else unSelectedIcon
+    val backgroundColor = if (selected != null && selected) selectedColor else unSelectedColor
+    val icon = if (selected != null && selected) selectedIcon else unSelectedIcon
 
     Row(
         modifier = Modifier
             .background(color = backgroundColor, shape = RoundedCornerShape(size = roundedCorner))
             .clip(RoundedCornerShape(size = roundedCorner))
-            .clickable{
+            .clickable {
                 onClickItem()
             }
             .padding(horizontal = 6.dp).padding(vertical = 4.dp),

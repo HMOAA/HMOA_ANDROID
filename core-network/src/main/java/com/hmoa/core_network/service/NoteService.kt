@@ -1,6 +1,9 @@
 package com.hmoa.core_network.service
 
+import ResultResponse
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.NoteDescResponseDto
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
 interface NoteService {
@@ -9,7 +12,7 @@ interface NoteService {
     suspend fun getNoteAll(@Field("pageNum") pageNum: Int): DataResponseDto<Any>
 
     @GET("/note/{noteId}")
-    suspend fun getNote(@Path("noteId") noteId: Int): DataResponseDto<Any>
+    suspend fun getNote(@Path("noteId") noteId: Int): ApiResponse<DataResponseDto<NoteDescResponseDto>>
 
     @DELETE("/note/{noteId}")
     suspend fun deleteNote(noteId: Int): DataResponseDto<Any>

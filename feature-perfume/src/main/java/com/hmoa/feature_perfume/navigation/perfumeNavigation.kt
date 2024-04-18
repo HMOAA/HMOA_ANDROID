@@ -7,8 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.hmoa.feature_perfume.screen.*
 
-fun NavController.navigateToPerfume(perfumeId: Int) = navigate("${PerfumeRoute.Perfume.name}/$perfumeId")
-fun NavController.navigateToPerfumeComment(perfumeId: Int) = navigate("${PerfumeRoute.PerfumeComment.name}/$perfumeId")
+fun NavController.navigateToPerfume(perfumeId: Int) = navigate("${PerfumeRoute.Perfume.name}/${perfumeId}")
+fun NavController.navigateToPerfumeComment(perfumeId: Int) =
+    navigate("${PerfumeRoute.PerfumeComment.name}/${perfumeId}")
+
 fun NavController.navigateToSpecificPerfumeComment(commentId: Int, isEditable: Boolean) {
     when (isEditable) {
         true -> navigate("${PerfumeRoute.EditMyPerfumeComment.name}/${commentId}")
@@ -19,7 +21,6 @@ fun NavController.navigateToSpecificPerfumeComment(commentId: Int, isEditable: B
 fun NavController.navigateToCreateNewperfumeComment(perfumeId: Int) =
     navigate("${PerfumeRoute.CreateNewPerfumeComment.name}/$perfumeId")
 
-
 fun NavGraphBuilder.perfumeScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
@@ -27,7 +28,7 @@ fun NavGraphBuilder.perfumeScreen(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     composable(
         route = "${PerfumeRoute.Perfume.name}/{perfumeId}",

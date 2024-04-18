@@ -32,7 +32,7 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 
 @Composable
 fun CommunityHomeRoute(
-    onNavCommunityByCategory: () -> Unit,
+    onNavCommunityGraph: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
     viewModel : CommunityHomeViewModel = hiltViewModel(),
 ){
@@ -42,7 +42,7 @@ fun CommunityHomeRoute(
     
     CommunityHome(
         uiState = uiState.value,
-        onNavCommunityByCategory = onNavCommunityByCategory,
+        onNavCommunityGraph = onNavCommunityGraph,
         onNavCommunityDescription = onNavCommunityDescription
     )
 }
@@ -50,7 +50,7 @@ fun CommunityHomeRoute(
 @Composable
 fun CommunityHome(
     uiState : CommunityHomeUiState, //이거 uiState로 이전해서 uiState에서 데이터 가져오는 방식으로
-    onNavCommunityByCategory : () -> Unit, //카테고리 별 Community 화면으로 이동
+    onNavCommunityGraph : () -> Unit, //카테고리 별 Community 화면으로 이동
     onNavCommunityDescription : (Int) -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
 ){
 
@@ -61,7 +61,7 @@ fun CommunityHome(
         is CommunityHomeUiState.Community -> {
             CommunityHomeContent(
                 communities = uiState.communities,
-                onNavCommunityByCategory = onNavCommunityByCategory,
+                onNavCommunityByCategory = onNavCommunityGraph,
                 onNavCommunityDescription = onNavCommunityDescription
             )
         }

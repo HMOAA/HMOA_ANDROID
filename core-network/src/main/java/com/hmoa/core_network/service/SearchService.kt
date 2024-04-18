@@ -8,10 +8,10 @@ import retrofit2.http.Query
 
 interface SearchService {
     @GET("/search/brand")
-    suspend fun getBrand(searchWord: String): BrandSearchResponseDto
+    suspend fun getBrand(@Query("searchWord") searchWord: String): ApiResponse<List<BrandSearchResponseDto>>
 
     @GET("/search/brandAll")
-    suspend fun getBrandAll(@Query("consonant") consonant: Int): List<BrandDefaultResponseDto>
+    suspend fun getBrandAll(@Query("consonant") consonant: Int): ApiResponse<List<BrandDefaultResponseDto>>
 
     @GET("/search/brandStory")
     suspend fun getBrandStory(
@@ -33,7 +33,10 @@ interface SearchService {
     ): List<CommunityByCategoryResponseDto>
 
     @GET("/search/note")
-    suspend fun getNote(@Query("page") page: Int, @Query("searchWord") searchWord: String): List<NoteDefaultResponseDto>
+    suspend fun getNote(
+        @Query("page") page: Int,
+        @Query("seachWord") searchWord: String
+    ): List<NoteDefaultResponseDto>
 
     @GET("/search/perfume")
     suspend fun getPerfume(
@@ -50,9 +53,12 @@ interface SearchService {
     @GET("/search/perfumer")
     suspend fun getPerfumer(
         @Query("page") page: Int,
-        @Query("searchWord") searchWord: String
+        @Query("seachWord") searchWord: String
     ): List<PerfumerDefaultResponseDto>
 
     @GET("/search/term")
-    suspend fun getTerm(@Query("page") page: Int, @Query("searchWord") searchWord: String): List<TermDefaultResponseDto>
+    suspend fun getTerm(
+        @Query("page") page: Int,
+        @Query("seachWord") searchWord: String
+    ): List<TermDefaultResponseDto>
 }

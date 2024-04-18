@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -37,7 +38,7 @@ import com.hmoa.feature_perfume.viewmodel.PerfumeViewmodel
 fun PerfumeRoute(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onCommentAddClick: (perfumdId:Int) -> Unit,
+    onCommentAddClick: (perfumdId: Int) -> Unit,
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
@@ -95,7 +96,7 @@ fun PerfumeScreen(
                     onInitializeAgeClick = { viewModel.onBackAgeToZero() },
                     onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
                     onViewCommentAllClick = { onViewCommentAllClick(it) },
-                    onSimilarPerfumeClick = { onSimilarPerfumeClick(perfumeId) },
+                    onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
                     data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
                     weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
                     gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
@@ -206,7 +207,8 @@ fun PerfumeContent(
                     .background(color = CustomColor.gray2)
             )
             LazyRow {
-                items(data.similarPerfumes) { it ->
+                val length = data.similarPerfumes.size
+                itemsIndexed(data.similarPerfumes) { index, it ->
                     Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
                         PerfumeItemView(
                             it.perfumeImgUrl,
@@ -218,6 +220,11 @@ fun PerfumeContent(
                             1f,
                             Color.White
                         )
+                        if (index < length) {
+                            Spacer(
+                                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                            )
+                        }
                     }
                 }
             }
@@ -528,7 +535,7 @@ fun CommentView(
                     content = it.content,
                     createdDate = it.createdAt ?: "",
                     onReportClick = {},
-                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed)},
+                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
                     onCommentLikedClick = {}
                 )
             }

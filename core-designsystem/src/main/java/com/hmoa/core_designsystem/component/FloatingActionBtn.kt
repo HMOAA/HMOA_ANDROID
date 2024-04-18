@@ -1,6 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,18 +57,11 @@ fun FloatingActionBtn(
                 .padding(end = 8.dp),
             horizontalArrangement = Arrangement.End
         ){
-            IconButton(
-                modifier = Modifier.size(56.dp),
-                onClick = {
-                    isOpen = !isOpen
-                }
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.ic_fab),
-                    contentDescription = "FAB"
-                )
-            }
+            Icon(
+                modifier = Modifier.size(56.dp).clickable { isOpen = !isOpen },
+                painter = painterResource(R.drawable.ic_fab),
+                contentDescription = "FAB"
+            )
         }
 
         Spacer(Modifier.height(8.dp))

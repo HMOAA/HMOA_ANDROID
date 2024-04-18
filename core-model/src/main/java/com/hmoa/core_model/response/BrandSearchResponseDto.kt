@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BrandSearchResponseDto(
     val brandList: List<BrandDefaultResponseDto>,
-    val consonant: Int
+    var consonant: Int
 )

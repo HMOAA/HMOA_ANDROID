@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 
 fun NavController.navigateToBrand(brandId: String) = navigate("${BrandRoute.Brand.name}/${brandId}")
+fun NavController.navigateToBrandSearch() = navigate("${BrandRoute.BrandSearch.name}")
 
 fun NavGraphBuilder.brandScreen(
     onBackClck: () -> Unit,
@@ -23,6 +24,20 @@ fun NavGraphBuilder.brandScreen(
             onBackClick = { onBackClck() },
             onHomeClick = { onHomeClick() },
             onPerfumeClick = { onPerfumeClick(it) }
+        )
+    }
+}
+
+fun NavGraphBuilder.brandSearchScreen(
+    onBackClick: () -> Unit,
+    onBrandClick: (brandId: Int) -> Unit,
+) {
+    composable(
+        route = "${BrandRoute.BrandSearch.name}",
+    ) {
+        com.hmoa.feature_brand.screen.BrandSearchRoute(
+            onBackClick = { onBackClick() },
+            onBrandClick = { onBrandClick(it) }
         )
     }
 }

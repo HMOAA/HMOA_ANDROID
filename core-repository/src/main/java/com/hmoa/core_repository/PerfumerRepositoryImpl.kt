@@ -1,7 +1,9 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Perfumer.PerfumerDataStore
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PerfumerDescResponseDto
 import javax.inject.Inject
 
 class PerfumerRepositoryImpl @Inject constructor(private val perfumerDataStore: PerfumerDataStore) :
@@ -10,7 +12,7 @@ class PerfumerRepositoryImpl @Inject constructor(private val perfumerDataStore: 
         return perfumerDataStore.getPerfumers(pageNum)
     }
 
-    override suspend fun getPerfumer(perfumerId: Int): DataResponseDto<Any> {
+    override suspend fun getPerfumer(perfumerId: Int): ResultResponse<DataResponseDto<PerfumerDescResponseDto>> {
         return perfumerDataStore.getPerfumer(perfumerId)
     }
 }

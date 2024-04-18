@@ -6,10 +6,14 @@ import androidx.navigation.compose.NavHost
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
+import com.hmoa.feature_brand.navigation.brandSearchScreen
 import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToHome
+import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
+import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
+import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
 import com.hmoa.feature_perfume.navigation.*
 
 @Composable
@@ -21,9 +25,11 @@ fun SetUpNavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-        
+
         /** home 모듈 */
-        homeScreen(onPerfumeClick = { perfumeId -> navController.navigateToPerfume(perfumeId) }, onAllPerfumeClick = {})
+        homeScreen(onPerfumeClick = { perfumeId ->
+            navController.navigateToPerfume(perfumeId)
+        }, onAllPerfumeClick = {})
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)
@@ -53,15 +59,18 @@ fun SetUpNavGraph(
             onNavMyGender = navController::navigateToMyGenderPage
         )
 
-        /** community 모듈 */
-        this.nestedCommunityGraph(
+        /** HPedia 모듈 (내부에 Community 모듈 포함) */
+        this.nestedHPediaGraph(
             onNavBack = navController::navigateToBack,
             onNavCommunityPost = navController::navigateToCommunityPostRoute,
             onNavCommunityEdit = navController::navigateToCommunityEditRoute,
-            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
+            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
             onNavCommunityPage = navController::navigateToCommunityPage,
+            onNavCommunityGraph = navController::navigateToCommunityRoute,
+            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
             onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
-            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute
+            onNavHPediaDesc = navController::navigateToHPediaDescRoute,
+            onNavHPediaSearch = navController::navigateToHPediaSearchRoute
         )
 
         /** perfume 모듈 */
@@ -77,7 +86,7 @@ fun SetUpNavGraph(
                     commentId.toInt(),
                     isEditable
                 )
-            }
+            },
         )
         perfumeComment(
             onBackClick = navController::navigateToBack,
@@ -92,10 +101,16 @@ fun SetUpNavGraph(
         specificComment(onBackClick = navController::navigateToBack)
         editMyPerfumeComment(onBackClick = navController::navigateToBack)
         createNewPerfumeComment(onBackClick = navController::navigateToBack)
+
         /**brand 모듈*/
         brandScreen(
             onBackClck = navController::navigateToBack,
             onHomeClick = { navController.navigateToHome() },
-            onPerfumeClick = { navController.navigateToPerfume(it) })
+            onPerfumeClick = { navController.navigateToPerfume(it) }
+        )
+        brandSearchScreen(
+            onBackClick = navController::navigateToBack,
+            onBrandClick = { navController.navigateToBrand(it.toString()) }
+        )
     }
 }

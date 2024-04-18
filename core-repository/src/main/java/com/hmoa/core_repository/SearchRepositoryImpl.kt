@@ -9,11 +9,11 @@ class SearchRepositoryImpl @Inject constructor(
     private val searchDataStore: SearchDataStore
 ) : com.hmoa.core_domain.repository.SearchRepository {
 
-    override suspend fun getBrand(searchWord: String): BrandSearchResponseDto {
+    override suspend fun getBrand(searchWord: String): ResultResponse<List<BrandSearchResponseDto>> {
         return searchDataStore.getBrand(searchWord)
     }
 
-    override suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
+    override suspend fun getBrandAll(consonant: Int): ResultResponse<List<BrandDefaultResponseDto>> {
         return searchDataStore.getBrandAll(consonant)
     }
 

@@ -39,7 +39,6 @@ class BrandViewmodel @Inject constructor(private val brandRepository: BrandRepos
         initialValue = BrandUiState.Loading
     )
 
-
     fun intializeBrandPerfumes(brandId: Int) {
         viewModelScope.launch {
             flow { emit(brandRepository.getBrand(brandId)) }.asResult().collectLatest {

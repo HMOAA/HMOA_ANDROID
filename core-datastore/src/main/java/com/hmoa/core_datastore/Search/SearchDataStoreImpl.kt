@@ -3,19 +3,31 @@ package com.hmoa.core_datastore.Search
 import ResultResponse
 import com.hmoa.core_model.response.*
 import com.hmoa.core_network.service.SearchService
+import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
-import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class SearchDataStoreImpl @Inject constructor(
     private val searchService: SearchService
 ) : SearchDataStore {
-    override suspend fun getBrand(searchWord: String): BrandSearchResponseDto {
-        return searchService.getBrand(searchWord)
+    override suspend fun getBrand(searchWord: String): ResultResponse<List<BrandSearchResponseDto>> {
+        val result = ResultResponse<List<BrandSearchResponseDto>>()
+        searchService.getBrand(searchWord).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
-    override suspend fun getBrandAll(consonant: Int): List<BrandDefaultResponseDto> {
-        return searchService.getBrandAll(consonant)
+    override suspend fun getBrandAll(consonant: Int): ResultResponse<List<BrandDefaultResponseDto>> {
+        val result = ResultResponse<List<BrandDefaultResponseDto>>()
+        searchService.getBrandAll(consonant).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getBrandStory(
@@ -29,9 +41,9 @@ class SearchDataStoreImpl @Inject constructor(
         page: Int,
         searchWord: String
     ): ResultResponse<List<CommunityByCategoryResponseDto>> {
-        val result = ResultResponse<List<CommunityByCategoryResponseDto>>(null)
-        searchService.getCommunity(page, searchWord).suspendOnSuccess{
-            result.data = this.data
+        val result = ResultResponse<List<CommunityByCategoryResponseDto>>()
+        searchService.getCommunity(page, searchWord).suspendMapSuccess {
+            result.data = this
         }.suspendOnError {
             result.exception = Exception(this.statusCode.code.toString())
         }

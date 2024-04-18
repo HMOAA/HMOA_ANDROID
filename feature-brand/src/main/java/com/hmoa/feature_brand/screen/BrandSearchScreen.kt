@@ -37,9 +37,11 @@ fun BrandSearchScreen(
     viewModel: BrandSearchViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val width = LocalConfiguration.current.screenWidthDp
+    val height = LocalConfiguration.current.screenHeightDp
 
     Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = Modifier.fillMaxWidth().fillMaxHeight().requiredSize(width = width.dp, height = height.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {

@@ -2,12 +2,10 @@ package com.hmoa.app
 
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
@@ -17,8 +15,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.navigateToBack
@@ -27,8 +31,8 @@ import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
+import com.hmoa.feature_brand.screen.BrandSearchRoute
 import com.hmoa.feature_community.Navigation.CommunityRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_home.navigation.HomeRoute
 import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
@@ -65,16 +69,25 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navHostController = rememberNavController()
 
-            var currentScreen by remember{ mutableStateOf(BottomScreen.Home.name) }
+            var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
             var isBottomBarVisible = true
             var isTopBarVisible = true
+            fun customShape() = object : Shape {
+                override fun createOutline(
+                    size: Size,
+                    layoutDirection: LayoutDirection,
+                    density: Density
+                ): Outline {
+                    return Outline.Rectangle(Rect(0f, 0f, 100f /* width */, 131f /* height */))
+                }
+            }
 
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
                 Log.d("TAG TEST", "current route : ${route}")
                 Log.d("TAG TEST", "navigation: ${bottomNav}")
-                if (route in bottomNav){
+                if (route in bottomNav) {
                     currentScreen = route
                     Log.d("TAG TEST", "current screen : ${currentScreen}")
                 }
@@ -97,6 +110,15 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 },
+                drawerContent = {
+                    Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
+                        BrandSearchRoute(
+                            onBrandClick = { navHostController.navigateToBrandSearch() },
+                            onBackClick = navHostController::navigateToBack
+                        )
+                    }
+                },
+                drawerShape = customShape(),
                 scaffoldState = scaffoldState,
                 topBar = {
                     if (isTopBarVisible) {

@@ -15,7 +15,7 @@ interface LoginRepository {
     suspend fun postRemembered(dto: RememberedLoginRequestDto): ResultResponse<TokenResponseDto>
     suspend fun saveAuthToken(token: String)
     suspend fun saveRememberedToken(token: String)
-    fun saveKakaoAccessToken(token: String)
+    suspend fun saveKakaoAccessToken(token: String)
     suspend fun deleteAuthToken()
     suspend fun deleteRememberedToken()
     suspend fun deleteKakaoAccessToken()

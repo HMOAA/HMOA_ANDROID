@@ -45,7 +45,7 @@ class LoginRepositoryImpl @Inject constructor(
         loginLocalDataStore.saveRememberedToken(token)
     }
 
-    override fun saveKakaoAccessToken(token: String) {
+    override suspend fun saveKakaoAccessToken(token: String) {
         loginLocalDataStore.saveKakaoAccessToken(token)
     }
 

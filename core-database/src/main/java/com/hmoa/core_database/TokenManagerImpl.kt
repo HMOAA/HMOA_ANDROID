@@ -53,11 +53,9 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
-    override fun saveAuthToken(token: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStore.edit { preferences ->
-                preferences[AUTH_TOKEN_KEY] = token
-            }
+    override suspend fun saveAuthToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[AUTH_TOKEN_KEY] = token
         }
     }
 

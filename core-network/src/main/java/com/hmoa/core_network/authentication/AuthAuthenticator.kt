@@ -8,7 +8,6 @@ import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Request
@@ -37,20 +36,22 @@ class AuthAuthenticator @Inject constructor(
                 .suspendOnError {
                     if (this.response.code() == 401) {
                         isAvailableToSendNewRequest = false
-                        Log.d("AuthAuthenticator", "토큰 리프레싱 실패")
+                        Log.e("AuthAuthenticator", "토큰 리프레싱 실패")
                     }
                 }
                 .suspendOnSuccess {
                     if (this.response.body() != null) {
-                        val refreshedAuthToken = tokenManager.getAuthToken().firstOrNull()
+                        val refreshedAuthToken = this.response.body()!!.authToken
+                        val refreshedRememberToken = this.response.body()!!.rememberedToken
+                        refreshTokenManager.saveRefreshTokens(refreshedAuthToken, refreshedRememberToken)
                         newRequest = response.request.addRefreshAuthToken(refreshedAuthToken)
                         isAvailableToSendNewRequest = true
-                        Log.d("AuthAuthenticator", "토큰 리프레싱 성공")
                     }
                 }
         }
 
         if (isAvailableToSendNewRequest) {
+            isAvailableToSendNewRequest = false
             return newRequest
         }
         return null

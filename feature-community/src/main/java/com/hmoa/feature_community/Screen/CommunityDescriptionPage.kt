@@ -32,6 +32,8 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.AppDefaultDialog
+import com.hmoa.core_designsystem.component.AppLoadingDialog
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.CommentInputBar
 import com.hmoa.core_designsystem.component.PostContent
@@ -51,6 +53,7 @@ fun CommunityDescriptionRoute(
     val id = _id ?: -1
     viewModel.setId(id)
 
+    val errState = viewModel.errState.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
@@ -60,6 +63,7 @@ fun CommunityDescriptionRoute(
     val context = LocalContext.current
 
     CommunityDescriptionPage(
+        errState = errState.value,
         isOpenBottomOptions = isOpenBottomOptions.value,
         changeBottomOptionState = {viewModel.updateBottomOptionsState(it)},
         type = type,
@@ -104,6 +108,7 @@ fun CommunityDescriptionRoute(
 
 @Composable
 fun CommunityDescriptionPage(
+    errState : String,
     isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
     type : String,
@@ -130,11 +135,7 @@ fun CommunityDescriptionPage(
 
     when (uiState) {
         CommunityDescUiState.Loading -> {
-            Column() {
-                Text(
-                    text = "Loading"
-                )
-            }
+            AppLoadingDialog()
         }
 
         is CommunityDescUiState.CommunityDesc -> {
@@ -251,11 +252,20 @@ fun CommunityDescriptionPage(
             }
         }
         CommunityDescUiState.Error -> {
-            Column {
-                Text(
-                    text = "Data is Error"
-                )
-            }
+            var isOpen by remember{mutableStateOf(true)}
+            AppDefaultDialog(
+                isOpen = isOpen,
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth(0.8f),
+                title = "오류",
+                content = errState,
+                onDismiss = {
+                    isOpen = false
+                    changeBottomOptionState(false)
+                    onNavBack()
+                }
+            )
         }
     }
 }

@@ -30,6 +30,7 @@ import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
+import com.hmoa.feature_authentication.navigation.AuthenticationRoute
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
 import com.hmoa.feature_brand.screen.BrandSearchRoute
 import com.hmoa.feature_community.Navigation.CommunityRoute
@@ -38,7 +39,6 @@ import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -61,17 +61,30 @@ class MainActivity : AppCompatActivity() {
 
     private val needTopBarScreens = HomeRoute.Home.name
 
+    fun createRoute() {
+        if (viewModel.authTokenState.value == null && viewModel.rememberedTokenState.value == null) {
+            initialRoute = AuthenticationRoute.Login.name
+        } else {
+            initialRoute = HomeRoute.Home.name
+        }
+        Log.d(
+            "MainActivity",
+            "authTokenState: ${viewModel.authTokenState.value}\n, rememberedTokenState: ${viewModel.rememberedTokenState.value}"
+        )
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        runBlocking { initialRoute = viewModel.routeInitialScreen() }
+        createRoute()
 
         setContent {
             val navHostController = rememberNavController()
-
             var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
             var isBottomBarVisible = true
             var isTopBarVisible = true
+            var isDrawerGestureEnabled = false
             fun customShape() = object : Shape {
                 override fun createOutline(
                     size: Size,
@@ -94,8 +107,10 @@ class MainActivity : AppCompatActivity() {
 
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
+                isDrawerGestureEnabled = if (isTopBarVisible) true else false
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+
 
             Scaffold(
                 backgroundColor = Color.White,
@@ -118,7 +133,7 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 },
-                drawerShape = customShape(),
+                drawerGesturesEnabled = isDrawerGestureEnabled,
                 scaffoldState = scaffoldState,
                 topBar = {
                     if (isTopBarVisible) {

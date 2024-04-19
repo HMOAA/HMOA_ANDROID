@@ -1,22 +1,16 @@
 package com.hmoa.feature_community.ViewModel
 
 import android.app.Application
-import android.database.Cursor
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -77,7 +71,6 @@ class CommunityPostViewModel @Inject constructor(
             }
             result
         }
-        Log.d("TAG TEST", "pictures update : ${pictures.value}")
     }
 
     //사진 삭제
@@ -90,16 +83,13 @@ class CommunityPostViewModel @Inject constructor(
 
     //게시글 게시
     fun postCommunity() {
-        Log.d("TAG TEST", "view model : post community")
         val images = arrayListOf<File>()
         pictures.value.map{ picture ->
             val path = absolutePath(picture) ?: throw NullPointerException("file path is NULL")
             images.add(File(path))
         }
-        Log.d("TAG TEST", "forEach done : ${images.map{it.absoluteFile}}")
         viewModelScope.launch {
 
-            Log.d("TAG TEST", "images : ${images.toTypedArray().map{it}}")
             val result = repository.postCommunitySave(
                 images = images.map{it.absoluteFile}.toTypedArray(),
                 category = category.value.name,
@@ -110,7 +100,6 @@ class CommunityPostViewModel @Inject constructor(
             if (result.exception is Exception) {
                 _errState.update{"Exception : ${result.exception!!}"}
             } else {
-                Log.d("TAG TEST", "${result.data}")
                 result.data
             }
         }

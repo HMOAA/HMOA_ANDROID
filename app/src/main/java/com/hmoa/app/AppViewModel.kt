@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEmpty
@@ -24,10 +25,12 @@ class AppViewModel @Inject constructor(
     }
 
     fun initializeRoute() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             loginRepository.getRememberedToken().onEmpty { }.collectLatest {
                 _rememberedTokenState.value = it
             }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
                 _authTokenState.value = it
             }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -58,8 +60,8 @@ fun FloatingActionBtn(
             horizontalArrangement = Arrangement.End
         ){
             Icon(
-                modifier = Modifier.size(56.dp).clickable { isOpen = !isOpen },
-                painter = painterResource(R.drawable.ic_fab),
+                modifier = Modifier.size(56.dp).clip(CircleShape).clickable { isOpen = !isOpen },
+                painter = painterResource(if(isOpen) R.drawable.ic_loading_3 else R.drawable.ic_fab),
                 contentDescription = "FAB"
             )
         }

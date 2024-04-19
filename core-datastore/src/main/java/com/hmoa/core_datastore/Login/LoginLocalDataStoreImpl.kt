@@ -1,45 +1,40 @@
 package com.hmoa.core_datastore.Login
 
+import android.util.Log
 import com.hmoa.core_database.TokenManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LoginLocalDataStoreImpl @Inject constructor(
     private val tokenManager: TokenManager
 ) : LoginLocalDataStore {
-    override suspend fun getAuthToken(): String? {
-        val token = CoroutineScope(Dispatchers.IO).async {
-            tokenManager.getAuthToken().first()
-        }.await()
+    override suspend fun getAuthToken(): Flow<String?> {
+        val token = tokenManager.getAuthToken()
+        Log.d("LoginLocalDataStoreImpl", "getAuthToken:${token}")
         return token
     }
 
-    override suspend fun getRememberedToken(): String? {
-        val token = CoroutineScope(Dispatchers.IO).async {
-            tokenManager.getRememberedToken().first()
-        }.await()
+    override suspend fun getRememberedToken(): Flow<String?> {
+        val token = tokenManager.getRememberedToken()
+        Log.d("LoginLocalDataStoreImpl", "getRememberedToken:${token}")
         return token
     }
 
-    override suspend fun getKakaoAccessToken(): String? {
-        val token = CoroutineScope(Dispatchers.IO).async {
-            tokenManager.getKakaoAccessToken().first()
-        }.await()
-        return token
+    override suspend fun getKakaoAccessToken(): Flow<String?> {
+        return tokenManager.getKakaoAccessToken()
     }
 
-    override fun saveAuthToken(token: String) {
+    override suspend fun saveAuthToken(token: String) {
+        Log.d("LoginLocalDataStoreImpl", "saveAuthToken:${token}")
         tokenManager.saveAuthToken(token)
     }
 
-    override fun saveRememberedToken(token: String) {
+    override suspend fun saveRememberedToken(token: String) {
+        Log.d("LoginLocalDataStoreImpl", "saveRememberedToken:${token}")
         tokenManager.saveRememberedToken(token)
     }
 
-    override fun saveKakaoAccessToken(token: String) {
+    override suspend fun saveKakaoAccessToken(token: String) {
         tokenManager.saveKakaoAccessToken(token)
     }
 

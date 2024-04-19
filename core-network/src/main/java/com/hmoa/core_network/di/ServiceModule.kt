@@ -12,7 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -57,7 +57,9 @@ object ServiceModule {
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
         var token: String? = null
         CoroutineScope(Dispatchers.IO).launch {
-            token = tokenManager.getAuthToken().firstOrNull()
+            tokenManager.getAuthToken().collectLatest {
+                token = it
+            }
         }
 
 
@@ -163,7 +165,7 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun providerTermService(retrofit : Retrofit) : TermService{
+    fun providerTermService(retrofit: Retrofit): TermService {
         return retrofit.create(TermService::class.java)
     }
 }

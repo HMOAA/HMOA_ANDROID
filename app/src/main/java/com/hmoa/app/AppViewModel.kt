@@ -1,27 +1,39 @@
 package com.hmoa.app
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.hmoa.core_domain.usecase.GetAuthAndRememberedTokenUseCase
-import com.hmoa.feature_authentication.navigation.AuthenticationRoute
+import androidx.lifecycle.viewModelScope
+import com.hmoa.core_domain.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AppViewModel @Inject constructor(private val getAuthAndRememberedTokenUseCase: GetAuthAndRememberedTokenUseCase) :
-    ViewModel() {
-    private var authToken: String? = null
-    private var rememberedToken: String? = null
-    suspend fun routeInitialScreen(): String {
-        val pair = getAuthAndRememberedTokenUseCase()
-        authToken = pair.first
-        rememberedToken = pair.second
+class AppViewModel @Inject constructor(
+    private val loginRepository: LoginRepository
+) : ViewModel() {
+    private var _authTokenState = MutableStateFlow<String?>(null)
+    var authTokenState = _authTokenState
+    private var _rememberedTokenState = MutableStateFlow<String?>(null)
+    var rememberedTokenState = _rememberedTokenState
 
-        Log.d("TAG TEST", "token : ${authToken} / remember : ${rememberedToken}")
+    init {
+        initializeRoute()
+    }
 
-        if (authToken == null && rememberedToken == null) {
-            return AuthenticationRoute.Login.name
+    fun initializeRoute() {
+        viewModelScope.launch(Dispatchers.IO) {
+            loginRepository.getRememberedToken().onEmpty { }.collectLatest {
+                _rememberedTokenState.value = it
+            }
         }
-        return com.hmoa.feature_home.navigation.HomeRoute.Home.name
+        viewModelScope.launch(Dispatchers.IO) {
+            loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                _authTokenState.value = it
+            }
+        }
     }
 }

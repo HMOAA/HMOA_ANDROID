@@ -269,7 +269,6 @@ fun ExpandableImage(
     height : Float,
     picture : String
 ){
-
     var showDialog by remember{mutableStateOf(false)}
 
     if (showDialog) {
@@ -286,7 +285,7 @@ fun ExpandableImage(
                     width = 1f,
                     height = 1f,
                     backgroundColor = Color.Black,
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.FillWidth
                 )
                 Row(
                     modifier = Modifier.fillMaxSize()
@@ -326,7 +325,7 @@ fun ExpandableImage(
             width = 1f,
             height = 1f,
             backgroundColor = CustomColor.gray1,
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.FillWidth
         )
     }
 }

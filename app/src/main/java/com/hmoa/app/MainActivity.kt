@@ -98,11 +98,8 @@ class MainActivity : AppCompatActivity() {
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
-                Log.d("TAG TEST", "current route : ${route}")
-                Log.d("TAG TEST", "navigation: ${bottomNav}")
                 if (route in bottomNav) {
                     currentScreen = route
-                    Log.d("TAG TEST", "current screen : ${currentScreen}")
                 }
 
                 isBottomBarVisible = route in needBottomBarScreens

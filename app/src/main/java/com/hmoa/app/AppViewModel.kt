@@ -29,8 +29,6 @@ class AppViewModel @Inject constructor(
             loginRepository.getRememberedToken().onEmpty { }.collectLatest {
                 _rememberedTokenState.value = it
             }
-        }
-        viewModelScope.launch(Dispatchers.IO) {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
                 _authTokenState.value = it
             }

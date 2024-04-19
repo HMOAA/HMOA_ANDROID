@@ -62,15 +62,15 @@ class MainActivity : AppCompatActivity() {
     private val needTopBarScreens = HomeRoute.Home.name
 
     fun createRoute() {
-        Log.d(
-            "MainActivity",
-            "authTokenState: ${viewModel.authTokenState.value}\n, rememberedTokenState: ${viewModel.rememberedTokenState.value}"
-        )
         if (viewModel.authTokenState.value == null && viewModel.rememberedTokenState.value == null) {
             initialRoute = AuthenticationRoute.Login.name
         } else {
             initialRoute = HomeRoute.Home.name
         }
+        Log.d(
+            "MainActivity",
+            "authTokenState: ${viewModel.authTokenState.value}\n, rememberedTokenState: ${viewModel.rememberedTokenState.value}"
+        )
     }
 
 

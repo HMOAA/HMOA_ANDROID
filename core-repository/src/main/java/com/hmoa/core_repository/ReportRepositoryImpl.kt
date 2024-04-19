@@ -7,11 +7,11 @@ import com.hmoa.core_model.response.DataResponseDto
 import javax.inject.Inject
 
 class ReportRepositoryImpl @Inject constructor(private val reportDataStore: ReportDataStore) : ReportRepository {
-    override fun reportCommunity(dto: TargetRequestDto): DataResponseDto<Any> {
+    override suspend fun reportCommunity(dto: TargetRequestDto): DataResponseDto<Any?> {
         return reportDataStore.reportCommunity(dto)
     }
 
-    override fun reportCommunityComment(dto: TargetRequestDto): DataResponseDto<Any> {
+    override suspend fun reportCommunityComment(dto: TargetRequestDto): DataResponseDto<Any> {
         return reportDataStore.reportCommunityComment(dto)
     }
 

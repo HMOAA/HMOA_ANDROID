@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.Screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -55,6 +57,8 @@ fun CommunityDescriptionRoute(
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     var type by remember{mutableStateOf("post")}
 
+    val context = LocalContext.current
+
     CommunityDescriptionPage(
         isOpenBottomOptions = isOpenBottomOptions.value,
         changeBottomOptionState = {viewModel.updateBottomOptionsState(it)},
@@ -65,8 +69,16 @@ fun CommunityDescriptionRoute(
         uiState = uiState.value,
         commentList = comments,
         onNavBack = onNavBack,
-        onReportCommunity = {viewModel.reportCommunity()},
-        onReportComment = {viewModel.reportComment(it)},
+        onReportCommunity = {
+            viewModel.reportCommunity()
+            viewModel.updateBottomOptionsState(false)
+            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+        },
+        onReportComment = {
+            viewModel.reportComment(it)
+            viewModel.updateBottomOptionsState(false)
+            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+        },
         onPostComment = {
             viewModel.postComment(it)
             comments.refresh()
@@ -78,10 +90,12 @@ fun CommunityDescriptionRoute(
         onDeleteCommunity = {
             viewModel.delCommunity()
             onNavBack()
+            Toast.makeText(context, "게시글 삭제 완료", Toast.LENGTH_SHORT).show()
         },
         onDeleteComment = { commentId ->
             viewModel.delComment(commentId)
             comments.refresh()
+            Toast.makeText(context, "댓글 삭제", Toast.LENGTH_SHORT).show()
         },
         onNavCommunityEdit = {onNavCommunityEdit(id)},
         onNavCommentEdit = onNavCommentEdit

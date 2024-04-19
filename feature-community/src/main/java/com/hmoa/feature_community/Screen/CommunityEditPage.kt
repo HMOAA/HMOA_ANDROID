@@ -286,8 +286,8 @@ fun EditImageViewPager(
             ){
                 IconButton(
                     modifier = Modifier.size(24.dp)
-                        .border(width = 1.dp, color = Color.Black, shape = CircleShape)
                         .background(color = Color.White, shape = CircleShape)
+                        .border(width = 1.dp, color = Color.Black, shape = CircleShape)
                         .clip(CircleShape),
                     onClick = {
                         onDeletePictures(pictures[it])

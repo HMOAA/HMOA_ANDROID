@@ -9,9 +9,6 @@ import com.hmoa.core_network.service.LoginService
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import com.skydoves.sandwich.suspendOnSuccess
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,9 +26,8 @@ class RefreshTokenManagerImpl @Inject constructor(private val tokenManager: Toke
             rememberedToken = this.response.body()!!.rememberedToken
         }
 
-        CoroutineScope(Dispatchers.IO).async {
-            saveRefreshTokens(refreshedAuthToken, rememberedToken)
-        }
+        saveRefreshTokens(refreshedAuthToken, rememberedToken)
+
         return response
     }
 

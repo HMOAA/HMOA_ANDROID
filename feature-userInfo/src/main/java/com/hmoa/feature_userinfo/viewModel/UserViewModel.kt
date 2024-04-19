@@ -25,9 +25,7 @@ class UserViewModel @Inject constructor(
     private val getUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
     private var _authTokenState = MutableStateFlow<String?>(null)
-    var authTokenState = _authTokenState
     private var _rememberedTokenState = MutableStateFlow<String?>(null)
-    var rememberedTokenState = _rememberedTokenState
 
     //Login 여부
     private val _isLogin = MutableStateFlow(false)
@@ -63,7 +61,14 @@ class UserViewModel @Inject constructor(
     val isDuplicated get() = _isDuplicated
 
     init {
-        checkLoginState()
+        viewModelScope.launch {
+            var authToken: String? = getAuthToken()
+            if (authToken != null) {
+                _isLogin.update { true }
+            } else {
+                _isLogin.update { false }
+            }
+        }
 
         //기본 nickname, profile, gender, birth 가져오기
         viewModelScope.launch(Dispatchers.IO) {
@@ -105,32 +110,10 @@ class UserViewModel @Inject constructor(
         initialValue = UserInfoUiState.Loading
     )
 
-    fun checkLoginState() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val authToken = getAuthToken()
-            val rememberedToken = getRememeredToken()
-            if (authToken != null && rememberedToken != null) {
-                _isLogin.update { true }
-            } else {
-                _isLogin.update { false }
-            }
-        }
-    }
-
     fun getAuthToken(): String? {
         var result: String? = null
         viewModelScope.launch(Dispatchers.IO) {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
-                result = it
-            }
-        }
-        return result
-    }
-
-    fun getRememeredToken(): String? {
-        var result: String? = null
-        viewModelScope.launch(Dispatchers.IO) {
-            loginRepository.getRememberedToken().onEmpty { }.collectLatest {
                 result = it
             }
         }

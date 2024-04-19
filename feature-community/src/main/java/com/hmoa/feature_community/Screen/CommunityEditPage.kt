@@ -39,6 +39,7 @@ import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.TopBarWithEvent
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.feature_community.ViewModel.CommunityEditUiState
 import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
 
 @Composable
@@ -49,7 +50,10 @@ fun CommunityEditRoute(
 ){
 
     //id가 null이 아니면 view model에 setting
-    viewModel.setId(id ?: -1)
+    viewModel.setId(id)
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errState.collectAsStateWithLifecycle()
 
     val title = viewModel.title.collectAsStateWithLifecycle()
     val content = viewModel.content.collectAsStateWithLifecycle()
@@ -57,7 +61,8 @@ fun CommunityEditRoute(
     val category = viewModel.category.collectAsStateWithLifecycle()
 
     CommunityEditPage(
-        category = category.value!!.name,
+        uiState = uiState.value,
+        category = category.value?.name,
         title = title.value,
         onTitleChanged = {
             viewModel.updateTitle(it)
@@ -83,7 +88,8 @@ fun CommunityEditRoute(
 
 @Composable
 fun CommunityEditPage(
-    category : String,
+    uiState: CommunityEditUiState,
+    category : String?,
     title : String,
     onTitleChanged : (String) -> Unit,
     content : String,
@@ -96,56 +102,60 @@ fun CommunityEditPage(
 ){
     val scrollableState = rememberScrollState()
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        TopBarWithEvent(
-            onCancelClick = onNavBack,
-            onConfirmClick = {
-                onPostCommunity()
-                onNavBack()
-            },
-            title = category
-        )
-        HorizontalDivider(
-            Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = Color.Black
-        )
-        //title input
-        EditTitleTextField(
-            title = title,
-            onTitleChanged = onTitleChanged
-        )
-        HorizontalDivider(
-            Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = Color.Black
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(horizontal = 33.dp, vertical = 27.dp)
-                .scrollable(state = scrollableState, orientation = Orientation.Vertical)
-        ){
-            //content input
-            EditContentTextField(
-                content = content,
-                onContentChanged = onContentChanged
+    when(uiState){
+        CommunityEditUiState.Loading -> {
+            Text(
+                "Loading"
             )
         }
+        CommunityEditUiState.Success -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                TopBarWithEvent(
+                    onCancelClick = onNavBack,
+                    onConfirmClick = {
+                        onPostCommunity()
+                        onNavBack()
+                    },
+                    title = category!!
+                )
+                HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+                //title input
+                EditTitleTextField(
+                    title = title,
+                    onTitleChanged = onTitleChanged
+                )
+                HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 33.dp, vertical = 27.dp)
+                        .scrollable(state = scrollableState, orientation = Orientation.Vertical)
+                ){
+                    //content input
+                    EditContentTextField(
+                        content = content,
+                        onContentChanged = onContentChanged
+                    )
+                }
 
-        if(pictures.isNotEmpty()){
+                if(pictures.isNotEmpty()){
 
-            Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(10.dp))
 
-            EditImageViewPager(
-                pictures = pictures,
-                onDeletePictures = onDeletePictures
-            )
-
-            BottomCameraBtn(onUpdatePictures)
+                    EditImageViewPager(
+                        pictures = pictures,
+                        onDeletePictures = onDeletePictures
+                    )
+                }
+                BottomCameraBtn(onUpdatePictures)
+            }
+        }
+        CommunityEditUiState.Error -> {
+            Text("Error")
         }
     }
 }
@@ -194,6 +204,7 @@ fun EditTitleTextField(
                     color = CustomColor.gray3
                 )
             }
+            it()
         }
 
         Text(
@@ -229,6 +240,7 @@ fun EditContentTextField(
                 color = CustomColor.gray3
             )
         }
+        it()
     }
 }
 

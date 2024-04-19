@@ -53,14 +53,10 @@ class CommunityPostViewModel @Inject constructor(
     }
 
     //title update
-    fun updateTitle(title: String) {
-        _title.update { title }
-    }
+    fun updateTitle(title: String) {_title.update { title }}
 
     //content update
-    fun updateContent(content: String) {
-        _content.update { content }
-    }
+    fun updateContent(content: String) {_content.update { content }}
 
     //사진 update
     fun updatePictures(newPictures: List<Uri>) {

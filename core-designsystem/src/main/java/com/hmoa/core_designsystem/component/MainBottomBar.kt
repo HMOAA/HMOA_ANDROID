@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -63,7 +64,7 @@ fun MainBottomBar(
         ),
     )
 
-    NavigationBar(containerColor = Color.Black) {
+    NavigationBar(containerColor = Color.White) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -78,16 +79,17 @@ fun MainBottomBar(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ){
-                            Image(
+                            Icon(
                                 modifier = Modifier.size(25.dp),
                                 painter = item.icon,
                                 contentDescription = "${item.name}아이템",
+                                tint = Color.Black
                             )
 
                             Spacer(Modifier.height(5.dp))
 
                             if (initValue == item.name.name) {
-                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White)
+                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Black)
                             }
                         }
                     }
@@ -100,5 +102,6 @@ fun MainBottomBar(
 @Preview
 @Composable
 fun MainBottomBarPreview() {
-    MainBottomBar(BottomScreen.Home.name, {}, {}, {}, {})
+    var selectedScreen = BottomScreen.Home.name
+    MainBottomBar(selectedScreen, {selectedScreen = BottomScreen.Home.name}, {selectedScreen = BottomScreen.HPedia.name}, {}, {})
 }

@@ -54,11 +54,8 @@ fun CommunityDescriptionRoute(
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     var type by remember{mutableStateOf("post")}
-    var flag by remember{mutableStateOf(false)}
 
     CommunityDescriptionPage(
-        flag = flag,
-        onFlagChange = {flag = it},
         isOpenBottomOptions = isOpenBottomOptions.value,
         changeBottomOptionState = {viewModel.updateBottomOptionsState(it)},
         type = type,
@@ -93,8 +90,6 @@ fun CommunityDescriptionRoute(
 
 @Composable
 fun CommunityDescriptionPage(
-    flag : Boolean,
-    onFlagChange : (Boolean) -> Unit,
     isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
     type : String,
@@ -131,7 +126,6 @@ fun CommunityDescriptionPage(
         is CommunityDescUiState.CommunityDesc -> {
 
             val community = uiState.community
-            onFlagChange(true)
 
             if(isOpenBottomOptions){
                 BottomOptionDialog(
@@ -219,7 +213,6 @@ fun CommunityDescriptionPage(
                     Spacer(Modifier.height(21.dp))
 
                     Comments(
-                        flag = flag,
                         commentList = commentList.itemSnapshotList,
                         changeBottomOptionState = changeBottomOptionState,
                         onChangeType = onChangeType,
@@ -255,18 +248,12 @@ fun CommunityDescriptionPage(
 
 @Composable
 fun Comments(
-    flag : Boolean,
     commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
     changeBottomOptionState : (Boolean) -> Unit,
     onChangeType: (String) -> Unit,
     onChangeCommentLike : (Int, Boolean) -> Unit,
     setCommentId : (Int) -> Unit,
 ){
-    val noDataTextStyle = TextStyle(
-        fontSize = 20.sp,
-        color = Color.Black
-    )
-
     if (commentList.isNotEmpty()) {
         commentList.reversed().forEachIndexed { index, comment ->
             if (comment != null){
@@ -293,17 +280,13 @@ fun Comments(
             }
         }
     } else {
-        if (flag){
-            /** Loading Component를 여기서도 띄우는 것이 좋겠다 */
-            Text(text = "댓글 갱신 중~")
-        } else {
-            Spacer(Modifier.height(40.dp))
-            Text(
-                text = "아직 작성한 댓글이 없습니다",
-                style = noDataTextStyle
-            )
-            Spacer(Modifier.height(30.dp))
-        }
+        Spacer(Modifier.height(40.dp))
+        Text(
+            text = "아직 작성한 댓글이 없습니다",
+            fontSize = 20.sp,
+            color = Color.Black
+        )
+        Spacer(Modifier.height(30.dp))
     }
 }
 
@@ -333,6 +316,7 @@ fun BottomOptionDialog(
         onDismissRequest = { changeBottomOptionState(false) },
         containerColor = Color.White,
         scrimColor = Color.Black.copy(alpha = 0.3f),
+
     ) {
         Column(
             modifier = Modifier

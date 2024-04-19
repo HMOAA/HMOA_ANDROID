@@ -6,7 +6,6 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
-import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,7 +31,8 @@ class CommunityCommentEditViewModel @Inject constructor(
     val errState get() = _errState.asStateFlow()
 
     val uiState : StateFlow<CommunityCommentEditUiState> = commentId.map{ id ->
-        val response = communityCommentRepository.getCommunityComment(id ?: return@map )
+        if (id == null) throw NullPointerException("Id is NULL")
+        val response = communityCommentRepository.getCommunityComment(id)
         if (response.exception is Exception) {
             throw response.exception!!
         }
@@ -44,9 +44,9 @@ class CommunityCommentEditViewModel @Inject constructor(
                     CommunityCommentEditUiState.Error
                 }
                 is Result.Success -> {
-                    val data = result.data as CommunityCommentWithLikedResponseDto
+                    val data = result.data
                     _comment.update{ data.content }
-                    CommunityCommentEditUiState.Comment(data.content)
+                    CommunityCommentEditUiState.Comment
                 }
                 is Result.Loading -> {
                     CommunityCommentEditUiState.Loading
@@ -88,8 +88,6 @@ class CommunityCommentEditViewModel @Inject constructor(
 
 sealed interface CommunityCommentEditUiState {
     data object Error : CommunityCommentEditUiState
-    data class Comment(
-        val content : String
-    ) : CommunityCommentEditUiState
+    data object Comment : CommunityCommentEditUiState
     data object Loading : CommunityCommentEditUiState
 }

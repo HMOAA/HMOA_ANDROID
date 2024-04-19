@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -207,25 +208,23 @@ fun PostContent(
                         width = screenWidth,
                         height = screenHeight
                     )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(30.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ){
-                        pictures.forEach{picture ->
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(color = if (picture == pictures[it]) Color.Black else CustomColor.gray4)
-                            )
-                        }
-                    }
                 }
-
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally)
+            ){
+                for(i in pictures.indices){
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(color = if (i == state.currentPage) CustomColor.blackTrans30 else Color.White, shape = CircleShape)
+                            .clip(CircleShape)
+                    )
+                }
             }
         }
 

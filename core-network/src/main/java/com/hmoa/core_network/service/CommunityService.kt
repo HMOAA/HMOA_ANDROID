@@ -6,20 +6,20 @@ import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
-import java.io.File
 
 interface CommunityService {
     @GET("/community/{communityId}")
     suspend fun getCommunity(@Path(value = "communityId") communityId: Int): ApiResponse<CommunityDefaultResponseDto>
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/community/{communityId}")
     suspend fun postCommunityUpdate(
-        @Field("images") images: Array<File>,
-        @Field("deleteCommunityPhotoIds") deleteCommunityPhotoIds: Array<Int>,
-        @Field("title") title: String,
-        @Field("content") content: String,
+        @Part images: Array<MultipartBody.Part>,
+        @Part("deleteCommunityPhotoIds") deleteCommunityPhotoIds: Array<RequestBody>,
+        @Part("title") title: RequestBody,
+        @Part("content") content: RequestBody,
         @Path("communityId") communityId: Int
     ): ApiResponse<CommunityDefaultResponseDto>
 

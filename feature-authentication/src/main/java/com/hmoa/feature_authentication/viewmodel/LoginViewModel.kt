@@ -46,7 +46,7 @@ class LoginViewModel @Inject constructor(
 
     }
 
-    fun saveKakoAccessToken(token: String) {
+    suspend fun saveKakoAccessToken(token: String) {
         saveKakaoToken(token)
     }
 
@@ -65,8 +65,9 @@ class LoginViewModel @Inject constructor(
                         is Result.Success -> {
                             val authToken = it.data!!.authToken
                             val rememberedToken = it.data!!.rememberedToken
-                            checkIsExistedMember(it.data!!)
+                            Log.d("LoginViewModel", "authToken:${authToken},\n rememberedToken:${rememberedToken}")
                             saveAuthAndRememberedToken(authToken, rememberedToken)
+                            checkIsExistedMember(it.data!!)
                         }
 
                         is Result.Loading -> {}
@@ -82,6 +83,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun checkIsExistedMember(data: MemberLoginResponseDto) {
+        Log.d("LoginViewModel", "checkIsExistedMember execute")
         if (data.existedMember) {
             _isAbleToGoHome.update { true }
         } else {

@@ -60,7 +60,8 @@ fun FloatingActionBtn(
             horizontalArrangement = Arrangement.End
         ){
             Icon(
-                modifier = Modifier.size(56.dp).clip(CircleShape).clickable { isOpen = !isOpen },
+                modifier = Modifier.size(56.dp).clip(CircleShape).clickable { isOpen = !isOpen }
+                    .background(color = Color.White, shape = CircleShape),
                 painter = painterResource(if(isOpen) R.drawable.ic_loading_3 else R.drawable.ic_fab),
                 contentDescription = "FAB"
             )

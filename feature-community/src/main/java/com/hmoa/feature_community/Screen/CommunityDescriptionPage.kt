@@ -155,7 +155,6 @@ fun CommunityDescriptionPage(
                     onNavCommentEdit = { onNavCommentEdit(commentId) }
                 )
             }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -340,7 +339,7 @@ fun BottomOptionDialog(
         onDismissRequest = { changeBottomOptionState(false) },
         containerColor = Color.White,
         scrimColor = Color.Black.copy(alpha = 0.3f),
-
+        dragHandle = null
     ) {
         Column(
             modifier = Modifier

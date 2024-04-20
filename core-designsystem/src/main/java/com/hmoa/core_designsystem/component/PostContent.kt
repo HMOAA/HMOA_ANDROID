@@ -221,7 +221,7 @@ fun PostContent(
                     Box(
                         modifier = Modifier
                             .size(8.dp)
-                            .background(color = if (i == state.currentPage) CustomColor.blackTrans30 else Color.White, shape = CircleShape)
+                            .background(color = if (i == state.currentPage) Color.Black else CustomColor.blackTrans30, shape = CircleShape)
                             .clip(CircleShape)
                     )
                 }

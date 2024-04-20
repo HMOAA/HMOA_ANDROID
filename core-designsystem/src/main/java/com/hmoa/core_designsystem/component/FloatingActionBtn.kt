@@ -93,7 +93,7 @@ fun FloatingActionBtn(
                 text = {
                     Text(
                         modifier = Modifier.height(46.dp),
-                        text = "선물",
+                        text = "시향기",
                         style = textStyle
                     )
                 },

@@ -79,42 +79,7 @@ fun Comment(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ){
-            GlideImage(
-                modifier = Modifier.size(28.dp),
-                imageModel = profile,
-                success = { imageState ->
-                    imageState.drawable?.let {
-                        Image(
-                            modifier = Modifier.fillMaxSize()
-                                .clip(shape = CircleShape),
-                            bitmap = it.toBitmap().asImageBitmap(),
-                            contentDescription = "profile"
-                        )
-                    }
-                },
-                loading = {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CircularProgressIndicator(
-                            color = CustomColor.gray2
-                        )
-                    }
-                },
-                failure = {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                            .background(color = CustomColor.gray4)
-                            .clip(CircleShape)
-                    ){
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Not have profile",
-                            tint = CustomColor.gray2
-                        )
-                    }
-                }
-            )
+            CircleImageView(imgUrl = profile, width = 28, height = 28)
 
             Spacer(Modifier.width(6.dp))
 
@@ -155,7 +120,8 @@ fun Comment(
             Spacer(Modifier.weight(1f))
 
             Row(
-                modifier = Modifier.width(40.dp)
+                modifier = Modifier
+                    .width(40.dp)
                     .height(40.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically

@@ -38,7 +38,6 @@ fun AppDefaultDialog(
     title : String,
     content : String,
     onDismiss : () -> Unit,
-    onCancelClick : () -> Unit,
 ){
     if (isOpen){
         Dialog(
@@ -72,7 +71,7 @@ fun AppDefaultDialog(
                         .fillMaxWidth()
                         .height(48.dp)
                         .clickable {
-                            onCancelClick()
+                            onDismiss()
                         },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -119,7 +118,6 @@ fun TestDialog(){
             title = "Dialog Test",
             content = "테스트 성공",
             onDismiss = { isOpen = false },
-            onCancelClick = { isOpen = false}
         )
     }
 }

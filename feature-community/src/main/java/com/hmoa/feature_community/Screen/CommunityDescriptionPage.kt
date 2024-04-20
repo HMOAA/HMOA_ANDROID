@@ -1,6 +1,6 @@
 package com.hmoa.feature_community.Screen
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +32,8 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.AppDefaultDialog
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.CommentInputBar
 import com.hmoa.core_designsystem.component.PostContent
@@ -50,38 +53,35 @@ fun CommunityDescriptionRoute(
     val id = _id ?: -1
     viewModel.setId(id)
 
+    val errState = viewModel.errState.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     var type by remember{mutableStateOf("post")}
-    var flag by remember{mutableStateOf(false)}
+
+    val context = LocalContext.current
 
     CommunityDescriptionPage(
-        flag = flag,
-        onFlagChange = {
-            flag = it
-        },
+        errState = errState.value,
         isOpenBottomOptions = isOpenBottomOptions.value,
-        changeBottomOptionState = {
-            viewModel.updateBottomOptionsState(it)
-        },
+        changeBottomOptionState = {viewModel.updateBottomOptionsState(it)},
         type = type,
-        onChangeType = {
-            type = it
-        },
+        onChangeType = {type = it},
         isLiked = isLiked.value,
-        onChangeLike = {
-            viewModel.updateLike()
-        },
+        onChangeLike = {viewModel.updateLike()},
         uiState = uiState.value,
         commentList = comments,
         onNavBack = onNavBack,
         onReportCommunity = {
             viewModel.reportCommunity()
+            viewModel.updateBottomOptionsState(false)
+            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
         },
         onReportComment = {
             viewModel.reportComment(it)
+            viewModel.updateBottomOptionsState(false)
+            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
         },
         onPostComment = {
             viewModel.postComment(it)
@@ -94,22 +94,21 @@ fun CommunityDescriptionRoute(
         onDeleteCommunity = {
             viewModel.delCommunity()
             onNavBack()
+            Toast.makeText(context, "게시글 삭제 완료", Toast.LENGTH_SHORT).show()
         },
         onDeleteComment = { commentId ->
             viewModel.delComment(commentId)
             comments.refresh()
+            Toast.makeText(context, "댓글 삭제", Toast.LENGTH_SHORT).show()
         },
-        onNavCommunityEdit = {
-            onNavCommunityEdit(id)
-        },
+        onNavCommunityEdit = {onNavCommunityEdit(id)},
         onNavCommentEdit = onNavCommentEdit
     )
 }
 
 @Composable
 fun CommunityDescriptionPage(
-    flag : Boolean,
-    onFlagChange : (Boolean) -> Unit,
+    errState : String,
     isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
     type : String,
@@ -134,33 +133,14 @@ fun CommunityDescriptionPage(
 
     val configuration = LocalConfiguration.current
 
-    /** Text Style 정의 */
-    val categoryTextStyle = TextStyle(
-        fontSize = 14.sp,
-        color = CustomColor.gray2
-    )
-    val infoTextStyle = TextStyle(
-        fontSize = 16.sp,
-        color = Color.Black
-    )
-    val commentSizeTextStyle = TextStyle(
-        fontSize = 12.sp,
-        color = Color.Black
-    )
-
     when (uiState) {
         CommunityDescUiState.Loading -> {
-            Column() {
-                Text(
-                    text = "Loading"
-                )
-            }
+            AppLoadingScreen()
         }
 
         is CommunityDescUiState.CommunityDesc -> {
 
             val community = uiState.community
-            onFlagChange(true)
 
             if(isOpenBottomOptions){
                 BottomOptionDialog(
@@ -175,7 +155,6 @@ fun CommunityDescriptionPage(
                     onNavCommentEdit = { onNavCommentEdit(commentId) }
                 )
             }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -199,7 +178,8 @@ fun CommunityDescriptionPage(
                     Text(
                         modifier = Modifier.padding(start = 16.dp),
                         text = uiState.community.category,
-                        style = categoryTextStyle
+                        fontSize = 14.sp,
+                        color = CustomColor.gray2
                     )
                     Spacer(Modifier.height(18.dp))
 
@@ -231,21 +211,22 @@ fun CommunityDescriptionPage(
                     ){
                         Text(
                             text = "답변",
-                            style = infoTextStyle
+                            fontSize = 16.sp,
+                            color = Color.Black
                         )
 
                         Spacer(Modifier.width(4.dp))
 
                         Text(
                             text = "+${commentList.itemCount}",
-                            style = commentSizeTextStyle
+                            fontSize = 12.sp,
+                            color = Color.Black
                         )
                     }
 
                     Spacer(Modifier.height(21.dp))
 
                     Comments(
-                        flag = flag,
                         commentList = commentList.itemSnapshotList,
                         changeBottomOptionState = changeBottomOptionState,
                         onChangeType = onChangeType,
@@ -269,31 +250,33 @@ fun CommunityDescriptionPage(
                 Spacer(Modifier.height(7.dp))
             }
         }
-
         CommunityDescUiState.Error -> {
-            Column {
-                Text(
-                    text = "Data is Error"
-                )
-            }
+            var isOpen by remember{mutableStateOf(true)}
+            AppDefaultDialog(
+                isOpen = isOpen,
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth(0.8f),
+                title = "오류",
+                content = errState,
+                onDismiss = {
+                    isOpen = false
+                    changeBottomOptionState(false)
+                    onNavBack()
+                }
+            )
         }
     }
 }
 
 @Composable
-fun Comments(
-    flag : Boolean,
+private fun Comments(
     commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
     changeBottomOptionState : (Boolean) -> Unit,
     onChangeType: (String) -> Unit,
     onChangeCommentLike : (Int, Boolean) -> Unit,
     setCommentId : (Int) -> Unit,
 ){
-    val noDataTextStyle = TextStyle(
-        fontSize = 20.sp,
-        color = Color.Black
-    )
-
     if (commentList.isNotEmpty()) {
         commentList.reversed().forEachIndexed { index, comment ->
             if (comment != null){
@@ -304,9 +287,7 @@ fun Comments(
                     comment = comment.content,
                     isFirst = false,
                     isSelected = comment.liked,
-                    onChangeSelect = {
-                        onChangeCommentLike(comment.commentId, !comment.liked)
-                    },
+                    onChangeSelect = {onChangeCommentLike(comment.commentId, !comment.liked)},
                     heartCount = comment.heartCount,
                     onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
                     onOpenBottomDialog = {
@@ -322,23 +303,19 @@ fun Comments(
             }
         }
     } else {
-        if (flag){
-            /** Loading Component를 여기서도 띄우는 것이 좋겠다 */
-            Text(text = "댓글 갱신 중~")
-        } else {
-            Spacer(Modifier.height(40.dp))
-            Text(
-                text = "아직 작성한 댓글이 없습니다",
-                style = noDataTextStyle
-            )
-            Spacer(Modifier.height(30.dp))
-        }
+        Spacer(Modifier.height(40.dp))
+        Text(
+            text = "아직 작성한 댓글이 없습니다",
+            fontSize = 20.sp,
+            color = Color.Black
+        )
+        Spacer(Modifier.height(30.dp))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomOptionDialog(
+private fun BottomOptionDialog(
     changeBottomOptionState : (Boolean) -> Unit,
     isWritten : Boolean,
     type : String,
@@ -362,6 +339,7 @@ fun BottomOptionDialog(
         onDismissRequest = { changeBottomOptionState(false) },
         containerColor = Color.White,
         scrimColor = Color.Black.copy(alpha = 0.3f),
+        dragHandle = null
     ) {
         Column(
             modifier = Modifier
@@ -380,8 +358,10 @@ fun BottomOptionDialog(
                         .clickable {
                             //게시글일 경우
                             if (type == "post") {
+                                changeBottomOptionState(false)
                                 onNavCommunityEdit()
                             } else {
+                                changeBottomOptionState(false)
                                 onNavCommentEdit()
                             }
                         },
@@ -402,12 +382,13 @@ fun BottomOptionDialog(
                         .clickable {
                             //post 일 경우
                             if (type == "post") {
+                                changeBottomOptionState(false)
                                 onDeleteCommunity()
                             }
                             //댓글 일 경우
                             else {
-                                onDeleteComment()
                                 changeBottomOptionState(false)
+                                onDeleteComment()
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically

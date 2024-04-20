@@ -50,9 +50,9 @@ import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
 fun CommunityEditRoute(
     id : Int?,
     onNavBack : () -> Unit,
+    onNavCommunityDesc : (Int) -> Unit,
     viewModel : CommunityEditViewModel = hiltViewModel()
 ){
-
     //id가 null이 아니면 view model에 setting
     viewModel.setId(id)
 
@@ -82,11 +82,12 @@ fun CommunityEditRoute(
         onDeletePictures = {
             viewModel.deletePicture(it)
         },
-        onNavBack = onNavBack,
         onPostCommunity = {
             //view model의 update community 사용
             viewModel.updateCommunity()
-        }
+        },
+        onNavBack = onNavBack,
+        onNavCommunityDesc = { onNavCommunityDesc(id!!) }
     )
 }
 
@@ -101,8 +102,9 @@ fun CommunityEditPage(
     pictures : List<Uri>,
     onUpdatePictures : (List<Uri>) -> Unit,
     onDeletePictures : (Uri) -> Unit,
-    onNavBack : () -> Unit,
     onPostCommunity : () -> Unit,
+    onNavBack : () -> Unit,
+    onNavCommunityDesc: () -> Unit
 ){
     val scrollableState = rememberScrollState()
 
@@ -121,7 +123,7 @@ fun CommunityEditPage(
                     onCancelClick = onNavBack,
                     onConfirmClick = {
                         onPostCommunity()
-                        onNavBack()
+                        onNavCommunityDesc()
                     },
                     title = category!!
                 )
@@ -285,7 +287,8 @@ fun EditImageViewPager(
                 verticalAlignment = Alignment.Top
             ){
                 IconButton(
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier
+                        .size(24.dp)
                         .background(color = Color.White, shape = CircleShape)
                         .border(width = 1.dp, color = Color.Black, shape = CircleShape)
                         .clip(CircleShape),

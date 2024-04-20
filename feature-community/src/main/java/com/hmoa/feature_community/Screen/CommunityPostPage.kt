@@ -49,8 +49,8 @@ import com.hmoa.feature_community.ViewModel.CommunityPostViewModel
 
 @Composable
 fun CommunityPostRoute(
-    onNavBack : () -> Unit,
     _category : String?,
+    onNavBack : () -> Unit,
     viewModel : CommunityPostViewModel = hiltViewModel()
 ){
     viewModel.setCategory(_category ?: "")
@@ -105,47 +105,40 @@ fun PostCommunityPage(
 
     val context = LocalContext.current
 
-    when(errState) {
-        null -> {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ){
-                //unique top bar
-                CommunityPostTopBar(
-                    context = context,
-                    title = category.name,
-                    isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
-                    onPostCommunity = onPostCommunity,
-                    onNavBack = onNavBack
-                )
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ){
+        //unique top bar
+        CommunityPostTopBar(
+            context = context,
+            title = category.name,
+            isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
+            onPostCommunity = onPostCommunity,
+            onNavBack = onNavBack
+        )
 
-                HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-                TextFieldTitle(
-                    title = title,
-                    onTitleChanged = onTitleChanged
-                )
+        TextFieldTitle(
+            title = title,
+            onTitleChanged = onTitleChanged
+        )
 
-                HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-                TextFieldContent(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = 33.dp, vertical = 27.dp)
-                        .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
-                    content = content,
-                    onContentChanged = onContentChanged,
-                    pictures = pictures,
-                    onDeletePictures = onDeletePictures
-                )
+        TextFieldContent(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 33.dp, vertical = 27.dp)
+                .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
+            content = content,
+            onContentChanged = onContentChanged,
+            pictures = pictures,
+            onDeletePictures = onDeletePictures
+        )
 
-                BottomCameraBtn(onUpdatePictures)
-            }
-        }
-        else -> {
-            /** err state에 대한 메세지를 띄우고 onNavBack() 하는 것이 좋을 듯 */
-        }
+        BottomCameraBtn(onUpdatePictures)
     }
 }
 

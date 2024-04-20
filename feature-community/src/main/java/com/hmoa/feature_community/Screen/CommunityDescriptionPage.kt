@@ -270,7 +270,7 @@ fun CommunityDescriptionPage(
 }
 
 @Composable
-fun Comments(
+private fun Comments(
     commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
     changeBottomOptionState : (Boolean) -> Unit,
     onChangeType: (String) -> Unit,
@@ -315,7 +315,7 @@ fun Comments(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomOptionDialog(
+private fun BottomOptionDialog(
     changeBottomOptionState : (Boolean) -> Unit,
     isWritten : Boolean,
     type : String,
@@ -358,8 +358,10 @@ fun BottomOptionDialog(
                         .clickable {
                             //게시글일 경우
                             if (type == "post") {
+                                changeBottomOptionState(false)
                                 onNavCommunityEdit()
                             } else {
+                                changeBottomOptionState(false)
                                 onNavCommentEdit()
                             }
                         },
@@ -380,12 +382,13 @@ fun BottomOptionDialog(
                         .clickable {
                             //post 일 경우
                             if (type == "post") {
+                                changeBottomOptionState(false)
                                 onDeleteCommunity()
                             }
                             //댓글 일 경우
                             else {
-                                onDeleteComment()
                                 changeBottomOptionState(false)
+                                onDeleteComment()
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically

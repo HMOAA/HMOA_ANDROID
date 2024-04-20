@@ -167,7 +167,7 @@ fun CommunityEditPage(
 }
 
 @Composable
-fun EditTitleTextField(
+private fun EditTitleTextField(
     title : String,
     onTitleChanged : (String) -> Unit,
 ){
@@ -222,7 +222,7 @@ fun EditTitleTextField(
 }
 
 @Composable
-fun EditContentTextField(
+private fun EditContentTextField(
     content : String,
     onContentChanged: (String) -> Unit
 ){
@@ -252,7 +252,7 @@ fun EditContentTextField(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun EditImageViewPager(
+private fun EditImageViewPager(
     pictures: List<Uri>,
     onDeletePictures : (Uri) -> Unit
 ){

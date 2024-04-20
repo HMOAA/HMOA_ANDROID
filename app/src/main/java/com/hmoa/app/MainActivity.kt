@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.navigateToBack
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         createRoute()
 
         setContent {
@@ -110,6 +112,7 @@ class MainActivity : AppCompatActivity() {
 
 
             Scaffold(
+                modifier = Modifier.systemBarsPadding(),
                 backgroundColor = Color.White,
                 bottomBar = {
                     if (isBottomBarVisible) {

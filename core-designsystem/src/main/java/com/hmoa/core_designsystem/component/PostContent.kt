@@ -107,46 +107,15 @@ fun PostContent(
             verticalAlignment = Alignment.CenterVertically
         ){
             //profile
-            GlideImage(
-                imageModel = profile,
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape),
-                contentDescription = "Profile",
-                loading = {
-                    CircularProgressIndicator(
-                        color = CustomColor.gray2
-                    )
-                },
-                failure = {
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(color = Color.White, shape = CircleShape)
-                    ){
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Not Loading Profile",
-                            tint = CustomColor.gray2
-                        )
-                    }
-                }
-            )
+            CircleImageView(imgUrl = profile, height = 28, width = 28)
 
             Spacer(Modifier.width(8.dp))
 
-            Text(
-                text = nickname,
-                style = nicknameTextStyle
-            )
+            Text(text = nickname,style = nicknameTextStyle)
 
             Spacer(Modifier.width(7.dp))
 
-            Text(
-                text = dateDiff,
-                style = dateDiffTextStyle
-            )
+            Text(text = dateDiff,style = dateDiffTextStyle)
 
             Spacer(Modifier.weight(1f))
 
@@ -176,18 +145,12 @@ fun PostContent(
 
             Spacer(Modifier.width(8.dp))
 
-            Text(
-                text = title,
-                style = titleTextStyle
-            )
+            Text(text = title,style = titleTextStyle)
         }
 
         Spacer(Modifier.height(15.dp))
 
-        Text(
-            text = content,
-            style = contentTextStyle
-        )
+        Text(text = content,style = contentTextStyle)
 
         if(pictures.isNotEmpty()){
             Spacer(Modifier.height(17.dp))
@@ -199,9 +162,7 @@ fun PostContent(
                     .align(Alignment.CenterHorizontally),
                 state = state
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ){
+                Column(modifier = Modifier.fillMaxSize()){
                     ExpandableImage(
                         modifier = Modifier.requiredWidth(width),
                         picture = pictures[it],
@@ -235,7 +196,6 @@ fun PostContent(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ){
-
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
@@ -252,10 +212,7 @@ fun PostContent(
 
             Spacer(Modifier.width(5.dp))
 
-            Text(
-                text = heartCount,
-                style = viewNumberTextStyle
-            )
+            Text(text = heartCount,style = viewNumberTextStyle)
         }
 
         Spacer(Modifier.height(14.dp))
@@ -263,7 +220,7 @@ fun PostContent(
 }
 
 @Composable
-fun ExpandableImage(
+private fun ExpandableImage(
     modifier : Modifier,
     width : Float,
     height : Float,

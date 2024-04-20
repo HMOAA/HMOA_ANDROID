@@ -29,7 +29,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import kotlinx.coroutines.delay
 
 @Composable
-fun AppLoadingDialog(){
+fun AppLoadingScreen(){
 
     var i by remember{mutableIntStateOf(0)}
     val loadingPainters = listOf(
@@ -72,5 +72,5 @@ fun AppLoadingDialog(){
 @Preview
 @Composable
 fun TestLoading(){
-    AppLoadingDialog()
+    AppLoadingScreen()
 }

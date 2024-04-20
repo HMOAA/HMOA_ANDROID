@@ -1,6 +1,5 @@
 package com.hmoa.feature_community.Screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.TopBarWithEvent
 import com.hmoa.feature_community.ViewModel.CommunityCommentEditUiState
 import com.hmoa.feature_community.ViewModel.CommunityCommentEditViewModel
@@ -27,7 +27,6 @@ fun CommunityCommentEditRoute(
     onNavBack : () -> Unit,
     viewModel : CommunityCommentEditViewModel = hiltViewModel()
 ){
-    Log.d("TAG TEST", "comment id : ${_commentId}")
     viewModel.setId(_commentId)
 
     val comment = viewModel.comment.collectAsStateWithLifecycle()
@@ -57,7 +56,7 @@ fun CommunityCommentEditScreen(
 ){
     when(uiState){
         CommunityCommentEditUiState.Loading -> {
-            Text("로딩 중")
+            AppLoadingScreen()
         }
         CommunityCommentEditUiState.Comment -> {
             Column(

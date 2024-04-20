@@ -33,7 +33,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.AppDefaultDialog
-import com.hmoa.core_designsystem.component.AppLoadingDialog
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.CommentInputBar
 import com.hmoa.core_designsystem.component.PostContent
@@ -135,7 +135,7 @@ fun CommunityDescriptionPage(
 
     when (uiState) {
         CommunityDescUiState.Loading -> {
-            AppLoadingDialog()
+            AppLoadingScreen()
         }
 
         is CommunityDescUiState.CommunityDesc -> {

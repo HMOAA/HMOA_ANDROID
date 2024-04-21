@@ -16,7 +16,7 @@ class MemberRepositoryImpl @Inject constructor(
     private val memberDataStore: MemberDataStore
 ) : com.hmoa.core_domain.repository.MemberRepository {
 
-    override suspend fun getMember(): MemberResponseDto {
+    override suspend fun getMember(): ResultResponse<MemberResponseDto> {
         return memberDataStore.getMember()
     }
 

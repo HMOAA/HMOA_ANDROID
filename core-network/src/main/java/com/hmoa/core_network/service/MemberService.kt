@@ -13,7 +13,7 @@ import retrofit2.http.*
 
 interface MemberService {
     @GET("/member")
-    suspend fun getMember(): MemberResponseDto
+    suspend fun getMember(): ApiResponse<MemberResponseDto>
 
     @PATCH("/member/age")
     suspend fun updateAge(@Body request: AgeRequestDto): DataResponseDto<Any>

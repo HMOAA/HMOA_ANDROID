@@ -18,8 +18,14 @@ import javax.inject.Inject
 class MemberDataStoreImpl @Inject constructor(
     private val memberService: MemberService
 ) : MemberDataStore {
-    override suspend fun getMember(): MemberResponseDto {
-        return memberService.getMember()
+    override suspend fun getMember(): ResultResponse<MemberResponseDto> {
+        val result = ResultResponse<MemberResponseDto>()
+        memberService.getMember().suspendOnSuccess {
+            result.data= this.data
+        }.suspendOnError{
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {

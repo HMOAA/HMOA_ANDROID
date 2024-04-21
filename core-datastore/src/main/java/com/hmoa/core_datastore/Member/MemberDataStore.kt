@@ -11,7 +11,7 @@ import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 
 interface MemberDataStore {
-    suspend fun getMember(): MemberResponseDto
+    suspend fun getMember(): ResultResponse<MemberResponseDto>
     suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any>
     suspend fun getCommunities(page: Int): List<CommunityByCategoryResponseDto>
     suspend fun getCommunityComments(page: Int): List<CommunityCommentDefaultResponseDto>

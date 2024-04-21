@@ -1,35 +1,35 @@
 package com.hmoa.core_domain.usecase
 
+import ResultResponse
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.data.UserInfo
-import kotlinx.coroutines.flow.flow
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 class GetMyUserInfoUseCase @Inject constructor(
     private val memberRepository : MemberRepository
 ){
 
-    operator fun invoke() = flow{
-        val result = memberRepository.getMember()
+    suspend operator fun invoke() : ResultResponse<UserInfo> {
 
-        val todayYear = LocalDateTime.now().year
+        val response = memberRepository.getMember()
+        val result = ResultResponse<UserInfo>()
+        if (response.exception is Exception){
+            result.exception = response.exception
+        } else {
+            val todayYear = LocalDateTime.now().year
+            val birth = todayYear - response.data!!.age + 1
+            val gender = if (response.data!!.sex) "male" else "female"
 
-        val birth = todayYear - result.age + 1
-        val gender = if (result.sex) "male" else "female"
-
-        val user = UserInfo(
-            birth = birth,
-            gender = gender,
-            profile = result.memberImageUrl,
-            nickname = result.nickname,
-            provider = result.provider
-        )
-        emit(user)
+            val user = UserInfo(
+                birth = birth,
+                gender = gender,
+                profile = response.data!!.memberImageUrl,
+                nickname = response.data!!.nickname,
+                provider = response.data!!.provider
+            )
+            result.data = user
+        }
+        return result
     }
-
 }

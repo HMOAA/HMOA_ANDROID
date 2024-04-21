@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature_userinfo.viewModel.FavoriteCommentUiState
 import com.example.feature_userinfo.viewModel.FavoriteCommentViewModel
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.AppLoadingDialog
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.feature_userinfo.Screen.NoDataPage
 
@@ -56,6 +57,11 @@ fun MyFavoriteCommentPage(
     onAddPage: () -> Unit,
     onTypeChanged: (newType: String) -> Unit,
 ) {
+    when(uiState){
+        FavoriteCommentUiState.Loading -> {
+            AppLoadingDialog()
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

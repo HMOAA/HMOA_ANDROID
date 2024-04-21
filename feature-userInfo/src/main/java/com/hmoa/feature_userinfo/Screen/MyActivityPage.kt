@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -22,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.R
 
 @Composable
@@ -46,6 +52,11 @@ fun MyActivityPage(
     onNavMyPost : () -> Unit,
     onNavBack : () -> Unit
 ){
+    val columnData = listOf(
+        ColumnData("좋아요 누른 댓글"){onNavMyFavoriteComment()},
+        ColumnData("작성한 댓글"){onNavMyComment()},
+        ColumnData("작성한 게시글"){onNavMyPost()}
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,101 +65,40 @@ fun MyActivityPage(
         TopBar(
             title = "내 활동",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack //뒤로 가기
+            onNavClick = onNavBack
         )
+        LazyColumn{
+            itemsIndexed(columnData){idx, data ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Text(
+                        text = data.title,
+                        fontSize = 16.sp
+                    )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Text(
-                text = "좋아요 누른 댓글",
-                fontSize = 16.sp
-            )
-
-            IconButton(
-                modifier = Modifier.size(20.dp),
-                onClick = onNavMyFavoriteComment // 좋아요 누른 댓글
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
-                    contentDescription = "Nav Button",
-                    tint = Color(0xFFBBBBBB)
-                )
+                    IconButton(
+                        modifier = Modifier.size(20.dp),
+                        onClick = data.onNavClick
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
+                            contentDescription = "Nav Button",
+                            tint = CustomColor.gray2
+                        )
+                    }
+                }
+                if (idx != columnData.lastIndex){
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                }
             }
         }
-
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Text(
-                text = "작성한 댓글",
-                fontSize = 16.sp
-            )
-
-            IconButton(
-                modifier = Modifier.size(20.dp),
-                onClick = onNavMyComment // 작성한 댓글로 이동
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
-                    contentDescription = "Nav Button",
-                    tint = Color(0xFFBBBBBB)
-                )
-            }
-        }
-
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Text(
-                text = "작성한 게시글",
-                fontSize = 16.sp
-            )
-
-            IconButton(
-                modifier = Modifier.size(20.dp),
-                onClick = onNavMyPost //작성한 게시글로 이동
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
-                    contentDescription = "Nav Button",
-                    tint = Color(0xFFBBBBBB)
-                )
-            }
-        }
-
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp))
     }
 }
 

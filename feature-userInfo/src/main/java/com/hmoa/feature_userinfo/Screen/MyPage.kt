@@ -37,6 +37,7 @@ import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.OnAndOffBtn
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.UserInfo
+import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 
 @Composable
@@ -80,14 +81,14 @@ fun MyPage(
     onNavLogin : () -> Unit
 ){
     val columnInfo = listOf(
-        UserInfoColumn("내 활동"){onNavMyActivity()},
-        UserInfoColumn("내 정보관리"){onNavManageMyInfo()},
-        UserInfoColumn("이용 약관"){ },
-        UserInfoColumn("개인정보 처리방침"){  },
-        UserInfoColumn("버전 정보"){},
-        UserInfoColumn("1대1 문의"){},
-        UserInfoColumn("로그아웃"){},
-        UserInfoColumn("계정삭제") {
+        ColumnData("내 활동"){onNavMyActivity()},
+        ColumnData("내 정보관리"){onNavManageMyInfo()},
+        ColumnData("이용 약관"){ },
+        ColumnData("개인정보 처리방침"){  },
+        ColumnData("버전 정보"){},
+        ColumnData("1대1 문의"){},
+        ColumnData("로그아웃"){},
+        ColumnData("계정삭제") {
             onDelAccount()
             onNavLogin()
         },
@@ -241,8 +242,3 @@ private fun ServiceAlarm(
         OnAndOffBtn()
     }
 }
-
-private data class UserInfoColumn(
-    val title : String,
-    val onNavClick : () -> Unit,
-)

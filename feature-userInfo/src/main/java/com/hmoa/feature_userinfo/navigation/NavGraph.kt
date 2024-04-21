@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.userinfo.MyActivityPage
+import com.example.userinfo.MyActivityRoute
 import com.example.userinfo.MyCommentRoute
 import com.example.userinfo.MyPageRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
@@ -81,7 +81,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoGraph.MyActivityRoute.name) {
-            MyActivityPage(
+            MyActivityRoute(
                 onNavMyFavoriteComment = onNavMyFavoriteComment,
                 onNavMyComment = onNavMyComment,
                 onNavMyPost = onNavMyPost,

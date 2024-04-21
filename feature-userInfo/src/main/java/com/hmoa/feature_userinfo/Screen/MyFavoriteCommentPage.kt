@@ -1,6 +1,5 @@
 package com.hmoa.feature_userinfo
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +17,7 @@ import com.example.feature_userinfo.viewModel.FavoriteCommentUiState
 import com.example.feature_userinfo.viewModel.FavoriteCommentViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.feature_userinfo.Screen.NoDataPage
 
 @Composable
 fun MyFavoriteCommentRoute(
@@ -62,7 +62,7 @@ fun MyFavoriteCommentPage(
             .background(color = Color.White)
     ) {
         TopBar(
-            navIcon = painterResource(R.drawable.back_btn),
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             title = "좋아요 누른 댓글",
             onNavClick = onNavBack //뒤로 가기
         )

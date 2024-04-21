@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.theme.CustomColor
 
 //인증이 안되어 있는 My Page
 @Composable
@@ -61,7 +62,7 @@ fun NoAuthMyPage(
                     modifier = Modifier.fillMaxSize(),
                     painter = painterResource(R.drawable.next_btn),
                     contentDescription = "Nav Button",
-                    tint = Color(0xFFBBBBBB)
+                    tint = CustomColor.gray2
                 )
             }
         }

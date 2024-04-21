@@ -19,6 +19,7 @@ import com.example.feature_userinfo.viewModel.PostViewModel
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.feature_userinfo.Screen.NoDataPage
 
 @Composable
 fun MyPostRoute(
@@ -61,7 +62,7 @@ fun MyPostPage(
             .background(color = Color.White)
     ) {
         TopBar(
-            navIcon = painterResource(R.drawable.back_btn),
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             title = "작성한 게시글",
             onNavClick = onNavBack
         )

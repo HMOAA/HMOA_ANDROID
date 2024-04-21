@@ -64,7 +64,7 @@ fun MyGenderPage(
                     .background(color = Color.White)
             ) {
                 TopBar(
-                    navIcon = painterResource(R.drawable.back_btn),
+                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
                     onNavClick = onNavBack, //뒤로 가기
                     title = "성별"
                 )

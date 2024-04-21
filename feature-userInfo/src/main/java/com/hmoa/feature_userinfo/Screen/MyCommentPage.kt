@@ -23,8 +23,8 @@ import com.hmoa.feature_userinfo.viewModel.CommentUiState
 import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Comment
-import com.hmoa.feature_userinfo.NoDataPage
 import com.hmoa.feature_userinfo.R
+import com.hmoa.feature_userinfo.Screen.NoDataPage
 
 @Composable
 fun MyCommentRoute(
@@ -70,7 +70,7 @@ fun MyCommentPage(
     ){
         //Toolbar
         TopBar(
-            navIcon = painterResource(R.drawable.back_btn),
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             title = "작성한 댓글",
             onNavClick = onNavBack //뒤로 가기
         )

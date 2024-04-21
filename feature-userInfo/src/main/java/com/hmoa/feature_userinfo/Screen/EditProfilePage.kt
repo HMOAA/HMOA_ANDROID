@@ -79,14 +79,14 @@ fun EditProfilePage(
 
         }
 
-        is UserInfoUiState.UserInfo -> {
+        is UserInfoUiState.User -> {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color.White)
             ) {
                 TopBar(
-                    navIcon = painterResource(R.drawable.back_btn),
+                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
                     onNavClick = onNavBack,
                     title = "프로필 수정",
                 )

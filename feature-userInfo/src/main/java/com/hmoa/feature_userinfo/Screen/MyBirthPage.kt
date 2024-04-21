@@ -82,7 +82,7 @@ fun MyBirthPage(
                     .background(color = Color.White)
             ) {
                 TopBar(
-                    navIcon = painterResource(R.drawable.back_btn),
+                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
                     onNavClick = onNavBack,
                     title = "출생연도"
                 )

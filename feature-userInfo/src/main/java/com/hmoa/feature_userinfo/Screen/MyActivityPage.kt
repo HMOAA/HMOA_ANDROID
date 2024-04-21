@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.example.userinfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,29 +21,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.TopBar
 import com.hmoa.feature_userinfo.R
 
 @Composable
-fun MyInfoRoute(
+fun MyActivityRoute(
+    onNavMyFavoriteComment: () -> Unit,
+    onNavMyComment : () -> Unit,
+    onNavMyPost : () -> Unit,
     onNavBack : () -> Unit,
-    onNavMyBirth : () -> Unit,
-    onNavMyGender : () -> Unit,
 ){
-    MyInfoPage(
-        onNavBack = onNavBack,
-        onNavMyBirth = onNavMyBirth,
-        onNavMyGender = onNavMyGender
+    MyActivityPage(
+        onNavMyFavoriteComment = onNavMyFavoriteComment,
+        onNavMyComment = onNavMyComment,
+        onNavMyPost = onNavMyPost,
+        onNavBack = onNavBack
     )
 }
 
 @Composable
-fun MyInfoPage(
-    onNavBack : () -> Unit,
-    onNavMyBirth : () -> Unit,
-    onNavMyGender : () -> Unit,
+fun MyActivityPage(
+    onNavMyFavoriteComment : () -> Unit,
+    onNavMyComment : () -> Unit,
+    onNavMyPost : () -> Unit,
+    onNavBack : () -> Unit
 ){
     Column(
         modifier = Modifier
@@ -54,9 +52,9 @@ fun MyInfoPage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = painterResource(R.drawable.back_btn),
-            onNavClick = onNavBack, //뒤오 가기
-            title = "내 정보"
+            title = "내 활동",
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            onNavClick = onNavBack //뒤로 가기
         )
 
         Row(
@@ -68,18 +66,18 @@ fun MyInfoPage(
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             Text(
-                text = "출생연도",
-                fontSize = 16.sp,
+                text = "좋아요 누른 댓글",
+                fontSize = 16.sp
             )
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavMyBirth //출생연도 수정 이동
+                onClick = onNavMyFavoriteComment // 좋아요 누른 댓글
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
                     painter = painterResource(R.drawable.next_btn),
-                    contentDescription = "Navigation Button",
+                    contentDescription = "Nav Button",
                     tint = Color(0xFFBBBBBB)
                 )
             }
@@ -99,18 +97,49 @@ fun MyInfoPage(
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             Text(
-                text = "출생연도",
-                fontSize = 16.sp,
+                text = "작성한 댓글",
+                fontSize = 16.sp
             )
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavMyGender // 내 성별
+                onClick = onNavMyComment // 작성한 댓글로 이동
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
                     painter = painterResource(R.drawable.next_btn),
-                    contentDescription = "Navigation Button",
+                    contentDescription = "Nav Button",
+                    tint = Color(0xFFBBBBBB)
+                )
+            }
+        }
+
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(
+                text = "작성한 게시글",
+                fontSize = 16.sp
+            )
+
+            IconButton(
+                modifier = Modifier.size(20.dp),
+                onClick = onNavMyPost //작성한 게시글로 이동
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.next_btn),
+                    contentDescription = "Nav Button",
                     tint = Color(0xFFBBBBBB)
                 )
             }
@@ -123,12 +152,13 @@ fun MyInfoPage(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun TestMyInfoPage(){
-    MyInfoPage(
-        onNavBack = {},
-        onNavMyBirth = {},
-        onNavMyGender = {}
+fun TestMyActivity(){
+    MyActivityPage(
+        onNavMyFavoriteComment = {},
+        onNavMyComment = {},
+        onNavMyPost = {},
+        onNavBack = {}
     )
 }

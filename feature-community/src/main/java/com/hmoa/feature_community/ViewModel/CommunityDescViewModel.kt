@@ -1,6 +1,5 @@
 package com.hmoa.feature_community.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -35,7 +34,7 @@ import javax.inject.Inject
 class CommunityDescViewModel @Inject constructor(
     private val communityRepository: CommunityRepository,
     private val communityCommentRepository: CommunityCommentRepository,
-    private val reportRepository : ReportRepository
+    private val reportRepository : ReportRepository,
 ) : ViewModel() {
 
     //바텀 다이얼로그 state
@@ -86,7 +85,6 @@ class CommunityDescViewModel @Inject constructor(
             }
             communityResult is Result.Loading -> CommunityDescUiState.Loading
             else -> {
-                Log.d("TAG TEST", "comment : ${commentsResult}")
                 CommunityDescUiState.CommunityDesc(
                     (communityResult as Result.Success).data,
                     commentsResult,

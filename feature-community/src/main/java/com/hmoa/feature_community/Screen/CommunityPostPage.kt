@@ -2,10 +2,8 @@ package com.hmoa.feature_community.Screen
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -15,8 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,22 +30,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -57,8 +49,8 @@ import com.hmoa.feature_community.ViewModel.CommunityPostViewModel
 
 @Composable
 fun CommunityPostRoute(
-    onNavBack : () -> Unit,
     _category : String?,
+    onNavBack : () -> Unit,
     viewModel : CommunityPostViewModel = hiltViewModel()
 ){
     viewModel.setCategory(_category ?: "")
@@ -113,59 +105,40 @@ fun PostCommunityPage(
 
     val context = LocalContext.current
 
-    val isDataEmpty by remember{
-        mutableStateOf(title.isNotEmpty() && content.isNotEmpty())
-    }
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ){
+        //unique top bar
+        CommunityPostTopBar(
+            context = context,
+            title = category.name,
+            isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
+            onPostCommunity = onPostCommunity,
+            onNavBack = onNavBack
+        )
 
-    when(errState) {
-        null -> {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ){
-                //unique top bar
-                CommunityPostTopBar(
-                    context = context,
-                    title = category.name,
-                    isDataEmpty = isDataEmpty,
-                    onPostCommunity = onPostCommunity,
-                    onNavBack = onNavBack
-                )
+        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-                HorizontalDivider(
-                    Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = Color.Black
-                )
+        TextFieldTitle(
+            title = title,
+            onTitleChanged = onTitleChanged
+        )
 
-                TextFieldTitle(
-                    title = title,
-                    onTitleChanged = onTitleChanged
-                )
+        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-                HorizontalDivider(
-                    Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = Color.Black
-                )
+        TextFieldContent(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 33.dp, vertical = 27.dp)
+                .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
+            content = content,
+            onContentChanged = onContentChanged,
+            pictures = pictures,
+            onDeletePictures = onDeletePictures
+        )
 
-                TextFieldContent(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = 33.dp, vertical = 27.dp)
-                        .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
-                    content = content,
-                    onContentChanged = onContentChanged,
-                    pictures = pictures,
-                    onDeletePictures = onDeletePictures
-                )
-
-                BottomCameraBtn(onUpdatePictures)
-            }
-        }
-        else -> {
-            /** err state에 대한 메세지를 띄우고 onNavBack() 하는 것이 좋을 듯 */
-        }
+        BottomCameraBtn(onUpdatePictures)
     }
 }
 
@@ -380,44 +353,6 @@ fun TextFieldContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun BottomCameraBtn(
-    onUpdatePictures : (List<Uri>) -> Unit,
-){
-    //갤러리에서 사진 가져오기
-    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = {uris ->
-            onUpdatePictures(uris)
-        }
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp),
-    ){
-        IconButton(
-            modifier = Modifier
-                .fillMaxHeight()
-                .aspectRatio(1f),
-            onClick = {
-                multiplePhotoPickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
-                )
-            }
-        ){
-            Icon(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_camera),
-                contentDescription = "Add Picture"
-            )
         }
     }
 }

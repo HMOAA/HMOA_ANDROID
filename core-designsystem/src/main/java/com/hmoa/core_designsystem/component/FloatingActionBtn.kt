@@ -55,12 +55,17 @@ fun FloatingActionBtn(
         modifier = Modifier.width(135.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(end = 8.dp),
             horizontalArrangement = Arrangement.End
         ){
             Icon(
-                modifier = Modifier.size(56.dp).clip(CircleShape).clickable { isOpen = !isOpen },
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+                    .clickable { isOpen = !isOpen }
+                    .background(color = Color.White, shape = CircleShape),
                 painter = painterResource(if(isOpen) R.drawable.ic_loading_3 else R.drawable.ic_fab),
                 contentDescription = "FAB"
             )
@@ -87,17 +92,23 @@ fun FloatingActionBtn(
                         style = textStyle
                     )
                 },
-                onClick = onNavRecommend
+                onClick = {
+                    isOpen = false
+                    onNavRecommend()
+                }
             )
             DropdownMenuItem(
                 text = {
                     Text(
                         modifier = Modifier.height(46.dp),
-                        text = "선물",
+                        text = "시향기",
                         style = textStyle
                     )
                 },
-                onClick = onNavPresent
+                onClick = {
+                    isOpen = false
+                    onNavPresent()
+                }
             )
             DropdownMenuItem(
                 text = {
@@ -107,7 +118,10 @@ fun FloatingActionBtn(
                         style = textStyle
                     )
                 },
-                onClick = onNavFree
+                onClick = {
+                    isOpen = false
+                    onNavFree()
+                }
             )
         }
     }

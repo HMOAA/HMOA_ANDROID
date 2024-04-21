@@ -20,8 +20,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -45,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.skydoves.landscapist.glide.GlideImage
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -106,46 +103,15 @@ fun PostContent(
             verticalAlignment = Alignment.CenterVertically
         ){
             //profile
-            GlideImage(
-                imageModel = profile,
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape),
-                contentDescription = "Profile",
-                loading = {
-                    CircularProgressIndicator(
-                        color = CustomColor.gray2
-                    )
-                },
-                failure = {
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(color = Color.White, shape = CircleShape)
-                    ){
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Not Loading Profile",
-                            tint = CustomColor.gray2
-                        )
-                    }
-                }
-            )
+            CircleImageView(imgUrl = profile, height = 28, width = 28)
 
             Spacer(Modifier.width(8.dp))
 
-            Text(
-                text = nickname,
-                style = nicknameTextStyle
-            )
+            Text(text = nickname,style = nicknameTextStyle)
 
             Spacer(Modifier.width(7.dp))
 
-            Text(
-                text = dateDiff,
-                style = dateDiffTextStyle
-            )
+            Text(text = dateDiff,style = dateDiffTextStyle)
 
             Spacer(Modifier.weight(1f))
 
@@ -175,18 +141,12 @@ fun PostContent(
 
             Spacer(Modifier.width(8.dp))
 
-            Text(
-                text = title,
-                style = titleTextStyle
-            )
+            Text(text = title,style = titleTextStyle)
         }
 
         Spacer(Modifier.height(15.dp))
 
-        Text(
-            text = content,
-            style = contentTextStyle
-        )
+        Text(text = content,style = contentTextStyle)
 
         if(pictures.isNotEmpty()){
             Spacer(Modifier.height(17.dp))
@@ -198,34 +158,30 @@ fun PostContent(
                     .align(Alignment.CenterHorizontally),
                 state = state
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ){
+                Column(modifier = Modifier.fillMaxSize()){
                     ExpandableImage(
                         modifier = Modifier.requiredWidth(width),
                         picture = pictures[it],
                         width = screenWidth,
                         height = screenHeight
                     )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(30.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ){
-                        pictures.forEach{picture ->
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(color = if (picture == pictures[it]) Color.Black else CustomColor.gray4)
-                            )
-                        }
-                    }
                 }
-
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally)
+            ){
+                for(i in pictures.indices){
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(color = if (i == state.currentPage) Color.Black else CustomColor.blackTrans30, shape = CircleShape)
+                            .clip(CircleShape)
+                    )
+                }
             }
         }
 
@@ -236,7 +192,6 @@ fun PostContent(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ){
-
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = {
@@ -253,10 +208,7 @@ fun PostContent(
 
             Spacer(Modifier.width(5.dp))
 
-            Text(
-                text = heartCount,
-                style = viewNumberTextStyle
-            )
+            Text(text = heartCount,style = viewNumberTextStyle)
         }
 
         Spacer(Modifier.height(14.dp))
@@ -264,13 +216,12 @@ fun PostContent(
 }
 
 @Composable
-fun ExpandableImage(
+private fun ExpandableImage(
     modifier : Modifier,
     width : Float,
     height : Float,
     picture : String
 ){
-
     var showDialog by remember{mutableStateOf(false)}
 
     if (showDialog) {
@@ -287,7 +238,7 @@ fun ExpandableImage(
                     width = 1f,
                     height = 1f,
                     backgroundColor = Color.Black,
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.FillWidth
                 )
                 Row(
                     modifier = Modifier.fillMaxSize()
@@ -327,7 +278,7 @@ fun ExpandableImage(
             width = 1f,
             height = 1f,
             backgroundColor = CustomColor.gray1,
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.FillWidth
         )
     }
 }

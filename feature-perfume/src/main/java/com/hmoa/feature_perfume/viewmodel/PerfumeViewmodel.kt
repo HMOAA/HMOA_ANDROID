@@ -33,7 +33,7 @@ class PerfumeViewmodel @Inject constructor(
     private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
     private var genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
     private var ageState = MutableStateFlow<PerfumeAgeResponseDto?>(null)
-    private var perfumeCommentDataState = MutableStateFlow<PerfumeCommentGetResponseDto?>(null)
+    private var perfumeCommentsState = MutableStateFlow<PerfumeCommentGetResponseDto?>(null)
     private var _perfumeCommentIdStateToReport = MutableStateFlow<Int?>(null)
     val perfumeCommentIdStateToReport = _perfumeCommentIdStateToReport
 
@@ -43,14 +43,14 @@ class PerfumeViewmodel @Inject constructor(
             genderState,
             ageState,
             perfumeState,
-            perfumeCommentDataState
-        ) { weather, gender, age, perfume, perfumeCommentData ->
+            perfumeCommentsState
+        ) { weather, gender, age, perfume, perfumeComments ->
             PerfumeUiState.PerfumeData(
                 data = perfume,
                 weather = weather,
                 age = age,
                 gender = gender,
-                perfumeCommentData = perfumeCommentData
+                perfumeComments = perfumeComments
             )
         }
             .stateIn(
@@ -111,7 +111,7 @@ class PerfumeViewmodel @Inject constructor(
                 when (result) {
                     is Result.Success -> {
                         perfumeState.update { result.data }
-                        perfumeCommentDataState.update { result.data.commentInfo }
+                        perfumeCommentsState.update { result.data.commentInfo }
                     }
 
                     is Result.Loading -> {}
@@ -177,9 +177,16 @@ class PerfumeViewmodel @Inject constructor(
                     is Result.Loading -> {}
                     is Result.Success -> {
                         val oldPerfumeComments = perfumeState.value?.commentInfo?.comments
-                        perfumeState.value?.commentInfo?.comments = listOf()
-                        perfumeState.value?.commentInfo?.comments =
-                            updatePerfumeCommentState(index, like, oldPerfumeComments) ?: emptyList()
+                        val newPerfumeComments = updatePerfumeCommentState(index, like, oldPerfumeComments)
+                        perfumeCommentsState.update {
+                            PerfumeCommentGetResponseDto(
+                                commentCount = newPerfumeComments?.size ?: 0,
+                                comments = newPerfumeComments ?: emptyList(),
+                                lastPage = false
+                            )
+                        }
+                        Log.d("PerfumeViewmodel", "새 리스트: ${newPerfumeComments}")
+                        Log.d("PerfumeViewmodel", "perfumeCommentsState: ${perfumeCommentsState.value}")
                     }
 
                     is Result.Error -> {}
@@ -193,15 +200,16 @@ class PerfumeViewmodel @Inject constructor(
         like: Boolean,
         oldPerfumeComments: List<PerfumeCommentResponseDto>?
     ): List<PerfumeCommentResponseDto>? {
-        val likeTargetPerfumeComment = oldPerfumeComments?.get(index)
-        val newPerfumeComments = oldPerfumeComments?.toMutableList()
-        likeTargetPerfumeComment?.liked = like
+        var likeTargetPerfumeComment = oldPerfumeComments?.get(index)
+        var newPerfumeComments = oldPerfumeComments?.toMutableList()
+
         when (like) {
             true -> likeTargetPerfumeComment?.heartCount?.plus(1)
             false -> likeTargetPerfumeComment?.heartCount?.minus(-1)
         }
+        likeTargetPerfumeComment?.liked = like
         newPerfumeComments?.set(index, likeTargetPerfumeComment!!)
-        Log.d("PerfumeViewModel", "새 리스트: ${newPerfumeComments}")
+
         return newPerfumeComments?.toList()
     }
 
@@ -225,7 +233,7 @@ class PerfumeViewmodel @Inject constructor(
             val weather: PerfumeWeatherResponseDto?,
             val gender: PerfumeGenderResponseDto?,
             val age: PerfumeAgeResponseDto?,
-            val perfumeCommentData: PerfumeCommentGetResponseDto?,
+            val perfumeComments: PerfumeCommentGetResponseDto?
         ) : PerfumeUiState
 
         data object Empty : PerfumeUiState

@@ -105,6 +105,7 @@ fun PerfumeScreen(
                     weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
                     gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
                     age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
+                    perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
                     onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
                     onSpecificCommentLikeClick = { commentId, isLike, index ->
                         viewModel.updatePerfumeCommentLike(
@@ -113,7 +114,7 @@ fun PerfumeScreen(
                             index
                         )
                     },
-                    updatePerfumeCommentIdToReport = { viewModel.updatePerfumeCommentIdToReport(it) }
+                    updatePerfumeCommentIdToReport = { viewModel.updatePerfumeCommentIdToReport(it) },
                 )
             }
 
@@ -144,6 +145,7 @@ fun PerfumeContent(
     weather: PerfumeWeatherResponseDto?,
     gender: PerfumeGenderResponseDto?,
     age: PerfumeAgeResponseDto?,
+    perfumeComments: PerfumeCommentGetResponseDto?,
     updatePerfumeCommentIdToReport: (commentId: Int) -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
@@ -151,7 +153,6 @@ fun PerfumeContent(
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded })
-
 
     if (data == null) return
     ModalBottomSheetLayout(
@@ -231,7 +232,8 @@ fun PerfumeContent(
                 )
                 if (data.commentInfo != null) {
                     CommentView(
-                        data.commentInfo!!,
+                        commentCount = perfumeComments?.commentCount ?: 0,
+                        perfumeComments = perfumeComments?.comments ?: emptyList(),
                         onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
                         onSpecificCommentClick = { commentId, isEditable ->
                             onSpecificCommentClick(
@@ -250,9 +252,7 @@ fun PerfumeContent(
                             updatePerfumeCommentIdToReport(it)
                             scope.launch { modalSheetState.show() }
                         },
-                        perfumeComments = data?.commentInfo?.comments
                     )
-
                 }
                 Text(
                     "같은 브랜드의 제품",
@@ -554,8 +554,8 @@ fun PerfumeAgeView(
 
 @Composable
 fun CommentView(
-    commentInfo: PerfumeCommentGetResponseDto,
-    perfumeComments: List<PerfumeCommentResponseDto>?,
+    commentCount: Int,
+    perfumeComments: List<PerfumeCommentResponseDto>,
     onViewCommentAllClick: () -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
     onSpecificCommentLikeClick: (commentId: Int, isLike: Boolean, index: Int) -> Unit,
@@ -571,11 +571,11 @@ fun CommentView(
             modifier = Modifier.padding(end = 4.dp)
         )
         Text(
-            "${commentInfo.commentCount}",
+            "${commentCount}",
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light)
         )
     }
-    when (commentInfo.commentCount) {
+    when (commentCount) {
         0 -> Text(
             "해당 제품에 대한 의견을 남겨주세요",
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = CustomColor.gray3),
@@ -584,7 +584,7 @@ fun CommentView(
         )
 
         else -> {
-            perfumeComments?.forEachIndexed { index, it ->
+            perfumeComments.forEachIndexed { index, it ->
                 CommentItem(
                     count = it.heartCount,
                     isCommentLiked = it.liked,
@@ -596,7 +596,7 @@ fun CommentView(
                     onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
                     onCommentLikedClick = { onSpecificCommentLikeClick(it.id, !it.liked, index) }
                 )
-                if (index < commentInfo.comments.size - 1) {
+                if (index < commentCount - 1) {
                     Spacer(
                         modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
                     )

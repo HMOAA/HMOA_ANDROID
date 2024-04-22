@@ -24,11 +24,11 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.updateAge(request)
     }
 
-    override suspend fun getCommunities(page: Int): List<CommunityByCategoryResponseDto> {
+    override suspend fun getCommunities(page: Int): ResultResponse<List<CommunityByCategoryResponseDto>> {
         return memberDataStore.getCommunities(page)
     }
 
-    override suspend fun getCommunityComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getCommunityComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getCommunityComments(page)
     }
 
@@ -40,11 +40,11 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.postExistsNickname(request)
     }
 
-    override suspend fun getCommunityFavoriteComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getCommunityFavoriteComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getCommunityFavoriteComments(page)
     }
 
-    override suspend fun getPerfumeFavoriteComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getPerfumeFavoriteComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getPerfumeFavoriteComments(page)
     }
 
@@ -56,7 +56,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.updateNickname(request)
     }
 
-    override suspend fun getPerfumeComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getPerfumeComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getPerfumeComments(page)
     }
 

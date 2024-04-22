@@ -1,10 +1,13 @@
 package com.hmoa.core_datastore.PerfumeComment
 
+import ResultResponse
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.core_network.service.PerfumeCommentService
+import com.skydoves.sandwich.suspendOnError
+import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :
@@ -33,12 +36,24 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         return perfumeCommentService.deletePerfumeComments(commentId)
     }
 
-    override suspend fun putPerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
-        return perfumeCommentService.putPerfumeCommentLike(commentId)
+    override suspend fun putPerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
+        var result = ResultResponse<DataResponseDto<Nothing?>>()
+        perfumeCommentService.putPerfumeCommentLike(commentId).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
-    override suspend fun deletePerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
-        return perfumeCommentService.deletePerfumeCommentLike(commentId)
+    override suspend fun deletePerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
+        var result = ResultResponse<DataResponseDto<Nothing?>>()
+        perfumeCommentService.deletePerfumeCommentLike(commentId).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun putPerfumeCommentModify(

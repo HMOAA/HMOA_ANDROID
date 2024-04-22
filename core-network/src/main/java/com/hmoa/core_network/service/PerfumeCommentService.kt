@@ -4,6 +4,7 @@ import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
+import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
 interface PerfumeCommentService {
@@ -33,11 +34,11 @@ interface PerfumeCommentService {
     @DELETE("/perfume/comments/{comments}/delete")
     suspend fun deletePerfumeComments(@Path("commentId") commentId: Int): DataResponseDto<Any>
 
-    @PUT("/perfume/comments/{comments}/like")
-    suspend fun putPerfumeCommentLike(@Path("commentId") commentId: Int): DataResponseDto<Any>
+    @PUT("/perfume/comments/{commentId}/like")
+    suspend fun putPerfumeCommentLike(@Path("commentId") commentId: Int): ApiResponse<DataResponseDto<Nothing?>>
 
-    @DELETE("/perfume/comments/{comments}/like")
-    suspend fun deletePerfumeCommentLike(@Path("commentId") commentId: Int): DataResponseDto<Any>
+    @DELETE("/perfume/comments/{commentId}/like")
+    suspend fun deletePerfumeCommentLike(@Path("commentId") commentId: Int): ApiResponse<DataResponseDto<Nothing?>>
 
     @PUT("/perfume/comments/{comments}/modify")
     suspend fun putPerfumeCommentModify(

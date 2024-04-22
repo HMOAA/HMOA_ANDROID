@@ -59,7 +59,7 @@ fun EditMyPerfumeCommentScreen(
                 EditMyPerfumeCommentContent(
                     onBackClick = { onBackClick() },
                     onConfirmClick = { viewModel.onSubmitPerfumeComment(commentId, text = it) },
-                    data = (uiState as SpecificCommentViewmodel.SpecificCommentUiState.CommentData).comment,
+                    data = (uiState as EditMyPerfumeCommentViewmodel.SpecificCommentUiState.CommentData).comment,
                     onContentChanged = { viewModel.onChangePerfumceComment(it) }
                 )
             }
@@ -112,7 +112,7 @@ fun MyPerfumeCommentContent(
                     )
                 }
                 Text(
-                    text = data?.content!!,
+                    text = data?.content?:"",
                     style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, color = Color.Black),
                 )
             }

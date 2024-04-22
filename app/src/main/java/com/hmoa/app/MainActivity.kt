@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.UserInfoGraph
 import com.example.feature_userinfo.navigateToBack
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
@@ -51,7 +52,14 @@ class MainActivity : AppCompatActivity() {
         CommunityRoute.CommunityPageRoute.name,
         HPediaRoute.HPedia.name,
         "${HPediaRoute.HPediaSearchRoute.name}/{type}",
-        "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}"
+        "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
+        UserInfoGraph.MyPage.name,
+        UserInfoGraph.EditProfileRoute.name,
+        UserInfoGraph.MyInfoRoute.name,
+        UserInfoGraph.MyFavoriteCommentRoute.name,
+        UserInfoGraph.MyActivityRoute.name,
+        UserInfoGraph.MyCommentRoute.name,
+        UserInfoGraph.MyPostRoute.name
     )
     private val bottomNav = listOf(
         BottomScreen.Home.name,

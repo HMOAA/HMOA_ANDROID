@@ -12,7 +12,7 @@ import com.hmoa.feature_userinfo.MyPostRoute
 import com.hmoa.feature_userinfo.NoAuthMyPage
 
 //마이페이지로 이동
-fun NavController.navigateToMyPage() = navigate(UserInfoGraph.MyPageRoute.name)
+fun NavController.navigateToMyPage() = navigate(UserInfoGraph.MyPage.name)
 
 //내 활동 페이지
 fun NavController.navigateToMyActivity() = navigate(UserInfoGraph.MyActivityRoute.name)
@@ -56,10 +56,10 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     onNavMyGender: () -> Unit
 ) {
     navigation(
-        startDestination = UserInfoGraph.MyPageRoute.name,
+        startDestination = UserInfoGraph.MyPage.name,
         route = UserInfoGraph.UserInfoGraph.name
     ) {
-        composable(route = UserInfoGraph.MyPageRoute.name) {
+        composable(route = UserInfoGraph.MyPage.name) {
             MyPageRoute(
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,

@@ -44,10 +44,8 @@ fun NavController.navigateToBack() = navigateUp()
 fun NavGraphBuilder.nestedUserInfoGraph(
     onNavLogin: () -> Unit,
     onNavBack: () -> Unit,
-    /** onNavCommunity는 Community 모듈로의 이동 */
-    onNavCommunity: () -> Unit,
-    /** 여기서 게시글 수정으로 이동해야.. 하나요..? */
-    onNavEditPost: () -> Unit,
+    onNavCommunity: (Int) -> Unit,
+    onNavEditPost: (Int) -> Unit,
     onNavEditProfile: () -> Unit,
     onNavManageMyInfo: () -> Unit,
     onNavMyActivity: () -> Unit,

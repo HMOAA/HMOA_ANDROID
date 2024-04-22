@@ -35,7 +35,7 @@ import com.hmoa.feature_userinfo.NoDataPage
 @Composable
 fun MyCommentRoute(
     onNavBack : () -> Unit,
-    onNavCommunity : () -> Unit,
+    onNavCommunity : (Int) -> Unit,
     viewModel : CommentViewModel = hiltViewModel()
 ){
     //comment list
@@ -58,7 +58,7 @@ fun MyCommentPage(
     uiState : CommentUiState,
     type : String,
     onNavBack : () -> Unit,
-    onNavCommunity : () -> Unit, //Community로 이동 (Comment에서 사용),
+    onNavCommunity : (Int) -> Unit,
     onTypeChanged : (String) -> Unit
 ){
     when(uiState){
@@ -94,7 +94,7 @@ private fun MyCommentContent(
     type : String,
     onTypeChanged : (String) -> Unit,
     onNavBack : () -> Unit,
-    onNavCommunity : () -> Unit,
+    onNavCommunity : (Int) -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -139,7 +139,7 @@ private fun MyCommentContent(
                         comment = comment.content,
                         isFirst = false,
                         heartCount = comment.heartCount,
-                        onNavCommunity = onNavCommunity,
+                        onNavCommunity = { onNavCommunity(comment.parentId) },
                         onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
                         isSelected = comment.liked,
                         onChangeSelect = {

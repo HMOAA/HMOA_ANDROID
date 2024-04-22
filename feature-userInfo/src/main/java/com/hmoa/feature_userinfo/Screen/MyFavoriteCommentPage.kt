@@ -32,7 +32,7 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 @Composable
 fun MyFavoriteCommentRoute(
     onNavBack: () -> Unit,
-    onNavCommunity: () -> Unit,
+    onNavCommunity: (Int) -> Unit,
     viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
 
@@ -52,10 +52,10 @@ fun MyFavoriteCommentRoute(
 @Composable
 fun MyFavoriteCommentPage(
     onNavBack: () -> Unit,
-    onNavCommunity: () -> Unit, //Community로 이동?
+    onNavCommunity: (Int) -> Unit,
     uiState: FavoriteCommentUiState,
     commentType: String,
-    onTypeChanged: (newType: String) -> Unit,
+    onTypeChanged: (String) -> Unit,
 ) {
     when(uiState){
         FavoriteCommentUiState.Loading -> {
@@ -101,7 +101,7 @@ fun FavoriteCommentContent(
     onTypeChanged: (String) -> Unit,
     comments : ItemSnapshotList<CommunityCommentDefaultResponseDto>,
     onNavBack : () -> Unit,
-    onNavCommunity : () -> Unit,
+    onNavCommunity : (Int) -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -148,7 +148,7 @@ fun FavoriteCommentContent(
                         comment = comment.content,
                         isFirst = false,
                         heartCount = comment.heartCount,
-                        onNavCommunity = onNavCommunity,
+                        onNavCommunity = { onNavCommunity(comment.parentId) },
                         onOpenBottomDialog = {/** 여기도 Bottom Dialog 사용하려면 사용합시다 */},
                         isSelected = comment.liked,
                         onChangeSelect = {}

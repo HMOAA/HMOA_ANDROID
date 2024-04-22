@@ -78,7 +78,7 @@ fun MyInfoPage(
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
                     contentDescription = "Navigation Button",
                     tint = Color(0xFFBBBBBB)
                 )
@@ -109,7 +109,7 @@ fun MyInfoPage(
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
                     contentDescription = "Navigation Button",
                     tint = Color(0xFFBBBBBB)
                 )

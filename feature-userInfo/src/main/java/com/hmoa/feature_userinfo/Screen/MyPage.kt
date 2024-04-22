@@ -32,7 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature_userinfo.viewModel.MyPageViewModel
 import com.example.feature_userinfo.viewModel.UserInfoUiState
 import com.hmoa.component.TopBar
-import com.hmoa.core_designsystem.component.AppLoadingDialog
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.OnAndOffBtn
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -96,7 +96,7 @@ fun MyPage(
 
     when(uiState){
         UserInfoUiState.Loading -> {
-            AppLoadingDialog()
+            AppLoadingScreen()
         }
         is UserInfoUiState.User -> {
             val data = uiState.userInfo

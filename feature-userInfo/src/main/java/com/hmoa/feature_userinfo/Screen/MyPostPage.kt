@@ -24,7 +24,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 @Composable
 fun MyPostRoute(
     onNavBack: () -> Unit,
-    onNavEditPost: () -> Unit,
+    onNavEditPost: (Int) -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -40,7 +40,7 @@ fun MyPostRoute(
 fun MyPostPage(
     uiState : PostUiState,
     onNavBack: () -> Unit,
-    onNavEditPost: () -> Unit, //누르면 게시글 수정 화면으로?
+    onNavEditPost: (Int) -> Unit, //누르면 게시글 수정 화면으로?
 ) {
     when(uiState) {
         PostUiState.Loading -> {
@@ -75,7 +75,7 @@ fun MyPostPage(
                                             color = CustomColor.gray2,
                                             shape = RoundedCornerShape(10.dp)
                                         ),
-                                    onPostClick = onNavEditPost,
+                                    onPostClick = { onNavEditPost(post.communityId) },
                                     postType = post.category,
                                     postTitle = post.title,
                                     heartCount = post.heartCount,

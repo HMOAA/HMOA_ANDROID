@@ -1,6 +1,5 @@
 package com.hmoa.feature_brand.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -36,13 +35,6 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
     init {
         initializeBrands()
     }
-
-//    fun getConsonantBrandsPagingSource(): Flow<PagingData<BrandDefaultResponseDto>>? {
-//        return Pager(
-//            config = PagingConfig(PAGE_SIZE),
-//            pagingSourceFactory = { ConsonantBrandsPagingSource(searchRepository) }
-//        ).flow.cachedIn(viewModelScope)
-//    }
 
     fun initializeBrands() {
         viewModelScope.launch {
@@ -82,7 +74,7 @@ class BrandSearchViewmodel @Inject constructor(private val searchRepository: Sea
                     }
 
                     is Result.Error -> {
-                        
+
                     }
 
                     is Result.Loading -> {

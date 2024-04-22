@@ -10,16 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.feature_userinfo.viewModel.PostUiState
 import com.example.feature_userinfo.viewModel.PostViewModel
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.feature_userinfo.Screen.NoDataPage
 
 @Composable
 fun MyPostRoute(
@@ -27,20 +27,10 @@ fun MyPostRoute(
     onNavEditPost: () -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
-
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-
-    val type = viewModel.type.collectAsStateWithLifecycle()
 
     MyPostPage(
         uiState = uiState.value,
-        postType = type.value,
-        onAddPage = {
-            viewModel.addPage()
-        },
-        onTypeChanged = {
-            viewModel.changeType(it)
-        },
         onNavBack = onNavBack,
         onNavEditPost = onNavEditPost,
     )
@@ -49,51 +39,42 @@ fun MyPostRoute(
 @Composable
 fun MyPostPage(
     uiState : PostUiState,
-    postType : String,
-    onAddPage : () -> Unit,
-    onTypeChanged : (String) -> Unit,
     onNavBack: () -> Unit,
     onNavEditPost: () -> Unit, //누르면 게시글 수정 화면으로?
 ) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
-    ) {
-        TopBar(
-            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            title = "작성한 게시글",
-            onNavClick = onNavBack
-        )
-
-        when(uiState) {
-            PostUiState.Loading -> {
-                /** Loading 화면 */
-            }
-            else -> {
-                Spacer(Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    /** PL되면 TypeButton 2개 추가 */
-                }
-                when(uiState){
-                    is PostUiState.Posts -> {
-                        Spacer(Modifier.height(23.dp))
-
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            items(uiState.posts) { post ->
-                                /** post에 따른 match */
+    when(uiState) {
+        PostUiState.Loading -> {
+            AppLoadingScreen()
+        }
+        is PostUiState.Posts -> {
+            val posts = uiState.posts.collectAsLazyPagingItems().itemSnapshotList
+            if (posts.isNotEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color.White)
+                ) {
+                    TopBar(
+                        navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                        title = "작성한 게시글",
+                        onNavClick = onNavBack
+                    )
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        items(posts) { post ->
+                            if (post != null){
                                 PostListItem(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .wrapContentHeight()
-                                        .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
+                                        .border(
+                                            width = 1.dp,
+                                            color = CustomColor.gray2,
+                                            shape = RoundedCornerShape(10.dp)
+                                        ),
                                     onPostClick = onNavEditPost,
                                     postType = post.category,
                                     postTitle = post.title,
@@ -103,34 +84,17 @@ fun MyPostPage(
                             }
                         }
                     }
-                    PostUiState.Empty -> {
-                        NoDataPage(
-                            mainMsg = "작성한 게시글이\n없습니다.",
-                            subMsg = "게시글을 올려주세요"
-                        )
-                    }
-                    else -> {
-
-                    }
                 }
+            } else {
+                NoDataPage(
+                    mainMsg = "작성한 게시글이\n없습니다.",
+                    subMsg = "게시글을 올려주세요"
+                )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TestMyPostPage() {
-    MyPostPage(
-        onNavBack = {},
-        onNavEditPost = {},
-        uiState = PostUiState.Loading,
-        postType = "시향기",
-        onAddPage = {
-
-        },
-        onTypeChanged = {
+        PostUiState.Error -> {
 
         }
-    )
+        else -> {}
+    }
 }

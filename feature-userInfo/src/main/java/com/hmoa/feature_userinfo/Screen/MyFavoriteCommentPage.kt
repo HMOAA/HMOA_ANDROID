@@ -140,7 +140,6 @@ fun FavoriteCommentContent(
         LazyColumn {
             items(comments) { comment ->
                 if (comment != null){
-                    /** Comment 클릭 시 해당 댓글이 있는 Community로 이동 */
                     Comment(
                         profile = comment.profileImg,
                         nickname = comment.nickname,

@@ -9,11 +9,11 @@ import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class ReportDataStoreImpl @Inject constructor(private val reportService: ReportService) : ReportDataStore {
-    override fun reportCommunity(dto: TargetRequestDto): DataResponseDto<Any?> {
+    override suspend fun reportCommunity(dto: TargetRequestDto): DataResponseDto<Any?> {
         return reportService.postReportCommunity(dto)
     }
 
-    override fun reportCommunityComment(dto: TargetRequestDto): DataResponseDto<Any?> {
+    override suspend fun reportCommunityComment(dto: TargetRequestDto): DataResponseDto<Any> {
         return reportService.postReportCommunityComment(dto)
     }
 

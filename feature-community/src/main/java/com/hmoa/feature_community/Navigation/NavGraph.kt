@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.Navigation
 
+import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -28,7 +29,9 @@ fun NavController.navigateToCommunityPostRoute(type : String) = navigate("${Comm
 fun NavController.navigateToCommunityEditRoute(id : Int) = navigate("${CommunityRoute.CommunityEditRoute.name}/${id}")
 
 //게시글 상세 화면
-fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}")
+fun NavController.navigateToCommunityDescriptionRoute(id : Int) = navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}"){
+    popUpTo("${CommunityRoute.CommunityDescriptionRoute.name}/{id}"){inclusive = true}
+}
 
 //게시글 검색 화면
 fun NavController.navigateToCommunitySearchRoute() = navigate(CommunityRoute.CommunitySearchRoute.name)
@@ -72,11 +75,12 @@ fun NavGraphBuilder.nestedCommunityGraph(
             )
         }
         composable(route = "${CommunityRoute.CommunityEditRoute.name}/{id}"){
-            val id = it.arguments?.getString("id") ?: "0"
+            val id = it.arguments?.getString("id")
 
             CommunityEditRoute(
-                id = id.toInt(),
-                onNavBack = onNavBack
+                id = id?.toInt(),
+                onNavBack = onNavBack,
+                onNavCommunityDesc = onNavCommunityDescription
             )
         }
         composable(route = "${CommunityRoute.CommunityDescriptionRoute.name}/{id}") {

@@ -1,8 +1,8 @@
 package com.hmoa.core_datastore.Community
 
 import ResultResponse
-import android.util.Log
 import com.hmoa.core_datastore.Mapper.transformMultipartBody
+import com.hmoa.core_datastore.Mapper.transformRequestBody
 import com.hmoa.core_datastore.Mapper.transformToMultipartBody
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
@@ -34,12 +34,17 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityId: Int
     ): ResultResponse<CommunityDefaultResponseDto> {
         val result = ResultResponse<CommunityDefaultResponseDto>()
-        communityService.postCommunityUpdate(images, deleteCommunityPhotoIds, title, content, communityId)
-            .suspendMapSuccess {
-                result.data = this
-            }.suspendOnError {
-                result.exception = Exception(this.statusCode.code.toString())
-            }
+        communityService.postCommunityUpdate(
+            images.transformToMultipartBody(),
+            deleteCommunityPhotoIds.transformRequestBody(),
+            title.transformRequestBody(),
+            content.transformRequestBody(),
+            communityId
+        ).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
         return result
     }
 
@@ -103,10 +108,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
             title.transformMultipartBody("title"),
             content.transformMultipartBody("content")
         ).suspendMapSuccess {
-            Log.d("TAG TEST", "success : ${result.data}")
             result.data = this
         }.suspendOnError {
-            Log.d("TAG TEST", "failed : ${result.exception}")
             result.exception = Exception(this.statusCode.code.toString())
         }
         return result

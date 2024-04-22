@@ -99,7 +99,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoGraph.MyInfoRoute.name) {
-            MyInfoPage(
+            MyInfoRoute(
                 onNavBack = onNavBack,
                 onNavMyBirth = onNavMyBirth,
                 onNavMyGender = onNavMyGender

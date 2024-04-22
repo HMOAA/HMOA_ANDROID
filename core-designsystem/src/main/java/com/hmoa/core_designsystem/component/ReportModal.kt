@@ -22,8 +22,7 @@ fun ReportModal(onOkClick: () -> Unit, onCancelClick: () -> Unit) {
         modifier = Modifier.fillMaxWidth().background(color = Color.Transparent),
         verticalArrangement = Arrangement.Bottom
     ) {
-        Column(modifier = Modifier.padding(horizontal = 22.dp, vertical = 12.dp).background(color = Color.Transparent)) {
-
+        Column(modifier = Modifier.padding(vertical = 20.dp).padding(horizontal = 20.dp).background(color = Color.Transparent)) {
             ModalButton(
                 "신고",
                 { onOkClick() },
@@ -31,6 +30,7 @@ fun ReportModal(onOkClick: () -> Unit, onCancelClick: () -> Unit) {
                 textSize = 20,
                 radious = 10
             )
+            Spacer(modifier = Modifier.fillMaxWidth().background(Color.Transparent).height(10.dp))
             ModalButton(
                 "취소",
                 { onCancelClick() },
@@ -51,7 +51,7 @@ private fun ModalButton(
     radious: Int,
 ) {
     Row(
-        modifier = Modifier.padding(bottom = 10.dp).background(color = Color.Transparent)
+        modifier = Modifier.background(color = Color.Transparent)
             .clip(RoundedCornerShape(size = radious.dp))
             .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(radious.dp))
     ){

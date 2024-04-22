@@ -8,7 +8,7 @@ data class PerfumeCommentResponseDto(
     val createdAt: String?,
     val heartCount: Int,
     val id: Int,
-    val liked: Boolean,
+    var liked: Boolean,
     val nickname: String,
     val perfumeId: Int,
     val profileImg: String?,

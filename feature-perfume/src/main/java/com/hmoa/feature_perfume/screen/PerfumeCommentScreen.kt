@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +33,6 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.viewmodel.PerfumeCommentViewmodel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -112,7 +111,7 @@ fun PerfumeCommentContent(
     saveReportTarget: (commentId: String) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
-    val scope = CoroutineScope(Dispatchers.IO)
+    val scope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },

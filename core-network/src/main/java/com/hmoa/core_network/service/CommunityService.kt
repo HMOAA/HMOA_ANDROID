@@ -4,6 +4,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -50,4 +51,13 @@ interface CommunityService {
         @Part content: MultipartBody.Part
     ): ApiResponse<CommunityDefaultResponseDto>
 
+    @GET("/community/like")
+    suspend fun getMyCommunitiesByHeart(
+        @Query("cursor") cursor : Int
+    ) : ApiResponse<PagingData<CommunityByCategoryResponseDto>>
+
+    @GET("/community/me")
+    suspend fun getMyCommunities(
+        @Query("cursor") cursor : Int
+    ) : ApiResponse<PagingData<CommunityByCategoryResponseDto>>
 }

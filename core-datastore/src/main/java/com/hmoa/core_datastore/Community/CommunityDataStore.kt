@@ -6,6 +6,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import java.io.File
 
 interface CommunityDataStore {
@@ -29,4 +30,6 @@ interface CommunityDataStore {
         title: String,
         content: String
     ): ResultResponse<CommunityDefaultResponseDto>
+    suspend fun getMyCommunitiesByHeart(cursor : Int) : ResultResponse<PagingData<CommunityByCategoryResponseDto>>
+    suspend fun getMyCommunities(cursor : Int) : ResultResponse<PagingData<CommunityByCategoryResponseDto>>
 }

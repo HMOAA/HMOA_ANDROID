@@ -6,6 +6,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import java.io.File
 import javax.inject.Inject
 
@@ -55,5 +56,13 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataStore
         content: String
     ): ResultResponse<CommunityDefaultResponseDto> {
         return communityDataStore.postCommunitySave(images, category, title, content)
+    }
+
+    override suspend fun getMyCommunitiesByHeart(cursor: Int): ResultResponse<PagingData<CommunityByCategoryResponseDto>> {
+        return communityDataStore.getMyCommunitiesByHeart(cursor)
+    }
+
+    override suspend fun getMyCommunities(cursor: Int): ResultResponse<PagingData<CommunityByCategoryResponseDto>> {
+        return communityDataStore.getMyCommunities(cursor)
     }
 }

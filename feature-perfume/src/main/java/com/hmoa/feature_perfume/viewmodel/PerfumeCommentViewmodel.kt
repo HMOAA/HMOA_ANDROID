@@ -80,14 +80,6 @@ class PerfumeCommentViewmodel @Inject constructor(
         }
     }
 
-    fun addLatestPerfumeComments(perfumeId: Int) {
-    }
-
-    fun addLikePerfumeComments(perfumeId: Int) {
-
-
-    }
-
     fun onClickSortLike() {
         isSortState.update { SortType.LIKE }
     }
@@ -100,13 +92,6 @@ class PerfumeCommentViewmodel @Inject constructor(
         val id = handle.get<String>(TARGET_ID)
         if (id != null) {
             viewModelScope.launch { reportRepository.reportPerfumeComment(TargetRequestDto(id)) }
-        }
-    }
-
-    fun judgeSortedComments(): PagingData<PerfumeCommentResponseDto>? {
-        when (isSortState.value) {
-            SortType.LIKE -> return _sortedLikeCommentsState.value
-            SortType.LATEST -> return sortedLatestCommentsState.value
         }
     }
 

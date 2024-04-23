@@ -74,7 +74,7 @@ fun MyInfoPage(
             )
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavMyBirth //출생연도 수정 이동
+                onClick = onNavMyBirth
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),

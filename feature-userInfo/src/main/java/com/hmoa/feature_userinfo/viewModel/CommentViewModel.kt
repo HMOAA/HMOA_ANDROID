@@ -6,31 +6,23 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.compose.LazyPagingItems
-import com.example.feature_userinfo.viewModel.MyPageViewModel
 import com.example.feature_userinfo.viewModel.PAGE_SIZE
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
-import com.hmoa.core_domain.usecase.GetMyCommentByPerfumeUseCase
-import com.hmoa.core_domain.usecase.GetMyCommentByPostUseCase
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.feature_userinfo.CommentPagingSource
 import com.hmoa.feature_userinfo.FavoriteCommentPagingSource
 import com.hmoa.feature_userinfo.MyPageCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

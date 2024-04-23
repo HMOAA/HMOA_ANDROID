@@ -2,42 +2,34 @@ package com.example.feature_userinfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_userinfo.viewModel.UserInfoUiState
-import com.example.feature_userinfo.viewModel.UserViewModel
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
-import com.hmoa.feature_userinfo.R
+import com.hmoa.core_designsystem.component.RadioButtonList
+import com.hmoa.feature_userinfo.viewModel.MyGenderUiState
+import com.hmoa.feature_userinfo.viewModel.MyGenderViewModel
 
 @Composable
 fun MyGenderRoute(
     onNavBack: () -> Unit,
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: MyGenderViewModel = hiltViewModel()
 ) {
 
-    val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle()
-
+    val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     MyGenderPage(
         uiState = uiState.value,
-        updateGender = {
-            viewModel.updateGender(it)
-        },
-        saveGender = {
-            viewModel.saveGender()
-        },
+        onUpdateGender = {viewModel.updateGender(it)},
+        onSaveGender = {viewModel.saveGender()},
         isEnabled = isEnabled.value,
         onNavBack = onNavBack
     )
@@ -45,100 +37,68 @@ fun MyGenderRoute(
 
 @Composable
 fun MyGenderPage(
-    uiState: UserInfoUiState,
-    updateGender: (String) -> Unit,
-    saveGender: () -> Unit,
+    uiState: MyGenderUiState,
+    onUpdateGender: (String) -> Unit,
+    onSaveGender: () -> Unit,
     isEnabled: Boolean,
     onNavBack: () -> Unit,
 ) {
-
     when (uiState) {
-        is UserInfoUiState.Loading -> {
+        MyGenderUiState.Loading -> {
+            AppLoadingScreen()
+        }
+        MyGenderUiState.Success -> {
+            SelectGenderContent(
+                isEnabled = isEnabled,
+                onUpdateGender = onUpdateGender,
+                onSaveGender = onSaveGender,
+                onNavBack = onNavBack
+            )
+        }
+        MyGenderUiState.Error -> {
 
         }
+    }
+}
 
-        is UserInfoUiState.UserInfo -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.White)
-            ) {
-                TopBar(
-                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                    onNavClick = onNavBack, //뒤로 가기
-                    title = "성별"
-                )
-
-                Spacer(Modifier.height(38.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(28.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        modifier = Modifier.size(28.dp),
-                        onClick = {
-                            updateGender("female")
-                        }
-                    ) {
-                        Icon(
-                            painter = if (uiState.gender == "female") painterResource(R.drawable.checked_btn) else painterResource(
-                                R.drawable.not_checked_btn
-                            ),
-                            contentDescription = "Radio Button Female"
-                        )
-                    }
-
-                    Spacer(Modifier.width(12.dp))
-
-                    Text(
-                        text = "여성",
-                        fontSize = 16.sp,
-                        color = Color(0xFF414141)
-                    )
-
-                    Spacer(Modifier.width(16.dp))
-
-                    IconButton(
-                        modifier = Modifier.size(28.dp),
-                        onClick = {
-                            updateGender("male")
-                        }
-                    ) {
-                        Icon(
-                            painter = if (uiState.gender == "male") painterResource(R.drawable.checked_btn) else painterResource(
-                                R.drawable.not_checked_btn
-                            ),
-                            contentDescription = "Radio Button Female"
-                        )
-                    }
-
-                    Spacer(Modifier.width(12.dp))
-
-                    Text(
-                        text = "남성",
-                        fontSize = 16.sp,
-                        color = Color(0xFF414141)
-                    )
-                }
-
-                Spacer(Modifier.weight(1f))
-
-                Button(
-                    isEnabled = isEnabled,
-                    btnText = "변경",
-                    onClick = {
-                        //변경 클릭 >> 서버 업데이트
-                        saveGender()
-
-                        //뒤로가기 실행
-                        onNavBack()
-                    }
-                )
+@Composable
+private fun SelectGenderContent(
+    isEnabled : Boolean,
+    onUpdateGender : (String) -> Unit,
+    onSaveGender : () -> Unit,
+    onNavBack: () -> Unit
+){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ) {
+        TopBar(
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            onNavClick = onNavBack,
+            title = "성별"
+        )
+        Spacer(Modifier.height(38.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(28.dp)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButtonList(
+                radioOptions = listOf("남성","여성"),
+                onButtonClick ={onUpdateGender(it)}
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        Button(
+            isEnabled = isEnabled,
+            btnText = "변경",
+            onClick = {
+                onSaveGender()
+                onNavBack()
             }
-        }
+        )
     }
 }

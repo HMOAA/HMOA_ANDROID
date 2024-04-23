@@ -68,9 +68,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoGraph.EditProfileRoute.name) {
-            EditProfileRoute(
-                onNavBack = onNavBack
-            )
+            EditProfileRoute(onNavBack = onNavBack)
         }
         composable(route = UserInfoGraph.MyPostRoute.name) {
             MyPostRoute(
@@ -106,14 +104,13 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoGraph.MyBirthRoute.name) {
-            MyBirthRoute(
-                onNavBack = onNavBack
-            )
+            MyBirthRoute(onNavBack = onNavBack)
+        }
+        composable(route = UserInfoGraph.MyGenderRoute.name){
+            MyGenderRoute(onNavBack = onNavBack)
         }
         composable(route = UserInfoGraph.NoAuthMyPage.name) {
-            NoAuthMyPage(
-                onNavLogin = onNavLogin
-            )
+            NoAuthMyPage(onNavLogin = onNavLogin)
         }
     }
 }

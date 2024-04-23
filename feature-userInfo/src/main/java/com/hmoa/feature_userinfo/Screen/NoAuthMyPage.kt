@@ -60,7 +60,7 @@ fun NoAuthMyPage(
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
                     contentDescription = "Nav Button",
                     tint = CustomColor.gray2
                 )

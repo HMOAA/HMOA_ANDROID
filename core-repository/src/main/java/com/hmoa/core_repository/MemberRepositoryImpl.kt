@@ -10,6 +10,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
+import java.io.File
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
@@ -36,7 +37,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.deleteMember()
     }
 
-    override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
+    override suspend fun postExistsNickname(request: NickNameRequestDto): ResultResponse<Boolean> {
         return memberDataStore.postExistsNickname(request)
     }
 
@@ -52,7 +53,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.updateJoin(request)
     }
 
-    override suspend fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any> {
+    override suspend fun updateNickname(request: NickNameRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateNickname(request)
     }
 
@@ -60,7 +61,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.getPerfumeComments(page)
     }
 
-    override suspend fun postProfilePhoto(image: String): DataResponseDto<Any> {
+    override suspend fun postProfilePhoto(image: File): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.postProfilePhoto(image)
     }
 

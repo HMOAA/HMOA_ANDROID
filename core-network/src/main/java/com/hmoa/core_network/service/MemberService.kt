@@ -9,6 +9,8 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.skydoves.sandwich.ApiResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface MemberService {
@@ -37,7 +39,7 @@ interface MemberService {
     suspend fun updateJoin(@Body request: JoinUpdateRequestDto): ApiResponse<MemberResponseDto>
 
     @PATCH("/member/nickname")
-    suspend fun updateNickname(@Body request: NickNameRequestDto): DataResponseDto<Any>
+    suspend fun updateNickname(@Body request: NickNameRequestDto): ApiResponse<DataResponseDto<Any>>
 
     @GET("/member/perfumeComments")
     suspend fun getPerfumeComments(@Query("page") page: Int): ApiResponse<List<CommunityCommentDefaultResponseDto>>
@@ -45,9 +47,9 @@ interface MemberService {
     @GET("/member/perfumeHearts")
     suspend fun getPerfumeFavoriteComments(@Query("page") page: Int): ApiResponse<List<CommunityCommentDefaultResponseDto>>
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/member/profile-photo")
-    suspend fun postProfilePhoto(@Field("image") image: String): DataResponseDto<Any>
+    suspend fun postProfilePhoto(@Part image: MultipartBody.Part): ApiResponse<DataResponseDto<Any>>
 
 
     @DELETE("/member/profile-photo")

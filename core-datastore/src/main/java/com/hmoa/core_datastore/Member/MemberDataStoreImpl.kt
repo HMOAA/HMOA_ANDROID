@@ -1,6 +1,7 @@
 package com.hmoa.core_datastore.Member
 
 import ResultResponse
+import com.hmoa.core_datastore.Mapper.transformToMultipartBody
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
@@ -14,6 +15,7 @@ import com.hmoa.core_network.service.MemberService
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import java.io.File
 import javax.inject.Inject
 
 class MemberDataStoreImpl @Inject constructor(
@@ -57,10 +59,16 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.deleteMember()
     }
 
-    override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
-        var result = true
+    override suspend fun postExistsNickname(request: NickNameRequestDto): ResultResponse<Boolean> {
+        val result = ResultResponse<Boolean>()
         memberService.postExistsNickname(request).suspendOnSuccess {
-            result = false
+            result.data = false
+        }.suspendOnError{
+            if (this.statusCode.code == 409){
+                result.data = true
+            } else {
+                result.exception = Exception(this.statusCode.code.toString())
+            }
         }
         return result
     }
@@ -75,8 +83,14 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any> {
-        return memberService.updateNickname(request)
+    override suspend fun updateNickname(request: NickNameRequestDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.updateNickname(request).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getCommunityFavoriteComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
@@ -109,8 +123,14 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun postProfilePhoto(image: String): DataResponseDto<Any> {
-        return memberService.postProfilePhoto(image)
+    override suspend fun postProfilePhoto(image: File): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.postProfilePhoto(image.transformToMultipartBody()).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError{
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun deleteProfilePhoto(): DataResponseDto<Any> {

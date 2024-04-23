@@ -1,5 +1,6 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.Report.ReportDataStore
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.request.TargetRequestDto
@@ -15,7 +16,7 @@ class ReportRepositoryImpl @Inject constructor(private val reportDataStore: Repo
         return reportDataStore.reportCommunityComment(dto)
     }
 
-    override fun reportPerfumeComment(dto: TargetRequestDto): DataResponseDto<Any> {
+    suspend override fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {
         return reportDataStore.reportPerfumeComment(dto)
     }
 

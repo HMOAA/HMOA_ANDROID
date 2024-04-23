@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,12 +30,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.CommentItem
+import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.viewmodel.PerfumeCommentViewmodel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -87,8 +88,8 @@ fun PerfumeCommentScreen(
                     onSortLikeClick = { viewModel.onClickSortLike() },
                     onSortLatestClick = { viewModel.onClickSortLatest() },
                     onAddCommentClick = { onAddCommentClick(perfumeId) },
-                    onReportClick = { viewModel.onClickReport() },
-                    saveReportTarget = { viewModel.saveTargetId(it) },
+                    onPerfumeCommentReportClick = { viewModel.onClickReport() },
+                    saveReportTargetId = { viewModel.saveTargetId(it) },
                     onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
                 )
             }
@@ -108,66 +109,83 @@ fun PerfumeCommentContent(
     onSortLikeClick: () -> Unit,
     onSortLatestClick: () -> Unit,
     onAddCommentClick: () -> Unit,
-    onReportClick: () -> Unit,
-    saveReportTarget: (commentId: String) -> Unit,
+    onPerfumeCommentReportClick: () -> Unit,
+    saveReportTargetId: (commentId: String) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
-    val scope = CoroutineScope(Dispatchers.IO)
+    val scope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
-        skipHalfExpanded = true
     )
 
-    fun showReportModal(id: String) {
-        scope.launch { modalSheetState.show() }
-        saveReportTarget(id)
-    }
 
-    Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight()
-            .background(color = Color.White),
-        verticalArrangement = Arrangement.SpaceBetween
+    ModalBottomSheetLayout(
+        modifier = Modifier.fillMaxHeight(),
+        sheetState = modalSheetState,
+        sheetContent = {
+            ReportModal(
+                onOkClick = {
+                    scope.launch {
+                        onPerfumeCommentReportClick()
+                        modalSheetState.hide()
+                    }
+                },
+                onCancelClick = {
+                    scope.launch { modalSheetState.hide() }
+                },
+            )
+        },
+        sheetBackgroundColor = CustomColor.gray2,
+        sheetContentColor = Color.Transparent,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().fillMaxHeight()
                 .background(color = Color.White),
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            TopBar(
-                title = "댓글",
-                iconSize = 25.dp,
-                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = { onBackClick() },
-            )
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.fillMaxWidth()
+                    .background(color = Color.White),
+                verticalArrangement = Arrangement.Top
             ) {
-                CommentAndSortText(
-                    commentCount = latestPerfumeComments?.itemCount ?: 0,
-                    onSortLikeClick = { onSortLikeClick() },
-                    onSortLatestClick = { onSortLatestClick() },
-                    sortType = sortType
+                TopBar(
+                    title = "댓글",
+                    iconSize = 25.dp,
+                    navIcon = painterResource(R.drawable.ic_back),
+                    onNavClick = { onBackClick() },
                 )
-                when (sortType) {
-                    SortType.LATEST -> PerfumeCommentList(
-                        likePerfumeComments,
-                        {},
-                        { id, isWrited -> onSpecificCommentClick(id, isWrited) })
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    CommentAndSortText(
+                        commentCount = latestPerfumeComments?.itemCount ?: 0,
+                        onSortLikeClick = { onSortLikeClick() },
+                        onSortLatestClick = { onSortLatestClick() },
+                        sortType = sortType
+                    )
+                    when (sortType) {
+                        SortType.LATEST -> PerfumeCommentList(
+                            likePerfumeComments,
+                            {
+                                saveReportTargetId(it)
+                                scope.launch { modalSheetState.show() }
+                            },
+                            { id, isWrited -> onSpecificCommentClick(id, isWrited) })
 
-                    SortType.LIKE -> PerfumeCommentList(
-                        latestPerfumeComments,
-                        {},
-                        { id, isWrited -> onSpecificCommentClick(id, isWrited) })
+                        SortType.LIKE -> PerfumeCommentList(
+                            latestPerfumeComments,
+                            {},
+                            { id, isWrited -> onSpecificCommentClick(id, isWrited) })
+                    }
+
                 }
-
             }
+            BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
         }
-        BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
     }
-
 }
 
 @Composable

@@ -1,5 +1,6 @@
 package com.hmoa.core_repository
 
+import ResultResponse
 import com.hmoa.core_datastore.PerfumeComment.PerfumeCommentDataStore
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.DataResponseDto
@@ -33,11 +34,11 @@ class PerfumeCommentRepositoryImpl @Inject constructor(private val perfumeCommen
         return perfumeCommentDataStore.deletePerfumeComments(commentId)
     }
 
-    override suspend fun putPerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
+    override suspend fun putPerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
         return perfumeCommentDataStore.putPerfumeCommentLike(commentId)
     }
 
-    override suspend fun deletePerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
+    override suspend fun deletePerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
         return perfumeCommentDataStore.deletePerfumeCommentLike(commentId)
     }
 

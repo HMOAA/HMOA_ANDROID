@@ -165,7 +165,7 @@ fun YearPickerDialog(
                 com.hmoa.core_designsystem.component.Button(true, textColor = Color.White, textSize = 16, btnText = "확인", onClick = {onDoneClick(selectedValue)
                     onDismiss()}, buttonModifier = Modifier
                     .width(200.dp)
-                    .fillMaxHeight(),)
+                    .fillMaxHeight())
             }
 
             Spacer(Modifier.height(24.dp))

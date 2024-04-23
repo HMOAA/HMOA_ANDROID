@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -28,11 +32,9 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.PerfumeGender
 import com.hmoa.core_model.Weather
 import com.hmoa.core_model.data.Perfume
-import com.hmoa.core_model.response.PerfumeAgeResponseDto
-import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
-import com.hmoa.core_model.response.PerfumeGenderResponseDto
-import com.hmoa.core_model.response.PerfumeWeatherResponseDto
+import com.hmoa.core_model.response.*
 import com.hmoa.feature_perfume.viewmodel.PerfumeViewmodel
+import kotlinx.coroutines.launch
 
 @Composable
 fun PerfumeRoute(
@@ -76,6 +78,7 @@ fun PerfumeScreen(
         viewModel.initializePerfume(perfumeId)
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
@@ -97,11 +100,21 @@ fun PerfumeScreen(
                     onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
                     onViewCommentAllClick = { onViewCommentAllClick(it) },
                     onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
+                    onPerfumeCommentReportClick = { viewModel.reportPerfumeComment(perfumeCommentIdToReport) },
                     data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
                     weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
                     gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
                     age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
-                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
+                    perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
+                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
+                    onSpecificCommentLikeClick = { commentId, isLike, index ->
+                        viewModel.updatePerfumeCommentLike(
+                            isLike,
+                            commentId,
+                            index
+                        )
+                    },
+                    updatePerfumeCommentIdToReport = { viewModel.updatePerfumeCommentIdToReport(it) },
                 )
             }
 
@@ -111,6 +124,7 @@ fun PerfumeScreen(
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PerfumeContent(
     onBackClick: () -> Unit,
@@ -125,111 +139,152 @@ fun PerfumeContent(
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onSpecificCommentLikeClick: (commentId: Int, isLike: Boolean, index: Int) -> Unit,
+    onPerfumeCommentReportClick: () -> Unit,
     data: Perfume?,
     weather: PerfumeWeatherResponseDto?,
     gender: PerfumeGenderResponseDto?,
-    age: PerfumeAgeResponseDto?
+    age: PerfumeAgeResponseDto?,
+    perfumeComments: PerfumeCommentGetResponseDto?,
+    updatePerfumeCommentIdToReport: (commentId: Int) -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+    val modalSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded })
 
     if (data == null) return
-
-    Column(
-        modifier = Modifier.fillMaxWidth().verticalScroll(verticalScrollState)
-            .background(color = Color.White)
+    ModalBottomSheetLayout(
+        modifier = Modifier.fillMaxHeight(),
+        sheetState = modalSheetState,
+        sheetContent = {
+            ReportModal(
+                onOkClick = {
+                    scope.launch {
+                        onPerfumeCommentReportClick()
+                        modalSheetState.hide()
+                    }
+                },
+                onCancelClick = {
+                    scope.launch { modalSheetState.hide() }
+                },
+            )
+        },
+        sheetBackgroundColor = CustomColor.gray2,
+        sheetContentColor = Color.Transparent,
     ) {
-        TopBar(
-            title = data.brandKoreanName,
-            iconSize = 25.dp,
-            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = { onBackClick() },
-            menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_home),
-            onMenuClick = { onHomeClick() }
-        )
         Column(
-            modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth().verticalScroll(verticalScrollState)
+                .background(color = Color.White)
         ) {
-            ImageView(
-                data.perfumeImageUrl,
-                width = 0.6f,
-                height = 0.6f,
-                backgroundColor = CustomColor.gray2,
-                contentScale = ContentScale.FillWidth
-            )
-        }
-        Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
-            PerfumeInfo(
-                isLikedPerfume = false,
-                heartCount = data.likedCount,
-                perfumeKoreanName = data.perfumeKoreanName,
-                perfumeEnglishName = data.perfumeEnglishName,
-                perfumeVolume = data.perfumeVolume,
-                perfumeVolumes = data.perfumeVolumeList,
-                price = data.price
-            )
-            Spacer(
-                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+            TopBar(
+                title = data.brandKoreanName,
+                iconSize = 25.dp,
+                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                onNavClick = { onBackClick() },
+                menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_home),
+                onMenuClick = { onHomeClick() }
             )
             Column(
-                modifier = Modifier.clickable { onBrandClick(data.brandId) }.padding(horizontal = 16.dp)
-                    .padding(top = 48.dp)
+                modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                BrandCard(data.brandImgUrl, data.brandEnglishName, data.brandKoreanName)
+                ImageView(
+                    data.perfumeImageUrl,
+                    width = 0.6f,
+                    height = 0.6f,
+                    backgroundColor = CustomColor.gray2,
+                    contentScale = ContentScale.FillWidth
+                )
             }
-            TastingNoteView(
-                notes = arrayOf(data.topNote, data.heartNote, data.baseNote),
-                imageUrls = data.notePhotos,
-                noteTitle = listOf("TOP", "HEART", "BASE")
-            )
-            PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
-            PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
-            PerfumeAgeView(
-                onAgeDragFinish = { onAgeDragFinish(it) },
-                onInitializeAgeClick = { onInitializeAgeClick() },
-                age
-            )
-            if (data.commentInfo != null) {
-                CommentView(
-                    data.commentInfo!!,
-                    onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
-                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) })
-
-            }
-            Text(
-                "같은 브랜드의 제품",
-                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-                modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
-            )
-            Spacer(
-                modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp).fillMaxWidth().height(1.dp)
-                    .background(color = CustomColor.gray2)
-            )
-            LazyRow {
-                val length = data.similarPerfumes.size
-                itemsIndexed(data.similarPerfumes) { index, it ->
-                    Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
-                        PerfumeItemView(
-                            it.perfumeImgUrl,
-                            it.perfumeName,
-                            it.brandName,
-                            88,
-                            88,
-                            1f,
-                            1f,
-                            Color.White
-                        )
-                        if (index < length) {
-                            Spacer(
-                                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+            Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
+                PerfumeInfo(
+                    isLikedPerfume = data.liked,
+                    heartCount = data.likedCount,
+                    perfumeKoreanName = data.perfumeKoreanName,
+                    perfumeEnglishName = data.perfumeEnglishName,
+                    perfumeVolume = data.perfumeVolume,
+                    perfumeVolumes = data.perfumeVolumeList,
+                    price = data.price
+                )
+                Spacer(
+                    modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                )
+                Column(
+                    modifier = Modifier.clickable { onBrandClick(data.brandId) }.padding(horizontal = 16.dp)
+                        .padding(top = 48.dp)
+                ) {
+                    BrandCard(data.brandImgUrl, data.brandEnglishName, data.brandKoreanName)
+                }
+                TastingNoteView(
+                    notes = arrayOf(data.topNote, data.heartNote, data.baseNote),
+                    imageUrls = data.notePhotos,
+                    noteTitle = listOf("TOP", "HEART", "BASE")
+                )
+                PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
+                PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
+                PerfumeAgeView(
+                    onAgeDragFinish = { onAgeDragFinish(it) },
+                    onInitializeAgeClick = { onInitializeAgeClick() },
+                    age
+                )
+                if (data.commentInfo != null) {
+                    CommentView(
+                        commentCount = perfumeComments?.commentCount ?: 0,
+                        perfumeComments = perfumeComments?.comments ?: emptyList(),
+                        onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
+                        onSpecificCommentClick = { commentId, isEditable ->
+                            onSpecificCommentClick(
+                                commentId,
+                                isEditable
+                            )
+                        },
+                        onSpecificCommentLikeClick = { commentId, isLike, index ->
+                            onSpecificCommentLikeClick(
+                                commentId,
+                                isLike,
+                                index
+                            )
+                        },
+                        onPerfumeCommentReportClick = {
+                            updatePerfumeCommentIdToReport(it)
+                            scope.launch { modalSheetState.show() }
+                        },
+                    )
+                }
+                Text(
+                    "같은 브랜드의 제품",
+                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+                    modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
+                )
+                Spacer(
+                    modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp).fillMaxWidth().height(1.dp)
+                        .background(color = CustomColor.gray2)
+                )
+                LazyRow {
+                    itemsIndexed(data.similarPerfumes) { index, it ->
+                        Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
+                            PerfumeItemView(
+                                it.perfumeImgUrl,
+                                it.perfumeName,
+                                it.brandName,
+                                88,
+                                88,
+                                1f,
+                                1f,
+                                Color.White
                             )
                         }
+                        Spacer(
+                            modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                        )
                     }
                 }
             }
+            BottomToolBar(data.liked, onLikeClick = { onLikeClick(it) }, onCommentAddClick = { onCommentAddClick() })
         }
-        BottomToolBar(data.liked, onLikeClick = { onLikeClick(it) }, onCommentAddClick = { onCommentAddClick() })
     }
 }
 
@@ -499,9 +554,12 @@ fun PerfumeAgeView(
 
 @Composable
 fun CommentView(
-    commentInfo: PerfumeCommentGetResponseDto,
+    commentCount: Int,
+    perfumeComments: List<PerfumeCommentResponseDto>,
     onViewCommentAllClick: () -> Unit,
-    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onSpecificCommentLikeClick: (commentId: Int, isLike: Boolean, index: Int) -> Unit,
+    onPerfumeCommentReportClick: (commentId: Int) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -513,11 +571,11 @@ fun CommentView(
             modifier = Modifier.padding(end = 4.dp)
         )
         Text(
-            "${commentInfo.commentCount}",
+            "${commentCount}",
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light)
         )
     }
-    when (commentInfo.commentCount) {
+    when (commentCount) {
         0 -> Text(
             "해당 제품에 대한 의견을 남겨주세요",
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = CustomColor.gray3),
@@ -526,7 +584,7 @@ fun CommentView(
         )
 
         else -> {
-            commentInfo.comments.forEach {
+            perfumeComments.forEachIndexed { index, it ->
                 CommentItem(
                     count = it.heartCount,
                     isCommentLiked = it.liked,
@@ -534,10 +592,15 @@ fun CommentView(
                     userName = it.nickname,
                     content = it.content,
                     createdDate = it.createdAt ?: "",
-                    onReportClick = {},
+                    onReportClick = { onPerfumeCommentReportClick(it.id) },
                     onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
-                    onCommentLikedClick = {}
+                    onCommentLikedClick = { onSpecificCommentLikeClick(it.id, !it.liked, index) }
                 )
+                if (index < commentCount - 1) {
+                    Spacer(
+                        modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                    )
+                }
             }
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 Button(

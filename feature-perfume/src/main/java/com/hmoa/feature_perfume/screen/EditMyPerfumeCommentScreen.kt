@@ -1,14 +1,14 @@
 package com.hmoa.feature_perfume.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -16,10 +16,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_designsystem.component.TopBarWithEvent
-import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.viewmodel.EditMyPerfumeCommentViewmodel
-import com.hmoa.feature_perfume.viewmodel.SpecificCommentViewmodel
 
 @Composable
 fun EditMyPerfumeCommentRoute(onBackClick: () -> Unit, commentId: Int?) {
@@ -59,7 +57,7 @@ fun EditMyPerfumeCommentScreen(
                 EditMyPerfumeCommentContent(
                     onBackClick = { onBackClick() },
                     onConfirmClick = { viewModel.onSubmitPerfumeComment(commentId, text = it) },
-                    data = (uiState as SpecificCommentViewmodel.SpecificCommentUiState.CommentData).comment,
+                    data = (uiState as EditMyPerfumeCommentViewmodel.SpecificCommentUiState.CommentData).comment,
                     onContentChanged = { viewModel.onChangePerfumceComment(it) }
                 )
             }
@@ -76,44 +74,38 @@ fun EditMyPerfumeCommentContent(
     data: PerfumeCommentResponseDto?,
     onContentChanged: (text: String) -> Unit
 ) {
-    MyPerfumeCommentContent(
-        data = data,
-        onBackClick = { onBackClick() },
-        onConfirmClick = { onConfirmClick(data!!.content) },
-        onContentChanged = { onContentChanged(it) })
-}
+    var text = remember { mutableStateOf(data?.content ?: "") }
 
+    LaunchedEffect(data) {
+        text.value = data?.content ?: ""
+        Log.d("EditMyPerfumeCommentScreen", "${data}")
+    }
 
-@Composable
-fun MyPerfumeCommentContent(
-    onBackClick: () -> Unit,
-    onConfirmClick: () -> Unit,
-    data: PerfumeCommentResponseDto?,
-    onContentChanged: (text: String) -> Unit
-) {
     Column {
-        TopBarWithEvent(onCancelClick = { onBackClick() }, onConfirmClick = { onConfirmClick() }, title = "댓글")
+        TopBarWithEvent(
+            onCancelClick = { onBackClick() },
+            onConfirmClick = { onConfirmClick(text.value) },
+            title = "댓글"
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 32.dp, vertical = 20.dp)
         ) {
+
             BasicTextField(
-                value = data?.content ?: "",
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                value = text.value,
                 onValueChange = {
+                    text.value = it
                     onContentChanged(it)
                 },
-                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
+                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.Black),
+                cursorBrush = SolidColor(Color.Black)
             ) {
-                if (data?.content?.length == 0) {
-                    Text(
-                        text = "해당 제품에 대한 의견을 남겨주세요",
-                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, color = CustomColor.gray3),
-                    )
-                }
                 Text(
-                    text = data?.content!!,
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, color = Color.Black),
+                    text = text.value,
+                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.Black),
                 )
             }
         }

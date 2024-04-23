@@ -87,7 +87,7 @@ fun PickNicknameScreen(
             isAvailableNickname,
             "다음",
             { onPickPersonalInfoClick() },
-            Modifier.fillMaxWidth().height(80.dp)
+            Modifier.fillMaxWidth().height(80.dp),
         )
     }
 }

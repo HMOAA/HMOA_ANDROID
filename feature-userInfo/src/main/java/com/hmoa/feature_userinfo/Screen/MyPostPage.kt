@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.feature_userinfo.viewModel.PostUiState
 import com.example.feature_userinfo.viewModel.PostViewModel
@@ -20,6 +21,7 @@ import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 
 @Composable
 fun MyPostRoute(
@@ -40,7 +42,7 @@ fun MyPostRoute(
 fun MyPostPage(
     uiState : PostUiState,
     onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit, //누르면 게시글 수정 화면으로?
+    onNavEditPost: (Int) -> Unit
 ) {
     when(uiState) {
         PostUiState.Loading -> {
@@ -49,42 +51,11 @@ fun MyPostPage(
         is PostUiState.Posts -> {
             val posts = uiState.posts.collectAsLazyPagingItems().itemSnapshotList
             if (posts.isNotEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = Color.White)
-                ) {
-                    TopBar(
-                        navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                        title = "작성한 게시글",
-                        onNavClick = onNavBack
-                    )
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        items(posts) { post ->
-                            if (post != null){
-                                PostListItem(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight()
-                                        .border(
-                                            width = 1.dp,
-                                            color = CustomColor.gray2,
-                                            shape = RoundedCornerShape(10.dp)
-                                        ),
-                                    onPostClick = { onNavEditPost(post.communityId) },
-                                    postType = post.category,
-                                    postTitle = post.title,
-                                    heartCount = post.heartCount,
-                                    commentCount = post.commentCount
-                                )
-                            }
-                        }
-                    }
-                }
+                MyPostContent(
+                    posts = posts,
+                    onNavBack = onNavBack,
+                    onNavEditPost = onNavEditPost
+                )
             } else {
                 NoDataPage(
                     mainMsg = "작성한 게시글이\n없습니다.",
@@ -96,5 +67,49 @@ fun MyPostPage(
 
         }
         else -> {}
+    }
+}
+
+@Composable
+private fun MyPostContent(
+    posts : ItemSnapshotList<CommunityByCategoryResponseDto>,
+    onNavBack: () -> Unit,
+    onNavEditPost: (communityId : Int) -> Unit
+){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ) {
+        TopBar(
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            title = "작성한 게시글",
+            onNavClick = onNavBack
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            items(posts) { post ->
+                if (post != null){
+                    PostListItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .border(
+                                width = 1.dp,
+                                color = CustomColor.gray2,
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                        onPostClick = { onNavEditPost(post.communityId) },
+                        postType = post.category,
+                        postTitle = post.title,
+                        heartCount = post.heartCount,
+                        commentCount = post.commentCount
+                    )
+                }
+            }
+        }
     }
 }

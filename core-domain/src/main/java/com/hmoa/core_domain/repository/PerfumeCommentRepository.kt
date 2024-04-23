@@ -15,8 +15,8 @@ interface PerfumeCommentRepository {
     suspend fun postPerfumeComment(perfumeId: Int, dto: PerfumeCommentRequestDto): PerfumeCommentResponseDto
     suspend fun getPerfumeCommentsLikest(page: String, perfumeId: String): PerfumeCommentGetResponseDto
     suspend fun deletePerfumeComments(commentId: Int): DataResponseDto<Any>
-    suspend fun putPerfumeCommentLike(commentId: Int): DataResponseDto<Any>
-    suspend fun deletePerfumeCommentLike(commentId: Int): DataResponseDto<Any>
+    suspend fun putPerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>>
+    suspend fun deletePerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>>
     suspend fun putPerfumeCommentModify(commentId: Int, dto: PerfumeCommentRequestDto): PerfumeCommentResponseDto
     suspend fun getPerfumeCommentsWithHeart(cursor : Int) : ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>
     suspend fun getMyPerfumeComments(cursor : Int) : ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>

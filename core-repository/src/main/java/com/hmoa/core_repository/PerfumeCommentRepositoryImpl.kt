@@ -36,11 +36,11 @@ class PerfumeCommentRepositoryImpl @Inject constructor(private val perfumeCommen
         return perfumeCommentDataStore.deletePerfumeComments(commentId)
     }
 
-    override suspend fun putPerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
+    override suspend fun putPerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
         return perfumeCommentDataStore.putPerfumeCommentLike(commentId)
     }
 
-    override suspend fun deletePerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
+    override suspend fun deletePerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
         return perfumeCommentDataStore.deletePerfumeCommentLike(commentId)
     }
 

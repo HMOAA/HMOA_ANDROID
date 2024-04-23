@@ -2,10 +2,10 @@ package com.hmoa.feature_perfume.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,11 +35,11 @@ fun CreateNewPerfumeCommentScreen(
     viewModel: CreateNewPerfumeViewmodel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isNewPerfumeCommentSubmitFinished = viewModel.isNewPerfumeCommentSubmitedState
+    val isNewPerfumeCommentSubmitFinished by viewModel.isNewPerfumeCommentSubmitedState.collectAsState()
 
 
     LaunchedEffect(isNewPerfumeCommentSubmitFinished) {
-        if (isNewPerfumeCommentSubmitFinished.value) {
+        if (isNewPerfumeCommentSubmitFinished) {
             onBackClick()
         }
     }
@@ -65,7 +65,6 @@ fun CreateNewPerfumeCommentScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CreateNewPerfumeCommentContent(
     onBackClick: () -> Unit,
@@ -90,18 +89,18 @@ fun CreateNewPerfumeCommentContent(
                 onValueChange = {
                     onContentChanged(it)
                 },
-                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, color = Color.Black),
+                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.Black),
                 cursorBrush = SolidColor(Color.Black)
             ) {
                 if (data.length == 0) {
                     Text(
                         text = "해당 제품에 대한 의견을 남겨주세요",
-                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, color = CustomColor.gray3),
+                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = CustomColor.gray3),
                     )
                 }
                 Text(
                     text = data,
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, color = Color.Black),
+                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.Black),
                 )
             }
         }

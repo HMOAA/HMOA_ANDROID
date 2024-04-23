@@ -38,12 +38,24 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         return perfumeCommentService.deletePerfumeComments(commentId)
     }
 
-    override suspend fun putPerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
-        return perfumeCommentService.putPerfumeCommentLike(commentId)
+    override suspend fun putPerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
+        var result = ResultResponse<DataResponseDto<Nothing?>>()
+        perfumeCommentService.putPerfumeCommentLike(commentId).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
-    override suspend fun deletePerfumeCommentLike(commentId: Int): DataResponseDto<Any> {
-        return perfumeCommentService.deletePerfumeCommentLike(commentId)
+    override suspend fun deletePerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>> {
+        var result = ResultResponse<DataResponseDto<Nothing?>>()
+        perfumeCommentService.deletePerfumeCommentLike(commentId).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun putPerfumeCommentModify(

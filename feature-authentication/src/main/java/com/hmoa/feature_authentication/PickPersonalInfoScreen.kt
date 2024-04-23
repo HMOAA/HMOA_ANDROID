@@ -148,7 +148,9 @@ fun PickPersonalInfoScreen(
                     )
                 }
             }
-            Button(isAvailableButtonState, "시작하기", { onHomeClick() }, Modifier.fillMaxWidth().height(80.dp))
+            Button(isAvailableButtonState, "시작하기", { onHomeClick() },
+                buttonModifier = Modifier.fillMaxWidth().height(80.dp)
+            )
         }
     }
 }

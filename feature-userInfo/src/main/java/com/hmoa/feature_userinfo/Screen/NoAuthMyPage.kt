@@ -56,7 +56,7 @@ fun NoAuthMyPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavLogin //로그인 화면으로 이동
+                onClick = onNavLogin
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),

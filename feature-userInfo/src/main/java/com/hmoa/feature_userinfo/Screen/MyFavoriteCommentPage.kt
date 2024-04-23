@@ -79,18 +79,7 @@ fun MyFavoriteCommentPage(
             }
         }
         FavoriteCommentUiState.Error -> {
-            var isOpen by remember{mutableStateOf(true)}
 
-            AppDefaultDialog(
-                isOpen = isOpen,
-                modifier = Modifier,
-                title = "",
-                content = "",
-                onDismiss = {
-                    isOpen = false
-                    onNavBack()
-                }
-            )
         }
         else ->{}
     }

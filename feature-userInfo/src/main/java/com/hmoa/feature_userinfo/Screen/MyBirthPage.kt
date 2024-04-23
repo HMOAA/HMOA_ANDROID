@@ -11,44 +11,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_userinfo.viewModel.UserInfoUiState
-import com.example.feature_userinfo.viewModel.UserViewModel
 import com.hmoa.component.Spinner
 import com.hmoa.component.TopBar
 import com.hmoa.component.YearPickerDialog
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
-import com.hmoa.feature_userinfo.R
+import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.feature_userinfo.viewModel.MyBirthUiState
+import com.hmoa.feature_userinfo.viewModel.MyBirthViewModel
+import java.time.LocalDateTime
 
 @Composable
 fun MyBirthRoute(
     onNavBack: () -> Unit,
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: MyBirthViewModel = hiltViewModel()
 ) {
+    val availableYearRange = (1950..LocalDateTime.now().year).toList()
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     var showDialog by remember { mutableStateOf(false) }
-    val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle()
+    val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
+    val birth = viewModel.birth.collectAsStateWithLifecycle()
 
     MyBirthPage(
+        availableYearRange = availableYearRange,
         uiState = uiState.value,
+        birth = birth.value!!,
         isEnabled = isEnabled.value,
         showDialog = showDialog,
-        onChangeDialogState = {
-            showDialog = !showDialog
-        },
-        onUpdateBirth = {
-            viewModel.updateBirth(it)
-        },
-        onSaveBirth = {
-            viewModel.saveBirth()
-        },
+        onChangeDialogState = {showDialog = !showDialog},
+        onUpdateBirth = {viewModel.updateBirth(it)},
+        onSaveBirth = {viewModel.saveBirth()},
         onNavBack = onNavBack
     )
 }
 
 @Composable
 fun MyBirthPage(
-    uiState: UserInfoUiState,
+    availableYearRange : List<Int>,
+    uiState: MyBirthUiState,
+    birth : Int,
     isEnabled: Boolean,
     showDialog: Boolean,
     onChangeDialogState: () -> Unit,
@@ -57,75 +59,90 @@ fun MyBirthPage(
     onNavBack: () -> Unit
 ) {
     when (uiState) {
-        is UserInfoUiState.Loading -> {
+        MyBirthUiState.Loading -> {
+            AppLoadingScreen()
+        }
+        MyBirthUiState.Success -> {
+            SelectBirthContent(
+                availableYearRange = availableYearRange,
+                birth = birth,
+                isEnabled = isEnabled,
+                showDialog = showDialog,
+                onChangeDialogState = onChangeDialogState,
+                onUpdateBirth = onUpdateBirth,
+                onSaveBirth = onSaveBirth,
+                onNavBack = onNavBack
+            )
+        }
+        MyBirthUiState.Error -> {
 
         }
+    }
+}
 
-        is UserInfoUiState.UserInfo -> {
-            if (showDialog) {
-                YearPickerDialog(
-                    yearList = (1950..2024).toList(),
-                    initialValue = uiState.birth,
-                    height = 370.dp,
-                    onDismiss = onChangeDialogState,
-                    onDoneClick = {
-                        // view model에서 가지고 있는 데이터 값을 init value로 가지고 이를 교체
-                        onUpdateBirth(it)
-
-                        onChangeDialogState()
-                    }
-                )
+@Composable
+private fun SelectBirthContent(
+    availableYearRange : List<Int>,
+    birth : Int,
+    isEnabled: Boolean,
+    showDialog: Boolean,
+    onChangeDialogState: () -> Unit,
+    onUpdateBirth: (Int) -> Unit,
+    onSaveBirth: () -> Unit,
+    onNavBack: () -> Unit
+){
+    if (showDialog) {
+        YearPickerDialog(
+            yearList = availableYearRange,
+            initialValue = birth,
+            height = 370.dp,
+            onDismiss = onChangeDialogState,
+            onDoneClick = {
+                onUpdateBirth(it)
+                onChangeDialogState()
             }
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.White)
-            ) {
-                TopBar(
-                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                    onNavClick = onNavBack,
-                    title = "출생연도"
-                )
-
-                Spacer(Modifier.height(36.dp))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = "출생연도",
-                        fontSize = 16.sp,
-                        color = Color(0xFF414141)
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-
-                    /** Spinner 이용 dialog 띄우는 곳 */
-                    Spinner(
-                        width = 152.dp,
-                        height = 46.dp,
-                        value = uiState.birth,
-                        onClick = {
-                            onChangeDialogState()
-                        },
-                        placeholder = "선택"
-                    )
-                }
-
-                /** 데이터 update */
-                Button(
-                    isEnabled = isEnabled,
-                    btnText = "변경",
-                    onClick = {
-                        onSaveBirth()
-                        onNavBack()
-                    }
-                )
-            }
-
+        )
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ) {
+        TopBar(
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            onNavClick = onNavBack,
+            title = "출생연도"
+        )
+        Spacer(Modifier.height(36.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(
+                text = "출생연도",
+                fontSize = 16.sp,
+                color = CustomColor.gray4
+            )
+            Spacer(Modifier.height(8.dp))
+            Spinner(
+                width = 152.dp,
+                height = 46.dp,
+                value = birth,
+                onClick = {
+                    onChangeDialogState()
+                },
+                placeholder = "선택"
+            )
         }
+        Button(
+            isEnabled = isEnabled,
+            btnText = "변경",
+            onClick = {
+                onSaveBirth()
+                onNavBack()
+            }
+        )
     }
 }

@@ -49,7 +49,7 @@ class EditMyPerfumeCommentViewmodel @Inject constructor(
                     }
 
                     is com.hmoa.core_common.Result.Success -> {
-                        perfumeCommentState.update { it }
+                        perfumeCommentState.value = it.data
                     }
 
                     is Result.Error -> {
@@ -58,10 +58,6 @@ class EditMyPerfumeCommentViewmodel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun onChangeLikePerfumeComment() {
-
     }
 
     fun onChangePerfumceComment(text: String) {

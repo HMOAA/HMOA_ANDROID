@@ -27,7 +27,7 @@ class FavoriteCommentPagingSource(
         }
         val result = response.data!!
         totalCount = result.data.size
-        cursor = result.data.last().id
+        cursor = if(totalCount == 0) 0 else result.data.last().id
         val prevKey = if (pageNumber > 0) pageNumber - 1 else null
         val nextKey = if (result.lastPage) null else pageNumber + 1
 

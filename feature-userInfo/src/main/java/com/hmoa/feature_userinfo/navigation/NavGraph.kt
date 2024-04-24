@@ -11,6 +11,9 @@ import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
 import com.hmoa.feature_userinfo.MyPostRoute
 import com.hmoa.feature_userinfo.NoAuthMyPage
 
+//graph 이동
+fun NavController.navigateToUserInfoGraph() = navigate(UserInfoGraph.UserInfoGraph.name)
+
 //마이페이지로 이동
 fun NavController.navigateToMyPage() = navigate(UserInfoGraph.MyPage.name)
 

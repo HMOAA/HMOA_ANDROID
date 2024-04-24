@@ -10,17 +10,17 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.navigateToBack
@@ -38,6 +38,7 @@ import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -79,30 +80,23 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         createRoute()
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                if (viewModel.authTokenState.value == null && viewModel.rememberedTokenState.value == null) {
+                    initialRoute = AuthenticationRoute.Login.name
+                } else {
+                    initialRoute = HomeRoute.Home.name
+                }
+            }
+        }
+
+
         setContent {
             val navHostController = rememberNavController()
             var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
             var isBottomBarVisible = true
             var isTopBarVisible = true
             var isDrawerGestureEnabled = false
-            fun customShape() = object : Shape {
-                override fun createOutline(
-                    size: Size,
-                    layoutDirection: LayoutDirection,
-                    density: Density
-                ): Outline {
-                    return Outline.Rectangle(Rect(0f, 0f, 100f /* width */, 131f /* height */))
-                }
-            }
-
-            val authTokenState by viewModel.authTokenState.collectAsState()
-            val rememberedTokenState by viewModel.rememberedTokenState.collectAsState()
-
-            LaunchedEffect(authTokenState) {
-                Log.d("MainActivity", "authToken: ${authTokenState}")
-                Log.d("MainActivity", "rememberedToken: ${rememberedTokenState}")
-            }
-
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->

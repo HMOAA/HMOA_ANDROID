@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -45,6 +46,7 @@ fun SearchTopBar(
                 textStyle = TextStyle(
                     fontSize = 16.sp,
                 ),
+                keyboardActions = KeyboardActions(onDone = {onClickSearch()}, onGo = {onClickSearch()}, onSend = {onClickSearch()}, onSearch = {onClickSearch()})
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically

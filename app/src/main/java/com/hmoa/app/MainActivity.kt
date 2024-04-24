@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         "${HPediaRoute.HPediaSearchRoute.name}/{type}",
         "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
         UserInfoGraph.MyPage.name,
-        UserInfoGraph.EditProfileRoute.name,
         UserInfoGraph.MyInfoRoute.name,
         UserInfoGraph.MyFavoriteCommentRoute.name,
         UserInfoGraph.MyActivityRoute.name,

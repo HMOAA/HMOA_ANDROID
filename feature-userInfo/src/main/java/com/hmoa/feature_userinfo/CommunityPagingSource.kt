@@ -21,7 +21,7 @@ class CommunityPagingSource(
         }
         val result = response.data!!
         totalCount = result.data.size
-        cursor = result.data.last().communityId
+        cursor = if(totalCount == 0) 0 else result.data.last().communityId
         val prevKey = if (pageNumber > 0) pageNumber - 1 else null
         val nextKey = if (result.lastPage) null else pageNumber + 1
 

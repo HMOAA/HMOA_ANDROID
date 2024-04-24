@@ -1,3 +1,4 @@
 /build
 /local.properties
 /src/main/res/values/secret_information.xml
+/google-services.json

@@ -49,7 +49,7 @@ fun EditProfileRoute(
         uiState = uiState.value,
         isEnabled = isEnabled.value,
         isDuplicated = isDuplicated.value,
-        profileImg = profileImg.value!!,
+        profileImg = profileImg.value,
         onChangeInfo = {viewModel.saveInfo()},
         checkDuplication = {viewModel.checkNicknameDup(it)},
         onUpdateNickname = {viewModel.updateNickname(it)},
@@ -64,7 +64,7 @@ fun EditProfilePage(
     uiState: EditProfileUiState,
     isEnabled: Boolean,
     isDuplicated : Boolean,
-    profileImg : String,
+    profileImg : String?,
     onChangeInfo : () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
@@ -99,7 +99,7 @@ private fun EditProfileContent(
     nickname : String,
     isEnabled : Boolean,
     isDuplicated : Boolean,
-    profileImg : String,
+    profileImg : String?,
     onChangeInfo : () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
@@ -126,7 +126,7 @@ private fun EditProfileContent(
                 modifier = Modifier.size(72.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                CircleImageView(imgUrl = profileImg,width = 72,height = 72)
+                CircleImageView(imgUrl = profileImg ?: "",width = 72,height = 72)
                 EditProfileButton(launcher = launcher)
             }
         }

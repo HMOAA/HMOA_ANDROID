@@ -20,6 +20,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 @Composable
 fun NicknameInput(
     initNickname : String? = null,
+    onChangeValue : (String) -> Unit = {},
     onPressNicknameExist: (text: String) -> Unit,
     isAvailable: Boolean,
     isEnabled : Boolean = true,
@@ -63,6 +64,7 @@ fun NicknameInput(
                                 if (isLenthUnder9(it)) {
                                     nickname = it
                                     nicknameLength = it.length.toString()
+                                    onChangeValue(it)
                                 }
                             },
                             placeholder = {
@@ -136,5 +138,5 @@ fun handleTextColor(isAvailable: Boolean): Color {
 @Preview
 @Composable
 fun NicknameInputPreview() {
-    NicknameInput(null, {}, true)
+    NicknameInput(null,{}, {}, true)
 }

@@ -7,20 +7,25 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.hmoa.core_common.Result
+import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_domain.repository.ReportRepository
+import com.hmoa.core_domain.usecase.UpdateLikePerfumeCommentUseCase
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.PerfumeCommentLatestPagingSource
 import com.hmoa.feature_perfume.PerfumeCommentLikePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PerfumeCommentViewmodel @Inject constructor(
+    private val updateLikePerfumeComment: UpdateLikePerfumeCommentUseCase,
     private val perfumeCommentRepository: PerfumeCommentRepository,
     private val reportRepository: ReportRepository,
     private val handle: SavedStateHandle
@@ -92,6 +97,18 @@ class PerfumeCommentViewmodel @Inject constructor(
         val id = handle.get<String>(TARGET_ID)
         if (id != null) {
             viewModelScope.launch { reportRepository.reportPerfumeComment(TargetRequestDto(id)) }
+        }
+    }
+
+    fun updatePerfumeCommentLike(like: Boolean, commentId: Int, index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateLikePerfumeComment(like, commentId).asResult().collectLatest {
+                when (it) {
+                    is Result.Loading -> {}
+                    is Result.Success -> {}
+                    is Result.Error -> {}
+                }
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToHome
+import com.hmoa.feature_home.navigation.perfumeSearchScreen
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
@@ -30,6 +31,7 @@ fun SetUpNavGraph(
         homeScreen(onPerfumeClick = { perfumeId ->
             navController.navigateToPerfume(perfumeId)
         }, onAllPerfumeClick = {})
+        perfumeSearchScreen(onBackClick = navController::navigateToBack, onPerfumeSearchResultClick = {})
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)

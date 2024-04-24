@@ -10,10 +10,7 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -37,6 +34,7 @@ import com.hmoa.feature_brand.screen.BrandSearchRoute
 import com.hmoa.feature_community.Navigation.CommunityRoute
 import com.hmoa.feature_home.navigation.HomeRoute
 import com.hmoa.feature_home.navigation.navigateToHome
+import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,6 +95,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            val authTokenState by viewModel.authTokenState.collectAsState()
+            val rememberedTokenState by viewModel.rememberedTokenState.collectAsState()
+
+            LaunchedEffect(authTokenState) {
+                Log.d("MainActivity", "authToken: ${authTokenState}")
+                Log.d("MainActivity", "rememberedToken: ${rememberedTokenState}")
+            }
+
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
@@ -140,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                         HomeTopBar(
                             title = "H M O A",
                             onDrawerClick = { navHostController.navigateToBrandSearch() },
-                            onSearchClick = {},
+                            onSearchClick = { navHostController.navigateToPerfumeSearch() },
                             onNotificationClick = {},
                             drawerIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_drawer),
                             searchIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),

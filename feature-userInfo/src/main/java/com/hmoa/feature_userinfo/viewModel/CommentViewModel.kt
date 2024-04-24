@@ -12,6 +12,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.feature_userinfo.CommentPagingSource
 import com.hmoa.feature_userinfo.FavoriteCommentPagingSource
 import com.hmoa.feature_userinfo.MyPageCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,7 +69,7 @@ class CommentViewModel @Inject constructor(
 
 
     //paging
-    private fun getFavoriteCommentPaging(type : String) = FavoriteCommentPagingSource(
+    private fun getFavoriteCommentPaging(type : String) = CommentPagingSource(
         communityCommentRepository = communityCommentRepository,
         perfumeCommentRepository = perfumeCommentRepository,
         type = type

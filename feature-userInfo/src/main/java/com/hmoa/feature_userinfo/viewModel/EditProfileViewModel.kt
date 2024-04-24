@@ -39,7 +39,9 @@ class EditProfileViewModel @Inject constructor(
     val isDuplicated get() = _isDuplicated.asStateFlow()
 
     val isEnabled = nickname.map{
-        if(it == null) errState.update{ "Nickname is NULL" }
+        if (uiState.value != EditProfileUiState.Loading && it == null){
+            errState.update{ "Nickname is NULL" }
+        }
         !(it == "" || it == baseNickname)
     }
 
@@ -66,7 +68,9 @@ class EditProfileViewModel @Inject constructor(
                 _profileImg.update{ data.memberImageUrl }
                 EditProfileUiState.Success
             }
-            is Result.Error -> EditProfileUiState.Error
+            is Result.Error -> {
+                EditProfileUiState.Error(if (result.exception is Exception) result.exception.toString() else errState.value.toString())
+            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -143,5 +147,7 @@ class EditProfileViewModel @Inject constructor(
 sealed interface EditProfileUiState{
     data object Loading : EditProfileUiState
     data object Success : EditProfileUiState
-    data object Error : EditProfileUiState
+    data class Error(
+        val message : String
+    ) : EditProfileUiState
 }

@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,11 +25,11 @@ class AppViewModel @Inject constructor(
 
     fun initializeRoute() {
         viewModelScope.launch(Dispatchers.IO) {
-            loginRepository.getRememberedToken().onEmpty { }.collectLatest {
-                _rememberedTokenState.value = it
-            }
-            loginRepository.getAuthToken().onEmpty { }.collectLatest {
+            loginRepository.getAuthToken().collectLatest {
                 _authTokenState.value = it
+            }
+            loginRepository.getRememberedToken().collectLatest {
+                _rememberedTokenState.value = it
             }
         }
     }

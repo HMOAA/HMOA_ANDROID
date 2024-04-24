@@ -21,10 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,7 +30,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.ImageView
-import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.component.PerfumeWithCountItemView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.SortType
 import com.hmoa.core_model.response.BrandDefaultResponseDto
@@ -241,70 +238,6 @@ fun PerfumeGridView(
             )
         }
 
-    }
-}
-
-@Composable
-fun PerfumeWithCountItemView(
-    imageUrl: String,
-    perfumeName: String,
-    brandName: String,
-    containerWidth: Int,
-    containerHeight: Int,
-    imageWidth: Float,
-    imageHeight: Float,
-    imageBackgroundColor: Color,
-    heartCount: Int,
-    isLikedPerfume: Boolean,
-    onPerfumeClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier.padding(horizontal = 4.dp).padding(bottom = 30.dp).clickable { onPerfumeClick() },
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Column(
-            modifier = Modifier.width(containerWidth.dp).height(containerHeight.dp)
-                .background(imageBackgroundColor)
-                .border(border = BorderStroke(width = 1.dp, color = CustomColor.gray3)),
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-
-        ) {
-            ImageView(
-                imageUrl = imageUrl,
-                backgroundColor = imageBackgroundColor,
-                width = imageWidth,
-                height = imageHeight,
-                contentScale = ContentScale.Fit
-            )
-        }
-        Row(
-            modifier = Modifier.width(containerWidth.dp).padding(top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
-            )
-            TypeBadge(
-                roundedCorner = 20.dp,
-                type = "${heartCount}",
-                fontColor = Color.Black,
-                unSelectedIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_heart),
-                selectedIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_heart_filled),
-                iconColor = Color.Black,
-                fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
-                selected = isLikedPerfume,
-                unSelectedColor = CustomColor.gray1,
-                selectedColor = CustomColor.gray1
-            )
-        }
-        Text(
-            text = perfumeName,
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light, textAlign = TextAlign.End),
-            modifier = Modifier.width(containerWidth.dp).padding(end = 4.dp).padding(bottom = 2.dp),
-            softWrap = true
-        )
     }
 }
 

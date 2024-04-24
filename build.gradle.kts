@@ -13,4 +13,5 @@ plugins {
     id("com.android.library") version "8.1.0" apply false
     id("com.google.dagger.hilt.android") version "2.48.1" apply false
     id("org.jetbrains.kotlin.plugin.serialization") version "1.5.0"
+    id("com.google.gms.google-services") version "4.4.1" apply false
 }

@@ -28,7 +28,7 @@ class BrandViewmodel @Inject constructor(private val brandRepository: BrandRepos
     private var isSortState = MutableStateFlow(SortType.LATEST)
     private var brandState = MutableStateFlow<BrandDefaultResponseDto?>(null)
     val PAGE_SIZE = 10
-    var uiState: StateFlow<BrandUiState> = combine(brandState, isSortState) { brand, isSort ->
+    val uiState: StateFlow<BrandUiState> = combine(brandState, isSortState) { brand, isSort ->
         BrandUiState.Data(
             brand = brand,
             sortType = isSort

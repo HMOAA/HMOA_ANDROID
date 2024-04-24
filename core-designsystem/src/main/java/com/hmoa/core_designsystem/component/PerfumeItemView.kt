@@ -1,6 +1,8 @@
 package com.hmoa.core_designsystem.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,15 +23,15 @@ fun PerfumeItemView(
     containerHeight: Int,
     imageWidth: Float,
     imageHeight: Float,
-    imageBackgroundColor: Color
+    imageBackgroundColor: Color,
+    imageBorderStroke: BorderStroke?,
 ) {
     Column(modifier = Modifier.padding(end = 8.dp).width(containerWidth.dp)) {
         Column(
             modifier = Modifier.width(containerWidth.dp).height(containerHeight.dp)
-                .background(imageBackgroundColor),
+                .background(imageBackgroundColor).border(border = imageBorderStroke?: BorderStroke(width = 0.dp, color = Color.Transparent)),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-
         ) {
             ImageView(
                 imageUrl = imageUrl,
@@ -40,8 +42,8 @@ fun PerfumeItemView(
             )
         }
         Text(
-            text = brandName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-            modifier = Modifier.padding(end = 4.dp, top = 8.dp)
+            text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
+            modifier = Modifier.padding(end = 4.dp, top = 8.dp, bottom = 6.dp)
         )
         Text(
             text = perfumeName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),

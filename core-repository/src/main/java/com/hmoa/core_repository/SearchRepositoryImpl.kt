@@ -21,7 +21,10 @@ class SearchRepositoryImpl @Inject constructor(
         return searchDataStore.getBrandStory(page, searchWord)
     }
 
-    override suspend fun getCommunity(page: Int, searchWord: String): ResultResponse<List<CommunityByCategoryResponseDto>> {
+    override suspend fun getCommunity(
+        page: Int,
+        searchWord: String
+    ): ResultResponse<List<CommunityByCategoryResponseDto>> {
         return searchDataStore.getCommunity(page, searchWord)
     }
 
@@ -37,11 +40,14 @@ class SearchRepositoryImpl @Inject constructor(
         return searchDataStore.getNote(page, searchWord)
     }
 
-    override suspend fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto> {
+    override suspend fun getPerfume(page: Int, searchWord: String): ResultResponse<List<PerfumeSearchResponseDto>> {
         return searchDataStore.getPerfume(page, searchWord)
     }
 
-    override suspend fun getPerfumeName(page: Int, searchWord: String): List<PerfumeNameSearchResponseDto> {
+    override suspend fun getPerfumeName(
+        page: Int,
+        searchWord: String
+    ): ResultResponse<List<PerfumeNameSearchResponseDto>> {
         return searchDataStore.getPerfumeName(page, searchWord)
     }
 

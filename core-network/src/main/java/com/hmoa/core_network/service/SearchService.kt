@@ -2,7 +2,6 @@ package com.hmoa.core_network.service
 
 import com.hmoa.core_model.response.*
 import com.skydoves.sandwich.ApiResponse
-import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -42,13 +41,13 @@ interface SearchService {
     suspend fun getPerfume(
         @Query("page") page: Int,
         @Query("searchWord") searchWord: String
-    ): List<PerfumeSearchResponseDto>
+    ): ApiResponse<List<PerfumeSearchResponseDto>>
 
     @GET("/search/perfumeName")
     suspend fun getPerfumeName(
         @Query("page") page: Int,
         @Query("searchWord") searchWord: String
-    ): List<PerfumeNameSearchResponseDto>
+    ): ApiResponse<List<PerfumeNameSearchResponseDto>>
 
     @GET("/search/perfumer")
     suspend fun getPerfumer(

@@ -15,8 +15,8 @@ interface SearchRepository {
     ): List<CommunityByCategoryResponseDto>
 
     suspend fun getNote(page: Int, searchWord: String): List<NoteDefaultResponseDto>
-    suspend fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto>
-    suspend fun getPerfumeName(page: Int, searchWord: String): List<PerfumeNameSearchResponseDto>
+    suspend fun getPerfume(page: Int, searchWord: String): ResultResponse<List<PerfumeSearchResponseDto>>
+    suspend fun getPerfumeName(page: Int, searchWord: String): ResultResponse<List<PerfumeNameSearchResponseDto>>
     suspend fun getPerfumer(page: Int, searchWord: String): List<PerfumerDefaultResponseDto>
     suspend fun getTerm(page: Int, searchWord: String): List<TermDefaultResponseDto>
 }

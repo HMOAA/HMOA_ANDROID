@@ -274,7 +274,8 @@ fun PerfumeContent(
                                 88,
                                 1f,
                                 1f,
-                                Color.White
+                                Color.White,
+                                BorderStroke(width = 0.dp, color = Color.Transparent)
                             )
                         }
                         Spacer(

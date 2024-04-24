@@ -90,7 +90,14 @@ fun PerfumeCommentScreen(
                     onAddCommentClick = { onAddCommentClick(perfumeId) },
                     onPerfumeCommentReportClick = { viewModel.onClickReport() },
                     saveReportTargetId = { viewModel.saveTargetId(it) },
-                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
+                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
+                    onSpecificCommentLikeClick = { commentId, isLike, index ->
+                        viewModel.updatePerfumeCommentLike(commentId = commentId, like = isLike, index = index)
+                        when ((uiState as PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData).sortType) {
+                            SortType.LATEST -> latestPerfumeComments?.refresh()
+                            SortType.LIKE -> likePerfumeComments?.refresh()
+                        }
+                    }
                 )
             }
 
@@ -111,7 +118,8 @@ fun PerfumeCommentContent(
     onAddCommentClick: () -> Unit,
     onPerfumeCommentReportClick: () -> Unit,
     saveReportTargetId: (commentId: String) -> Unit,
-    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onSpecificCommentLikeClick: (commentId: Int, isLike: Boolean, index: Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
@@ -173,12 +181,18 @@ fun PerfumeCommentContent(
                                 saveReportTargetId(it)
                                 scope.launch { modalSheetState.show() }
                             },
-                            { id, isWrited -> onSpecificCommentClick(id, isWrited) })
+                            { id, isWrited -> onSpecificCommentClick(id, isWrited) },
+                            { commentId, isLike, index -> onSpecificCommentLikeClick(commentId, isLike, index) })
 
                         SortType.LIKE -> PerfumeCommentList(
                             latestPerfumeComments,
-                            {},
-                            { id, isWrited -> onSpecificCommentClick(id, isWrited) })
+                            {
+                                saveReportTargetId(it)
+                                scope.launch { modalSheetState.show() }
+                            },
+                            { id, isWrited -> onSpecificCommentClick(id, isWrited) },
+                            { commentId, isLike, index -> onSpecificCommentLikeClick(commentId, isLike, index) }
+                        )
                     }
 
                 }
@@ -193,6 +207,7 @@ fun PerfumeCommentList(
     latestPerfumeComments: LazyPagingItems<PerfumeCommentResponseDto>?,
     onShowReportModal: (id: String) -> Unit,
     onSpecificCommentClick: (id: String, isWrited: Boolean) -> Unit,
+    onSpecificCommentLikeClick: (commentId: Int, isLike: Boolean, index: Int) -> Unit,
 ) {
     LazyColumn(
         userScrollEnabled = true,
@@ -208,7 +223,7 @@ fun PerfumeCommentList(
                 createdDate = it.createdAt ?: "",
                 onReportClick = { onShowReportModal(it.id.toString()) },
                 onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
-                onCommentLikedClick = {}
+                onCommentLikedClick = { onSpecificCommentLikeClick(it.id, !it.liked, it.id) }
             )
             if (index < length) {
                 Spacer(
@@ -219,62 +234,6 @@ fun PerfumeCommentList(
     }
 }
 
-//    ModalBottomSheetLayout(
-//        sheetState = modalSheetState,
-//        sheetContent = {
-//            ReportModal(onOkClick = {
-//                scope.launch {
-//                    onReportClick()
-//                    modalSheetState.hide()
-//                }
-//            }, onCancelClick = { scope.launch { modalSheetState.hide() } })
-//        }
-//    ) {
-//        Column(
-//            modifier = Modifier.fillMaxWidth().fillMaxHeight()
-//                .background(color = Color.White),
-//            verticalArrangement = Arrangement.Top
-//        ) {
-//            TopBar(
-//                title = "댓글",
-//                iconSize = 25.dp,
-//                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-//                onNavClick = { onBackClick() },
-//            )
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.Center,
-//                modifier = Modifier.padding(16.dp)
-//            ) {
-//                CommentAndSortText(
-//                    commentCount = data.itemCount,
-//                    onSortLikeClick = { onSortLikeClick() },
-//                    onSortLatestClick = { onSortLatestClick() },
-//                    sortType = sortType
-//                )
-//                LazyColumn(
-//                    userScrollEnabled = true,
-//                ) {
-//
-//                    items(items = data.itemSnapshotList) {
-//                        CommentItem(
-//                            count = it?.heartCount ?: 0,
-//                            isCommentLiked = it!!.liked,
-//                            userImgUrl = it.profileImg ?: "",
-//                            userName = it.nickname,
-//                            content = it.content,
-//                            createdDate = it.createdAt ?: "",
-//                            onReportClick = { showReportModal(it.id.toString()) },
-//                            onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
-//                            onCommentLikedClick = {}
-//                        )
-//                    }
-//
-//                }
-//            }
-//            BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })
-//        }
-//    }
 @Composable
 fun CommentAndSortText(
     commentCount: Int,

@@ -10,6 +10,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.AppDefaultDialog
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.NicknameInput
@@ -34,7 +39,7 @@ fun EditProfileRoute(
     val uiState = viewModel.uiState.collectAsState()
     val nickname = viewModel.nickname.collectAsStateWithLifecycle()
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
-    val isDuplicated = viewModel.isDuplicated.collectAsStateWithLifecycle()
+    val isDuplicated = viewModel.isEnabledBtn.collectAsStateWithLifecycle(false)
     val profileImg = viewModel.profileImg.collectAsStateWithLifecycle()
 
     val launcher = rememberLauncherForActivityResult(
@@ -87,8 +92,18 @@ fun EditProfilePage(
                 onNavBack = onNavBack
             )
         }
-        EditProfileUiState.Error -> {
-
+        is EditProfileUiState.Error -> {
+            var showDialog by remember{mutableStateOf(true)}
+            AppDefaultDialog(
+                isOpen = showDialog,
+                modifier = Modifier.fillMaxWidth(0.7f),
+                title = "오류",
+                content = uiState.message,
+                onDismiss = {
+                    showDialog = false
+                    onNavBack()
+                }
+            )
         }
     }
 }
@@ -141,8 +156,8 @@ private fun EditProfileContent(
             Spacer(Modifier.height(6.dp))
             NicknameInput(
                 initNickname = nickname,
+                onChangeValue = onUpdateNickname,
                 onPressNicknameExist = {
-                    onUpdateNickname(it)
                     checkDuplication(it)
                 },
                 isAvailable = isDuplicated,
@@ -154,8 +169,8 @@ private fun EditProfileContent(
             buttonModifier = Modifier
                 .height(82.dp)
                 .fillMaxWidth()
-                .background(color = if (isEnabled) Color.Black else CustomColor.gray2),
-            isEnabled = isEnabled,
+                .background(color = if (isDuplicated) Color.Black else CustomColor.gray2),
+            isEnabled = isDuplicated,
             btnText = "변경",
             onClick = {
                 onChangeInfo()

@@ -2,6 +2,7 @@ package com.hmoa.feature_userinfo.viewModel
 
 import android.app.Application
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -36,13 +38,20 @@ class EditProfileViewModel @Inject constructor(
     val profileImg get() = _profileImg.asStateFlow()
 
     private val _isDuplicated = MutableStateFlow(false)
-    val isDuplicated get() = _isDuplicated.asStateFlow()
+    private val _isProfileUpdate = MutableStateFlow(false)
 
     val isEnabled = nickname.map{
         if (uiState.value != EditProfileUiState.Loading && it == null){
             errState.update{ "Nickname is NULL" }
         }
-        !(it == "" || it == baseNickname)
+        (it != "" && it != baseNickname)
+    }
+
+    val isEnabledBtn = combine(
+        _isDuplicated,
+        _isProfileUpdate,
+    ){ isDup, isUpdate ->
+        isDup || isUpdate
     }
 
     private val errState = MutableStateFlow<String?>(null)
@@ -80,12 +89,14 @@ class EditProfileViewModel @Inject constructor(
 
     //nick name 업데이트
     fun updateNickname(newNick : String) {
-        _nickname.update{ newNick }
+        _nickname.update{newNick}
+        _isDuplicated.update{false}
     }
 
     //profile 업데이트
     fun updateProfile(newProfile : String) {
         _profileImg.update{ newProfile }
+        _isProfileUpdate.update { true }
     }
 
     //nickname 중복 검사
@@ -95,15 +106,14 @@ class EditProfileViewModel @Inject constructor(
             val result = memberRepository.postExistsNickname(requestDto)
             if (result.exception is Exception){
                 errState.update{ result.exception.toString() }
-            } else {
-                _isDuplicated.update { result.data!! }
             }
+            _isDuplicated.update{ !result.data!! }
         }
     }
 
     //remote 정보 update
     fun saveInfo(){
-        val path = absolutePath(profileImg.value!!.toUri()) ?: throw NullPointerException("Path is NULL")
+        val path = absolutePath(profileImg.value!!.toUri()) ?: ""
         val file = File(path)
         val requestDto = NickNameRequestDto(nickname.value)
         viewModelScope.launch{

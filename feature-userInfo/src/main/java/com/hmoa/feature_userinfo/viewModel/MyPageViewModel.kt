@@ -1,6 +1,5 @@
 package com.example.feature_userinfo.viewModel
 
-import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -8,9 +7,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
-import com.hmoa.core_model.data.UserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,22 +18,15 @@ class MyPageViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val getUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
+    private val authTokenState = MutableStateFlow<String?>(null)
 
     //Login 여부
-    private val _isLogin = MutableStateFlow(false)
-    val isLogin get() = _isLogin.asStateFlow()
+    val isLogin = authTokenState.map{it != null}
 
     private val errState = MutableStateFlow<String?>(null)
 
     init {
-        viewModelScope.launch {
-            var authToken: String? = getAuthToken()
-            if (authToken != null) {
-                _isLogin.update { true }
-            } else {
-                _isLogin.update { false }
-            }
-        }
+        getAuthToken()
     }
 
     val uiState : StateFlow<UserInfoUiState> = errState.map{
@@ -52,7 +42,8 @@ class MyPageViewModel @Inject constructor(
         when(result) {
             Result.Loading -> UserInfoUiState.Loading
             is Result.Success -> {
-                UserInfoUiState.User(result.data)
+                val data = result.data
+                UserInfoUiState.User(data.profile, data.nickname, data.provider)
             }
             is Result.Error -> UserInfoUiState.Error
         }
@@ -62,14 +53,12 @@ class MyPageViewModel @Inject constructor(
         initialValue = UserInfoUiState.Loading
     )
 
-    fun getAuthToken(): String? {
-        var result: String? = null
-        viewModelScope.launch(Dispatchers.IO) {
+    private fun getAuthToken() {
+        viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
-                result = it
+                authTokenState.value = it
             }
         }
-        return result
     }
 
     //로그아웃
@@ -79,7 +68,6 @@ class MyPageViewModel @Inject constructor(
 
     //계정 삭제
     fun delAccount(){
-        /** 저장되어 있는 토큰 정보를 모두 날리고 LoginRoute로 Navigation 이게 맞음 */
         viewModelScope.launch{
             try{
                 memberRepository.deleteMember()
@@ -92,10 +80,10 @@ class MyPageViewModel @Inject constructor(
 
 sealed interface UserInfoUiState {
     data object Loading : UserInfoUiState
-
     data class User(
-        val userInfo : UserInfo
+        val profile : String,
+        val nickname : String,
+        val provider : String,
     ) : UserInfoUiState
-
     data object Error : UserInfoUiState
 }

@@ -128,7 +128,7 @@ private fun MyCommentContent(
             } else {
                 NoDataPage(
                     mainMsg = "작성한 댓글이\n없습니다",
-                    subMsg = "좋아하는 함수에 댓글을 작성해주세요"
+                    subMsg = "댓글을 작성해주세요"
                 )
             }
         }

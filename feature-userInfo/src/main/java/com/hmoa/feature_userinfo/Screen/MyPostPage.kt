@@ -113,7 +113,7 @@ private fun MyPostContent(
             } else {
                 NoDataPage(
                     mainMsg = "작성한 게시글이\n없습니다.",
-                    subMsg = "게시글을 올려주세요"
+                    subMsg = "게시글을 작성해주세요"
                 )
             }
         }

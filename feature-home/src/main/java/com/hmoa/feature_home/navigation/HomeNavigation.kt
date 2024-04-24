@@ -20,12 +20,10 @@ fun NavGraphBuilder.homeScreen(
 }
 
 fun NavGraphBuilder.perfumeSearchScreen(
-    onPerfumeSearchResultClick: (searchWord: String) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(route = "${HomeRoute.PerfumeSearch}") {
         PerfumeSearchRoute(
-            onPerfumeSearchResultClick = { onPerfumeSearchResultClick(it) },
             onBackClick = { onBackClick() })
     }
 }

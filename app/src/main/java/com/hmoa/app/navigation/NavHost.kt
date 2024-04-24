@@ -31,7 +31,7 @@ fun SetUpNavGraph(
         homeScreen(onPerfumeClick = { perfumeId ->
             navController.navigateToPerfume(perfumeId)
         }, onAllPerfumeClick = {})
-        perfumeSearchScreen(onBackClick = navController::navigateToBack, onPerfumeSearchResultClick = {})
+        perfumeSearchScreen(onBackClick = navController::navigateToBack)
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)

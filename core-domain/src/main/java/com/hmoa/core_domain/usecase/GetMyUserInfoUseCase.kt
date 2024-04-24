@@ -9,7 +9,6 @@ import javax.inject.Inject
 class GetMyUserInfoUseCase @Inject constructor(
     private val memberRepository : MemberRepository
 ){
-
     suspend operator fun invoke() : ResultResponse<UserInfo> {
 
         val response = memberRepository.getMember()

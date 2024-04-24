@@ -62,15 +62,27 @@ class SearchDataStoreImpl @Inject constructor(
         return searchService.getNote(page, searchWord)
     }
 
-    override suspend fun getPerfume(page: Int, searchWord: String): List<PerfumeSearchResponseDto> {
-        return searchService.getPerfume(page, searchWord)
+    override suspend fun getPerfume(page: Int, searchWord: String): ResultResponse<List<PerfumeSearchResponseDto>> {
+        var result = ResultResponse<List<PerfumeSearchResponseDto>>(null)
+        searchService.getPerfume(page, searchWord).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getPerfumeName(
         page: Int,
         searchWord: String
-    ): List<PerfumeNameSearchResponseDto> {
-        return searchService.getPerfumeName(page, searchWord)
+    ): ResultResponse<List<PerfumeNameSearchResponseDto>> {
+        var result = ResultResponse<List<PerfumeNameSearchResponseDto>>(null)
+        searchService.getPerfumeName(page, searchWord).suspendMapSuccess {
+            result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
     }
 
     override suspend fun getPerfumer(

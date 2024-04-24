@@ -40,6 +40,9 @@ fun SearchTopBar(
                     .padding(start = 13.dp),
                 value = searchWord,
                 onValueChange = {
+                    if(it == ""){
+                        onClearWord()
+                    }
                     onChangeWord(it)
                 },
                 singleLine = true,

@@ -28,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.UserInfoGraph
 import com.example.feature_userinfo.navigateToBack
+import com.example.feature_userinfo.navigateToUserInfoGraph
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
@@ -129,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                             onClickHome = navHostController::navigateToHome,
                             onClickHPedia = navHostController::navigateToHPedia,
                             onClickLike = { /*TODO*/ },
-                            onClickMyPage = {}
+                            onClickMyPage = navHostController::navigateToUserInfoGraph
                         )
                     }
                 },

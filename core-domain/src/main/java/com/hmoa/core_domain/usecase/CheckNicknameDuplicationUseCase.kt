@@ -6,6 +6,6 @@ import javax.inject.Inject
 
 class CheckNicknameDuplicationUseCase @Inject constructor(private val memberRepository: MemberRepository) {
     suspend operator fun invoke(nickname: String?): Boolean {
-        return memberRepository.postExistsNickname(NickNameRequestDto(nickname))
+        return memberRepository.postExistsNickname(NickNameRequestDto(nickname)).data!!
     }
 }

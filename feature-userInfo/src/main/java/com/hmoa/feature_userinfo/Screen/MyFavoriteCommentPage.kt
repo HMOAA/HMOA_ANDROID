@@ -63,20 +63,13 @@ fun MyFavoriteCommentPage(
         }
         is FavoriteCommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems()
-            if (comments.itemSnapshotList.isNotEmpty()){
-                FavoriteCommentContent(
-                    type = commentType,
-                    onTypeChanged = onTypeChanged,
-                    comments = comments.itemSnapshotList,
-                    onNavBack = onNavBack,
-                    onNavCommunity = onNavCommunity
-                )
-            } else {
-                NoDataPage(
-                    mainMsg = "작성한 댓글이\n없습니다",
-                    subMsg = "좋아하는 함수에 댓글을 작성해주세요"
-                )
-            }
+            FavoriteCommentContent(
+                type = commentType,
+                onTypeChanged = onTypeChanged,
+                comments = comments.itemSnapshotList,
+                onNavBack = onNavBack,
+                onNavCommunity = onNavCommunity
+            )
         }
         FavoriteCommentUiState.Error -> {
 
@@ -102,47 +95,62 @@ fun FavoriteCommentContent(
             title = "좋아요 누른 댓글",
             onNavClick = onNavBack //뒤로 가기
         )
-
-        Spacer(Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            TypeBadge(
-                onClickItem = { onTypeChanged("향수") },
-                roundedCorner = 20.dp,
-                type = "향수",
-                fontSize = 12.sp,
-                fontColor = Color.Black,
-                selected = type == "향수"
-            )
-            Spacer(Modifier.width(8.dp))
-            TypeBadge(
-                onClickItem = { onTypeChanged("게시글") },
-                roundedCorner = 20.dp,
-                type = "게시글",
-                fontSize = 12.sp,
-                fontColor = Color.Black,
-                selected = type == "게시글"
-            )
-        }
-        LazyColumn {
-            items(comments) { comment ->
-                if (comment != null){
-                    Comment(
-                        profile = comment.profileImg,
-                        nickname = comment.nickname,
-                        dateDiff = comment.createAt,
-                        comment = comment.content,
-                        isFirst = false,
-                        heartCount = comment.heartCount,
-                        onNavCommunity = { onNavCommunity(comment.parentId) },
-                        onOpenBottomDialog = {/** 여기도 Bottom Dialog 사용하려면 사용합시다 */},
-                        isSelected = comment.liked,
-                        onChangeSelect = {}
-                    )
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp)
+        ){
+            TypeRow(type = type, onTypeChanged = onTypeChanged)
+            if(comments.isNotEmpty()){
+                LazyColumn {
+                    items(comments) { comment ->
+                        if (comment != null){
+                            Comment(
+                                profile = comment.profileImg,
+                                nickname = comment.nickname,
+                                dateDiff = comment.createAt,
+                                comment = comment.content,
+                                isFirst = false,
+                                heartCount = comment.heartCount,
+                                onNavCommunity = { onNavCommunity(comment.parentId) },
+                                onOpenBottomDialog = {/** 여기도 Bottom Dialog 사용하려면 사용합시다 */},
+                                isSelected = comment.liked,
+                                onChangeSelect = {}
+                            )
+                        }
+                    }
                 }
             }
+            else {NoDataPage(mainMsg = "좋아요 한 댓글이\n없습니다",subMsg = "댓글에 좋아요를 눌러주세요")}
         }
+    }
+}
+
+@Composable
+private fun TypeRow(
+    type : String,
+    onTypeChanged : (type : String) -> Unit,
+){
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .wrapContentHeight(),
+    ) {
+        TypeBadge(
+            onClickItem = { onTypeChanged("향수") },
+            roundedCorner = 20.dp,
+            type = "향수",
+            fontSize = 12.sp,
+            fontColor = Color.White,
+            selected = type == "향수"
+        )
+        Spacer(Modifier.width(8.dp))
+        TypeBadge(
+            onClickItem = { onTypeChanged("게시글") },
+            roundedCorner = 20.dp,
+            type = "게시글",
+            fontSize = 12.sp,
+            fontColor = Color.White,
+            selected = type == "게시글"
+        )
     }
 }

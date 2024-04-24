@@ -50,18 +50,11 @@ fun MyPostPage(
         }
         is PostUiState.Posts -> {
             val posts = uiState.posts.collectAsLazyPagingItems().itemSnapshotList
-            if (posts.isNotEmpty()) {
-                MyPostContent(
-                    posts = posts,
-                    onNavBack = onNavBack,
-                    onNavEditPost = onNavEditPost
-                )
-            } else {
-                NoDataPage(
-                    mainMsg = "작성한 게시글이\n없습니다.",
-                    subMsg = "게시글을 올려주세요"
-                )
-            }
+            MyPostContent(
+                posts = posts,
+                onNavBack = onNavBack,
+                onNavEditPost = onNavEditPost
+            )
         }
         PostUiState.Error -> {
 
@@ -86,29 +79,42 @@ private fun MyPostContent(
             title = "작성한 게시글",
             onNavClick = onNavBack
         )
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            items(posts) { post ->
-                if (post != null){
-                    PostListItem(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .border(
-                                width = 1.dp,
-                                color = CustomColor.gray2,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        onPostClick = { onNavEditPost(post.communityId) },
-                        postType = post.category,
-                        postTitle = post.title,
-                        heartCount = post.heartCount,
-                        commentCount = post.commentCount
-                    )
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp)
+        ){
+            if (posts.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    items(posts) { post ->
+                        if (post != null){
+                            PostListItem(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .border(
+                                        width = 1.dp,
+                                        color = CustomColor.gray2,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
+                                onPostClick = { onNavEditPost(post.communityId) },
+                                postType = post.category,
+                                postTitle = post.title,
+                                heartCount = post.heartCount,
+                                commentCount = post.commentCount
+                            )
+                        }
+                    }
                 }
+            } else {
+                NoDataPage(
+                    mainMsg = "작성한 게시글이\n없습니다.",
+                    subMsg = "게시글을 올려주세요"
+                )
             }
         }
     }

@@ -67,7 +67,10 @@ class MyPageViewModel @Inject constructor(
 
     //로그아웃
     fun logout(){
-        /** 저장되어 있는 토큰 정보를 모두 날리고 LoginRoute로 Navigation 이게 맞음 */
+        viewModelScope.launch{
+            loginRepository.deleteAuthToken()
+            loginRepository.deleteRememberedToken()
+        }
     }
 
     //계정 삭제
@@ -78,6 +81,8 @@ class MyPageViewModel @Inject constructor(
             } catch(e : Exception){
                 errState.update{ e.message }
             }
+            loginRepository.deleteAuthToken()
+            loginRepository.deleteRememberedToken()
         }
     }
 }

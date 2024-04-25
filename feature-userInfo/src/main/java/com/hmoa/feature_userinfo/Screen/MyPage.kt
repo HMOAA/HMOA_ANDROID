@@ -65,12 +65,18 @@ internal fun MyPageRoute(
         //로그인 분기 처리 (토큰 확인)
         MyPage(
             uiState = uiState.value,
-            onDelAccount = { viewModel.delAccount() },
+            loginEvent = {
+                viewModel.logout()
+                onNavLogin()
+            },
+            onDelAccount = {
+                viewModel.delAccount()
+                onNavLogin()
+            },
             onNavKakaoChat = navKakao,
             onNavEditProfile = onNavEditProfile,
             onNavMyActivity = onNavMyActivity,
             onNavManageMyInfo = onNavManageMyInfo,
-            onNavLogin = onNavLogin
         )
     } else {
         //로그인 안 되어 있으면
@@ -84,12 +90,12 @@ internal fun MyPageRoute(
 @Composable
 fun MyPage(
     uiState : UserInfoUiState,
+    loginEvent : () -> Unit,
     onDelAccount : () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile : () -> Unit,
     onNavMyActivity : () -> Unit,
     onNavManageMyInfo : () -> Unit,
-    onNavLogin : () -> Unit
 ){
     when(uiState){
         UserInfoUiState.Loading -> {
@@ -100,12 +106,12 @@ fun MyPage(
                 profile = uiState.profile,
                 nickname = uiState.nickname,
                 provider = uiState.provider,
+                loginEvent = loginEvent,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
-                onNavLogin = onNavLogin
             )
         }
         UserInfoUiState.Error -> {
@@ -119,12 +125,12 @@ private fun MyPageContent(
     profile : String,
     nickname : String,
     provider : String,
+    loginEvent: () -> Unit,
     onDelAccount : () -> Unit,
     onNavKakaoChat : () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo : () -> Unit,
-    onNavLogin: () -> Unit
 ){
     val columnInfo = listOf(
         ColumnData("내 활동"){onNavMyActivity()},
@@ -132,14 +138,9 @@ private fun MyPageContent(
         ColumnData("이용 약관"){ },
         ColumnData("개인정보 처리방침"){  },
         ColumnData("버전 정보 ${APP_VERSION}"){},
-        ColumnData("1대1 문의"){
-            onNavKakaoChat()
-        },
-        ColumnData("로그아웃"){},
-        ColumnData("계정삭제") {
-            onDelAccount()
-            onNavLogin()
-        },
+        ColumnData("1대1 문의"){onNavKakaoChat()},
+        ColumnData("로그아웃"){loginEvent()},
+        ColumnData("계정삭제") {onDelAccount()},
     )
 
     Column(

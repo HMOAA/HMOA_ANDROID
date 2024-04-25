@@ -38,6 +38,9 @@ import com.hmoa.core_designsystem.component.OnAndOffBtn
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
+import com.hmoa.feature_userinfo.R
+
+const val APP_VERSION = "1.0.0"
 
 @Composable
 internal fun MyPageRoute(
@@ -138,7 +141,7 @@ private fun MyPageContent(
         ColumnData("내 정보관리"){onNavManageMyInfo()},
         ColumnData("이용 약관"){ },
         ColumnData("개인정보 처리방침"){  },
-        ColumnData("버전 정보"){},
+        ColumnData("버전 정보 ${APP_VERSION}"){},
         ColumnData("1대1 문의"){},
         ColumnData("로그아웃"){},
         ColumnData("계정삭제") {
@@ -171,21 +174,20 @@ private fun MyPageContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ){
-                    Text(
-                        text = it.title,
-                        fontSize = 16.sp
-                    )
+                    Text(text = it.title,fontSize = 16.sp)
 
-                    IconButton(
-                        modifier = Modifier.size(20.dp),
-                        onClick = it.onNavClick
-                    ) {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
-                            contentDescription = "Navigation Button",
-                            tint = CustomColor.gray2
-                        )
+                    if (idx != 4){
+                        IconButton(
+                            modifier = Modifier.size(20.dp),
+                            onClick = it.onNavClick
+                        ) {
+                            Icon(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
+                                contentDescription = "Navigation Button",
+                                tint = CustomColor.gray2
+                            )
+                        }
                     }
                 }
                 if (idx % 3 == 1){

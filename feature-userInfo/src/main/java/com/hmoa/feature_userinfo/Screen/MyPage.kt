@@ -2,7 +2,6 @@ package com.example.userinfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,8 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,7 +37,8 @@ import com.hmoa.core_designsystem.component.OnAndOffBtn
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
-import com.hmoa.feature_userinfo.R
+import com.kakao.sdk.talk.TalkApiClient
+import com.hmoa.feature_userinfo.BuildConfig
 
 const val APP_VERSION = "1.0.0"
 
@@ -50,15 +50,23 @@ internal fun MyPageRoute(
     onNavLogin : () -> Unit,
     viewModel : MyPageViewModel = hiltViewModel()
 ) {
-
     val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val navKakao = {
+        TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
+            if (err != null) {
+                viewModel.updateErr(err.message!!)
+            }
+        }
+    }
 
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
             uiState = uiState.value,
             onDelAccount = { viewModel.delAccount() },
+            onNavKakaoChat = navKakao,
             onNavEditProfile = onNavEditProfile,
             onNavMyActivity = onNavMyActivity,
             onNavManageMyInfo = onNavManageMyInfo,
@@ -77,12 +85,12 @@ internal fun MyPageRoute(
 fun MyPage(
     uiState : UserInfoUiState,
     onDelAccount : () -> Unit,
+    onNavKakaoChat: () -> Unit,
     onNavEditProfile : () -> Unit,
     onNavMyActivity : () -> Unit,
     onNavManageMyInfo : () -> Unit,
     onNavLogin : () -> Unit
 ){
-
     when(uiState){
         UserInfoUiState.Loading -> {
             AppLoadingScreen()
@@ -93,6 +101,7 @@ fun MyPage(
                 nickname = uiState.nickname,
                 provider = uiState.provider,
                 onDelAccount = onDelAccount,
+                onNavKakaoChat = onNavKakaoChat,
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
@@ -105,32 +114,13 @@ fun MyPage(
         else -> {}
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun TestMyPage(){
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
-    ) {
-        MyPage(
-            uiState = UserInfoUiState.User("", "안드 호준", "카카오"),
-            onDelAccount = {},
-            onNavEditProfile = {},
-            onNavLogin = {},
-            onNavManageMyInfo = {},
-            onNavMyActivity = {}
-        )
-    }
-}
-
 @Composable
 private fun MyPageContent(
     profile : String,
     nickname : String,
     provider : String,
     onDelAccount : () -> Unit,
+    onNavKakaoChat : () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo : () -> Unit,
@@ -142,7 +132,9 @@ private fun MyPageContent(
         ColumnData("이용 약관"){ },
         ColumnData("개인정보 처리방침"){  },
         ColumnData("버전 정보 ${APP_VERSION}"){},
-        ColumnData("1대1 문의"){},
+        ColumnData("1대1 문의"){
+            onNavKakaoChat()
+        },
         ColumnData("로그아웃"){},
         ColumnData("계정삭제") {
             onDelAccount()

@@ -61,6 +61,10 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
+    fun updateErr(err : String) {
+        errState.update{ err }
+    }
+
     //로그아웃
     fun logout(){
         /** 저장되어 있는 토큰 정보를 모두 날리고 LoginRoute로 Navigation 이게 맞음 */

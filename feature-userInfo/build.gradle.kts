@@ -53,6 +53,7 @@ dependencies {
 
     //material3
     implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material:material:1.2.0-beta02")
 
     //preview
     implementation("androidx.compose.ui:ui-tooling-preview")

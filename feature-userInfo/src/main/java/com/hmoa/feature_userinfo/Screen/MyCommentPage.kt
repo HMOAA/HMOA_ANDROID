@@ -109,6 +109,7 @@ private fun MyCommentContent(
                     items(comments) { comment ->
                         if (comment != null){
                             Comment(
+                                isEditable = false,
                                 profile = comment.profileImg,
                                 nickname = comment.nickname,
                                 dateDiff = comment.createAt,

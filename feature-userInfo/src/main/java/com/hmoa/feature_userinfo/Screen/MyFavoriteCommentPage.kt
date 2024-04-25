@@ -23,7 +23,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.feature_userinfo.viewModel.FavoriteCommentUiState
 import com.example.feature_userinfo.viewModel.FavoriteCommentViewModel
 import com.hmoa.component.TopBar
-import com.hmoa.core_designsystem.component.AppDefaultDialog
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.TypeBadge
@@ -106,6 +105,7 @@ fun FavoriteCommentContent(
                     items(comments) { comment ->
                         if (comment != null){
                             Comment(
+                                isEditable = false,
                                 profile = comment.profileImg,
                                 nickname = comment.nickname,
                                 dateDiff = comment.createAt,

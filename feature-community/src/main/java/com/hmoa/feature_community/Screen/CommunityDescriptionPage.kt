@@ -280,6 +280,7 @@ private fun Comments(
         commentList.reversed().forEachIndexed { index, comment ->
             if (comment != null){
                 Comment(
+                    isEditable = true,
                     profile = comment.profileImg,
                     nickname = comment.author,
                     dateDiff = comment.time,

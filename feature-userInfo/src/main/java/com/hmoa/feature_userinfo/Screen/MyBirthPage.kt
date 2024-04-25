@@ -32,11 +32,12 @@ fun MyBirthRoute(
     var showDialog by remember { mutableStateOf(false) }
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val birth = viewModel.birth.collectAsStateWithLifecycle()
+    viewModel.init()
 
     MyBirthPage(
         availableYearRange = availableYearRange,
         uiState = uiState.value,
-        birth = birth.value!!,
+        birth = birth.value,
         isEnabled = isEnabled.value,
         showDialog = showDialog,
         onChangeDialogState = {showDialog = !showDialog},
@@ -50,7 +51,7 @@ fun MyBirthRoute(
 fun MyBirthPage(
     availableYearRange : List<Int>,
     uiState: MyBirthUiState,
-    birth : Int,
+    birth : Int?,
     isEnabled: Boolean,
     showDialog: Boolean,
     onChangeDialogState: () -> Unit,
@@ -65,7 +66,7 @@ fun MyBirthPage(
         MyBirthUiState.Success -> {
             SelectBirthContent(
                 availableYearRange = availableYearRange,
-                birth = birth,
+                birth = birth!!,
                 isEnabled = isEnabled,
                 showDialog = showDialog,
                 onChangeDialogState = onChangeDialogState,
@@ -75,7 +76,7 @@ fun MyBirthPage(
             )
         }
         MyBirthUiState.Error -> {
-
+            Text("Error : 뭐징")
         }
     }
 }

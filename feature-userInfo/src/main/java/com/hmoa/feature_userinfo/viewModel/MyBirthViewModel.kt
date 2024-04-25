@@ -1,5 +1,6 @@
 package com.hmoa.feature_userinfo.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -33,11 +35,12 @@ class MyBirthViewModel @Inject constructor(
     val isEnabled = _birth.map{
         birth.value != defaultBirth
     }
-
     private val errState = MutableStateFlow<String?>(null)
 
-    val uiState : StateFlow<MyBirthUiState> = errState.map {
-        if (errState.value == null){
+    private val flag = MutableStateFlow(false)
+
+    val uiState : StateFlow<MyBirthUiState> = errState.map{ err ->
+        if (err != null){
             throw Exception(errState.value)
         }
         val result = getMyUserInfoUseCase()
@@ -81,6 +84,11 @@ class MyBirthViewModel @Inject constructor(
                 errState.update{ e.message }
             }
         }
+    }
+
+    fun init(){
+        flag.update{ true }
+        Log.d("TAG TEST", "init()")
     }
 }
 

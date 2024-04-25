@@ -1,7 +1,6 @@
 package com.hmoa.app
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -61,24 +60,10 @@ class MainActivity : AppCompatActivity() {
 
     private val needTopBarScreens = HomeRoute.Home.name
 
-    fun createRoute() {
-        if (viewModel.authTokenState.value == null && viewModel.rememberedTokenState.value == null) {
-            initialRoute = AuthenticationRoute.Login.name
-        } else {
-            initialRoute = HomeRoute.Home.name
-        }
-        Log.d(
-            "MainActivity",
-            "authTokenState: ${viewModel.authTokenState.value}\n, rememberedTokenState: ${viewModel.rememberedTokenState.value}"
-        )
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        createRoute()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {

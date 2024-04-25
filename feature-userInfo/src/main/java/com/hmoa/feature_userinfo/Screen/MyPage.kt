@@ -226,9 +226,7 @@ private fun UserProfileInfo(
                 fontSize = 12.sp,
             )
         }
-
         Spacer(Modifier.weight(1f))
-
         IconButton(
             modifier = Modifier.size(20.dp),
             onClick = onNavEditProfile

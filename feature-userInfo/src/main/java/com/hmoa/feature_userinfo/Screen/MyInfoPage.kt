@@ -80,7 +80,7 @@ fun MyInfoPage(
                     modifier = Modifier.fillMaxSize(),
                     painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
                     contentDescription = "Navigation Button",
-                    tint = Color(0xFFBBBBBB)
+                    tint = CustomColor.gray2
                 )
             }
         }
@@ -93,7 +93,7 @@ fun MyInfoPage(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ){
-            Text(text = "출생연도",fontSize = 16.sp)
+            Text(text = "성별",fontSize = 16.sp)
             IconButton(
                 modifier = Modifier.size(20.dp),
                 onClick = onNavMyGender

@@ -36,18 +36,14 @@ fun MyBirthRoute(
     val availableYearRange = (1950..LocalDateTime.now().year).toList()
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    var showDialog by remember { mutableStateOf(false) }
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val birth = viewModel.birth.collectAsStateWithLifecycle()
-    viewModel.init()
 
     MyBirthPage(
         availableYearRange = availableYearRange,
         uiState = uiState.value,
         birth = birth.value,
         isEnabled = isEnabled.value,
-        showDialog = showDialog,
-        onChangeDialogState = {showDialog = !showDialog},
         onUpdateBirth = {viewModel.updateBirth(it)},
         onSaveBirth = {viewModel.saveBirth()},
         onNavBack = onNavBack
@@ -60,8 +56,6 @@ fun MyBirthPage(
     uiState: MyBirthUiState,
     birth : Int?,
     isEnabled: Boolean,
-    showDialog: Boolean,
-    onChangeDialogState: () -> Unit,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
     onNavBack: () -> Unit
@@ -75,8 +69,6 @@ fun MyBirthPage(
                 availableYearRange = availableYearRange,
                 birth = birth!!,
                 isEnabled = isEnabled,
-                showDialog = showDialog,
-                onChangeDialogState = onChangeDialogState,
                 onUpdateBirth = onUpdateBirth,
                 onSaveBirth = onSaveBirth,
                 onNavBack = onNavBack
@@ -94,8 +86,6 @@ private fun SelectBirthContent(
     availableYearRange : List<Int>,
     birth : Int,
     isEnabled: Boolean,
-    showDialog: Boolean,
-    onChangeDialogState: () -> Unit,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
     onNavBack: () -> Unit
@@ -106,7 +96,6 @@ private fun SelectBirthContent(
         confirmValueChange = {it!=ModalBottomSheetValue.HalfExpanded},
         skipHalfExpanded = true
     )
-    Log.d("TAG TEST", "showDialog : ${showDialog}")
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
         sheetContent = {

@@ -37,8 +37,6 @@ class MyBirthViewModel @Inject constructor(
     }
     private val errState = MutableStateFlow<String?>(null)
 
-    private val flag = MutableStateFlow(false)
-
     val uiState : StateFlow<MyBirthUiState> = errState.map{ err ->
         if (err != null){
             throw Exception(errState.value)
@@ -84,11 +82,6 @@ class MyBirthViewModel @Inject constructor(
                 errState.update{ e.message }
             }
         }
-    }
-
-    fun init(){
-        flag.update{ true }
-        Log.d("TAG TEST", "init()")
     }
 }
 

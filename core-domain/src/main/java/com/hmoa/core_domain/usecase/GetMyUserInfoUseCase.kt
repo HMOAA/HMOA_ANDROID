@@ -18,7 +18,7 @@ class GetMyUserInfoUseCase @Inject constructor(
         } else {
             val todayYear = LocalDateTime.now().year
             val birth = todayYear - response.data!!.age + 1
-            val gender = if (response.data!!.sex) "male" else "female"
+            val gender = if (response.data!!.sex) "남성" else "여성"
 
             val user = UserInfo(
                 birth = birth,

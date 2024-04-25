@@ -24,10 +24,12 @@ fun MyGenderRoute(
 ) {
 
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
+    val gender = viewModel.gender.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     MyGenderPage(
         uiState = uiState.value,
+        gender = gender.value,
         onUpdateGender = {viewModel.updateGender(it)},
         onSaveGender = {viewModel.saveGender()},
         isEnabled = isEnabled.value,
@@ -38,6 +40,7 @@ fun MyGenderRoute(
 @Composable
 fun MyGenderPage(
     uiState: MyGenderUiState,
+    gender : String?,
     onUpdateGender: (String) -> Unit,
     onSaveGender: () -> Unit,
     isEnabled: Boolean,
@@ -50,6 +53,7 @@ fun MyGenderPage(
         MyGenderUiState.Success -> {
             SelectGenderContent(
                 isEnabled = isEnabled,
+                gender = gender!!,
                 onUpdateGender = onUpdateGender,
                 onSaveGender = onSaveGender,
                 onNavBack = onNavBack
@@ -64,6 +68,7 @@ fun MyGenderPage(
 @Composable
 private fun SelectGenderContent(
     isEnabled : Boolean,
+    gender : String,
     onUpdateGender : (String) -> Unit,
     onSaveGender : () -> Unit,
     onNavBack: () -> Unit
@@ -87,12 +92,16 @@ private fun SelectGenderContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             RadioButtonList(
+                initValue = gender,
                 radioOptions = listOf("남성","여성"),
                 onButtonClick ={onUpdateGender(it)}
             )
         }
         Spacer(Modifier.weight(1f))
         Button(
+            buttonModifier = Modifier
+                .fillMaxWidth()
+                .height(78.dp),
             isEnabled = isEnabled,
             btnText = "변경",
             onClick = {

@@ -70,7 +70,7 @@ class MyGenderViewModel @Inject constructor(
             errState.update{ "Gender Info is NULL" }
             return
         }
-        val requestDto = SexRequestDto(gender.value == "male")
+        val requestDto = SexRequestDto(gender.value == "남성")
         viewModelScope.launch{
             try{
                 memberRepository.updateSex(requestDto)

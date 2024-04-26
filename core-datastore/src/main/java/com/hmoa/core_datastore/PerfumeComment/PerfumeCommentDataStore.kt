@@ -2,7 +2,9 @@ package com.hmoa.core_datastore.PerfumeComment
 
 import ResultResponse
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 
@@ -15,4 +17,6 @@ interface PerfumeCommentDataStore {
     suspend fun putPerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>>
     suspend fun deletePerfumeCommentLike(commentId: Int): ResultResponse<DataResponseDto<Nothing?>>
     suspend fun putPerfumeCommentModify(commentId: Int, dto: PerfumeCommentRequestDto): PerfumeCommentResponseDto
+    suspend fun getPerfumeCommentsWithHeart(cursor : Int) : ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>
+    suspend fun getMyPerfumeComments(cursor : Int) : ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>
 }

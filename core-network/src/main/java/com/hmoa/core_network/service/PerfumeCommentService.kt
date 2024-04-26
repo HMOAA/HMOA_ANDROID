@@ -1,7 +1,9 @@
 package com.hmoa.core_network.service
 
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.skydoves.sandwich.ApiResponse
@@ -45,4 +47,14 @@ interface PerfumeCommentService {
         @Path("commentId") commentId: Int,
         @Body dto: PerfumeCommentRequestDto
     ): PerfumeCommentResponseDto
+
+    @GET("/perfume/comments/like")
+    suspend fun getPerfumeCommentsWithHeart(
+        @Query("cursor") cursor : Int,
+    ) : ApiResponse<PagingData<CommunityCommentDefaultResponseDto>>
+
+    @GET("/perfume/comments/me")
+    suspend fun getMyPerfumeComments(
+        @Query("cursor") cursor : Int,
+    ) : ApiResponse<PagingData<CommunityCommentDefaultResponseDto>>
 }

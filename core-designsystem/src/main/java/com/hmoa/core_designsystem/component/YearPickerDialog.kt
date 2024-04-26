@@ -177,31 +177,17 @@ fun YearPickerDialog(
                 val centerIndex = scrollState.layoutInfo.visibleItemsInfo
                     .minByOrNull { (scrollState.layoutInfo.viewportEndOffset - scrollState.layoutInfo.viewportStartOffset) }?.index
                     ?: 0
-
                 selectedValue = yearList[centerIndex + 2]
             }
         }
         preventEvent = false
     }
-
-//    Dialog(
-//        onDismissRequest = onDismiss,
-//        properties = DialogProperties(
-//            dismissOnBackPress = true,
-//            dismissOnClickOutside = true,
-//            usePlatformDefaultWidth = false
-//        )
-//    ) {
-//
-//    }
 }
 
 @Preview
 @Composable
 fun TestPickerDialog() {
-
-
-    var showDialog by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
 
     var value by remember { mutableStateOf(2000) }
     val yearList = (1950..2024).toList()

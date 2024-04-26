@@ -78,7 +78,7 @@ fun PickNicknameScreen(
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Thin, color = CustomColor.gray4)
                 )
                 NicknameInput(
-                    { onCheckNicknameDuplication(it) },
+                    onPressNicknameExist = { onCheckNicknameDuplication(it) },
                     isAvailable = isAvailableNickname
                 )
             }

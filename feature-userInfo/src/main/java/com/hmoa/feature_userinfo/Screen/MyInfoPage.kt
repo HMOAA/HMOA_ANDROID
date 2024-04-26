@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.R
 
 @Composable
@@ -54,11 +56,10 @@ fun MyInfoPage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = painterResource(R.drawable.back_btn),
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             onNavClick = onNavBack, //뒤오 가기
             title = "내 정보"
         )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,25 +72,19 @@ fun MyInfoPage(
                 text = "출생연도",
                 fontSize = 16.sp,
             )
-
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavMyBirth //출생연도 수정 이동
+                onClick = onNavMyBirth
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
                     contentDescription = "Navigation Button",
-                    tint = Color(0xFFBBBBBB)
+                    tint = CustomColor.gray2
                 )
             }
         }
-
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp))
-
+        HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,37 +93,19 @@ fun MyInfoPage(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ){
-            Text(
-                text = "출생연도",
-                fontSize = 16.sp,
-            )
-
+            Text(text = "성별",fontSize = 16.sp)
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavMyGender // 내 성별
+                onClick = onNavMyGender
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
                     contentDescription = "Navigation Button",
-                    tint = Color(0xFFBBBBBB)
+                    tint = CustomColor.gray2
                 )
             }
         }
-
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp))
+        HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TestMyInfoPage(){
-    MyInfoPage(
-        onNavBack = {},
-        onNavMyBirth = {},
-        onNavMyGender = {}
-    )
 }

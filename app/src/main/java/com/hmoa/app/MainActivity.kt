@@ -23,7 +23,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.feature_userinfo.UserInfoGraph
 import com.example.feature_userinfo.navigateToBack
+import com.example.feature_userinfo.navigateToUserInfoGraph
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
@@ -50,7 +52,13 @@ class MainActivity : AppCompatActivity() {
         CommunityRoute.CommunityPageRoute.name,
         HPediaRoute.HPedia.name,
         "${HPediaRoute.HPediaSearchRoute.name}/{type}",
-        "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}"
+        "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
+        UserInfoGraph.MyPage.name,
+        UserInfoGraph.MyInfoRoute.name,
+        UserInfoGraph.MyFavoriteCommentRoute.name,
+        UserInfoGraph.MyActivityRoute.name,
+        UserInfoGraph.MyCommentRoute.name,
+        UserInfoGraph.MyPostRoute.name
     )
     private val bottomNav = listOf(
         BottomScreen.Home.name,
@@ -121,7 +129,7 @@ class MainActivity : AppCompatActivity() {
                             onClickHome = navHostController::navigateToHome,
                             onClickHPedia = navHostController::navigateToHPedia,
                             onClickLike = { /*TODO*/ },
-                            onClickMyPage = {}
+                            onClickMyPage = navHostController::navigateToUserInfoGraph
                         )
                     }
                 },

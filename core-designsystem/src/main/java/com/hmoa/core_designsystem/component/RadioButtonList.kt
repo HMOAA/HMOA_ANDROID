@@ -22,9 +22,16 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
-fun RadioButtonList(radioOptions: List<String>,onButtonClick:(value:String)->Unit) {
+fun RadioButtonList(
+    initValue : String? = null,
+    radioOptions: List<String>,
+    onButtonClick:(value:String)->Unit
+) {
     val radioOptions = radioOptions
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+    val (selectedOption, onOptionSelected) = remember {
+        val idx = if (initValue == null) 0 else radioOptions.indexOf(initValue)
+        mutableStateOf(radioOptions[idx])
+    }
 
     Row {
         radioOptions.forEach {
@@ -50,5 +57,5 @@ fun RadioButtonList(radioOptions: List<String>,onButtonClick:(value:String)->Uni
 @Preview
 @Composable
 fun RadioButtonListPreview() {
-    RadioButtonList(listOf("여성", "남성"),{})
+    RadioButtonList(null,listOf("여성", "남성"),{})
 }

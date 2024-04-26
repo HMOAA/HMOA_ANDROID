@@ -49,8 +49,8 @@ fun SetUpNavGraph(
         this.nestedUserInfoGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
-            onNavCommunity = { /** onNavCommunity는 Community 모듈로의 이동 */ },
-            onNavEditPost = { /** 여기서 게시글 수정으로 이동 */ },
+            onNavCommunity = navController::navigateToCommunityDescriptionRoute,
+            onNavEditPost = navController::navigateToCommunityEditRoute,
             onNavEditProfile = navController::navigateToEditProfilePage,
             onNavManageMyInfo = navController::navigateToMyInfoPage,
             onNavMyActivity = navController::navigateToMyActivity,

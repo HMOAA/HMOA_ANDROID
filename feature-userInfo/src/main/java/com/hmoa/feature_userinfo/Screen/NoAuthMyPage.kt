@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.theme.CustomColor
 
 //인증이 안되어 있는 My Page
 @Composable
@@ -55,13 +56,13 @@ fun NoAuthMyPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavLogin //로그인 화면으로 이동
+                onClick = onNavLogin
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.next_btn),
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
                     contentDescription = "Nav Button",
-                    tint = Color(0xFFBBBBBB)
+                    tint = CustomColor.gray2
                 )
             }
         }

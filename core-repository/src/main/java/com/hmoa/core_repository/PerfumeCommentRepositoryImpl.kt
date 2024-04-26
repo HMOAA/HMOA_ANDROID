@@ -3,7 +3,9 @@ package com.hmoa.core_repository
 import ResultResponse
 import com.hmoa.core_datastore.PerfumeComment.PerfumeCommentDataStore
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import javax.inject.Inject
@@ -47,6 +49,14 @@ class PerfumeCommentRepositoryImpl @Inject constructor(private val perfumeCommen
         dto: PerfumeCommentRequestDto
     ): PerfumeCommentResponseDto {
         return perfumeCommentDataStore.putPerfumeCommentModify(commentId, dto)
+    }
+
+    override suspend fun getPerfumeCommentsWithHeart(cursor: Int): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
+        return perfumeCommentDataStore.getPerfumeCommentsWithHeart(cursor)
+    }
+
+    override suspend fun getMyPerfumeComments(cursor: Int): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
+        return perfumeCommentDataStore.getMyPerfumeComments(cursor)
     }
 
 }

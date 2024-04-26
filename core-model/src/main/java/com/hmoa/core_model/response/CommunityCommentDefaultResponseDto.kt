@@ -12,23 +12,7 @@ data class CommunityCommentDefaultResponseDto(
     val id : Int,
     val liked : Boolean,
     val nickname : String,
-    val perfumeId : Int,
+    val parentId : Int,
     val profileImg : String,
     val writed : Boolean
-) {
-    fun calDate() : CommunityCommentDefaultResponseDto {
-
-        val today = LocalDateTime.now()
-        val date = LocalDateTime.parse(createAt)
-        val diff = ChronoUnit.DAYS.between(today, date).toInt()
-        val diffDay = when(diff){
-            0 -> "오늘"
-            1 -> "어제"
-            else -> "${diff}일 전"
-        }
-
-        return this.copy(
-            createAt = diffDay
-        )
-    }
-}
+)

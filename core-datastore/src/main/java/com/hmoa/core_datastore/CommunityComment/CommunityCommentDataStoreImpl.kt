@@ -3,8 +3,10 @@ package com.hmoa.core_datastore.CommunityComment
 import ResultResponse
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_network.service.CommunityCommentService
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
@@ -83,6 +85,26 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         val result = ResultResponse<CommunityCommentWithLikedResponseDto>()
         communityCommentService.postCommunityComment(communityId, dto).suspendMapSuccess {
             result.data = this
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
+    }
+
+    override suspend fun getMyCommunityCommentsByHeart(cursor: Int): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
+        val result = ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>()
+        communityCommentService.getMyCommunityCommentsByHeart(cursor).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
+    }
+
+    override suspend fun getMyCommunityComments(cursor: Int): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
+        val result = ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>()
+        communityCommentService.getMyCommunityComments(cursor).suspendOnSuccess{
+            result.data = this.data
         }.suspendOnError {
             result.exception = Exception(this.statusCode.code.toString())
         }

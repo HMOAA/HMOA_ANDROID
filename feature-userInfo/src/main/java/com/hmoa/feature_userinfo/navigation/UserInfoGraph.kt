@@ -1,7 +1,8 @@
 package com.example.feature_userinfo
 
-enum class Screens {
-    MyPageRoute, //마이페이지 Route
+enum class UserInfoGraph {
+    UserInfoGraph,
+    MyPage, //마이페이지 Route
     NoAuthMyPage, //인증되지 않았을 경우의 화면
     MyActivityRoute, //내 활동 화면
     MyCommentRoute, //작성한 댓글 Route

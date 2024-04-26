@@ -141,6 +141,7 @@ fun PickPersonalInfoScreen(
                 }
                 Column(modifier = Modifier.padding(top = 25.dp).padding(start = 5.dp)) {
                     RadioButtonList(
+                        null,
                         listOf(
                             stringResource(com.hmoa.feature_authentication.R.string.female),
                             stringResource(com.hmoa.feature_authentication.R.string.male)

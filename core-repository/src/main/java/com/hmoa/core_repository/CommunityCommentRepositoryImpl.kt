@@ -5,8 +5,10 @@ import com.hmoa.core_datastore.CommunityComment.CommunityCommentDataStore
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import javax.inject.Inject
 
 class CommunityCommentRepositoryImpl @Inject constructor(private val communityCommentDataStore: CommunityCommentDataStore)
@@ -45,5 +47,13 @@ class CommunityCommentRepositoryImpl @Inject constructor(private val communityCo
         dto: CommunityCommentDefaultRequestDto
     ): ResultResponse<CommunityCommentWithLikedResponseDto> {
         return communityCommentDataStore.postCommunityComment(communityId, dto)
+    }
+
+    override suspend fun getMyCommunityCommentsByHeart(cursor: Int): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
+        return communityCommentDataStore.getMyCommunityCommentsByHeart(cursor)
+    }
+
+    override suspend fun getMyCommunityComments(cursor: Int): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
+        return communityCommentDataStore.getMyCommunityComments(cursor)
     }
 }

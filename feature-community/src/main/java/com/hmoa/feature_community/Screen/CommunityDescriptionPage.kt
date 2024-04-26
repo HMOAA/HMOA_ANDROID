@@ -44,13 +44,12 @@ import com.hmoa.feature_community.ViewModel.CommunityDescViewModel
 
 @Composable
 fun CommunityDescriptionRoute(
-    _id: Int?,
+    id: Int?,
     onNavCommunityEdit: (Int) -> Unit,
     onNavCommentEdit : (Int) -> Unit,
     onNavBack : () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
-    val id = _id ?: -1
     viewModel.setId(id)
 
     val errState = viewModel.errState.collectAsStateWithLifecycle()
@@ -101,7 +100,7 @@ fun CommunityDescriptionRoute(
             comments.refresh()
             Toast.makeText(context, "댓글 삭제", Toast.LENGTH_SHORT).show()
         },
-        onNavCommunityEdit = {onNavCommunityEdit(id)},
+        onNavCommunityEdit = {onNavCommunityEdit(id!!)},
         onNavCommentEdit = onNavCommentEdit
     )
 }
@@ -281,6 +280,7 @@ private fun Comments(
         commentList.reversed().forEachIndexed { index, comment ->
             if (comment != null){
                 Comment(
+                    isEditable = true,
                     profile = comment.profileImg,
                     nickname = comment.author,
                     dateDiff = comment.time,

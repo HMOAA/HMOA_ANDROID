@@ -35,7 +35,7 @@ class LikeViewModel @Inject constructor(
             is Result.Success -> {
                 LikeUiState.Like(result.data.data)
             }
-            is Result.Error -> LikeUiState.Error
+            is Result.Error -> LikeUiState.Error(result.exception.toString())
         }
     }.stateIn(
         scope = viewModelScope,
@@ -50,5 +50,7 @@ sealed interface LikeUiState{
     data class Like(
         val perfumes : List<PerfumeLikeResponseDto>
     ) : LikeUiState
-    data object Error : LikeUiState
+    data class Error(
+        val message : String
+    ) : LikeUiState
 }

@@ -45,5 +45,5 @@ interface PerfumeService {
     suspend fun deletePerfumeWeather(@Path("perfumeId") perfumeId: String): PerfumeWeatherResponseDto
 
     @GET("/perfume/like")
-    suspend fun getLikePerfumes(): DataResponseDto<Any>
+    suspend fun getLikePerfumes(): ApiResponse<DataResponseDto<List<PerfumeLikeResponseDto>>>
 }

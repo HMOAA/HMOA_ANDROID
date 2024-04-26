@@ -19,4 +19,5 @@ object CustomColor {
     val blue2 = Color(0xFF1E62B5)
 
     val blackTrans30 = Color(0x2F000000)
+    val grayTrans50 = Color(0x88BBBBBB)
 }

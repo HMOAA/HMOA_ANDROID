@@ -50,7 +50,10 @@ fun SetUpNavGraph(
 
         /** like 모듈 */
         composable(LIKE_ROUTE){
-            LikeRoute(onNavPerfumeDesc = navController::navigateToPerfume)
+            LikeRoute(
+                onNavPerfumeDesc = navController::navigateToPerfume,
+                onNavHome = navController::navigateToHome
+            )
         }
 
         /** user info 모듈 */

@@ -53,7 +53,7 @@ class PerfumeRepositoryImpl @Inject constructor(private val perfumeDataStore: Pe
         return perfumeDataStore.deletePerfumeWeather(perfumeId)
     }
 
-    override suspend fun getLikePerfumes(): DataResponseDto<Any> {
+    override suspend fun getLikePerfumes(): ResultResponse<DataResponseDto<List<PerfumeLikeResponseDto>>> {
         return perfumeDataStore.getLikePerfumes()
     }
 }

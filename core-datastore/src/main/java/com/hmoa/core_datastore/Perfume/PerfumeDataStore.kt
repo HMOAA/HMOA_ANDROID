@@ -17,5 +17,5 @@ interface PerfumeDataStore {
     suspend fun deletePerfumeLike(perfumeId: String): DataResponseDto<Any>
     suspend fun postPerfumeWeather(perfumeId: String, dto: PerfumeWeatherRequestDto): PerfumeWeatherResponseDto
     suspend fun deletePerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto
-    suspend fun getLikePerfumes(): DataResponseDto<Any>
+    suspend fun getLikePerfumes(): ResultResponse<DataResponseDto<List<PerfumeLikeResponseDto>>>
 }

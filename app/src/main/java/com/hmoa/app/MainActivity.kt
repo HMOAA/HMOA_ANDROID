@@ -39,6 +39,8 @@ import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
+import com.hmoa.feature_like.Screen.LIKE_ROUTE
+import com.hmoa.feature_like.Screen.navigateToLike
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -58,7 +60,8 @@ class MainActivity : AppCompatActivity() {
         UserInfoGraph.MyFavoriteCommentRoute.name,
         UserInfoGraph.MyActivityRoute.name,
         UserInfoGraph.MyCommentRoute.name,
-        UserInfoGraph.MyPostRoute.name
+        UserInfoGraph.MyPostRoute.name,
+        LIKE_ROUTE
     )
     private val bottomNav = listOf(
         BottomScreen.Home.name,
@@ -128,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                             initValue = currentScreen,
                             onClickHome = navHostController::navigateToHome,
                             onClickHPedia = navHostController::navigateToHPedia,
-                            onClickLike = { /*TODO*/ },
+                            onClickLike = navHostController::navigateToLike,
                             onClickMyPage = navHostController::navigateToUserInfoGraph
                         )
                     }

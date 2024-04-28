@@ -35,16 +35,18 @@ internal fun LoginRoute(
         if (isAbleToGoHome) {
             onHome()
         }
-        if (isNeedToSignup){
+        if (isNeedToSignup) {
             onSignup()
         }
     }
-    LoginScreen(onClickKakaoLogin = { viewModel.handleKakaoLogin() })
+    LoginScreen(onClickKakaoLogin = { viewModel.handleKakaoLogin() }, onClickGoogleLogin = {}, onHome = { onHome })
 }
 
 @Composable
 fun LoginScreen(
-    onClickKakaoLogin: () -> Unit
+    onClickKakaoLogin: () -> Unit,
+    onClickGoogleLogin: () -> Unit,
+    onHome: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(vertical = 30.dp),
@@ -85,7 +87,7 @@ fun LoginScreen(
         }
         ClickableText(
             text = AnnotatedString("로그인없이 사용하기"),
-            onClick = {},
+            onClick = { onHome() },
             style = TextStyle(textAlign = TextAlign.Center, fontSize = 12.sp, color = CustomColor.gray4)
         )
 

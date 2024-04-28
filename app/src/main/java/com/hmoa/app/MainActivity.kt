@@ -17,9 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.navigateToBack
@@ -37,6 +35,9 @@ import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -66,11 +67,18 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                if (viewModel.authTokenState.value == null && viewModel.rememberedTokenState.value == null) {
-                    initialRoute = AuthenticationRoute.Login.name
-                } else {
-                    initialRoute = HomeRoute.Home.name
+            val authTokenState = viewModel.authToken().stateIn(this)
+            val rememberedTokenState = viewModel.rememberedToken().stateIn(this)
+            val newFlow = authTokenState.zip(rememberedTokenState) { authtoken, rememberedToken ->
+                Pair<String?, String?>(authtoken, rememberedToken)
+            }
+            launch {
+                newFlow.collectLatest {
+                    if (it.first == null && it.second == null) {
+                        initialRoute = AuthenticationRoute.Login.name
+                    } else {
+                        initialRoute = HomeRoute.Home.name
+                    }
                 }
             }
         }
@@ -82,6 +90,7 @@ class MainActivity : AppCompatActivity() {
             var isBottomBarVisible = true
             var isTopBarVisible = true
             var isDrawerGestureEnabled = false
+
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->

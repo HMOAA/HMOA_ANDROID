@@ -3,7 +3,6 @@ package com.hmoa.feature_perfume.screen
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,14 +32,14 @@ fun EditMyPerfumeCommentScreen(
     viewModel: EditMyPerfumeCommentViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isNewPerfumeCommentSubmitFinished = viewModel.isNewPerfumeCommentSubmitedState
+    val isNewPerfumeCommentSubmitFinished by viewModel.isNewPerfumeCommentSubmitedState.collectAsStateWithLifecycle()
 
     LaunchedEffect(true) {
         viewModel.initializePerfumeComment(commentId = commentId)
     }
 
     LaunchedEffect(isNewPerfumeCommentSubmitFinished) {
-        if (isNewPerfumeCommentSubmitFinished.value) {
+        if (isNewPerfumeCommentSubmitFinished) {
             onBackClick()
         }
     }
@@ -102,12 +101,7 @@ fun EditMyPerfumeCommentContent(
                 },
                 textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.Black),
                 cursorBrush = SolidColor(Color.Black)
-            ) {
-                Text(
-                    text = text.value,
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.Black),
-                )
-            }
+            )
         }
     }
 }

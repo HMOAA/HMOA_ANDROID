@@ -40,7 +40,7 @@ interface PerfumeCommentService {
     @DELETE("/perfume/comments/{commentId}/like")
     suspend fun deletePerfumeCommentLike(@Path("commentId") commentId: Int): ApiResponse<DataResponseDto<Nothing?>>
 
-    @PUT("/perfume/comments/{comments}/modify")
+    @PUT("/perfume/comments/{commentId}/modify")
     suspend fun putPerfumeCommentModify(
         @Path("commentId") commentId: Int,
         @Body dto: PerfumeCommentRequestDto

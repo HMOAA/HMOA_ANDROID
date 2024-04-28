@@ -8,8 +8,8 @@ import com.hmoa.core_network.BuildConfig
 import com.hmoa.core_network.service.LoginService
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
-import com.skydoves.sandwich.suspendOnSuccess
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -19,15 +19,6 @@ class RefreshTokenManagerImpl @Inject constructor(private val tokenManager: Toke
 
     override suspend fun refreshTokens(dto: RememberedLoginRequestDto): ApiResponse<TokenResponseDto> {
         val response = createWebService().create(LoginService::class.java).postRemembered(dto)
-        var refreshedAuthToken = ""
-        var rememberedToken = ""
-        response.suspendOnSuccess {
-            refreshedAuthToken = this.response.body()!!.authToken
-            rememberedToken = this.response.body()!!.rememberedToken
-        }
-
-        saveRefreshTokens(refreshedAuthToken, rememberedToken)
-
         return response
     }
 
@@ -36,9 +27,10 @@ class RefreshTokenManagerImpl @Inject constructor(private val tokenManager: Toke
         tokenManager.saveRememberedToken(rememberedToken)
     }
 
-
+    val httpLoggingInterceptor = HttpLoggingInterceptor()
     private val okHttp =
-        OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).build()
+        OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS).addInterceptor(httpLoggingInterceptor)
+            .readTimeout(60, TimeUnit.SECONDS).build()
 
     private fun createWebService(): Retrofit {
         return Retrofit.Builder()

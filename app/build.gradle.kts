@@ -28,6 +28,13 @@ android {
         manifestPlaceholders["NATIVE_APP_KEY"] = localProperties.getProperty("NATIVE_APP_KEY")
         buildConfigField("String", "NATIVE_APP_KEY", localProperties.getProperty("NATIVE_APP_KEY"))
     }
+
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("./debug.keystore")
+        }
+    }
+
     buildFeatures {
         buildConfig = true
     }

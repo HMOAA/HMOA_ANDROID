@@ -32,6 +32,10 @@ class LoginRepositoryImpl @Inject constructor(
         return loginLocalDataStore.getKakaoAccessToken()
     }
 
+    override suspend fun getGoogleAccessToken(): Flow<String?> {
+        return loginLocalDataStore.getGoogleAccessToken()
+    }
+
     override suspend fun postOAuth(
         accessToken: OauthLoginRequestDto,
         provider: Provider
@@ -57,6 +61,10 @@ class LoginRepositoryImpl @Inject constructor(
         loginLocalDataStore.saveKakaoAccessToken(token)
     }
 
+    override suspend fun saveGoogleAccessToken(token: String) {
+        loginLocalDataStore.saveGoogleAccessToken(token)
+    }
+
     override suspend fun deleteAuthToken() {
         loginLocalDataStore.deleteAuthToken()
     }
@@ -67,5 +75,9 @@ class LoginRepositoryImpl @Inject constructor(
 
     override suspend fun deleteKakaoAccessToken() {
         loginLocalDataStore.deleteKakaoAccessToken()
+    }
+
+    override suspend fun deleteGoogleAccessToken() {
+        loginLocalDataStore.deleteGoogleAccessToken()
     }
 }

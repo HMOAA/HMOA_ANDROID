@@ -37,12 +37,6 @@
                         android:scheme="@string/native_app_key"/>
             </intent-filter>
         </activity>
-        <!--   서비스를 추가하고 인텐트 필터를 설정한다.   -->
-        <service android:name=".FirebaseMessagingService" android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

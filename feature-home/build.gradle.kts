@@ -40,6 +40,7 @@ android {
 
 dependencies {
 
+    implementation("com.google.firebase:firebase-messaging-ktx:23.4.1")
     val hilt_version = "2.44"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
@@ -48,6 +49,7 @@ dependencies {
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
+    implementation(project(":feature-fcm"))
 
     implementation("androidx.compose.material:material:1.2.0-beta02")
     implementation("androidx.compose.material3:material3:1.1.0")

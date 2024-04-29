@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -59,6 +59,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-model"))
     val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"

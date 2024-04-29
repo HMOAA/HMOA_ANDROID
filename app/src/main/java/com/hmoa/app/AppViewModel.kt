@@ -39,6 +39,7 @@ class AppViewModel @Inject constructor(
     }
 
     fun saveFcmToken(fcmToken : String){
+        Log.d("TAG TEST", "token : ${fcmToken}")
         viewModelScope.launch(Dispatchers.IO){
             val requestDto = FCMTokenSaveRequestDto(fcmToken)
             try{
@@ -47,5 +48,6 @@ class AppViewModel @Inject constructor(
                 Log.e("TAG TEST", "Error : ${e.message}")
             }
         }
+        Log.d("TAG TEST", "save token done")
     }
 }

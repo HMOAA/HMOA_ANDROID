@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                     initialRoute = AuthenticationRoute.Login.name
                 } else {
                     initialRoute = HomeRoute.Home.name
-                    viewModel.saveFcmToken(FirebaseMessaging.getInstance().token.result)
+//                    viewModel.saveFcmToken(FirebaseMessaging.getInstance().token.result)
                 }
             }
         }

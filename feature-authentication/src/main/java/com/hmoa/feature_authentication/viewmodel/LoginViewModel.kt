@@ -5,12 +5,15 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.repository.FcmRepository
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
 import com.hmoa.core_model.Provider
+import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.kakao.sdk.auth.model.OAuthToken
@@ -20,7 +23,11 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +36,7 @@ class LoginViewModel @Inject constructor(
     private val application: Application,
     private val saveKakaoToken: SaveKakaoTokenUseCase,
     private val loginRepository: LoginRepository,
+    private val fcmRepository : FcmRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
     private val context = application.applicationContext
@@ -43,7 +51,7 @@ class LoginViewModel @Inject constructor(
         saveKakoAccessToken(token)
         postKakaoAccessToken(token)
         //TODO("401에러, 토큰 만료로 인해서 다시 사용하던 화면으로 돌아가야 하는 경우 어떻게 해야함?")
-
+        postFcmToken()
     }
 
     suspend fun saveKakoAccessToken(token: String) {
@@ -120,6 +128,18 @@ class LoginViewModel @Inject constructor(
             }
         } else {
             UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
+        }
+    }
+
+    private fun postFcmToken(){
+        val token = FirebaseMessaging.getInstance().token.result
+        viewModelScope.launch(Dispatchers.IO){
+            val requestDto = FCMTokenSaveRequestDto(token)
+            try{
+                fcmRepository.saveFcmToken(requestDto)
+            } catch(e : Exception){
+                Log.e("TAG TEST", "Error : ${e.message}")
+            }
         }
     }
 }

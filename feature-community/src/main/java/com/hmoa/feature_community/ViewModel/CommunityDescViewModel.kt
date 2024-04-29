@@ -207,7 +207,15 @@ class CommunityDescViewModel @Inject constructor(
     }
 
     //id 설정
-    fun setId(id: Int) {
+    fun setId(id: Int?) {
+        if (id == null){
+            _errState.update{"앱 오류"}
+            return
+        }
+        else if (
+            id == -1){_errState.update{"이미 삭제된 게시글 입니다."}
+            return
+        }
         _id.update { id }
     }
 

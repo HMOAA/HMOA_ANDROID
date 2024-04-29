@@ -9,23 +9,25 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.skydoves.sandwich.ApiResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface MemberService {
     @GET("/member")
-    suspend fun getMember(): MemberResponseDto
+    suspend fun getMember(): ApiResponse<MemberResponseDto>
 
     @PATCH("/member/age")
     suspend fun updateAge(@Body request: AgeRequestDto): DataResponseDto<Any>
 
     @GET("/member/communities")
-    suspend fun getCommunities(@Query("page") page: Int): List<CommunityByCategoryResponseDto>
+    suspend fun getCommunities(@Query("page") page: Int): ApiResponse<List<CommunityByCategoryResponseDto>>
 
     @GET("/member/communityComments")
-    suspend fun getCommunityComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
+    suspend fun getCommunityComments(@Query("page") page: Int): ApiResponse<List<CommunityCommentDefaultResponseDto>>
 
     @GET("/member/communityHearts")
-    suspend fun getCommunityFavoriteComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
+    suspend fun getCommunityFavoriteComments(@Query("page") page: Int): ApiResponse<List<CommunityCommentDefaultResponseDto>>
 
     @DELETE("/member/delete")
     suspend fun deleteMember(): DataResponseDto<Any>
@@ -37,17 +39,17 @@ interface MemberService {
     suspend fun updateJoin(@Body request: JoinUpdateRequestDto): ApiResponse<MemberResponseDto>
 
     @PATCH("/member/nickname")
-    suspend fun updateNickname(@Body request: NickNameRequestDto): DataResponseDto<Any>
+    suspend fun updateNickname(@Body request: NickNameRequestDto): ApiResponse<DataResponseDto<Any>>
 
     @GET("/member/perfumeComments")
-    suspend fun getPerfumeComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
+    suspend fun getPerfumeComments(@Query("page") page: Int): ApiResponse<List<CommunityCommentDefaultResponseDto>>
 
     @GET("/member/perfumeHearts")
-    suspend fun getPerfumeFavoriteComments(@Query("page") page: Int): List<CommunityCommentDefaultResponseDto>
+    suspend fun getPerfumeFavoriteComments(@Query("page") page: Int): ApiResponse<List<CommunityCommentDefaultResponseDto>>
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/member/profile-photo")
-    suspend fun postProfilePhoto(@Field("image") image: String): DataResponseDto<Any>
+    suspend fun postProfilePhoto(@Part image: MultipartBody.Part): ApiResponse<DataResponseDto<Any>>
 
 
     @DELETE("/member/profile-photo")

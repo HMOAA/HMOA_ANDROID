@@ -8,9 +8,11 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_network.service.CommunityService
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
+import com.skydoves.sandwich.suspendOnSuccess
 import java.io.File
 import javax.inject.Inject
 
@@ -110,6 +112,26 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         ).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
+    }
+
+    override suspend fun getMyCommunitiesByHeart(cursor: Int): ResultResponse<PagingData<CommunityByCategoryResponseDto>> {
+        val result = ResultResponse<PagingData<CommunityByCategoryResponseDto>>()
+        communityService.getMyCommunitiesByHeart(cursor).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            result.exception = Exception(this.statusCode.code.toString())
+        }
+        return result
+    }
+
+    override suspend fun getMyCommunities(cursor: Int): ResultResponse<PagingData<CommunityByCategoryResponseDto>> {
+        val result = ResultResponse<PagingData<CommunityByCategoryResponseDto>>()
+        communityService.getMyCommunities(cursor).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
             result.exception = Exception(this.statusCode.code.toString())
         }
         return result

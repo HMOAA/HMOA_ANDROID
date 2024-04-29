@@ -17,6 +17,6 @@ interface PerfumeRepository {
     suspend fun deletePerfumeLike(perfumeId: String): DataResponseDto<Any>
     suspend fun postPerfumeWeather(dto: PerfumeWeatherRequestDto, perfumeId: String): PerfumeWeatherResponseDto
     suspend fun deletePerfumeWeather(perfumeId: String): PerfumeWeatherResponseDto
-    suspend fun getLikePerfumes(): DataResponseDto<Any>
+    suspend fun getLikePerfumes(): ResultResponse<DataResponseDto<List<PerfumeLikeResponseDto>>>
 
 }

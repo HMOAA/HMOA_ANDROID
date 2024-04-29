@@ -10,13 +10,14 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
+import java.io.File
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
     private val memberDataStore: MemberDataStore
 ) : com.hmoa.core_domain.repository.MemberRepository {
 
-    override suspend fun getMember(): MemberResponseDto {
+    override suspend fun getMember(): ResultResponse<MemberResponseDto> {
         return memberDataStore.getMember()
     }
 
@@ -24,11 +25,11 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.updateAge(request)
     }
 
-    override suspend fun getCommunities(page: Int): List<CommunityByCategoryResponseDto> {
+    override suspend fun getCommunities(page: Int): ResultResponse<List<CommunityByCategoryResponseDto>> {
         return memberDataStore.getCommunities(page)
     }
 
-    override suspend fun getCommunityComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getCommunityComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getCommunityComments(page)
     }
 
@@ -36,15 +37,15 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.deleteMember()
     }
 
-    override suspend fun postExistsNickname(request: NickNameRequestDto): Boolean {
+    override suspend fun postExistsNickname(request: NickNameRequestDto): ResultResponse<Boolean> {
         return memberDataStore.postExistsNickname(request)
     }
 
-    override suspend fun getCommunityFavoriteComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getCommunityFavoriteComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getCommunityFavoriteComments(page)
     }
 
-    override suspend fun getPerfumeFavoriteComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getPerfumeFavoriteComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getPerfumeFavoriteComments(page)
     }
 
@@ -52,15 +53,15 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.updateJoin(request)
     }
 
-    override suspend fun updateNickname(request: NickNameRequestDto): DataResponseDto<Any> {
+    override suspend fun updateNickname(request: NickNameRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateNickname(request)
     }
 
-    override suspend fun getPerfumeComments(page: Int): List<CommunityCommentDefaultResponseDto> {
+    override suspend fun getPerfumeComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getPerfumeComments(page)
     }
 
-    override suspend fun postProfilePhoto(image: String): DataResponseDto<Any> {
+    override suspend fun postProfilePhoto(image: File): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.postProfilePhoto(image)
     }
 

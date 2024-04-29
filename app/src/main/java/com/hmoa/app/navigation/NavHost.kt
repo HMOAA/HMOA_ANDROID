@@ -3,6 +3,7 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
@@ -15,6 +16,8 @@ import com.hmoa.feature_home.navigation.perfumeSearchScreen
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
+import com.hmoa.feature_like.Screen.LIKE_ROUTE
+import com.hmoa.feature_like.Screen.LikeRoute
 import com.hmoa.feature_perfume.navigation.*
 
 @Composable
@@ -45,12 +48,20 @@ fun SetUpNavGraph(
             onPickNicknameClick = navController::navigateToPickNickname
         )
 
+        /** like 모듈 */
+        composable(LIKE_ROUTE){
+            LikeRoute(
+                onNavPerfumeDesc = navController::navigateToPerfume,
+                onNavHome = navController::navigateToHome
+            )
+        }
+
         /** user info 모듈 */
         this.nestedUserInfoGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
-            onNavCommunity = { /** onNavCommunity는 Community 모듈로의 이동 */ },
-            onNavEditPost = { /** 여기서 게시글 수정으로 이동 */ },
+            onNavCommunity = navController::navigateToCommunityDescriptionRoute,
+            onNavEditPost = navController::navigateToCommunityEditRoute,
             onNavEditProfile = navController::navigateToEditProfilePage,
             onNavManageMyInfo = navController::navigateToMyInfoPage,
             onNavMyActivity = navController::navigateToMyActivity,

@@ -18,8 +18,16 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
-fun NicknameInput(onPressNicknameExist: (text: String) -> Unit, isAvailable: Boolean) {
-    var nickname by remember { mutableStateOf("") }
+fun NicknameInput(
+    initNickname : String? = null,
+    onChangeValue : (String) -> Unit = {},
+    onPressNicknameExist: (text: String) -> Unit,
+    isAvailable: Boolean,
+    isEnabled : Boolean = true,
+) {
+    var nickname by remember {
+        mutableStateOf(initNickname ?: "")
+    }
     var descriptionText by remember { mutableStateOf("닉네임 제한 캡션입니다") }
     var descriptionTextColor by remember { mutableStateOf(Color.Black) }
     var nicknameLength by remember { mutableStateOf(nickname.length.toString()) }
@@ -56,6 +64,7 @@ fun NicknameInput(onPressNicknameExist: (text: String) -> Unit, isAvailable: Boo
                                 if (isLenthUnder9(it)) {
                                     nickname = it
                                     nicknameLength = it.length.toString()
+                                    onChangeValue(it)
                                 }
                             },
                             placeholder = {
@@ -84,14 +93,14 @@ fun NicknameInput(onPressNicknameExist: (text: String) -> Unit, isAvailable: Boo
                     }
                     Divider(modifier = Modifier.border(width = 1.dp, color = CustomColor.gray2).fillMaxWidth(0.75f))
                 }
-                Column(modifier = Modifier.padding(start = 8.dp)) {
+                Column(modifier = Modifier.padding(start = 8.dp), verticalArrangement = Arrangement.Center) {
                     Button(
-                        true,
+                        isEnabled,
                         "중복확인",
                         { onPressNicknameExist(nickname) },
                         textSize = 14,
                         radious = 10,
-                        buttonModifier = Modifier.height(46.dp).fillMaxWidth(1f)
+                        buttonModifier = Modifier.height(46.dp).fillMaxWidth(1f),
                     )
                 }
             }
@@ -129,5 +138,5 @@ fun handleTextColor(isAvailable: Boolean): Color {
 @Preview
 @Composable
 fun NicknameInputPreview() {
-    NicknameInput({}, true)
+    NicknameInput(null,{}, {}, true)
 }

@@ -1,8 +1,5 @@
 package com.hmoa.core_datastore.Mapper
 
-import android.net.Uri
-import android.util.Log
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.MultipartBody.Part.Companion.createFormData
@@ -17,4 +14,9 @@ fun Array<File>.transformToMultipartBody() : Array<MultipartBody.Part>{
         returnArray.add(image)
     }
     return returnArray.toTypedArray()
+}
+
+fun File.transformToMultipartBody() : MultipartBody.Part {
+    val requestFile = this.asRequestBody("imag5/*".toMediaTypeOrNull())
+    return createFormData("image", this.name, requestFile)
 }

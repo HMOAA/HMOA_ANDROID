@@ -4,42 +4,42 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.userinfo.MyActivityPage
-import com.example.userinfo.MyCommentPage
+import com.example.userinfo.MyActivityRoute
 import com.example.userinfo.MyCommentRoute
 import com.example.userinfo.MyPageRoute
-import com.hmoa.feature_userinfo.MyFavoriteCommentPage
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
-import com.hmoa.feature_userinfo.MyPostPage
 import com.hmoa.feature_userinfo.MyPostRoute
 import com.hmoa.feature_userinfo.NoAuthMyPage
 
+//graph 이동
+fun NavController.navigateToUserInfoGraph() = navigate(UserInfoGraph.UserInfoGraph.name)
+
 //마이페이지로 이동
-fun NavController.navigateToMyPage() = navigate(Screens.MyPageRoute.name)
+fun NavController.navigateToMyPage() = navigate(UserInfoGraph.MyPage.name)
 
 //내 활동 페이지
-fun NavController.navigateToMyActivity() = navigate(Screens.MyActivityRoute.name)
+fun NavController.navigateToMyActivity() = navigate(UserInfoGraph.MyActivityRoute.name)
 
 //내 댓글 페이지
-fun NavController.navigateToMyCommentPage() = navigate(Screens.MyCommentRoute.name)
+fun NavController.navigateToMyCommentPage() = navigate(UserInfoGraph.MyCommentRoute.name)
 
 //좋아요한 댓글 페이지
-fun NavController.navigateToMyFavoriteCommentPage() = navigate(Screens.MyFavoriteCommentRoute.name)
+fun NavController.navigateToMyFavoriteCommentPage() = navigate(UserInfoGraph.MyFavoriteCommentRoute.name)
 
 //프로필 수정 화면
-fun NavController.navigateToEditProfilePage() = navigate(Screens.EditProfileRoute.name)
+fun NavController.navigateToEditProfilePage() = navigate(UserInfoGraph.EditProfileRoute.name)
 
 //내 정보 페이지
-fun NavController.navigateToMyInfoPage() = navigate(Screens.MyInfoRoute.name)
+fun NavController.navigateToMyInfoPage() = navigate(UserInfoGraph.MyInfoRoute.name)
 
 //내 성별 페이지
-fun NavController.navigateToMyGenderPage() = navigate(Screens.MyGenderRoute.name)
+fun NavController.navigateToMyGenderPage() = navigate(UserInfoGraph.MyGenderRoute.name)
 
 //내 출생연도 페이지
-fun NavController.navigateToMyBirth() = navigate(Screens.MyBirthRoute.name)
+fun NavController.navigateToMyBirth() = navigate(UserInfoGraph.MyBirthRoute.name)
 
 //내 게시글 페이지
-fun NavController.navigateToMyPostPage() = navigate(Screens.MyPostRoute.name)
+fun NavController.navigateToMyPostPage() = navigate(UserInfoGraph.MyPostRoute.name)
 
 //뒤로가기
 fun NavController.navigateToBack() = navigateUp()
@@ -47,10 +47,8 @@ fun NavController.navigateToBack() = navigateUp()
 fun NavGraphBuilder.nestedUserInfoGraph(
     onNavLogin: () -> Unit,
     onNavBack: () -> Unit,
-    /** onNavCommunity는 Community 모듈로의 이동 */
-    onNavCommunity: () -> Unit,
-    /** 여기서 게시글 수정으로 이동해야.. 하나요..? */
-    onNavEditPost: () -> Unit,
+    onNavCommunity: (Int) -> Unit,
+    onNavEditPost: (Int) -> Unit,
     onNavEditProfile: () -> Unit,
     onNavManageMyInfo: () -> Unit,
     onNavMyActivity: () -> Unit,
@@ -61,10 +59,10 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     onNavMyGender: () -> Unit
 ) {
     navigation(
-        startDestination = Screens.MyPageRoute.name,
-        route = "user_info_graph"
+        startDestination = UserInfoGraph.MyPage.name,
+        route = UserInfoGraph.UserInfoGraph.name
     ) {
-        composable(route = Screens.MyPageRoute.name) {
+        composable(route = UserInfoGraph.MyPage.name) {
             MyPageRoute(
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
@@ -72,53 +70,50 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 onNavLogin = onNavLogin
             )
         }
-        composable(route = Screens.EditProfileRoute.name) {
-            EditProfileRoute(
-                onNavBack = onNavBack
-            )
+        composable(route = UserInfoGraph.EditProfileRoute.name) {
+            EditProfileRoute(onNavBack = onNavBack)
         }
-        composable(route = Screens.MyPostRoute.name) {
+        composable(route = UserInfoGraph.MyPostRoute.name) {
             MyPostRoute(
                 onNavBack = onNavBack,
                 onNavEditPost = onNavEditPost
             )
         }
-        composable(route = Screens.MyActivityRoute.name) {
-            MyActivityPage(
+        composable(route = UserInfoGraph.MyActivityRoute.name) {
+            MyActivityRoute(
                 onNavMyFavoriteComment = onNavMyFavoriteComment,
                 onNavMyComment = onNavMyComment,
                 onNavMyPost = onNavMyPost,
                 onNavBack = onNavBack
             )
         }
-        composable(route = Screens.MyCommentRoute.name) {
+        composable(route = UserInfoGraph.MyCommentRoute.name) {
             MyCommentRoute(
                 onNavBack = onNavBack,
                 onNavCommunity = onNavCommunity
             )
         }
-        composable(route = Screens.MyFavoriteCommentRoute.name) {
+        composable(route = UserInfoGraph.MyFavoriteCommentRoute.name) {
             MyFavoriteCommentRoute(
                 onNavBack = onNavBack,
                 onNavCommunity = onNavCommunity
             )
         }
-        composable(route = Screens.MyInfoRoute.name) {
-            MyInfoPage(
+        composable(route = UserInfoGraph.MyInfoRoute.name) {
+            MyInfoRoute(
                 onNavBack = onNavBack,
                 onNavMyBirth = onNavMyBirth,
                 onNavMyGender = onNavMyGender
             )
         }
-        composable(route = Screens.MyBirthRoute.name) {
-            MyBirthRoute(
-                onNavBack = onNavBack
-            )
+        composable(route = UserInfoGraph.MyBirthRoute.name) {
+            MyBirthRoute(onNavBack = onNavBack)
         }
-        composable(route = Screens.NoAuthMyPage.name) {
-            NoAuthMyPage(
-                onNavLogin = onNavLogin
-            )
+        composable(route = UserInfoGraph.MyGenderRoute.name){
+            MyGenderRoute(onNavBack = onNavBack)
+        }
+        composable(route = UserInfoGraph.NoAuthMyPage.name) {
+            NoAuthMyPage(onNavLogin = onNavLogin)
         }
     }
 }

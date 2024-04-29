@@ -5,6 +5,7 @@ import com.hmoa.core_model.response.CommunityCommentAllResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
@@ -46,4 +47,14 @@ interface CommunityCommentService {
         @Path(value = "communityId") commentId: Int,
         @Body dto: CommunityCommentDefaultRequestDto
     ): ApiResponse<CommunityCommentWithLikedResponseDto>
+
+    @GET("/community/comment/like")
+    suspend fun getMyCommunityCommentsByHeart(
+        @Query("cursor") cursor : Int,
+    ) : ApiResponse<PagingData<CommunityCommentDefaultResponseDto>>
+
+    @GET("/community/comment/me")
+    suspend fun getMyCommunityComments(
+        @Query("cursor") cursor : Int
+    ) : ApiResponse<PagingData<CommunityCommentDefaultResponseDto>>
 }

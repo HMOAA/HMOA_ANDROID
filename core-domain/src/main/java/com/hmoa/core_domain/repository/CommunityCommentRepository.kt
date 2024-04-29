@@ -3,8 +3,10 @@ package com.hmoa.core_domain.repository
 import ResultResponse
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.response.CommunityCommentAllResponseDto
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PagingData
 
 interface CommunityCommentRepository {
     suspend fun getCommunityComment(
@@ -26,4 +28,6 @@ interface CommunityCommentRepository {
         communityId: Int,
         dto: CommunityCommentDefaultRequestDto
     ): ResultResponse<CommunityCommentWithLikedResponseDto>
+    suspend fun getMyCommunityCommentsByHeart(cursor : Int) : ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>
+    suspend fun getMyCommunityComments(cursor : Int) : ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>
 }

@@ -5,7 +5,12 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
@@ -26,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.UserInfoGraph
 import com.example.feature_userinfo.navigateToBack
 import com.example.feature_userinfo.navigateToUserInfoGraph
+import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
@@ -101,6 +107,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Log.d("TAG TEST", "token : ${it}")
+        }.addOnFailureListener{
+            Log.e("TAG TEST", "${it}")
+        }
 
         setContent {
             val navHostController = rememberNavController()

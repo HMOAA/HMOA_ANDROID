@@ -27,12 +27,10 @@ class FcmAppService : FirebaseMessagingService() {
 
         val notificationManager = NotificationManagerCompat.from(applicationContext)
 
-        var builder : NotificationCompat.Builder
-
         val channel = NotificationChannel("HMOA", "HMOA", NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(channel)
 
-        builder = NotificationCompat.Builder(applicationContext, "HMOA")
+        val builder : NotificationCompat.Builder = NotificationCompat.Builder(applicationContext, "HMOA")
 
         val title = remoteMessage.notification?.title
         val body = remoteMessage.notification?.body

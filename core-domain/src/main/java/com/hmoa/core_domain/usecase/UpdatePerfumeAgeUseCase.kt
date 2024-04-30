@@ -1,5 +1,6 @@
 package com.hmoa.core_domain.usecase
 
+import ResultResponse
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.data.Age
 import com.hmoa.core_model.request.AgeRequestDto
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class UpdatePerfumeAgeUseCase @Inject constructor(
     private val perfumeRepository: PerfumeRepository
 ) {
-    operator fun invoke(age: Float, perfumeId: Int): Flow<PerfumeAgeResponseDto> {
+    operator fun invoke(age: Float, perfumeId: Int): Flow<ResultResponse<PerfumeAgeResponseDto>> {
         return flow {
             val result = perfumeRepository.postPerfumeAge(AgeRequestDto(mapToAgeNumber(age)), perfumeId.toString())
             emit(result)

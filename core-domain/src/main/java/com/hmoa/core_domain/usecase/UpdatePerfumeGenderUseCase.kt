@@ -1,5 +1,6 @@
 package com.hmoa.core_domain.usecase
 
+import ResultResponse
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.PerfumeGender
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class UpdatePerfumeGenderUseCase @Inject constructor(
     private val perfumeRepository: PerfumeRepository
 ) {
-    operator fun invoke(gender: PerfumeGender, perfumeId: Int): Flow<PerfumeGenderResponseDto> {
+    operator fun invoke(gender: PerfumeGender, perfumeId: Int): Flow<ResultResponse<PerfumeGenderResponseDto>> {
         val param = when (gender) {
             PerfumeGender.MALE -> 1
             PerfumeGender.FEMALE -> 2

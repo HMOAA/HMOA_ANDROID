@@ -59,7 +59,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-model"))
     val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
@@ -73,6 +72,7 @@ dependencies {
     implementation(project(":feature-hpedia"))
     implementation(project(":feature-like"))
     implementation(project(":core-designsystem"))
+    implementation(project(":core-model"))
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))
     implementation(project(":core-common"))

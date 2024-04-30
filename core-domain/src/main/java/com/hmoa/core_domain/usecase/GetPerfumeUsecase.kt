@@ -1,9 +1,13 @@
 package com.hmoa.core_domain.usecase
 
+import ResultResponse
 import com.hmoa.core_domain.repository.PerfumeRepository
+import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.data.Perfume
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
+import com.hmoa.core_model.response.PerfumeDetailResponseDto
+import com.hmoa.core_model.response.PerfumeDetailSecondResponseDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -11,7 +15,7 @@ import javax.inject.Inject
 class GetPerfumeUsecase @Inject constructor(
     private val perfumeRepository: PerfumeRepository
 ) {
-    suspend operator fun invoke(perfumeId: String): Flow<Perfume> {
+    suspend operator fun invoke(perfumeId: String): Flow<ResultResponse<Perfume>> {
         val perfumeInfo1 = perfumeRepository.getPerfumeTopDetail(perfumeId)
         val perfumeInfo2 = perfumeRepository.getPerfumeBottomDetail(perfumeId)
         val result = Perfume(
@@ -44,8 +48,22 @@ class GetPerfumeUsecase @Inject constructor(
             similarPerfumes = perfumeInfo2.data?.similarPerfumes ?: emptyArray()
         )
         return flow {
-            emit(result)
+            val exception = mapException(perfumeInfo1, perfumeInfo2)
+            if (exception == null) {
+                emit(ResultResponse(data = result, exception = exception))
+            } else {
+                throw Exception(exception.message)
+            }
         }
+    }
+
+    fun mapException(
+        perfumeInfo1: ResultResponse<PerfumeDetailResponseDto>,
+        perfumeInfo2: ResultResponse<PerfumeDetailSecondResponseDto>
+    ): ErrorMessage? {
+        if (perfumeInfo1.exception != null) return perfumeInfo1.exception
+        if (perfumeInfo2.exception != null) return perfumeInfo2.exception
+        return null
     }
 
 

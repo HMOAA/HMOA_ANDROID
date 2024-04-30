@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.PerfumeGender
@@ -45,6 +47,7 @@ fun PerfumeRoute(
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onErrorHandleLoginAgain: () -> Unit,
     perfumeId: String?,
 ) {
 
@@ -57,7 +60,8 @@ fun PerfumeRoute(
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
             perfumeId = perfumeId.toInt(),
-            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
+            onErrorHandleLoginAgain = { onErrorHandleLoginAgain() }
         )
     }
 }
@@ -71,6 +75,7 @@ fun PerfumeScreen(
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onErrorHandleLoginAgain: () -> Unit,
     viewModel: PerfumeViewmodel = hiltViewModel(),
     perfumeId: Int,
 ) {
@@ -79,6 +84,72 @@ fun PerfumeScreen(
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
+    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
+    var isOpen by remember { mutableStateOf(false) }
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    fun handleErrorState() {
+
+    }
+
+    when (errorUiState) {
+        is ErrorUiState.ErrorData -> {
+            if ((errorUiState as ErrorUiState.ErrorData).expiredTokenError) {
+                AppDesignDialog(
+                    isOpen = isOpen,
+                    modifier = Modifier.wrapContentHeight()
+                        .width(screenWidth - 88.dp),
+                    title = "리프레시 토큰이 만료되었습니다",
+                    content = "다시 로그인해주세요",
+                    buttonTitle = "로그인 하러가기",
+                    onOkClick = {
+                        isOpen = false
+                        onErrorHandleLoginAgain()
+                    },
+                    onCloseClick = { isOpen = false }
+                )
+            } else if ((errorUiState as ErrorUiState.ErrorData).wrongTypeTokenError) {
+                AppDesignDialog(
+                    isOpen = isOpen,
+                    modifier = Modifier.wrapContentHeight()
+                        .width(screenWidth - 88.dp),
+                    title = "유효하지 않은 토큰입니다",
+                    content = "유효한 토큰이 아닙니다",
+                    buttonTitle = "로그인 하러가기",
+                    onOkClick = {
+                        isOpen = false
+                        onErrorHandleLoginAgain()
+                    },
+                    onCloseClick = { isOpen = false }
+                )
+            } else if ((errorUiState as ErrorUiState.ErrorData).unknownError) {
+                AppDesignDialog(
+                    isOpen = isOpen,
+                    modifier = Modifier.wrapContentHeight()
+                        .width(screenWidth - 88.dp),
+                    title = "로그인 후 이용가능한 서비스입니다",
+                    content = "입력하신 내용을 다시 확인해주세요",
+                    buttonTitle = "로그인 하러가기",
+                    onOkClick = {
+                        isOpen = false
+                        onErrorHandleLoginAgain()
+                    },
+                    onCloseClick = { isOpen = false }
+                )
+            } else if ((errorUiState as ErrorUiState.ErrorData).generalError.first) {
+                AppDefaultDialog(
+                    isOpen = isOpen,
+                    title = "에러 발생 :(",
+                    content = (errorUiState as ErrorUiState.ErrorData).generalError.second ?: "",
+                    onDismiss = { isOpen = false },
+                    modifier = Modifier.wrapContentHeight()
+                        .width(screenWidth - 88.dp)
+                )
+            }
+        }
+
+        ErrorUiState.Loading -> {}
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(),

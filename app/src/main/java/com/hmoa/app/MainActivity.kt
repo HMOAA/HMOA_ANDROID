@@ -1,11 +1,20 @@
 package com.hmoa.app
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
@@ -17,6 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.UserInfoGraph
 import com.example.feature_userinfo.navigateToBack
 import com.example.feature_userinfo.navigateToUserInfoGraph
+import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
@@ -48,6 +60,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
     private lateinit var initialRoute: String
+    private val PERMISSION_REQUEST_CODE = 1001
+    private var useNotification : Boolean = false
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
@@ -72,6 +86,11 @@ class MainActivity : AppCompatActivity() {
 
     private val needTopBarScreens = HomeRoute.Home.name
 
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){
+        useNotification = it
+    }
     fun createRoute() {
         if (viewModel.authTokenState.value == null && viewModel.rememberedTokenState.value == null) {
             initialRoute = AuthenticationRoute.Login.name
@@ -90,6 +109,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         createRoute()
+        checkToken()
+        requestNotificationPermission()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -100,8 +121,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-
         setContent {
             val navHostController = rememberNavController()
             var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
@@ -114,14 +133,11 @@ class MainActivity : AppCompatActivity() {
                 if (route in bottomNav) {
                     currentScreen = route
                 }
-
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
-                isDrawerGestureEnabled = if (isTopBarVisible) true else false
+                isDrawerGestureEnabled = isTopBarVisible
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-
-
             Scaffold(
                 modifier = Modifier.systemBarsPadding(),
                 backgroundColor = Color.White,
@@ -165,6 +181,42 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     SetUpNavGraph(navHostController, initialRoute)
                 }
+            }
+        }
+    }
+    private fun requestNotificationPermission(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ){
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+    private fun checkToken(){
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Log.d("TAG TEST", "token : ${it}")
+        }.addOnFailureListener{
+            Log.e("TAG TEST", "${it}")
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE){
+
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                /** 권한 부여되면 처리할 작업? */
+            } else {
+                /** 권한 거부 시 사용자에게 설명 혹은 재요청 가능 */
             }
         }
     }

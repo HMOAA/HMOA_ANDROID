@@ -13,6 +13,6 @@ class FcmRepositoryImpl @Inject constructor(private val fcmDataStore: FcmDataSto
     }
 
     override suspend fun saveFcmToken(fcmTokenSaveRequest: FCMTokenSaveRequestDto): DataResponseDto<Any> {
-        return saveFcmToken(fcmTokenSaveRequest)
+        return fcmDataStore.saveFcmToken(fcmTokenSaveRequest)
     }
 }

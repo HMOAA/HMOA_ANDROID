@@ -1,5 +1,8 @@
 package com.hmoa.feature_home.screen
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -26,11 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
@@ -56,6 +61,7 @@ private fun HomeScreen(
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val localContext = LocalContext.current
     val firstMenuWithBannerState by viewModel.firstMenuWithBannerState.collectAsStateWithLifecycle()
     val bottomMenuState by viewModel.bottomMenuState.collectAsStateWithLifecycle()
     val verticalScrollState = rememberScrollState()
@@ -65,7 +71,17 @@ private fun HomeScreen(
             Log.e("TAG TEST", "Firebase is Not Success")
             return@addOnCompleteListener
         }
-        viewModel.postFCMToken(it.result)
+        //안드로이드 13 버전 이후일 경우 권한을 확인한 후 서버에 fcm 토큰 post
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (ContextCompat.checkSelfPermission(
+                localContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED){
+                viewModel.postFCMToken(it.result)
+            }
+        } else {
+            viewModel.postFCMToken(it.result)
+        }
     }
 
     Column(

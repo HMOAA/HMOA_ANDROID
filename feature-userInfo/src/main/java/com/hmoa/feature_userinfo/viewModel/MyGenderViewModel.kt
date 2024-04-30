@@ -8,19 +8,13 @@ import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_model.request.SexRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyGenderViewModel @Inject constructor(
-    private val memberRepository : MemberRepository,
+    private val memberRepository: MemberRepository,
     getMyUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
     private var defaultGender = ""
@@ -30,27 +24,28 @@ class MyGenderViewModel @Inject constructor(
 
     private val errState = MutableStateFlow<String?>(null)
 
-    val isEnabled = _gender.map{
+    val isEnabled = _gender.map {
         it != defaultGender
     }
 
-    val uiState : StateFlow<MyGenderUiState> = errState.map{
-        if (it != null){
+    val uiState: StateFlow<MyGenderUiState> = errState.map {
+        if (it != null) {
             throw NullPointerException("Gender Info is NULL")
         }
         val result = getMyUserInfoUseCase()
-        if (result.exception is Exception){
-            throw result.exception!!
+        if (result.errorMessage != null) {
+            throw Exception(result.errorMessage!!.message)
         }
         result.data
-    }.asResult().map{ result ->
-        when(result) {
+    }.asResult().map { result ->
+        when (result) {
             Result.Loading -> MyGenderUiState.Loading
             is Result.Success -> {
-                _gender.update{ result.data!!.gender }
+                _gender.update { result.data!!.gender }
                 defaultGender = result.data!!.gender
                 MyGenderUiState.Success
             }
+
             is Result.Error -> MyGenderUiState.Error
         }
     }.stateIn(
@@ -60,28 +55,28 @@ class MyGenderViewModel @Inject constructor(
     )
 
     //gender 정보 수정
-    fun updateGender(newGender : String){
-        _gender.update{ newGender }
+    fun updateGender(newGender: String) {
+        _gender.update { newGender }
     }
 
     //gender 정보 저장
-    fun saveGender(){
+    fun saveGender() {
         if (gender.value == null) {
-            errState.update{ "Gender Info is NULL" }
+            errState.update { "Gender Info is NULL" }
             return
         }
         val requestDto = SexRequestDto(gender.value == "남성")
-        viewModelScope.launch{
-            try{
+        viewModelScope.launch {
+            try {
                 memberRepository.updateSex(requestDto)
-            } catch(e : Exception){
-                errState.update{ e.message }
+            } catch (e: Exception) {
+                errState.update { e.message }
             }
         }
     }
 }
 
-sealed interface MyGenderUiState{
+sealed interface MyGenderUiState {
     data object Loading : MyGenderUiState
     data object Success : MyGenderUiState
     data object Error : MyGenderUiState

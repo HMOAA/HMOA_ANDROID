@@ -1,12 +1,15 @@
 package com.hmoa.core_datastore.Main
 
 import ResultResponse
+import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuFirstResponseDto
 import com.hmoa.core_network.service.MainService
+import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class MainDataStoreImpl @Inject constructor(
@@ -17,7 +20,8 @@ class MainDataStoreImpl @Inject constructor(
         mainService.getFirst().suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -27,7 +31,8 @@ class MainDataStoreImpl @Inject constructor(
         mainService.getFirstMenu().suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -37,7 +42,8 @@ class MainDataStoreImpl @Inject constructor(
         mainService.getSecond().suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -47,7 +53,8 @@ class MainDataStoreImpl @Inject constructor(
         mainService.getSecondMenu().suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -57,7 +64,8 @@ class MainDataStoreImpl @Inject constructor(
         mainService.getThirdMenu().suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }

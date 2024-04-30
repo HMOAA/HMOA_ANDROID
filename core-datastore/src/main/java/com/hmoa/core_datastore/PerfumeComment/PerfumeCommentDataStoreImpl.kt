@@ -1,15 +1,14 @@
 package com.hmoa.core_datastore.PerfumeComment
 
 import ResultResponse
+import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.PagingData
-import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
-import com.hmoa.core_model.response.PerfumeCommentResponseDto
+import com.hmoa.core_model.response.*
 import com.hmoa.core_network.service.PerfumeCommentService
+import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :
@@ -43,7 +42,8 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         perfumeCommentService.putPerfumeCommentLike(commentId).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -53,7 +53,8 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         perfumeCommentService.deletePerfumeCommentLike(commentId).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -66,25 +67,27 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
     }
 
     override suspend fun getPerfumeCommentsWithHeart(
-        cursor : Int
+        cursor: Int
     ): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
         val result = ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>()
         perfumeCommentService.getPerfumeCommentsWithHeart(cursor).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.exception = Exception(this.statusCode.code.toString())
+        }.suspendOnError {
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
 
     override suspend fun getMyPerfumeComments(
-        cursor : Int
+        cursor: Int
     ): ResultResponse<PagingData<CommunityCommentDefaultResponseDto>> {
         val result = ResultResponse<PagingData<CommunityCommentDefaultResponseDto>>()
         perfumeCommentService.getMyPerfumeComments(cursor).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.exception = Exception(this.statusCode.code.toString())
+        }.suspendOnError {
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }

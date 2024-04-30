@@ -4,15 +4,14 @@ import ResultResponse
 import com.hmoa.core_datastore.Mapper.transformMultipartBody
 import com.hmoa.core_datastore.Mapper.transformRequestBody
 import com.hmoa.core_datastore.Mapper.transformToMultipartBody
-import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.core_model.response.CommunityDefaultResponseDto
-import com.hmoa.core_model.response.CommunityWithCursorResponseDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.PagingData
+import com.hmoa.core_model.data.ErrorMessage
+import com.hmoa.core_model.response.*
 import com.hmoa.core_network.service.CommunityService
+import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.serialization.json.Json
 import java.io.File
 import javax.inject.Inject
 
@@ -23,7 +22,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getCommunity(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -45,7 +45,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         ).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -55,7 +56,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.deleteCommunity(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -65,7 +67,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.putCommunityLike(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -75,7 +78,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.deleteCommunityLike(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -92,7 +96,8 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getCommunitiesHome().suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -112,27 +117,30 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         ).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
 
     override suspend fun getMyCommunitiesByHeart(cursor: Int): ResultResponse<PagingData<CommunityByCategoryResponseDto>> {
         val result = ResultResponse<PagingData<CommunityByCategoryResponseDto>>()
-        communityService.getMyCommunitiesByHeart(cursor).suspendOnSuccess{
+        communityService.getMyCommunitiesByHeart(cursor).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.exception = Exception(this.statusCode.code.toString())
+        }.suspendOnError {
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
 
     override suspend fun getMyCommunities(cursor: Int): ResultResponse<PagingData<CommunityByCategoryResponseDto>> {
         val result = ResultResponse<PagingData<CommunityByCategoryResponseDto>>()
-        communityService.getMyCommunities(cursor).suspendOnSuccess{
+        communityService.getMyCommunities(cursor).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.exception = Exception(this.statusCode.code.toString())
+        }.suspendOnError {
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }

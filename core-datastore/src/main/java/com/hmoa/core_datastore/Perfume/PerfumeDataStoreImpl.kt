@@ -21,7 +21,7 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
             result.data = this.data
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -32,7 +32,7 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
             result.data = this.data
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -43,7 +43,7 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
             result.data = this.data
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -61,7 +61,7 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
             result.data = this.data
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -87,7 +87,7 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
             result.data = this.data
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -102,7 +102,7 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
             result.data = this.data
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }

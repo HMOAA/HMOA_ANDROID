@@ -50,7 +50,7 @@ class GetPerfumeUsecase @Inject constructor(
         return flow {
             val exception = mapException(perfumeInfo1, perfumeInfo2)
             if (exception == null) {
-                emit(ResultResponse(data = result, exception = exception))
+                emit(ResultResponse(data = result, errorMessage = exception))
             } else {
                 throw Exception(exception.message)
             }
@@ -61,8 +61,8 @@ class GetPerfumeUsecase @Inject constructor(
         perfumeInfo1: ResultResponse<PerfumeDetailResponseDto>,
         perfumeInfo2: ResultResponse<PerfumeDetailSecondResponseDto>
     ): ErrorMessage? {
-        if (perfumeInfo1.exception != null) return perfumeInfo1.exception
-        if (perfumeInfo2.exception != null) return perfumeInfo2.exception
+        if (perfumeInfo1.errorMessage != null) return perfumeInfo1.errorMessage
+        if (perfumeInfo2.errorMessage != null) return perfumeInfo2.errorMessage
         return null
     }
 

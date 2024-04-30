@@ -2,13 +2,16 @@ package com.hmoa.core_datastore.Login
 
 import ResultResponse
 import com.hmoa.core_model.Provider
+import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
 import com.hmoa.core_network.service.LoginService
+import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class LoginRemoteDataStoreImpl @Inject constructor(
@@ -24,7 +27,8 @@ class LoginRemoteDataStoreImpl @Inject constructor(
         loginService.postOAuth(accessToken, provider).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -34,7 +38,8 @@ class LoginRemoteDataStoreImpl @Inject constructor(
         loginService.postRemembered(dto).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            result.exception = Exception(this.statusCode.code.toString())
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }

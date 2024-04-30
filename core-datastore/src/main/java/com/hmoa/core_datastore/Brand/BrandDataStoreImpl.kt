@@ -22,7 +22,7 @@ class BrandDataStoreImpl @Inject constructor(
             result.data = this
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -56,7 +56,7 @@ class BrandDataStoreImpl @Inject constructor(
             result.data = this
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -70,7 +70,7 @@ class BrandDataStoreImpl @Inject constructor(
             result.data = this
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }
@@ -84,7 +84,7 @@ class BrandDataStoreImpl @Inject constructor(
             result.data = this
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.exception = errorMessage
+            result.errorMessage = errorMessage
         }
         return result
     }

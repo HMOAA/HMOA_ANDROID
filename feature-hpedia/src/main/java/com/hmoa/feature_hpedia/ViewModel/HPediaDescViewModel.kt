@@ -11,19 +11,12 @@ import com.hmoa.core_model.response.NoteDescResponseDto
 import com.hmoa.core_model.response.PerfumerDescResponseDto
 import com.hmoa.core_model.response.TermDescResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class HPediaDescViewModel @Inject constructor(
-    private val termRepository : TermRepository,
+    private val termRepository: TermRepository,
     private val noteRepository: NoteRepository,
     private val perfumerRepository: PerfumerRepository
 ) : ViewModel() {
@@ -36,46 +29,50 @@ class HPediaDescViewModel @Inject constructor(
     private val _errState = MutableStateFlow<String?>(null)
     val errState get() = _errState.asStateFlow()
 
-    val uiState : StateFlow<HPediaDescUiState> = id.combine(
+    val uiState: StateFlow<HPediaDescUiState> = id.combine(
         _type
-    ){ id, type ->
+    ) { id, type ->
         if (id == null || type == null) {
             throw NullPointerException("Id or Type is NULL")
         }
-        when(type){
+        when (type) {
             "용어" -> {
                 val result = termRepository.getTerm(id)
-                if (result.exception is Exception){
-                    throw result.exception!!
+                if (result.errorMessage != null) {
+                    throw Exception(result.errorMessage!!.message)
                 }
                 result.data!!
             }
+
             "노트" -> {
                 val result = noteRepository.getNote(id)
-                if (result.exception is Exception){
-                    throw result.exception!!
+                if (result.errorMessage != null) {
+                    throw Exception(result.errorMessage!!.message)
                 }
                 result.data!!
             }
+
             "조향사" -> {
                 val result = perfumerRepository.getPerfumer(id)
-                if (result.exception is Exception){
-                    throw result.exception!!
+                if (result.errorMessage != null) {
+                    throw Exception(result.errorMessage!!.message)
                 }
                 result.data!!
             }
+
             else -> {
                 throw IllegalArgumentException("Not Exist Type")
             }
         }
-    }.asResult().map{result ->
-        when(result) {
+    }.asResult().map { result ->
+        when (result) {
             is Result.Error -> {
                 HPediaDescUiState.Error
             }
+
             is Result.Success -> {
                 val data = result.data
-                when(type.value){
+                when (type.value) {
                     "용어" -> {
                         val term = data.data as TermDescResponseDto
                         HPediaDescUiState.HPediaDesc(
@@ -84,6 +81,7 @@ class HPediaDescViewModel @Inject constructor(
                             content = term.content
                         )
                     }
+
                     "노트" -> {
                         val note = result.data as NoteDescResponseDto
                         HPediaDescUiState.HPediaDesc(
@@ -92,6 +90,7 @@ class HPediaDescViewModel @Inject constructor(
                             content = note.content
                         )
                     }
+
                     "조향사" -> {
                         val perfumer = result.data as PerfumerDescResponseDto
                         HPediaDescUiState.HPediaDesc(
@@ -100,11 +99,13 @@ class HPediaDescViewModel @Inject constructor(
                             content = perfumer.content
                         )
                     }
+
                     else -> {
                         HPediaDescUiState.Error
                     }
                 }
             }
+
             is Result.Loading -> {
                 HPediaDescUiState.Loading
             }
@@ -115,9 +116,9 @@ class HPediaDescViewModel @Inject constructor(
         initialValue = HPediaDescUiState.Loading
     )
 
-    fun setInfo(type : String?, id : Int?) {
-        this._type.update{ type }
-        this.id.update{ id }
+    fun setInfo(type: String?, id: Int?) {
+        this._type.update { type }
+        this.id.update { id }
     }
 
 }
@@ -125,9 +126,10 @@ class HPediaDescViewModel @Inject constructor(
 sealed interface HPediaDescUiState {
     data object Error : HPediaDescUiState
     data class HPediaDesc(
-        val title : String,
-        val subTitle : String,
-        val content : String
+        val title: String,
+        val subTitle: String,
+        val content: String
     ) : HPediaDescUiState
+
     data object Loading : HPediaDescUiState
 }

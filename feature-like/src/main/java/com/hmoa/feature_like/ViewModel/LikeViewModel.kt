@@ -7,34 +7,31 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class LikeViewModel @Inject constructor(
-    private val perfumeRepository : PerfumeRepository
+    private val perfumeRepository: PerfumeRepository
 ) : ViewModel() {
     private val errState = MutableStateFlow<String?>(null)
 
-    val uiState : StateFlow<LikeUiState> = errState.map{
-        if (errState.value != null){
+    val uiState: StateFlow<LikeUiState> = errState.map {
+        if (errState.value != null) {
             throw Exception(errState.value!!)
         }
         val result = perfumeRepository.getLikePerfumes()
-        if (result.exception is Exception){
-            throw result.exception!!
+        if (result.errorMessage != null) {
+            throw Exception(result.errorMessage?.message)
         }
         result.data!!
-    }.asResult().map{ result ->
-        when(result){
+    }.asResult().map { result ->
+        when (result) {
             Result.Loading -> LikeUiState.Loading
             is Result.Success -> {
                 LikeUiState.Like(result.data.data)
             }
+
             is Result.Error -> LikeUiState.Error(result.exception.toString())
         }
     }.stateIn(
@@ -45,12 +42,13 @@ class LikeViewModel @Inject constructor(
 
 }
 
-sealed interface LikeUiState{
+sealed interface LikeUiState {
     data object Loading : LikeUiState
     data class Like(
-        val perfumes : List<PerfumeLikeResponseDto>
+        val perfumes: List<PerfumeLikeResponseDto>
     ) : LikeUiState
+
     data class Error(
-        val message : String
+        val message: String
     ) : LikeUiState
 }

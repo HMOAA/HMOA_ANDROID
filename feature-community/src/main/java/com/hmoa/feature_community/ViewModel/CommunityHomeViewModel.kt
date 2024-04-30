@@ -8,7 +8,6 @@ import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,10 +21,10 @@ class CommunityHomeViewModel @Inject constructor(
     private val _errState = MutableStateFlow("")
     val errState get() = _errState.asStateFlow()
 
-    val uiState: StateFlow<CommunityHomeUiState> = flow{
+    val uiState: StateFlow<CommunityHomeUiState> = flow {
         val result = repository.getCommunitiesHome()
-        if (result.exception is Exception) {
-            throw result.exception!!
+        if (result.errorMessage != null) {
+            throw Exception(result.errorMessage!!.message)
         }
         emit(result.data!!)
     }.asResult()

@@ -26,6 +26,7 @@ fun AppDesignDialog(
     isOpen: Boolean,
     modifier: Modifier,
     title: String,
+    buttonTitle: String,
     content: String,
     onOkClick: () -> Unit,
     onCloseClick: () -> Unit,
@@ -77,7 +78,7 @@ fun AppDesignDialog(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "취소",
+                        text = buttonTitle,
                         fontSize = 16.sp,
                         color = Color.White,
                         fontWeight = FontWeight.Medium
@@ -119,6 +120,7 @@ fun TestNavigateDialog() {
             title = "Dialog Test",
             content = "테스트 성공",
             onOkClick = { isOpen = false },
+            buttonTitle = "취소",
             onCloseClick = { isOpen = false }
         )
     }

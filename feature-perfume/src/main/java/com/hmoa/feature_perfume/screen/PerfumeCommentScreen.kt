@@ -63,8 +63,7 @@ fun PerfumeCommentScreen(
     viewModel: PerfumeCommentViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val latestPerfumeComments =
-        viewModel.getPagingLatestPerfumeComments(perfumeId)?.collectAsLazyPagingItems()
+    val latestPerfumeComments = viewModel.getPagingLatestPerfumeComments(perfumeId)?.collectAsLazyPagingItems()
     val likePerfumeComments = viewModel.getPagingLikePerfumeComments(perfumeId)?.collectAsLazyPagingItems()
 
     LaunchedEffect(perfumeId) {
@@ -105,6 +104,7 @@ fun PerfumeCommentScreen(
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

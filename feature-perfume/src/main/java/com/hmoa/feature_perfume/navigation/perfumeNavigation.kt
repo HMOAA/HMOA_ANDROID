@@ -28,7 +28,8 @@ fun NavGraphBuilder.perfumeScreen(
     onBrandClick: (brandId: String) -> Unit,
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
-    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
+    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onErrorHandleLoginAgain: () -> Unit
 ) {
     composable(
         route = "${PerfumeRoute.Perfume.name}/{perfumeId}",
@@ -43,7 +44,8 @@ fun NavGraphBuilder.perfumeScreen(
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
             perfumeId = perfumeId,
-            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
+            onErrorHandleLoginAgain = {onErrorHandleLoginAgain()}
         )
     }
 }

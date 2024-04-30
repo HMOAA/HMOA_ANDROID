@@ -63,12 +63,12 @@ class PerfumeViewmodel @Inject constructor(
 
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
-    private var unknownErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
     private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
     val errorUiState: StateFlow<ErrorUiState> = combine(
         expiredTokenErrorState,
         wrongTypeTokenErrorState,
-        unknownErrorState,
+        unLoginedErrorState,
         generalErrorState
     ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
         ErrorUiState.ErrorData(
@@ -95,38 +95,18 @@ class PerfumeViewmodel @Inject constructor(
                     is Result.Error -> {
                         when (result.exception.message) {
                             ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                //로그인화면으로
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: ${ErrorMessageType.EXPIRED_TOKEN.message}\n errorMessage-content:${result.exception.message}"
-                                )
                                 expiredTokenErrorState.update { true }
                             }
 
                             ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                //불일치 토큰
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: ${ErrorMessageType.WRONG_TYPE_TOKEN.message}\n errorMessage-content:${result.exception.message}"
-                                )
                                 wrongTypeTokenErrorState.update { true }
                             }
 
                             ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                //로그인이 필요한 서비스인 경우
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: ${ErrorMessageType.UNKNOWN_ERROR.message}\n errorMessage-content:${result.exception.message}"
-                                )
-                                unknownErrorState.update { true }
+                                unLoginedErrorState.update { true }
                             }
 
                             else -> {
-                                //통일되지 않은 레거시 에러메세지인 경우
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: none\n errorMessage-content:${result.exception.message}"
-                                )
                                 generalErrorState.update { Pair(true, result.exception.message) }
                             }
                         }
@@ -181,38 +161,18 @@ class PerfumeViewmodel @Inject constructor(
                     is Result.Error -> {
                         when (result.exception.message) {
                             ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                //로그인화면으로
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: ${ErrorMessageType.EXPIRED_TOKEN.message}\n errorMessage-content:${result.exception.message}"
-                                )
                                 expiredTokenErrorState.update { true }
                             }
 
                             ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                //불일치 토큰
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: ${ErrorMessageType.WRONG_TYPE_TOKEN.message}\n errorMessage-content:${result.exception.message}"
-                                )
                                 wrongTypeTokenErrorState.update { true }
                             }
 
                             ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                //로그인이 필요한 서비스인 경우
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: ${ErrorMessageType.UNKNOWN_ERROR.message}\n errorMessage-content:${result.exception.message}"
-                                )
-                                unknownErrorState.update { true }
+                                unLoginedErrorState.update { true }
                             }
 
                             else -> {
-                                //통일되지 않은 레거시 에러메세지인 경우
-                                Log.d(
-                                    "PerfumeViewModel",
-                                    "errorMessage-type: none\n errorMessage-content:${result.exception.message}"
-                                )
                                 generalErrorState.update { Pair(true, result.exception.message) }
                             }
                         }

@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -85,113 +84,58 @@ fun PerfumeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    var isOpen by remember { mutableStateOf(false) }
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-    fun handleErrorState() {
+    ErrorUiSetView(
+        onConfirmClick = { onErrorHandleLoginAgain() },
+        errorUiState = errorUiState,
+        onCloseClick = { onBackClick() }
+    )
 
-    }
-
-    when (errorUiState) {
-        is ErrorUiState.ErrorData -> {
-            if ((errorUiState as ErrorUiState.ErrorData).expiredTokenError) {
-                AppDesignDialog(
-                    isOpen = isOpen,
-                    modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp),
-                    title = "리프레시 토큰이 만료되었습니다",
-                    content = "다시 로그인해주세요",
-                    buttonTitle = "로그인 하러가기",
-                    onOkClick = {
-                        isOpen = false
-                        onErrorHandleLoginAgain()
-                    },
-                    onCloseClick = { isOpen = false }
-                )
-            } else if ((errorUiState as ErrorUiState.ErrorData).wrongTypeTokenError) {
-                AppDesignDialog(
-                    isOpen = isOpen,
-                    modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp),
-                    title = "유효하지 않은 토큰입니다",
-                    content = "유효한 토큰이 아닙니다",
-                    buttonTitle = "로그인 하러가기",
-                    onOkClick = {
-                        isOpen = false
-                        onErrorHandleLoginAgain()
-                    },
-                    onCloseClick = { isOpen = false }
-                )
-            } else if ((errorUiState as ErrorUiState.ErrorData).unknownError) {
-                AppDesignDialog(
-                    isOpen = isOpen,
-                    modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp),
-                    title = "로그인 후 이용가능한 서비스입니다",
-                    content = "입력하신 내용을 다시 확인해주세요",
-                    buttonTitle = "로그인 하러가기",
-                    onOkClick = {
-                        isOpen = false
-                        onErrorHandleLoginAgain()
-                    },
-                    onCloseClick = { isOpen = false }
-                )
-            } else if ((errorUiState as ErrorUiState.ErrorData).generalError.first) {
-                AppDefaultDialog(
-                    isOpen = isOpen,
-                    title = "에러 발생 :(",
-                    content = (errorUiState as ErrorUiState.ErrorData).generalError.second ?: "",
-                    onDismiss = { isOpen = false },
-                    modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp)
-                )
-            }
+    when (uiState) {
+        is PerfumeViewmodel.PerfumeUiState.Loading -> {
+            AppLoadingScreen()
         }
 
-        ErrorUiState.Loading -> {}
-    }
+        is PerfumeViewmodel.PerfumeUiState.PerfumeData -> {
+            PerfumeContent(
+                onBackClick = { onBackClick() },
+                onHomeClick = { onHomeClick() },
+                onLikeClick = { viewModel.updateLike(it, perfumeId) },
+                onCommentAddClick = { onCommentAddClick(perfumeId) },
+                onBrandClick = { onBrandClick(it) },
+                onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
+                onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },
+                onInitializeAgeClick = { viewModel.onBackAgeToZero() },
+                onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
+                onViewCommentAllClick = { onViewCommentAllClick(it) },
+                onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
+                onPerfumeCommentReportClick = { viewModel.reportPerfumeComment(perfumeCommentIdToReport) },
+                data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
+                weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
+                gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
+                age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
+                perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
+                onSpecificCommentClick = { commentId, isEditable ->
+                    onSpecificCommentClick(
+                        commentId,
+                        isEditable
+                    )
+                },
+                onSpecificCommentLikeClick = { commentId, isLike, index ->
+                    viewModel.updatePerfumeCommentLike(
+                        isLike,
+                        commentId,
+                        index
+                    )
+                },
+                updatePerfumeCommentIdToReport = { viewModel.updatePerfumeCommentIdToReport(it) },
+            )
+        }
 
-    Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        when (uiState) {
-            is PerfumeViewmodel.PerfumeUiState.Loading -> {}
-            is PerfumeViewmodel.PerfumeUiState.PerfumeData -> {
-                PerfumeContent(
-                    onBackClick = { onBackClick() },
-                    onHomeClick = { onHomeClick() },
-                    onLikeClick = { viewModel.updateLike(it, perfumeId) },
-                    onCommentAddClick = { onCommentAddClick(perfumeId) },
-                    onBrandClick = { onBrandClick(it) },
-                    onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
-                    onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },
-                    onInitializeAgeClick = { viewModel.onBackAgeToZero() },
-                    onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
-                    onViewCommentAllClick = { onViewCommentAllClick(it) },
-                    onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
-                    onPerfumeCommentReportClick = { viewModel.reportPerfumeComment(perfumeCommentIdToReport) },
-                    data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
-                    weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
-                    gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
-                    age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
-                    perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
-                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
-                    onSpecificCommentLikeClick = { commentId, isLike, index ->
-                        viewModel.updatePerfumeCommentLike(
-                            isLike,
-                            commentId,
-                            index
-                        )
-                    },
-                    updatePerfumeCommentIdToReport = { viewModel.updatePerfumeCommentIdToReport(it) },
-                )
-            }
-
-            is PerfumeViewmodel.PerfumeUiState.Empty -> {}
+        is PerfumeViewmodel.PerfumeUiState.Empty -> {
         }
     }
+
 }
 
 

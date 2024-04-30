@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-common"))
     //material3
     implementation("androidx.compose.material3:material3:1.2.1")
 

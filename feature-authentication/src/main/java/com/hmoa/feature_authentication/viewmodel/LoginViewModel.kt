@@ -20,7 +20,11 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,7 +47,6 @@ class LoginViewModel @Inject constructor(
         saveKakoAccessToken(token)
         postKakaoAccessToken(token)
         //TODO("401에러, 토큰 만료로 인해서 다시 사용하던 화면으로 돌아가야 하는 경우 어떻게 해야함?")
-
     }
 
     suspend fun saveKakoAccessToken(token: String) {

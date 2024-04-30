@@ -4,11 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.repository.FcmRepository
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +24,7 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val memberRepository: MemberRepository,
     private val loginRepository: LoginRepository,
+    private val fcmRepository : FcmRepository,
     private val getUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
     private val authTokenState = MutableStateFlow<String?>(null)
@@ -70,6 +79,7 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch{
             loginRepository.deleteAuthToken()
             loginRepository.deleteRememberedToken()
+            fcmRepository.deleteFcmToken()
         }
     }
 
@@ -83,6 +93,7 @@ class MyPageViewModel @Inject constructor(
             }
             loginRepository.deleteAuthToken()
             loginRepository.deleteRememberedToken()
+            fcmRepository.deleteFcmToken()
         }
     }
 }

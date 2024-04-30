@@ -1,9 +1,26 @@
 package com.hmoa.feature_home.screen
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,13 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -41,12 +61,32 @@ private fun HomeScreen(
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val localContext = LocalContext.current
     val firstMenuWithBannerState by viewModel.firstMenuWithBannerState.collectAsStateWithLifecycle()
     val bottomMenuState by viewModel.bottomMenuState.collectAsStateWithLifecycle()
     val verticalScrollState = rememberScrollState()
 
+    FirebaseMessaging.getInstance().token.addOnCompleteListener{
+        if(!it.isSuccessful) {
+            Log.e("TAG TEST", "Firebase is Not Success")
+            return@addOnCompleteListener
+        }
+        //안드로이드 13 버전 이후일 경우 권한을 확인한 후 서버에 fcm 토큰 post
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (ContextCompat.checkSelfPermission(
+                localContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED){
+                viewModel.postFCMToken(it.result)
+            }
+        } else {
+            viewModel.postFCMToken(it.result)
+        }
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .verticalScroll(state = verticalScrollState, reverseScrolling = true)
             .background(Color.White),
     ) {
@@ -109,8 +149,11 @@ private fun FirstMenuWithBannerContent(
             ContentScale.FillWidth
         )
         Row(
-            modifier = Modifier.fillMaxWidth().background(CustomColor.gray7)
-                .padding(vertical = 12.dp).padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(CustomColor.gray7)
+                .padding(vertical = 12.dp)
+                .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 bannerTitle ?: "글씨가 없습니다",
@@ -140,7 +183,10 @@ private fun BottomMenuContent(
     bottomMenu: List<HomeMenuDefaultResponseDto>,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp).padding(bottom = 29.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp)
+            .padding(bottom = 29.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center
     ) {
@@ -161,9 +207,14 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         firstMenu?.title ?: "글씨가 없습니다",
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
-        modifier = Modifier.padding(horizontal = 16.dp).padding(vertical = 12.dp)
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(vertical = 12.dp)
     )
-    Row(modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(totalHeight.dp)) {
+    Row(modifier = Modifier
+        .padding(horizontal = 16.dp)
+        .fillMaxWidth()
+        .height(totalHeight.dp)) {
         Column(modifier = Modifier.padding(end = 8.dp)) {
             ImageWithTitleView(
                 title = firstMenu.perfumeList[0].brandName,
@@ -230,7 +281,11 @@ fun BottomMenuView(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.padding(top = 29.dp).padding(bottom = 12.dp).padding(end = 16.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(top = 29.dp)
+            .padding(bottom = 12.dp)
+            .padding(end = 16.dp)
+            .fillMaxWidth()
     ) {
         Text(
             data?.title ?: "글씨가 없습니다",
@@ -267,7 +322,9 @@ fun ImageWithTitleView(
     height: Float
 ) {
     Box(
-        modifier = Modifier.clickable { onItemClick() }.fillMaxWidth(containerWidth)
+        modifier = Modifier
+            .clickable { onItemClick() }
+            .fillMaxWidth(containerWidth)
             .fillMaxHeight(containerHeight), contentAlignment = Alignment.BottomStart
     ) {
         ImageView(

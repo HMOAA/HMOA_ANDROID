@@ -1,6 +1,7 @@
 package com.hmoa.app
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.UserInfoGraph
@@ -48,6 +51,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
     private lateinit var initialRoute: String
+    private val PERMISSION_REQUEST_CODE = 1001
+    private var useNotification : Boolean = false
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
@@ -72,10 +77,19 @@ class MainActivity : AppCompatActivity() {
 
     private val needTopBarScreens = HomeRoute.Home.name
 
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){
+        useNotification = it
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        checkToken()
+        requestNotificationPermission()
 
         lifecycleScope.launch {
             val authTokenState = viewModel.authToken().stateIn(this)
@@ -159,6 +173,42 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     SetUpNavGraph(navHostController, initialRoute)
                 }
+            }
+        }
+    }
+    private fun requestNotificationPermission(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ){
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+    private fun checkToken(){
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Log.d("TAG TEST", "token : ${it}")
+        }.addOnFailureListener{
+            Log.e("TAG TEST", "${it}")
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE){
+
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                /** 권한 부여되면 처리할 작업? */
+            } else {
+                /** 권한 거부 시 사용자에게 설명 혹은 재요청 가능 */
             }
         }
     }

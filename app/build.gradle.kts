@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -79,6 +79,7 @@ dependencies {
     implementation(project(":feature-hpedia"))
     implementation(project(":feature-like"))
     implementation(project(":core-designsystem"))
+    implementation(project(":core-model"))
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))
     implementation(project(":core-common"))

@@ -49,7 +49,6 @@ dependencies {
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
-    implementation(project(":feature-fcm"))
 
     implementation("androidx.compose.material:material:1.2.0-beta02")
     implementation("androidx.compose.material3:material3:1.1.0")

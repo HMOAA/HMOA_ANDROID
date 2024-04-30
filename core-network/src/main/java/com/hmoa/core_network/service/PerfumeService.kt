@@ -15,7 +15,10 @@ interface PerfumeService {
     suspend fun getPerfumeBottomDetail(@Path("perfumeId") perfumeId: String): ApiResponse<PerfumeDetailSecondResponseDto>
 
     @POST("/perfume/{perfumeId}/age")
-    suspend fun postPerfumeAge(@Body dto: AgeRequestDto, @Path("perfumeId") perfumeId: String): PerfumeAgeResponseDto
+    suspend fun postPerfumeAge(
+        @Body dto: AgeRequestDto,
+        @Path("perfumeId") perfumeId: String
+    ): ApiResponse<PerfumeAgeResponseDto>
 
     @DELETE("/perfume/{perfumeId}/age")
     suspend fun deletePerfumeAge(@Path("perfumeId") perfumeId: String): PerfumeAgeResponseDto
@@ -24,7 +27,7 @@ interface PerfumeService {
     suspend fun postPerfumeGender(
         @Body dto: PerfumeGenderRequestDto,
         @Path("perfumeId") perfumeId: String
-    ): PerfumeGenderResponseDto
+    ): ApiResponse<PerfumeGenderResponseDto>
 
     @DELETE("/perfume/{perfumeId}/gender")
     suspend fun deletePerfumeGender(@Path("perfumeId") perfumeId: String): PerfumeGenderResponseDto
@@ -39,7 +42,7 @@ interface PerfumeService {
     suspend fun postPerfumeWeather(
         @Path("perfumeId") perfumeId: String,
         @Body dto: PerfumeWeatherRequestDto
-    ): PerfumeWeatherResponseDto
+    ): ApiResponse<PerfumeWeatherResponseDto>
 
     @DELETE("/perfume/{perfumeId}/weather")
     suspend fun deletePerfumeWeather(@Path("perfumeId") perfumeId: String): PerfumeWeatherResponseDto

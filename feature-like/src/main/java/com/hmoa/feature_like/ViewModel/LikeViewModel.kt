@@ -2,6 +2,8 @@ package com.hmoa.feature_like.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.PerfumeRepository
@@ -14,25 +16,62 @@ import javax.inject.Inject
 class LikeViewModel @Inject constructor(
     private val perfumeRepository: PerfumeRepository
 ) : ViewModel() {
-    private val errState = MutableStateFlow<String?>(null)
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
 
-    val uiState: StateFlow<LikeUiState> = errState.map {
-        if (errState.value != null) {
-            throw Exception(errState.value!!)
-        }
+    val uiState: StateFlow<LikeUiState> = flow {
         val result = perfumeRepository.getLikePerfumes()
         if (result.errorMessage != null) {
             throw Exception(result.errorMessage?.message)
         }
-        result.data!!
+        emit(result.data)
     }.asResult().map { result ->
         when (result) {
             Result.Loading -> LikeUiState.Loading
             is Result.Success -> {
-                LikeUiState.Like(result.data.data)
+                LikeUiState.Like(result.data?.data ?: emptyList())
             }
 
-            is Result.Error -> LikeUiState.Error(result.exception.toString())
+            is Result.Error -> {
+                when (result.exception.message) {
+                    ErrorMessageType.EXPIRED_TOKEN.message -> {
+                        expiredTokenErrorState.update { true }
+                    }
+
+                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                        wrongTypeTokenErrorState.update { true }
+                    }
+
+                    ErrorMessageType.UNKNOWN_ERROR.message -> {
+                        unLoginedErrorState.update { true }
+                    }
+
+                    else -> {
+                        generalErrorState.update { Pair(true, result.exception.message) }
+                    }
+                }
+                LikeUiState.Error(result.exception.toString())
+            }
+
         }
     }.stateIn(
         scope = viewModelScope,

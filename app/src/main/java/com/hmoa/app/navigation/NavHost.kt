@@ -52,7 +52,8 @@ fun SetUpNavGraph(
         composable(LIKE_ROUTE) {
             LikeRoute(
                 onNavPerfumeDesc = navController::navigateToPerfume,
-                onNavHome = navController::navigateToHome
+                onNavHome = navController::navigateToHome,
+                onErrorHandleLoginAgain = navController::navigateToLogin
             )
         }
 

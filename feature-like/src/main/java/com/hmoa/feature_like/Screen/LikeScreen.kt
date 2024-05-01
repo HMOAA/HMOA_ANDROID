@@ -2,19 +2,7 @@ package com.hmoa.feature_like.Screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -23,12 +11,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -38,8 +21,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.hmoa.component.TopBar
-import com.hmoa.core_designsystem.component.AppDefaultDialog
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.LikeGridItem
 import com.hmoa.core_designsystem.component.LikeRowItem
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -53,35 +37,44 @@ fun NavController.navigateToLike() = navigate(LIKE_ROUTE)
 
 @Composable
 fun LikeRoute(
-    onNavPerfumeDesc : (Int) -> Unit,
-    onNavHome : () -> Unit,
-    viewModel : LikeViewModel = hiltViewModel()
-){
+    onNavPerfumeDesc: (Int) -> Unit,
+    onNavHome: () -> Unit,
+    onErrorHandleLoginAgain: () -> Unit,
+    viewModel: LikeViewModel = hiltViewModel()
+) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    var type by remember{mutableStateOf("ROW")}
+    var type by remember { mutableStateOf("ROW") }
+    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
+
     LikeScreen(
         uiState = uiState.value,
         type = type,
-        onTypeChanged = {type = it},
+        onTypeChanged = { type = it },
         onNavPerfumeDesc = onNavPerfumeDesc,
-        onNavHome = onNavHome
+        onNavHome = onNavHome,
+        errorUiState = errorUiState,
+        onErrorHandleLoginAgain = onErrorHandleLoginAgain
     )
 }
 
 @Composable
 fun LikeScreen(
-    uiState : LikeUiState,
-    type : String,
-    onTypeChanged : (String) -> Unit,
+    errorUiState: ErrorUiState,
+    uiState: LikeUiState,
+    type: String,
+    onTypeChanged: (String) -> Unit,
     onNavPerfumeDesc: (Int) -> Unit,
-    onNavHome: () -> Unit
-){
-    when(uiState){
+    onNavHome: () -> Unit,
+    onErrorHandleLoginAgain: () -> Unit
+) {
+
+    when (uiState) {
         LikeUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is LikeUiState.Like -> {
-            if (uiState.perfumes.isNotEmpty()){
+            if (uiState.perfumes.isNotEmpty()) {
                 LikeContent(
                     type = type,
                     onTypeChanged = onTypeChanged,
@@ -92,17 +85,12 @@ fun LikeScreen(
                 NoSavePerfumeScreen()
             }
         }
+
         is LikeUiState.Error -> {
-            var showDialog by remember{mutableStateOf(true)}
-            AppDefaultDialog(
-                isOpen = showDialog,
-                modifier = Modifier.fillMaxWidth(.7f).fillMaxHeight(.5f),
-                title = "오류",
-                content = uiState.message,
-                onDismiss = {
-                    showDialog = false
-                    onNavHome()
-                }
+            ErrorUiSetView(
+                onConfirmClick = { onErrorHandleLoginAgain() },
+                errorUiState = errorUiState,
+                onCloseClick = { onNavHome() }
             )
         }
     }
@@ -110,21 +98,21 @@ fun LikeScreen(
 
 @Composable
 private fun LikeContent(
-    type : String,
+    type: String,
     onTypeChanged: (String) -> Unit,
-    perfumes : List<PerfumeLikeResponseDto>,
+    perfumes: List<PerfumeLikeResponseDto>,
     onNavPerfumeDesc: (Int) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White),
-    ){
+    ) {
         TopBar(title = "저장")
         Spacer(Modifier.height(16.dp))
-        IconRow(type = type,onTypeChanged = onTypeChanged)
+        IconRow(type = type, onTypeChanged = onTypeChanged)
         Spacer(Modifier.height(20.dp))
-        if (type == "ROW"){
+        if (type == "ROW") {
             LikePerfumeListByRow(
                 perfumes = perfumes,
                 onNavPerfumeDesc = onNavPerfumeDesc
@@ -140,7 +128,7 @@ private fun LikeContent(
 
 @Composable
 private fun IconRow(
-    type : String,
+    type: String,
     onTypeChanged: (String) -> Unit
 ) {
     Row(
@@ -179,9 +167,9 @@ private fun IconRow(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LikePerfumeListByRow(
-    perfumes : List<PerfumeLikeResponseDto>,
+    perfumes: List<PerfumeLikeResponseDto>,
     onNavPerfumeDesc: (Int) -> Unit
-){
+) {
     val pagerState = rememberPagerState(
         initialPage = 0,
         pageCount = { perfumes.size }
@@ -195,14 +183,14 @@ private fun LikePerfumeListByRow(
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center
-        ){
+        ) {
             LikeRowItem(
                 brand = perfume.brandName,
                 itemPicture = perfume.perfumeImageUrl,
                 price = perfume.price.toString(),
                 itemNameKo = perfume.koreanName,
                 itemNameEng = perfume.englishName,
-                onClickClose = {/* event nothing */},
+                onClickClose = {/* event nothing */ },
                 onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) }
             )
         }
@@ -211,29 +199,29 @@ private fun LikePerfumeListByRow(
 
 @Composable
 private fun LikePerfumeListByGrid(
-    perfumes : List<PerfumeLikeResponseDto>,
+    perfumes: List<PerfumeLikeResponseDto>,
     onNavPerfumeDesc: (Int) -> Unit
-){
-    var showCard by remember{mutableStateOf(false)}
-    var selectedPerfumeIdx by remember{mutableIntStateOf(0)}
+) {
+    var showCard by remember { mutableStateOf(false) }
+    var selectedPerfumeIdx by remember { mutableIntStateOf(0) }
     if (showCard) {
         val perfume = perfumes[selectedPerfumeIdx]
         Dialog(
             onDismissRequest = { showCard = false }
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .height(354.dp)
                     .width(280.dp)
-            ){
+            ) {
                 LikeRowItem(
                     brand = perfume.brandName,
                     itemPicture = perfume.perfumeImageUrl,
                     price = perfume.price.toString(),
                     itemNameKo = perfume.koreanName,
                     itemNameEng = perfume.englishName,
-                    onClickClose = {showCard = false},
-                    onNavPerfumeDesc = {onNavPerfumeDesc(perfume.perfumeId)}
+                    onClickClose = { showCard = false },
+                    onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) }
                 )
             }
         }
@@ -243,8 +231,8 @@ private fun LikePerfumeListByGrid(
         columns = GridCells.Fixed(3),
         state = rememberLazyGridState(),
         contentPadding = PaddingValues(8.dp)
-    ){
-        itemsIndexed(perfumes){idx, perfume ->
+    ) {
+        itemsIndexed(perfumes) { idx, perfume ->
             LikeGridItem(
                 itemPicture = perfume.perfumeImageUrl,
                 onClickItem = {

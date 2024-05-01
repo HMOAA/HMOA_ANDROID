@@ -29,7 +29,7 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 fun CommunityHomeRoute(
     onNavCommunityGraph: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
-    onErrorHandleLoginAgain:()->Unit,
+    onErrorHandleLoginAgain: () -> Unit,
     viewModel: CommunityHomeViewModel = hiltViewModel(),
 ) {
 
@@ -52,14 +52,14 @@ fun CommunityHome(
     uiState: CommunityHomeUiState, //이거 uiState로 이전해서 uiState에서 데이터 가져오는 방식으로
     onNavCommunityGraph: () -> Unit, //카테고리 별 Community 화면으로 이동
     onNavCommunityDescription: (Int) -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
-    onErrorHandleLoginAgain:()->Unit
+    onErrorHandleLoginAgain: () -> Unit
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp).fillMaxSize()) {
         CommunityTitleBar(onNavCommunityByCategory = onNavCommunityGraph)
         ErrorUiSetView(
             onConfirmClick = { onErrorHandleLoginAgain() },
             errorUiState = errorUiState,
-            onCloseClick = {  }
+            onCloseClick = { }
         )
 
         when (uiState) {

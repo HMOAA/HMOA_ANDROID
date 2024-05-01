@@ -7,14 +7,14 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 class GetMyUserInfoUseCase @Inject constructor(
-    private val memberRepository : MemberRepository
-){
-    suspend operator fun invoke() : ResultResponse<UserInfo> {
+    private val memberRepository: MemberRepository
+) {
+    suspend operator fun invoke(): ResultResponse<UserInfo> {
 
         val response = memberRepository.getMember()
         val result = ResultResponse<UserInfo>()
-        if (response.exception is Exception){
-            result.exception = response.exception
+        if (response.errorMessage != null) {
+            result.errorMessage = response.errorMessage
         } else {
             val todayYear = LocalDateTime.now().year
             val birth = todayYear - response.data!!.age + 1

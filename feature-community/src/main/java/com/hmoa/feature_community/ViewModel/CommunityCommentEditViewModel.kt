@@ -7,13 +7,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,11 +24,11 @@ class CommunityCommentEditViewModel @Inject constructor(
     private val _errState = MutableStateFlow<String?>(null)
     val errState get() = _errState.asStateFlow()
 
-    val uiState : StateFlow<CommunityCommentEditUiState> = commentId.map{ id ->
+    val uiState: StateFlow<CommunityCommentEditUiState> = commentId.map { id ->
         if (id == null) throw NullPointerException("Id is NULL")
         val response = communityCommentRepository.getCommunityComment(id)
-        if (response.exception is Exception) {
-            throw response.exception!!
+        if (response.errorMessage != null) {
+            throw Exception(response.errorMessage!!.message)
         }
         response.data!!
     }.asResult()
@@ -43,11 +37,13 @@ class CommunityCommentEditViewModel @Inject constructor(
                 is Result.Error -> {
                     CommunityCommentEditUiState.Error
                 }
+
                 is Result.Success -> {
                     val data = result.data
-                    _comment.update{ data.content }
+                    _comment.update { data.content }
                     CommunityCommentEditUiState.Comment
                 }
+
                 is Result.Loading -> {
                     CommunityCommentEditUiState.Loading
                 }
@@ -59,27 +55,27 @@ class CommunityCommentEditViewModel @Inject constructor(
         )
 
     //comment id 설정
-    fun setId(id : Int?) {
-        commentId.update{ id }
+    fun setId(id: Int?) {
+        commentId.update { id }
     }
 
     //comment 업데이트
-    fun updateComment(newComment : String) {
-        _comment.update{ newComment }
+    fun updateComment(newComment: String) {
+        _comment.update { newComment }
     }
 
     //comment 수정
     fun editComment() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             val id = commentId.value ?: return@launch
             val requestDto = CommunityCommentDefaultRequestDto(comment.value)
-            try{
+            try {
                 communityCommentRepository.putCommunityComment(
                     commentId = id,
                     dto = requestDto
                 )
-            } catch (e : Exception) {
-                _errState.update{ e.message.toString() }
+            } catch (e: Exception) {
+                _errState.update { e.message.toString() }
             }
         }
     }

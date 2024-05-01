@@ -3,6 +3,8 @@ package com.hmoa.feature_perfume.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.PerfumeRepository
@@ -29,7 +31,7 @@ class PerfumeViewmodel @Inject constructor(
     private val perfumeRepository: PerfumeRepository,
     private val reportRepository: ReportRepository
 ) : ViewModel() {
-    private val perfumeState = MutableStateFlow<Perfume?>(null)
+    private var perfumeState = MutableStateFlow<Perfume?>(null)
     private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
     private var genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
     private var ageState = MutableStateFlow<PerfumeAgeResponseDto?>(null)
@@ -59,16 +61,57 @@ class PerfumeViewmodel @Inject constructor(
                 initialValue = PerfumeUiState.Loading
             )
 
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
+
 
     fun onChangePerfumeAge(age: Float, perfumeId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             updatePerfumeAge(age = age, perfumeId).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
-                        ageState.update { result.data }
+                        ageState.update { result.data.data }
                     }
 
-                    is Result.Error -> {}
+                    is Result.Error -> {
+                        when (result.exception.message) {
+                            ErrorMessageType.EXPIRED_TOKEN.message -> {
+                                expiredTokenErrorState.update { true }
+                            }
+
+                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                                wrongTypeTokenErrorState.update { true }
+                            }
+
+                            ErrorMessageType.UNKNOWN_ERROR.message -> {
+                                unLoginedErrorState.update { true }
+                            }
+
+                            else -> {
+                                generalErrorState.update { Pair(true, result.exception.message) }
+                            }
+                        }
+                    }
+
                     is Result.Loading -> {}
                 }
             }
@@ -80,7 +123,7 @@ class PerfumeViewmodel @Inject constructor(
             updatePerfumeGender(gender, perfumeId).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
-                        genderState.update { result.data }
+                        genderState.update { result.data.data }
                     }
 
                     is Result.Error -> {}
@@ -95,7 +138,7 @@ class PerfumeViewmodel @Inject constructor(
             updatePerfumeWeather(weather, perfumeId).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
-                        weatherState.update { result.data }
+                        weatherState.update { result.data.data }
                     }
 
                     is Result.Error -> {}
@@ -110,12 +153,30 @@ class PerfumeViewmodel @Inject constructor(
             getPerfume(perfumeId.toString()).asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
-                        perfumeState.update { result.data }
-                        perfumeCommentsState.update { result.data.commentInfo }
+                        perfumeState.update { result.data.data }
+                        perfumeCommentsState.update { result.data.data?.commentInfo }
                     }
 
                     is Result.Loading -> {}
-                    is Result.Error -> {}
+                    is Result.Error -> {
+                        when (result.exception.message) {
+                            ErrorMessageType.EXPIRED_TOKEN.message -> {
+                                expiredTokenErrorState.update { true }
+                            }
+
+                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                                wrongTypeTokenErrorState.update { true }
+                            }
+
+                            ErrorMessageType.UNKNOWN_ERROR.message -> {
+                                unLoginedErrorState.update { true }
+                            }
+
+                            else -> {
+                                generalErrorState.update { Pair(true, result.exception.message) }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -238,5 +299,4 @@ class PerfumeViewmodel @Inject constructor(
 
         data object Empty : PerfumeUiState
     }
-
 }

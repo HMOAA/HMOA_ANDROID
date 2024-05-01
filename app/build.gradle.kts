@@ -28,6 +28,13 @@ android {
         manifestPlaceholders["NATIVE_APP_KEY"] = localProperties.getProperty("NATIVE_APP_KEY")
         buildConfigField("String", "NATIVE_APP_KEY", localProperties.getProperty("NATIVE_APP_KEY"))
     }
+
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("./debug.keystore")
+        }
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -102,7 +109,7 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-messaging:21.1.0")
     implementation("com.google.firebase:firebase-analytics")
-    
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

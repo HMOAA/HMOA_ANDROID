@@ -21,8 +21,8 @@ class PerfumeNameSearchPagingSource(
         try {
             val response = searchRepository.getPerfumeName(page = pageNumber, searchWord = word)
 
-            if (response.data == null) {
-                throw response.exception!!
+            if (response.errorMessage != null) {
+                throw Exception(response.errorMessage!!.message)
             }
 
             val prevKey = if (pageNumber > 0) pageNumber - 1 else null

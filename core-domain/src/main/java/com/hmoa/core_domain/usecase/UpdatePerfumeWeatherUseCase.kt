@@ -1,5 +1,6 @@
 package com.hmoa.core_domain.usecase
 
+import ResultResponse
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.Weather
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class UpdatePerfumeWeatherUseCase @Inject constructor(
     private val perfumeRepository: PerfumeRepository
 ) {
-    suspend operator fun invoke(weather: Weather, perfumeId: Int): Flow<PerfumeWeatherResponseDto> {
+    suspend operator fun invoke(weather: Weather, perfumeId: Int): Flow<ResultResponse<PerfumeWeatherResponseDto>> {
         val param = when (weather) {
             Weather.SPRING -> 1
             Weather.SUMMER -> 2

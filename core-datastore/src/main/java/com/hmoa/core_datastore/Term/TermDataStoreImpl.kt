@@ -1,12 +1,15 @@
 package com.hmoa.core_datastore.Term
 
 import ResultResponse
+import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.TermDefaultResponseDto
 import com.hmoa.core_model.response.TermDescResponseDto
 import com.hmoa.core_network.service.TermService
+import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class TermDataStoreImpl @Inject constructor(
@@ -19,10 +22,11 @@ class TermDataStoreImpl @Inject constructor(
 
     override suspend fun getTerm(termId: Int): ResultResponse<DataResponseDto<TermDescResponseDto>> {
         val result = ResultResponse<DataResponseDto<TermDescResponseDto>>()
-        termService.getTerm(termId).suspendOnSuccess{
+        termService.getTerm(termId).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.exception = Exception(this.statusCode.code.toString())
+        }.suspendOnError {
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
         }
         return result
     }

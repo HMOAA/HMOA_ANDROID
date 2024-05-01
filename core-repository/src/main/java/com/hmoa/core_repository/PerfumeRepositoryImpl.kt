@@ -18,7 +18,7 @@ class PerfumeRepositoryImpl @Inject constructor(private val perfumeDataStore: Pe
         return perfumeDataStore.getPerfumeBottomDetail(perfumeId)
     }
 
-    override suspend fun postPerfumeAge(dto: AgeRequestDto, perfumeId: String): PerfumeAgeResponseDto {
+    override suspend fun postPerfumeAge(dto: AgeRequestDto, perfumeId: String): ResultResponse<PerfumeAgeResponseDto> {
         return perfumeDataStore.postPerfumeAge(dto, perfumeId)
     }
 
@@ -26,7 +26,10 @@ class PerfumeRepositoryImpl @Inject constructor(private val perfumeDataStore: Pe
         return perfumeDataStore.deletePerfumeAge(perfumeId)
     }
 
-    override suspend fun postPerfumeGender(dto: PerfumeGenderRequestDto, perfumeId: String): PerfumeGenderResponseDto {
+    override suspend fun postPerfumeGender(
+        dto: PerfumeGenderRequestDto,
+        perfumeId: String
+    ): ResultResponse<PerfumeGenderResponseDto> {
         return perfumeDataStore.postPerfumeGender(dto, perfumeId)
     }
 
@@ -45,7 +48,7 @@ class PerfumeRepositoryImpl @Inject constructor(private val perfumeDataStore: Pe
     override suspend fun postPerfumeWeather(
         dto: PerfumeWeatherRequestDto,
         perfumeId: String
-    ): PerfumeWeatherResponseDto {
+    ): ResultResponse<PerfumeWeatherResponseDto> {
         return perfumeDataStore.postPerfumeWeather(perfumeId, dto)
     }
 

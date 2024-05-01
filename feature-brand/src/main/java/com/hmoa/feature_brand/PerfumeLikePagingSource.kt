@@ -14,8 +14,8 @@ class PerfumeLikePagingSource(
         try {
             val response = brandRepository.getPerfumesSortedLike(brandId = brandId, pageNum = pageNumber)
 
-            if (response?.data == null) {
-                throw response?.exception!!
+            if (response?.errorMessage != null) {
+                throw Exception(response?.errorMessage!!.message)
             }
 
             val prevKey = if (pageNumber > 0) pageNumber - 1 else null

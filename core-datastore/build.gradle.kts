@@ -34,6 +34,7 @@ android {
 
 dependencies {
     val hilt_version = "2.48.1"
+    val kotlinx_version = "1.5.0"
     implementation(project(":core-model"))
     implementation(project(":core-network"))
     implementation(project(":core-database"))
@@ -43,5 +44,6 @@ dependencies {
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

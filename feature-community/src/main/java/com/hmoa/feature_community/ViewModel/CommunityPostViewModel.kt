@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityPostViewModel @Inject constructor(
-    private val application : Application,
+    private val application: Application,
     private val repository: CommunityRepository
 ) : ViewModel() {
 
@@ -53,16 +53,20 @@ class CommunityPostViewModel @Inject constructor(
     }
 
     //title update
-    fun updateTitle(title: String) {_title.update { title }}
+    fun updateTitle(title: String) {
+        _title.update { title }
+    }
 
     //content update
-    fun updateContent(content: String) {_content.update { content }}
+    fun updateContent(content: String) {
+        _content.update { content }
+    }
 
     //사진 update
     fun updatePictures(newPictures: List<Uri>) {
         _pictures.update {
             val result = arrayListOf<Uri>()
-            newPictures.forEach{
+            newPictures.forEach {
                 result.add(it)
             }
             result
@@ -70,7 +74,7 @@ class CommunityPostViewModel @Inject constructor(
     }
 
     //사진 삭제
-    fun deletePicture(idx : Int){
+    fun deletePicture(idx: Int) {
         _pictures.update {
             val data = it
             data.minus(it[idx])
@@ -80,44 +84,44 @@ class CommunityPostViewModel @Inject constructor(
     //게시글 게시
     fun postCommunity() {
         val images = arrayListOf<File>()
-        pictures.value.map{ picture ->
+        pictures.value.map { picture ->
             val path = absolutePath(picture) ?: throw NullPointerException("file path is NULL")
             images.add(File(path))
         }
         viewModelScope.launch {
 
             val result = repository.postCommunitySave(
-                images = images.map{it.absoluteFile}.toTypedArray(),
+                images = images.map { it.absoluteFile }.toTypedArray(),
                 category = category.value.name,
                 title = title.value,
                 content = content.value
             )
 
-            if (result.exception is Exception) {
-                _errState.update{"Exception : ${result.exception!!}"}
+            if (result.errorMessage != null) {
+                _errState.update { "Exception : ${result.errorMessage!!.message}" }
             } else {
                 result.data
             }
         }
     }
 
-    private fun absolutePath(uri : Uri) : String? {
+    private fun absolutePath(uri: Uri): String? {
         val contentResolver = context.contentResolver
 
         val filePath = (context.applicationInfo.dataDir + File.separator + System.currentTimeMillis())
         val file = File(filePath)
 
-        try{
+        try {
             val inputStream = contentResolver.openInputStream(uri) ?: return null
 
             val outputStream = FileOutputStream(file)
 
             val buf = ByteArray(1024)
-            var len : Int
-            while (inputStream.read(buf).also {len = it} > 0) outputStream.write(buf, 0, len)
+            var len: Int
+            while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
             outputStream.close()
             inputStream.close()
-        } catch (ignore : Exception) {
+        } catch (ignore: Exception) {
             return null
         }
         return file.absolutePath

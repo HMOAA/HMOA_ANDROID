@@ -49,7 +49,7 @@ fun SetUpNavGraph(
         )
 
         /** like 모듈 */
-        composable(LIKE_ROUTE){
+        composable(LIKE_ROUTE) {
             LikeRoute(
                 onNavPerfumeDesc = navController::navigateToPerfume,
                 onNavHome = navController::navigateToHome
@@ -100,6 +100,7 @@ fun SetUpNavGraph(
                     isEditable
                 )
             },
+            onErrorHandleLoginAgain = { navController.navigateToLogin() }
         )
         perfumeComment(
             onBackClick = navController::navigateToBack,

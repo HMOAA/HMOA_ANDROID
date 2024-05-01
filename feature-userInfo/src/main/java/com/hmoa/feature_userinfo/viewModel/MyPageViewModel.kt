@@ -9,14 +9,7 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,13 +17,13 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val memberRepository: MemberRepository,
     private val loginRepository: LoginRepository,
-    private val fcmRepository : FcmRepository,
+    private val fcmRepository: FcmRepository,
     private val getUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
     private val authTokenState = MutableStateFlow<String?>(null)
 
     //Login 여부
-    val isLogin = authTokenState.map{it != null}
+    val isLogin = authTokenState.map { it != null }
 
     private val errState = MutableStateFlow<String?>(null)
 
@@ -38,22 +31,23 @@ class MyPageViewModel @Inject constructor(
         getAuthToken()
     }
 
-    val uiState : StateFlow<UserInfoUiState> = errState.map{
-        if (it != null){
+    val uiState: StateFlow<UserInfoUiState> = errState.map {
+        if (it != null) {
             throw Exception(it)
         }
         val result = getUserInfoUseCase()
-        if (result.exception is Exception){
-            throw result.exception!!
+        if (result.errorMessage != null) {
+            throw Exception(result.errorMessage!!.message)
         }
         result.data!!
-    }.asResult().map{result ->
-        when(result) {
+    }.asResult().map { result ->
+        when (result) {
             Result.Loading -> UserInfoUiState.Loading
             is Result.Success -> {
                 val data = result.data
                 UserInfoUiState.User(data.profile, data.nickname, data.provider)
             }
+
             is Result.Error -> UserInfoUiState.Error
         }
     }.stateIn(
@@ -70,13 +64,13 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    fun updateErr(err : String) {
-        errState.update{ err }
+    fun updateErr(err: String) {
+        errState.update { err }
     }
 
     //로그아웃
-    fun logout(){
-        viewModelScope.launch{
+    fun logout() {
+        viewModelScope.launch {
             loginRepository.deleteAuthToken()
             loginRepository.deleteRememberedToken()
             fcmRepository.deleteFcmToken()
@@ -84,12 +78,12 @@ class MyPageViewModel @Inject constructor(
     }
 
     //계정 삭제
-    fun delAccount(){
-        viewModelScope.launch{
-            try{
+    fun delAccount() {
+        viewModelScope.launch {
+            try {
                 memberRepository.deleteMember()
-            } catch(e : Exception){
-                errState.update{ e.message }
+            } catch (e: Exception) {
+                errState.update { e.message }
             }
             loginRepository.deleteAuthToken()
             loginRepository.deleteRememberedToken()
@@ -101,9 +95,10 @@ class MyPageViewModel @Inject constructor(
 sealed interface UserInfoUiState {
     data object Loading : UserInfoUiState
     data class User(
-        val profile : String,
-        val nickname : String,
-        val provider : String,
+        val profile: String,
+        val nickname: String,
+        val provider: String,
     ) : UserInfoUiState
+
     data object Error : UserInfoUiState
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.PerfumeGender
@@ -45,6 +46,7 @@ fun PerfumeRoute(
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onErrorHandleLoginAgain: () -> Unit,
     perfumeId: String?,
 ) {
 
@@ -57,7 +59,8 @@ fun PerfumeRoute(
             onViewCommentAllClick = { onViewCommentAllClick(it) },
             onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
             perfumeId = perfumeId.toInt(),
-            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) }
+            onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
+            onErrorHandleLoginAgain = { onErrorHandleLoginAgain() }
         )
     }
 }
@@ -71,6 +74,7 @@ fun PerfumeScreen(
     onViewCommentAllClick: (perfumeId: Int) -> Unit,
     onSimilarPerfumeClick: (perfumeId: Int) -> Unit,
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
+    onErrorHandleLoginAgain: () -> Unit,
     viewModel: PerfumeViewmodel = hiltViewModel(),
     perfumeId: Int,
 ) {
@@ -79,48 +83,59 @@ fun PerfumeScreen(
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
+    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        when (uiState) {
-            is PerfumeViewmodel.PerfumeUiState.Loading -> {}
-            is PerfumeViewmodel.PerfumeUiState.PerfumeData -> {
-                PerfumeContent(
-                    onBackClick = { onBackClick() },
-                    onHomeClick = { onHomeClick() },
-                    onLikeClick = { viewModel.updateLike(it, perfumeId) },
-                    onCommentAddClick = { onCommentAddClick(perfumeId) },
-                    onBrandClick = { onBrandClick(it) },
-                    onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
-                    onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },
-                    onInitializeAgeClick = { viewModel.onBackAgeToZero() },
-                    onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
-                    onViewCommentAllClick = { onViewCommentAllClick(it) },
-                    onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
-                    onPerfumeCommentReportClick = { viewModel.reportPerfumeComment(perfumeCommentIdToReport) },
-                    data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
-                    weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
-                    gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
-                    age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
-                    perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
-                    onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
-                    onSpecificCommentLikeClick = { commentId, isLike, index ->
-                        viewModel.updatePerfumeCommentLike(
-                            isLike,
-                            commentId,
-                            index
-                        )
-                    },
-                    updatePerfumeCommentIdToReport = { viewModel.updatePerfumeCommentIdToReport(it) },
-                )
-            }
+    ErrorUiSetView(
+        onConfirmClick = { onErrorHandleLoginAgain() },
+        errorUiState = errorUiState,
+        onCloseClick = { onBackClick() }
+    )
 
-            is PerfumeViewmodel.PerfumeUiState.Empty -> {}
+    when (uiState) {
+        is PerfumeViewmodel.PerfumeUiState.Loading -> {
+            AppLoadingScreen()
+        }
+
+        is PerfumeViewmodel.PerfumeUiState.PerfumeData -> {
+            PerfumeContent(
+                onBackClick = { onBackClick() },
+                onHomeClick = { onHomeClick() },
+                onLikeClick = { viewModel.updateLike(it, perfumeId) },
+                onCommentAddClick = { onCommentAddClick(perfumeId) },
+                onBrandClick = { onBrandClick(it) },
+                onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
+                onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },
+                onInitializeAgeClick = { viewModel.onBackAgeToZero() },
+                onAgeDragFinish = { viewModel.onChangePerfumeAge(it, perfumeId) },
+                onViewCommentAllClick = { onViewCommentAllClick(it) },
+                onSimilarPerfumeClick = { onSimilarPerfumeClick(it) },
+                onPerfumeCommentReportClick = { viewModel.reportPerfumeComment(perfumeCommentIdToReport) },
+                data = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).data,
+                weather = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).weather,
+                gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
+                age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
+                perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
+                onSpecificCommentClick = { commentId, isEditable ->
+                    onSpecificCommentClick(
+                        commentId,
+                        isEditable
+                    )
+                },
+                onSpecificCommentLikeClick = { commentId, isLike, index ->
+                    viewModel.updatePerfumeCommentLike(
+                        isLike,
+                        commentId,
+                        index
+                    )
+                },
+                updatePerfumeCommentIdToReport = { viewModel.updatePerfumeCommentIdToReport(it) },
+            )
+        }
+
+        is PerfumeViewmodel.PerfumeUiState.Empty -> {
         }
     }
+
 }
 
 

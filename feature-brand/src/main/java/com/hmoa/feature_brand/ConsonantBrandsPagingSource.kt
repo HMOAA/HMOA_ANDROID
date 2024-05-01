@@ -14,7 +14,7 @@ class ConsonantBrandsPagingSource(
             val response = searchRepository.getBrandAll(consonant)
 
             if (response?.data == null) {
-                throw response?.exception!!
+                throw Exception(response?.errorMessage?.message)
             }
 
             val prevKey = if (consonant > 0) consonant - 1 else null

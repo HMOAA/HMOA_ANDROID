@@ -20,11 +20,7 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -57,8 +53,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             flow {
                 val result = loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.KAKAO)
-                if (result.exception is Exception) {
-                    throw result.exception!!
+                if (result.errorMessage != null) {
+                    throw Exception(result.errorMessage!!.message)
                 } else {
                     emit(result.data)
                 }

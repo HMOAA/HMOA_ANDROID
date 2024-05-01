@@ -2,6 +2,8 @@ package com.hmoa.feature_community.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityRepository
@@ -18,8 +20,27 @@ class CommunityHomeViewModel @Inject constructor(
     private val _community = MutableStateFlow(emptyList<CommunityByCategoryResponseDto>())
     val community get() = _community.asStateFlow()
 
-    private val _errState = MutableStateFlow("")
-    val errState get() = _errState.asStateFlow()
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
 
     val uiState: StateFlow<CommunityHomeUiState> = flow {
         val result = repository.getCommunitiesHome()
@@ -39,7 +60,25 @@ class CommunityHomeViewModel @Inject constructor(
                 }
 
                 is Result.Error -> {
+                    when (result.exception.message) {
+                        ErrorMessageType.EXPIRED_TOKEN.message -> {
+                            expiredTokenErrorState.update { true }
+                        }
+
+                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                            wrongTypeTokenErrorState.update { true }
+                        }
+
+                        ErrorMessageType.UNKNOWN_ERROR.message -> {
+                            unLoginedErrorState.update { true }
+                        }
+
+                        else -> {
+                            generalErrorState.update { Pair(true, result.exception.message) }
+                        }
+                    }
                     CommunityHomeUiState.Error
+
                 }
             }
         }.stateIn(

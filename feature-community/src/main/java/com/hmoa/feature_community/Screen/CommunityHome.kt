@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +18,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityHomeUiState
@@ -26,30 +29,42 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 fun CommunityHomeRoute(
     onNavCommunityGraph: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
+    onErrorHandleLoginAgain:()->Unit,
     viewModel: CommunityHomeViewModel = hiltViewModel(),
 ) {
 
     //ui state를 전달 >> 여기에 community list를 가지고 이를 통해 LazyColumn 이용
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
 
     CommunityHome(
-        uiState = uiState.value,
+        errorUiState = errorUiState,
+        uiState = uiState,
         onNavCommunityGraph = onNavCommunityGraph,
-        onNavCommunityDescription = onNavCommunityDescription
+        onNavCommunityDescription = onNavCommunityDescription,
+        onErrorHandleLoginAgain = onErrorHandleLoginAgain
     )
 }
 
 @Composable
 fun CommunityHome(
+    errorUiState: ErrorUiState,
     uiState: CommunityHomeUiState, //이거 uiState로 이전해서 uiState에서 데이터 가져오는 방식으로
     onNavCommunityGraph: () -> Unit, //카테고리 별 Community 화면으로 이동
     onNavCommunityDescription: (Int) -> Unit, //해당 Community Id를 가진 Description 화면으로 이동
+    onErrorHandleLoginAgain:()->Unit
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp).fillMaxSize()) {
         CommunityTitleBar(onNavCommunityByCategory = onNavCommunityGraph)
+        ErrorUiSetView(
+            onConfirmClick = { onErrorHandleLoginAgain() },
+            errorUiState = errorUiState,
+            onCloseClick = {  }
+        )
+
         when (uiState) {
             is CommunityHomeUiState.Loading -> {
-                
+
             }
 
             is CommunityHomeUiState.Community -> {

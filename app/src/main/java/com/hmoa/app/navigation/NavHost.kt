@@ -83,7 +83,8 @@ fun SetUpNavGraph(
             onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
             onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
             onNavHPediaDesc = navController::navigateToHPediaDescRoute,
-            onNavHPediaSearch = navController::navigateToHPediaSearchRoute
+            onNavHPediaSearch = navController::navigateToHPediaSearchRoute,
+            onNavLogin = navController::navigateToLogin
         )
 
         /** perfume 모듈 */

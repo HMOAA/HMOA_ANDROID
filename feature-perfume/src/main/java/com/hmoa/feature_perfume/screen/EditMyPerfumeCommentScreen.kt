@@ -1,6 +1,7 @@
 package com.hmoa.feature_perfume.screen
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.*
@@ -8,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,7 @@ fun EditMyPerfumeCommentScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isNewPerfumeCommentSubmitFinished by viewModel.isNewPerfumeCommentSubmitedState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(true) {
         viewModel.initializePerfumeComment(commentId = commentId)
@@ -55,7 +58,12 @@ fun EditMyPerfumeCommentScreen(
             is EditMyPerfumeCommentViewmodel.SpecificCommentUiState.CommentData -> {
                 EditMyPerfumeCommentContent(
                     onBackClick = { onBackClick() },
-                    onConfirmClick = { viewModel.onSubmitPerfumeComment(commentId, text = it) },
+                    onConfirmClick = {
+                        if (it.length > 0) viewModel.onSubmitPerfumeComment(
+                            commentId,
+                            text = it
+                        ) else Toast.makeText(context, "댓글을 작성해주세요", Toast.LENGTH_SHORT).show()
+                    },
                     data = (uiState as EditMyPerfumeCommentViewmodel.SpecificCommentUiState.CommentData).comment,
                     onContentChanged = { viewModel.onChangePerfumceComment(it) }
                 )

@@ -1,5 +1,6 @@
 package com.hmoa.component
 
+import android.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
 fun TopBar(
@@ -32,7 +35,8 @@ fun TopBar(
     navIcon : Painter ?= null, //navigation 버튼
     onNavClick : () -> Unit = {}, //navigation click 이벤트
     menuIcon : Painter ?= null, //menu 버튼
-    onMenuClick : () -> Unit = {}, //menu click 이벤트
+    onMenuClick : () -> Unit = {}, //menu click 이벤트,
+    menuIconColor: androidx.compose.ui.graphics.Color = CustomColor.black,
     title : String //메인 타이틀
 ){
     Row(
@@ -66,10 +70,25 @@ fun TopBar(
             Icon(
                 modifier = Modifier.size(iconSize).clickable { onMenuClick() },
                 painter = menuIcon,
-                contentDescription = "Menu Button"
+                contentDescription = "Menu Button",
+                tint = menuIconColor
             )
         } else {
             Spacer(Modifier.size(iconSize))
         }
     }
+}
+
+@Composable
+@Preview
+fun TopBarPreview(){
+    TopBar(
+        title = "댓글",
+        iconSize = 25.dp,
+        navIcon = painterResource(R.drawable.ic_back),
+        onNavClick = {  },
+        menuIcon = painterResource(R.drawable.three_dot_menu_horizontal),
+        onMenuClick = {},
+        menuIconColor = CustomColor.gray2
+    )
 }

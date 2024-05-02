@@ -3,22 +3,16 @@ package com.hmoa.feature_userinfo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.feature_userinfo.viewModel.FavoriteCommentUiState
 import com.example.feature_userinfo.viewModel.FavoriteCommentViewModel
@@ -26,6 +20,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 
 @Composable
@@ -42,7 +37,7 @@ fun MyFavoriteCommentRoute(
     MyFavoriteCommentPage(
         uiState = uiState.value,
         commentType = type.value,
-        onTypeChanged = {viewModel.changeType(it)},
+        onTypeChanged = { viewModel.changeType(it) },
         onNavBack = onNavBack,
         onNavCommunity = onNavCommunity
     )
@@ -56,10 +51,11 @@ fun MyFavoriteCommentPage(
     commentType: String,
     onTypeChanged: (String) -> Unit,
 ) {
-    when(uiState){
+    when (uiState) {
         FavoriteCommentUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is FavoriteCommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems()
             FavoriteCommentContent(
@@ -70,20 +66,25 @@ fun MyFavoriteCommentPage(
                 onNavCommunity = onNavCommunity
             )
         }
+
         FavoriteCommentUiState.Error -> {
 
         }
-        else ->{}
+
+        else -> {}
     }
 }
+
 @Composable
 fun FavoriteCommentContent(
-    type : String,
+    type: String,
     onTypeChanged: (String) -> Unit,
-    comments : ItemSnapshotList<CommunityCommentDefaultResponseDto>,
-    onNavBack : () -> Unit,
-    onNavCommunity : (Int) -> Unit,
-){
+    comments: ItemSnapshotList<CommunityCommentDefaultResponseDto>,
+    onNavBack: () -> Unit,
+    onNavCommunity: (Int) -> Unit,
+) {
+    val commentCount = comments.size
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -98,12 +99,12 @@ fun FavoriteCommentContent(
             modifier = Modifier.fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
-        ){
+        ) {
             TypeRow(type = type, onTypeChanged = onTypeChanged)
-            if(comments.isNotEmpty()){
+            if (comments.isNotEmpty()) {
                 LazyColumn {
-                    items(comments) { comment ->
-                        if (comment != null){
+                    itemsIndexed(comments) { index, comment ->
+                        if (comment != null) {
                             Comment(
                                 isEditable = false,
                                 profile = comment.profileImg,
@@ -113,24 +114,31 @@ fun FavoriteCommentContent(
                                 isFirst = false,
                                 heartCount = comment.heartCount,
                                 onNavCommunity = { onNavCommunity(comment.parentId) },
-                                onOpenBottomDialog = {/** 여기도 Bottom Dialog 사용하려면 사용합시다 */},
+                                onOpenBottomDialog = { /** 여기도 Bottom Dialog 사용하려면 사용합시다 */ },
                                 isSelected = comment.liked,
                                 onChangeSelect = {}
                             )
+                            if (index < commentCount - 1) {
+                                Spacer(
+                                    modifier = Modifier.fillMaxWidth().height(1.dp)
+                                        .background(color = CustomColor.gray2)
+                                )
+                            }
                         }
                     }
                 }
+            } else {
+                NoDataPage(mainMsg = "좋아요 한 댓글이\n없습니다", subMsg = "댓글에 좋아요를 눌러주세요")
             }
-            else {NoDataPage(mainMsg = "좋아요 한 댓글이\n없습니다",subMsg = "댓글에 좋아요를 눌러주세요")}
         }
     }
 }
 
 @Composable
 private fun TypeRow(
-    type : String,
-    onTypeChanged : (type : String) -> Unit,
-){
+    type: String,
+    onTypeChanged: (type: String) -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth()
             .wrapContentHeight(),

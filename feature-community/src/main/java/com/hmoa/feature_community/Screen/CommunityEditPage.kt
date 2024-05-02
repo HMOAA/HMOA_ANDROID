@@ -6,17 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -39,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.TopBarWithEvent
@@ -48,17 +39,15 @@ import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
 
 @Composable
 fun CommunityEditRoute(
-    id : Int?,
-    onNavBack : () -> Unit,
-    onNavCommunityDesc : (Int) -> Unit,
-    viewModel : CommunityEditViewModel = hiltViewModel()
-){
+    id: Int?,
+    onNavBack: () -> Unit,
+    onNavCommunityDesc: (Int) -> Unit,
+    viewModel: CommunityEditViewModel = hiltViewModel()
+) {
     //id가 null이 아니면 view model에 setting
     viewModel.setId(id)
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val errState = viewModel.errState.collectAsStateWithLifecycle()
-
     val title = viewModel.title.collectAsStateWithLifecycle()
     val content = viewModel.content.collectAsStateWithLifecycle()
     val pictures = viewModel.newPictures.collectAsStateWithLifecycle()
@@ -94,31 +83,30 @@ fun CommunityEditRoute(
 @Composable
 fun CommunityEditPage(
     uiState: CommunityEditUiState,
-    category : String?,
-    title : String,
-    onTitleChanged : (String) -> Unit,
-    content : String,
-    onContentChanged : (String) -> Unit,
-    pictures : List<Uri>,
-    onUpdatePictures : (List<Uri>) -> Unit,
-    onDeletePictures : (Uri) -> Unit,
-    onPostCommunity : () -> Unit,
-    onNavBack : () -> Unit,
+    category: String?,
+    title: String,
+    onTitleChanged: (String) -> Unit,
+    content: String,
+    onContentChanged: (String) -> Unit,
+    pictures: List<Uri>,
+    onUpdatePictures: (List<Uri>) -> Unit,
+    onDeletePictures: (Uri) -> Unit,
+    onPostCommunity: () -> Unit,
+    onNavBack: () -> Unit,
     onNavCommunityDesc: () -> Unit
-){
+) {
     val scrollableState = rememberScrollState()
 
-    when(uiState){
+    when (uiState) {
         CommunityEditUiState.Loading -> {
-            Text(
-                "Loading"
-            )
+            AppLoadingScreen()
         }
+
         CommunityEditUiState.Success -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 TopBarWithEvent(
                     onCancelClick = onNavBack,
                     onConfirmClick = {
@@ -127,20 +115,20 @@ fun CommunityEditPage(
                     },
                     title = category!!
                 )
-                HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+                HorizontalDivider(Modifier.fillMaxWidth(), thickness = 1.dp, color = Color.Black)
                 //title input
                 EditTitleTextField(
                     title = title,
                     onTitleChanged = onTitleChanged
                 )
-                HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+                HorizontalDivider(Modifier.fillMaxWidth(), thickness = 1.dp, color = Color.Black)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .padding(horizontal = 33.dp, vertical = 27.dp)
                         .scrollable(state = scrollableState, orientation = Orientation.Vertical)
-                ){
+                ) {
                     //content input
                     EditContentTextField(
                         content = content,
@@ -148,7 +136,7 @@ fun CommunityEditPage(
                     )
                 }
 
-                if(pictures.isNotEmpty()){
+                if (pictures.isNotEmpty()) {
 
                     Spacer(Modifier.height(10.dp))
 
@@ -160,6 +148,7 @@ fun CommunityEditPage(
                 BottomCameraBtn(onUpdatePictures)
             }
         }
+
         CommunityEditUiState.Error -> {
             Text("Error")
         }
@@ -168,16 +157,16 @@ fun CommunityEditPage(
 
 @Composable
 private fun EditTitleTextField(
-    title : String,
-    onTitleChanged : (String) -> Unit,
-){
+    title: String,
+    onTitleChanged: (String) -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(45.dp)
             .padding(start = 33.dp, end = 15.dp),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Text(
             text = "제목:",
             fontSize = 16.sp,
@@ -201,9 +190,9 @@ private fun EditTitleTextField(
             ),
             maxLines = 1,
             singleLine = true,
-        ){
+        ) {
             //placeholder
-            if (title.isEmpty()){
+            if (title.isEmpty()) {
                 Text(
                     text = "제목을 입력해주세요",
                     fontSize = 14.sp,
@@ -223,9 +212,9 @@ private fun EditTitleTextField(
 
 @Composable
 private fun EditContentTextField(
-    content : String,
+    content: String,
     onContentChanged: (String) -> Unit
-){
+) {
     BasicTextField(
         modifier = Modifier
             .fillMaxSize(),
@@ -237,9 +226,9 @@ private fun EditContentTextField(
             fontSize = 14.sp,
             color = Color.Black
         )
-    ){
+    ) {
         //placeholder
-        if (content.isEmpty()){
+        if (content.isEmpty()) {
             Text(
                 text = "내용을 입력해주세요",
                 fontSize = 14.sp,
@@ -254,8 +243,8 @@ private fun EditContentTextField(
 @Composable
 private fun EditImageViewPager(
     pictures: List<Uri>,
-    onDeletePictures : (Uri) -> Unit
-){
+    onDeletePictures: (Uri) -> Unit
+) {
     //pager state
     val state = rememberPagerState(
         initialPage = 0,
@@ -268,7 +257,7 @@ private fun EditImageViewPager(
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
-        ){
+        ) {
             //image view
             ImageView(
                 imageUrl = pictures[it].toString(),
@@ -285,7 +274,7 @@ private fun EditImageViewPager(
                     .padding(top = 15.dp, end = 15.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Top
-            ){
+            ) {
                 IconButton(
                     modifier = Modifier
                         .size(24.dp)

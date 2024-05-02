@@ -106,7 +106,9 @@ class PerfumeCommentViewmodel @Inject constructor(
                 when (it) {
                     is Result.Loading -> {}
                     is Result.Success -> {}
-                    is Result.Error -> {}
+                    is Result.Error -> {
+
+                    }
                 }
             }
         }

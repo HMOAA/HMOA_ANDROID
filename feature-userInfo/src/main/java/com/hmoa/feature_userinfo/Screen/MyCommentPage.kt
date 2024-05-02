@@ -1,16 +1,9 @@
 package com.example.userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,23 +14,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.feature_userinfo.viewModel.CommentUiState
-import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.feature_userinfo.NoDataPage
+import com.hmoa.feature_userinfo.viewModel.CommentUiState
+import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 
 @Composable
 fun MyCommentRoute(
-    onNavBack : () -> Unit,
-    onNavCommunity : (Int) -> Unit,
-    viewModel : CommentViewModel = hiltViewModel()
-){
+    onNavBack: () -> Unit,
+    onNavCommunity: (Int) -> Unit,
+    viewModel: CommentViewModel = hiltViewModel()
+) {
     //comment list
-    val commentUiState= viewModel.uiState.collectAsStateWithLifecycle()
+    val commentUiState = viewModel.uiState.collectAsStateWithLifecycle()
     val type = viewModel.type.collectAsStateWithLifecycle()
 
     MyCommentPage(
@@ -53,16 +47,17 @@ fun MyCommentRoute(
 
 @Composable
 fun MyCommentPage(
-    uiState : CommentUiState,
-    type : String,
-    onNavBack : () -> Unit,
-    onNavCommunity : (Int) -> Unit,
-    onTypeChanged : (String) -> Unit
-){
-    when(uiState){
+    uiState: CommentUiState,
+    type: String,
+    onNavBack: () -> Unit,
+    onNavCommunity: (Int) -> Unit,
+    onTypeChanged: (String) -> Unit
+) {
+    when (uiState) {
         CommentUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is CommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems().itemSnapshotList
             MyCommentContent(
@@ -73,6 +68,7 @@ fun MyCommentPage(
                 onNavCommunity = onNavCommunity
             )
         }
+
         CommentUiState.Error -> {
 
         }
@@ -81,12 +77,14 @@ fun MyCommentPage(
 
 @Composable
 private fun MyCommentContent(
-    comments : ItemSnapshotList<CommunityCommentDefaultResponseDto>,
-    type : String,
-    onTypeChanged : (String) -> Unit,
-    onNavBack : () -> Unit,
-    onNavCommunity : (Int) -> Unit,
-){
+    comments: ItemSnapshotList<CommunityCommentDefaultResponseDto>,
+    type: String,
+    onTypeChanged: (String) -> Unit,
+    onNavBack: () -> Unit,
+    onNavCommunity: (Int) -> Unit,
+) {
+    val commentCount = comments.size
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -97,17 +95,17 @@ private fun MyCommentContent(
             title = "작성한 댓글",
             onNavClick = onNavBack
         )
-        TypeRow(type = type,onTypeChanged = onTypeChanged)
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
-        ){
-            if (comments.isNotEmpty()){
+        ) {
+            TypeRow(type = type, onTypeChanged = onTypeChanged)
+            if (comments.isNotEmpty()) {
                 LazyColumn {
-                    items(comments) { comment ->
-                        if (comment != null){
+                    itemsIndexed(comments) { index, comment ->
+                        if (comment != null) {
                             Comment(
                                 isEditable = false,
                                 profile = comment.profileImg,
@@ -123,6 +121,12 @@ private fun MyCommentContent(
 
                                 }
                             )
+                            if (index < commentCount - 1) {
+                                Spacer(
+                                    modifier = Modifier.fillMaxWidth().height(1.dp)
+                                        .background(color = CustomColor.gray2)
+                                )
+                            }
                         }
                     }
                 }
@@ -138,9 +142,9 @@ private fun MyCommentContent(
 
 @Composable
 private fun TypeRow(
-    type : String,
-    onTypeChanged : (type : String) -> Unit,
-){
+    type: String,
+    onTypeChanged: (type: String) -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -2,16 +2,7 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -22,26 +13,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
 fun Comment(
-    isEditable : Boolean,
-    profile : String,
-    nickname : String,
-    dateDiff : String,
-    comment : String,
-    isFirst : Boolean,
-    isSelected : Boolean,
-    onChangeSelect : () -> Unit,
-    heartCount : Int,
-    onOpenBottomDialog : () -> Unit,
-    onNavCommunity : () -> Unit,
-){
+    isEditable: Boolean,
+    profile: String,
+    nickname: String,
+    dateDiff: String,
+    comment: String,
+    isFirst: Boolean,
+    isSelected: Boolean,
+    onChangeSelect: () -> Unit,
+    heartCount: Int,
+    onOpenBottomDialog: () -> Unit,
+    onNavCommunity: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,13 +42,13 @@ fun Comment(
             }
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
-    ){
+    ) {
         Spacer(Modifier.height(11.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             CircleImageView(imgUrl = profile, width = 28, height = 28)
             Spacer(Modifier.width(6.dp))
             Text(
@@ -94,12 +85,12 @@ fun Comment(
                     .height(40.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-            ){
-                if(isEditable){
+            ) {
+                if (isEditable) {
                     IconButton(
                         modifier = Modifier.size(16.dp),
                         onClick = onChangeSelect
-                    ){
+                    ) {
                         Icon(
                             modifier = Modifier.fillMaxSize(),
                             painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
@@ -110,8 +101,8 @@ fun Comment(
                 } else {
                     Icon(
                         modifier = Modifier.size(16.dp),
-                        painter = painterResource(if(isSelected) R.drawable.ic_heart_selectable_selected else R.drawable.ic_heart),
-                        tint = if(isSelected) CustomColor.red else Color.Black,
+                        painter = painterResource(if (isSelected) R.drawable.ic_heart_selectable_selected else R.drawable.ic_heart_selectable_not_selected),
+                        tint = if (isSelected) CustomColor.red else Color.Black,
                         contentDescription = "Comment Like"
                     )
                 }
@@ -122,7 +113,7 @@ fun Comment(
                     fontSize = 12.sp
                 )
             }
-            if(isEditable){
+            if (isEditable) {
                 Spacer(Modifier.width(8.dp))
 
                 IconButton(
@@ -152,7 +143,7 @@ fun Comment(
 
 @Preview(showBackground = true)
 @Composable
-fun TestComment(){
+fun TestComment() {
     Comment(
         isEditable = true,
         profile = "",

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
+import com.hmoa.core_domain.repository.ReportRepository
+import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -13,11 +15,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SpecificCommentViewmodel @Inject constructor(
-    private val perfumeCommentRepository: PerfumeCommentRepository
+    private val perfumeCommentRepository: PerfumeCommentRepository,
+    private val reportRepository: ReportRepository,
 ) : ViewModel() {
     private val perfumeCommentState = MutableStateFlow<PerfumeCommentResponseDto?>(null)
     private val likePerfumeCommentState = MutableStateFlow<Boolean>(false)
-
+    private val targetId = MutableStateFlow<Int?>(null)
     val uiState: StateFlow<SpecificCommentUiState> =
         combine(perfumeCommentState, likePerfumeCommentState) { perfumeComment, likePerfume ->
             SpecificCommentUiState.CommentData(comment = perfumeComment, isLikeComment = likePerfume)
@@ -33,7 +36,7 @@ class SpecificCommentViewmodel @Inject constructor(
             flow { emit(perfumeCommentRepository.getPerfumeComment(commentId)) }.asResult().collectLatest {
                 when (it) {
                     is com.hmoa.core_common.Result.Loading -> {
-
+                        SpecificCommentUiState.Loading
                     }
 
                     is com.hmoa.core_common.Result.Success -> {
@@ -43,15 +46,21 @@ class SpecificCommentViewmodel @Inject constructor(
                     }
 
                     is Result.Error -> {
-
+                        SpecificCommentUiState.Error
                     }
                 }
             }
         }
     }
 
-    fun onChangeLikePerfumeComment() {
+    fun onReportConfirmClick() {
+        if (targetId != null) {
+            viewModelScope.launch { reportRepository.reportPerfumeComment(TargetRequestDto(targetId.value.toString())) }
+        }
+    }
 
+    fun saveReportTargetId(id: Int) {
+        targetId.update { id }
     }
 
     sealed interface SpecificCommentUiState {

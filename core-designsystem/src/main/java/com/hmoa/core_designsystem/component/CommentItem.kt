@@ -1,6 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,6 +8,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,7 +23,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
@@ -37,6 +37,7 @@ fun CommentItem(
     onCommentItemClick: () -> Unit,
     onCommentLikedClick: () -> Unit
 ) {
+    var isLiked = remember { mutableStateOf(isCommentLiked) }
     Column {
         Column(modifier = Modifier.fillMaxWidth().height(102.dp).padding(10.dp).clickable { onCommentItemClick() }) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -63,11 +64,14 @@ fun CommentItem(
                 }
                 Row {
                     LikeCountButton(
-                        onClickItem = {onCommentLikedClick()},
+                        onClickItem = {
+                            isLiked.value = !isLiked.value
+                            onCommentLikedClick()
+                        },
                         count = count,
                         fontSize = TextUnit(value = 14f, type = TextUnitType.Sp),
                         fontColor = Color.Black,
-                        selected = isCommentLiked,
+                        selected = isLiked.value,
                         iconSize = 18
                     )
                     Icon(

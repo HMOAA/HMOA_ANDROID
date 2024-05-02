@@ -1,13 +1,15 @@
 package com.hmoa.feature_perfume.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Icon
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,14 +26,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.CircleImageView
+import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.viewmodel.SpecificCommentViewmodel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SpecificCommentRoute(onBackClick: () -> Unit, commentId: Int?) {
-    if(commentId != null){
+    if (commentId != null) {
         SpecificCommentScreen(onBackClick = { onBackClick() }, commentId = commentId)
     }
 }
@@ -59,7 +63,9 @@ fun SpecificCommentScreen(
                 SpecificCommentContent(
                     onBackClick = { onBackClick() },
                     data = (uiState as SpecificCommentViewmodel.SpecificCommentUiState.CommentData).comment,
-                    isCommentLiked = (uiState as SpecificCommentViewmodel.SpecificCommentUiState.CommentData).isLikeComment
+                    isCommentLiked = (uiState as SpecificCommentViewmodel.SpecificCommentUiState.CommentData).isLikeComment,
+                    onReportClick = { viewModel.saveReportTargetId(it) },
+                    onSubmitReportClick = { viewModel.onReportConfirmClick() }
                 )
             }
 
@@ -68,28 +74,64 @@ fun SpecificCommentScreen(
     }
 }
 
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SpecificCommentContent(
     onBackClick: () -> Unit,
     data: PerfumeCommentResponseDto?,
-    isCommentLiked:Boolean
+    isCommentLiked: Boolean,
+    onReportClick: (targetId: Int) -> Unit,
+    onSubmitReportClick: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxHeight().fillMaxWidth(), verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally) {
-        TopBar(
-            title = "댓글",
-            iconSize = 25.dp,
-            navIcon = painterResource(R.drawable.ic_back),
-            onNavClick = { onBackClick() },
-        )
-        ProfileAndHeartView(
-            count = data?.heartCount ?: 0,
-            isCommentLiked = isCommentLiked,
-            userImgUrl = data?.profileImg ?: "",
-            userName = data?.nickname ?: "",
-            content = data?.content ?: "",
-            createdDate = data?.createdAt ?: "",
-            onReportClick = {}
-        )
+    val scope = rememberCoroutineScope()
+    val modalSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
+    )
+
+    ModalBottomSheetLayout(
+        modifier = Modifier.fillMaxHeight(),
+        sheetState = modalSheetState,
+        sheetContent = {
+            ReportModal(
+                onOkClick = {
+                    scope.launch {
+                        onSubmitReportClick()
+                        modalSheetState.hide()
+                    }
+                },
+                onCancelClick = {
+                    scope.launch { modalSheetState.hide() }
+                },
+            )
+        },
+        sheetBackgroundColor = CustomColor.gray2,
+        sheetContentColor = Color.Transparent,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TopBar(
+                title = "댓글",
+                iconSize = 25.dp,
+                navIcon = painterResource(R.drawable.ic_back),
+                onNavClick = { onBackClick() },
+                menuIcon = painterResource(R.drawable.three_dot_menu_horizontal),
+                onMenuClick = { onReportClick(data!!.id) },
+                menuIconColor = CustomColor.gray2
+            )
+            ProfileAndHeartView(
+                count = data?.heartCount ?: 0,
+                isCommentLiked = isCommentLiked,
+                userImgUrl = data?.profileImg ?: "",
+                userName = data?.nickname ?: "",
+                content = data?.content ?: "",
+                createdDate = data?.createdAt ?: "",
+            )
+        }
     }
 }
 
@@ -101,7 +143,6 @@ fun ProfileAndHeartView(
     userName: String,
     content: String,
     createdDate: String,
-    onReportClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 32.dp),
@@ -153,6 +194,5 @@ fun SpecificCommentPreview() {
         userImgUrl = "",
         content = "기존에 사용하던 향이라 재구매했어요. 계절에 상관없이 사용할 수 있어서 좋아요",
         createdDate = "10일 전",
-        onReportClick = {}
     )
 }

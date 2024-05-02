@@ -8,7 +8,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
@@ -27,7 +29,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.UserInfoGraph
-import com.example.feature_userinfo.navigateToBack
 import com.example.feature_userinfo.navigateToUserInfoGraph
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
@@ -36,7 +37,6 @@ import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.feature_authentication.navigation.AuthenticationRoute
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
-import com.hmoa.feature_brand.screen.BrandSearchRoute
 import com.hmoa.feature_community.Navigation.CommunityRoute
 import com.hmoa.feature_home.navigation.HomeRoute
 import com.hmoa.feature_home.navigation.navigateToHome
@@ -118,7 +118,6 @@ class MainActivity : AppCompatActivity() {
             var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
             var isBottomBarVisible = true
             var isTopBarVisible = true
-            var isDrawerGestureEnabled = false
 
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
@@ -129,7 +128,6 @@ class MainActivity : AppCompatActivity() {
 
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
-                isDrawerGestureEnabled = if (isTopBarVisible) true else false
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
@@ -148,15 +146,6 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 },
-                drawerContent = {
-                    Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
-                        BrandSearchRoute(
-                            onBrandClick = { navHostController.navigateToBrandSearch() },
-                            onBackClick = navHostController::navigateToBack
-                        )
-                    }
-                },
-                drawerGesturesEnabled = isDrawerGestureEnabled,
                 scaffoldState = scaffoldState,
                 topBar = {
                     if (isTopBarVisible) {

@@ -52,7 +52,8 @@ fun SetUpNavGraph(
         composable(LIKE_ROUTE) {
             LikeRoute(
                 onNavPerfumeDesc = navController::navigateToPerfume,
-                onNavHome = navController::navigateToHome
+                onNavHome = navController::navigateToHome,
+                onErrorHandleLoginAgain = navController::navigateToLogin
             )
         }
 
@@ -83,7 +84,8 @@ fun SetUpNavGraph(
             onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
             onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
             onNavHPediaDesc = navController::navigateToHPediaDescRoute,
-            onNavHPediaSearch = navController::navigateToHPediaSearchRoute
+            onNavHPediaSearch = navController::navigateToHPediaSearchRoute,
+            onNavLogin = navController::navigateToLogin
         )
 
         /** perfume 모듈 */

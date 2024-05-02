@@ -33,7 +33,7 @@ fun AppDesignDialog(
 ) {
     if (isOpen) {
         Dialog(
-            onDismissRequest = onOkClick
+            onDismissRequest = onCloseClick
         ) {
             Column(
                 modifier = modifier

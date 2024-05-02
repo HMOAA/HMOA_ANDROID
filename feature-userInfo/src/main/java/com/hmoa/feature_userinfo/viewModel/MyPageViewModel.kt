@@ -2,6 +2,8 @@ package com.example.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.FcmRepository
@@ -24,22 +26,38 @@ class MyPageViewModel @Inject constructor(
 
     //Login 여부
     val isLogin = authTokenState.map { it != null }
-
-    private val errState = MutableStateFlow<String?>(null)
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
 
     init {
         getAuthToken()
     }
 
-    val uiState: StateFlow<UserInfoUiState> = errState.map {
-        if (it != null) {
-            throw Exception(it)
-        }
+    val uiState: StateFlow<UserInfoUiState> = flow {
         val result = getUserInfoUseCase()
         if (result.errorMessage != null) {
             throw Exception(result.errorMessage!!.message)
         }
-        result.data!!
+        emit(result.data!!)
     }.asResult().map { result ->
         when (result) {
             Result.Loading -> UserInfoUiState.Loading
@@ -48,7 +66,26 @@ class MyPageViewModel @Inject constructor(
                 UserInfoUiState.User(data.profile, data.nickname, data.provider)
             }
 
-            is Result.Error -> UserInfoUiState.Error
+            is Result.Error -> {
+                when (result.exception.message) {
+                    ErrorMessageType.EXPIRED_TOKEN.message -> {
+                        expiredTokenErrorState.update { true }
+                    }
+
+                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                        wrongTypeTokenErrorState.update { true }
+                    }
+
+                    ErrorMessageType.UNKNOWN_ERROR.message -> {
+                        unLoginedErrorState.update { true }
+                    }
+
+                    else -> {
+                        generalErrorState.update { Pair(true, result.exception.message) }
+                    }
+                }
+                UserInfoUiState.Error
+            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -62,10 +99,6 @@ class MyPageViewModel @Inject constructor(
                 authTokenState.value = it
             }
         }
-    }
-
-    fun updateErr(err: String) {
-        errState.update { err }
     }
 
     //로그아웃
@@ -83,7 +116,7 @@ class MyPageViewModel @Inject constructor(
             try {
                 memberRepository.deleteMember()
             } catch (e: Exception) {
-                errState.update { e.message }
+                generalErrorState.update { Pair(true, "계정 삭제에 실패했습니다 :(") }
             }
             loginRepository.deleteAuthToken()
             loginRepository.deleteRememberedToken()

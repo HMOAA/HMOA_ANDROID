@@ -1,6 +1,9 @@
 package com.hmoa.app
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -17,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -24,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.feature_userinfo.UserInfoGraph
 import com.example.feature_userinfo.navigateToBack
 import com.example.feature_userinfo.navigateToUserInfoGraph
+import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
@@ -176,41 +182,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestNotificationPermission() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-//            ContextCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.POST_NOTIFICATIONS
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            ActivityCompat.requestPermissions(
-//                this,
-//                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-//                PERMISSION_REQUEST_CODE
-//            )
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                PERMISSION_REQUEST_CODE
+            )
+        }
     }
 
     private fun checkToken() {
-//        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-//            Log.d("TAG TEST", "token : ${it}")
-//        }.addOnFailureListener {
-//            Log.e("TAG TEST", "${it}")
-//        }
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Log.d("TAG TEST", "token : ${it}")
+        }.addOnFailureListener {
+            Log.e("TAG TEST", "${it}")
+        }
     }
 
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == PERMISSION_REQUEST_CODE) {
-//
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                /** 권한 부여되면 처리할 작업? */
-//            } else {
-//                /** 권한 거부 시 사용자에게 설명 혹은 재요청 가능 */
-//            }
-//        }
-//    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                /** 권한 부여되면 처리할 작업? */
+            } else {
+                /** 권한 거부 시 사용자에게 설명 혹은 재요청 가능 */
+            }
+        }
+    }
 }

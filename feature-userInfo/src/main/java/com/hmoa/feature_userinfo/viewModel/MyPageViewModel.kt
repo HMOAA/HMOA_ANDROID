@@ -101,10 +101,6 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    fun updateKakaoTalkApiClientError(err: String) {
-        generalErrorState.update { Pair(true, "카카오 향모아 챗봇 불러오기에 했습니다 :(") }
-    }
-
     //로그아웃
     fun logout() {
         viewModelScope.launch {

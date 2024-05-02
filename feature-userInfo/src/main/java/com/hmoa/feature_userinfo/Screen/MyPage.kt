@@ -1,5 +1,6 @@
 package com.example.userinfo
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -53,7 +54,7 @@ internal fun MyPageRoute(
     val navKakao = {
         TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
             if (err != null) {
-                viewModel.updateKakaoTalkApiClientError(err.message!!)
+                Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
             }
         }
     }

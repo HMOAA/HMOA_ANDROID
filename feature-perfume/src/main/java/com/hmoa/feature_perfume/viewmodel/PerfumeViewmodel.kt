@@ -157,7 +157,10 @@ class PerfumeViewmodel @Inject constructor(
                         perfumeCommentsState.update { result.data.data?.commentInfo }
                     }
 
-                    is Result.Loading -> {}
+                    is Result.Loading -> {
+                        PerfumeUiState.Loading
+                    }
+
                     is Result.Error -> {
                         when (result.exception.message) {
                             ErrorMessageType.EXPIRED_TOKEN.message -> {

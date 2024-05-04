@@ -46,7 +46,7 @@ fun AppDefaultDialog(
             Column(
                 modifier = modifier
                     .background(color = Color.White, shape = RoundedCornerShape(17.dp))
-                    .padding(top = 22.dp),
+                    .padding(top = 22.dp).padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ){
                 Text(

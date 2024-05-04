@@ -1,11 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -39,7 +35,7 @@ fun AppLoadingScreen(){
     var currentPainter by remember{mutableStateOf(loadingPainters[0])}
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxHeight().fillMaxWidth()
             .background(color = CustomColor.gray10),
         contentAlignment = Alignment.Center
     ){

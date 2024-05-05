@@ -15,7 +15,7 @@ class MainRepositoryImpl @Inject constructor(
         return mainDataStore.getFirst()
     }
 
-    override suspend fun getFirstMenu(): ResultResponse<HomeMenuAllResponseDto> {
+    override suspend fun getFirstMenu(): ResultResponse<List<HomeMenuAllResponseDto>> {
         return mainDataStore.getFirstMenu()
     }
 

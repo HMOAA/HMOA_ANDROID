@@ -4,23 +4,10 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -66,17 +54,18 @@ private fun HomeScreen(
     val bottomMenuState by viewModel.bottomMenuState.collectAsStateWithLifecycle()
     val verticalScrollState = rememberScrollState()
 
-    FirebaseMessaging.getInstance().token.addOnCompleteListener{
-        if(!it.isSuccessful) {
+    FirebaseMessaging.getInstance().token.addOnCompleteListener {
+        if (!it.isSuccessful) {
             Log.e("TAG TEST", "Firebase is Not Success")
             return@addOnCompleteListener
         }
         //안드로이드 13 버전 이후일 경우 권한을 확인한 후 서버에 fcm 토큰 post
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(
-                localContext,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED){
+                    localContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 viewModel.postFCMToken(it.result)
             }
         } else {
@@ -92,7 +81,7 @@ private fun HomeScreen(
     ) {
         when (firstMenuWithBannerState) {
             is HomeViewModel.BannerWithFirstMenuState.Loading -> {
-                Text("로딩 중 입니다", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                AppLoadingScreen()
             }
 
             is HomeViewModel.BannerWithFirstMenuState.Data -> {
@@ -111,7 +100,7 @@ private fun HomeScreen(
 
         when (bottomMenuState) {
             is HomeViewModel.BottomMenuState.Loading -> {
-                Text("로딩 중 입니다", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                AppLoadingScreen()
             }
 
             is HomeViewModel.BottomMenuState.Data -> {
@@ -211,10 +200,12 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
             .padding(horizontal = 16.dp)
             .padding(vertical = 12.dp)
     )
-    Row(modifier = Modifier
-        .padding(horizontal = 16.dp)
-        .fillMaxWidth()
-        .height(totalHeight.dp)) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(totalHeight.dp)
+    ) {
         Column(modifier = Modifier.padding(end = 8.dp)) {
             ImageWithTitleView(
                 title = firstMenu.perfumeList[0].brandName,
@@ -302,7 +293,8 @@ fun BottomMenuView(
     LazyRow() {
         items(data!!.perfumeList) {
             Column(modifier = Modifier.clickable { onPerfumeClick(it.perfumeId) }) {
-                PerfumeItemView(it.imgUrl, it.perfumeName, it.brandName, 126, 126, 0.9f, 0.9f, CustomColor.gray1,
+                PerfumeItemView(
+                    it.imgUrl, it.perfumeName, it.brandName, 126, 126, 0.9f, 0.9f, CustomColor.gray1,
                     BorderStroke(width = 0.dp, color = Color.Transparent)
                 )
             }

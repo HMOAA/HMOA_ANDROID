@@ -26,8 +26,8 @@ class MainDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getFirstMenu(): ResultResponse<HomeMenuAllResponseDto> {
-        val result = ResultResponse<HomeMenuAllResponseDto>()
+    override suspend fun getFirstMenu(): ResultResponse<List<HomeMenuAllResponseDto>> {
+        val result = ResultResponse<List<HomeMenuAllResponseDto>>()
         mainService.getFirstMenu().suspendMapSuccess {
             result.data = this
         }.suspendOnError {

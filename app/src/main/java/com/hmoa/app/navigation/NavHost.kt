@@ -10,9 +10,7 @@ import com.hmoa.feature_brand.navigation.brandScreen
 import com.hmoa.feature_brand.navigation.brandSearchScreen
 import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
-import com.hmoa.feature_home.navigation.homeScreen
-import com.hmoa.feature_home.navigation.navigateToHome
-import com.hmoa.feature_home.navigation.perfumeSearchScreen
+import com.hmoa.feature_home.navigation.*
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
@@ -33,8 +31,12 @@ fun SetUpNavGraph(
         /** home 모듈 */
         homeScreen(onPerfumeClick = { perfumeId ->
             navController.navigateToPerfume(perfumeId)
-        }, onAllPerfumeClick = {})
+        }, onAllPerfumeClick = { navController.navigateToAllPerfume(it) })
         perfumeSearchScreen(onBackClick = navController::navigateToBack)
+        allPerfumeScreen(
+            onNavLogin = navController::navigateToLogin,
+            onNavBack = navController::navigateToBack,
+            onPerfumeClick = { navController.navigateToPerfume(it) })
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)

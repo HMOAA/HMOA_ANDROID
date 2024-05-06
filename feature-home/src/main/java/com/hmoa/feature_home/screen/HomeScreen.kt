@@ -2,7 +2,6 @@ package com.hmoa.feature_home.screen
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -72,7 +71,6 @@ private fun HomeScreen(
 
     FirebaseMessaging.getInstance().token.addOnCompleteListener {
         if (!it.isSuccessful) {
-            Log.e("TAG TEST", "Firebase is Not Success")
             return@addOnCompleteListener
         }
         if (ContextCompat.checkSelfPermission(

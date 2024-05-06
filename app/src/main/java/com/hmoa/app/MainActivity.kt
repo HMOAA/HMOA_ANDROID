@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
@@ -81,14 +80,8 @@ class MainActivity : AppCompatActivity() {
 
     private val needTopBarScreens = HomeRoute.Home.name
 
-    private val requestNotificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) {
-        useNotification = it
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
+//        Log.d("TAG TEST", "${Utility.getKeyHash(this)}") 카카오 디벨로퍼에 key 등록
 
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)

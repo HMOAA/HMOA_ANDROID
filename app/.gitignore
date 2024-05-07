@@ -3,3 +3,6 @@
 /src/main/res/values/secret_information.xml
 /google-services.json
 /debug.keystore
+/debug.keystore.jks
+/debug
+/release

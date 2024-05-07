@@ -6,4 +6,4 @@
 /debug.keystore.jks
 /debug
 /release
-/key
+/release.keystore

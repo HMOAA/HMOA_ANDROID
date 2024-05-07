@@ -1,8 +1,19 @@
 package com.example.userinfo
 
+import android.content.Intent
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -24,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature_userinfo.viewModel.MyPageViewModel
 import com.example.feature_userinfo.viewModel.UserInfoUiState
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
@@ -58,8 +70,11 @@ internal fun MyPageRoute(
             }
         }
     }
-
-
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()){
+    }
+    val doOpenOSS = {
+        launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
+    }
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
@@ -68,6 +83,9 @@ internal fun MyPageRoute(
             loginEvent = {
                 viewModel.logout()
                 onNavLogin()
+            },
+            doOpenLicense = {
+                doOpenOSS()
             },
             onDelAccount = {
                 viewModel.delAccount()
@@ -94,6 +112,7 @@ fun MyPage(
     uiState: UserInfoUiState,
     errorUiState: ErrorUiState,
     loginEvent: () -> Unit,
+    doOpenLicense : () -> Unit,
     onDelAccount: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
@@ -113,6 +132,7 @@ fun MyPage(
                 nickname = uiState.nickname,
                 provider = uiState.provider,
                 loginEvent = loginEvent,
+                doOpenLicense = doOpenLicense,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
                 onNavEditProfile = onNavEditProfile,
@@ -132,13 +152,13 @@ fun MyPage(
         else -> {}
     }
 }
-
 @Composable
 private fun MyPageContent(
     profile: String,
     nickname: String,
     provider: String,
     loginEvent: () -> Unit,
+    doOpenLicense : () -> Unit,
     onDelAccount: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
@@ -148,12 +168,13 @@ private fun MyPageContent(
     val columnInfo = listOf(
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
+        ColumnData("오픈소스라이센스"){ doOpenLicense() },
         ColumnData("이용 약관") { },
         ColumnData("개인정보 처리방침") { },
         ColumnData("버전 정보 ${APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
         ColumnData("로그아웃") { loginEvent() },
-        ColumnData("계정삭제") { onDelAccount() },
+        ColumnData("계정삭제") { onDelAccount() }
     )
 
     Column(
@@ -168,14 +189,14 @@ private fun MyPageContent(
             provider = provider,
             onNavEditProfile = onNavEditProfile
         )
-        HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         ServiceAlarm()
+        HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         LazyColumn {
             itemsIndexed(columnInfo) { idx, it ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp)
+                        .height(46.dp)
                         .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -196,7 +217,7 @@ private fun MyPageContent(
                         }
                     }
                 }
-                if (idx % 3 == 1) {
+                if (idx % 3 == 2) {
                     HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
                 }
             }

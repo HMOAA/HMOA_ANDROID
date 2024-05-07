@@ -12,7 +12,12 @@ import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,9 +34,8 @@ class HomeViewModel @Inject constructor(
     private var _bottomMenuState = MutableStateFlow<BottomMenuState>(BottomMenuState.Loading)
     val bottomMenuState: StateFlow<BottomMenuState> = _bottomMenuState
 
-    private val fcmToken = MutableStateFlow<String?>(null)
     private val authToken = MutableStateFlow<String?>(null)
-
+    private var isFcmSent = false
     init {
         getFirstMenuWithBanner()
         getSecondMenu()
@@ -82,30 +86,26 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getAuthToken() {
-        Log.d("TAG TEST", "get auth token")
         viewModelScope.launch(Dispatchers.IO) {
             loginRepository.getAuthToken().onEmpty {}.collectLatest {
-                Log.d("TAG TEST", "token : ${it}")
                 authToken.value = it
             }
-            Log.d("TAG TEST", "auth token : ${authToken.value}")
         }
     }
 
     fun postFCMToken(token: String) {
-        if (authToken.value != null) {
+        if (authToken.value != null && !isFcmSent) {
             viewModelScope.launch(Dispatchers.IO) {
-                Log.d("TAG TEST", "fcmToken : ${token}")
                 val requestDto = FCMTokenSaveRequestDto(token)
-                Log.d("TAG TEST", "requestDto : ${requestDto}")
                 try {
                     fcmRepository.saveFcmToken(requestDto)
                 } catch (e: Exception) {
                     Log.e("TAG TEST", "Error : ${e.message}")
                 }
             }
+            isFcmSent = true
         } else {
-            Log.e("TAG TEST", "Not Login")
+            Log.i("TAG TEST", "Not Login")
         }
     }
 

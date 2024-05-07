@@ -72,9 +72,6 @@ internal fun MyPageRoute(
     }
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()){
     }
-    val doOpenOSS = {
-        launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
-    }
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
@@ -85,7 +82,8 @@ internal fun MyPageRoute(
                 onNavLogin()
             },
             doOpenLicense = {
-                doOpenOSS()
+                launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
+                OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
             },
             onDelAccount = {
                 viewModel.delAccount()

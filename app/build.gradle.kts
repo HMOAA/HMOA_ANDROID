@@ -34,6 +34,12 @@ android {
         getByName("debug") {
             storeFile = file("./debug.keystore")
         }
+        create("release") {
+            keyAlias = localProperties.getProperty("KEY_ALIAS")
+            keyPassword = localProperties.getProperty("KEY_PASSWORD")
+            storeFile = file("./key")
+            storePassword = localProperties.getProperty("STORE_PASSWORD")
+        }
     }
 
     buildFeatures {
@@ -44,6 +50,12 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+            isDebuggable = false
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = true
         }
     }
     compileOptions {

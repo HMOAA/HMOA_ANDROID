@@ -35,6 +35,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         private val REMEMBERED_TOKEN_KEY = stringPreferencesKey("REMEMBERED_TOKEN")
         private val KAKAO_ACCESS_TOKEN_KEY = stringPreferencesKey("KAKAO_ACCESS_TOKEN")
         private val GOOGLE_ACCESS_TOKEN_KEY = stringPreferencesKey("GOOGLE_ACCESS_TOKEN")
+        private val FCM_TOKEN_KEY = stringPreferencesKey("FCM_TOKEN")
     }
 
     override suspend fun getAuthToken(): Flow<String?> {
@@ -60,6 +61,12 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     override suspend fun getGoogleAccessToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[GOOGLE_ACCESS_TOKEN_KEY]
+        }
+    }
+
+    override suspend fun getFcmToken(): Flow<String?> {
+        return dataStore.data.map{ preferences ->
+            preferences[FCM_TOKEN_KEY]
         }
     }
 
@@ -93,6 +100,12 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
+    override suspend fun saveFcmToken(token: String) {
+        dataStore.edit{ preferences ->
+            preferences[FCM_TOKEN_KEY] = token
+        }
+    }
+
     override suspend fun deleteAuthToken() {
         dataStore.edit { preferences ->
             preferences.remove(AUTH_TOKEN_KEY)
@@ -114,6 +127,12 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     override suspend fun deleteGoogleAccessToken() {
         dataStore.edit { preferences ->
             preferences.remove(GOOGLE_ACCESS_TOKEN_KEY)
+        }
+    }
+
+    override suspend fun deleteFcmToken() {
+        dataStore.edit{ preferences ->
+            preferences.remove(FCM_TOKEN_KEY)
         }
     }
 }

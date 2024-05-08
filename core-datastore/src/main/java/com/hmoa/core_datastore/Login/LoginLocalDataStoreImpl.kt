@@ -28,6 +28,10 @@ class LoginLocalDataStoreImpl @Inject constructor(
         return tokenManager.getGoogleAccessToken()
     }
 
+    override suspend fun getFcmToken(): Flow<String?> {
+        return tokenManager.getFcmToken()
+    }
+
     override suspend fun saveAuthToken(token: String) {
         Log.d("LoginLocalDataStoreImpl", "saveAuthToken:${token}")
         tokenManager.saveAuthToken(token)
@@ -46,6 +50,10 @@ class LoginLocalDataStoreImpl @Inject constructor(
         tokenManager.saveGoogleAccessToken(token)
     }
 
+    override suspend fun saveFcmToken(token: String) {
+        tokenManager.saveFcmToken(token)
+    }
+
     override suspend fun deleteAuthToken() {
         tokenManager.deleteAuthToken()
     }
@@ -60,5 +68,9 @@ class LoginLocalDataStoreImpl @Inject constructor(
 
     override suspend fun deleteGoogleAccessToken() {
         tokenManager.deleteGoogleAccessToken()
+    }
+
+    override suspend fun deleteFcmToken() {
+        tokenManager.deleteFcmToken()
     }
 }

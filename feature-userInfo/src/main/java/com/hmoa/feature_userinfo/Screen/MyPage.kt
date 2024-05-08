@@ -77,7 +77,7 @@ internal fun MyPageRoute(
         MyPage(
             uiState = uiState.value,
             errorUiState = errorUiState,
-            loginEvent = {
+            logoutEvent = {
                 viewModel.logout()
                 onNavLogin()
             },
@@ -109,7 +109,7 @@ internal fun MyPageRoute(
 fun MyPage(
     uiState: UserInfoUiState,
     errorUiState: ErrorUiState,
-    loginEvent: () -> Unit,
+    logoutEvent: () -> Unit,
     doOpenLicense : () -> Unit,
     onDelAccount: () -> Unit,
     onNavKakaoChat: () -> Unit,
@@ -129,7 +129,7 @@ fun MyPage(
                 profile = uiState.profile,
                 nickname = uiState.nickname,
                 provider = uiState.provider,
-                loginEvent = loginEvent,
+                logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
@@ -155,7 +155,7 @@ private fun MyPageContent(
     profile: String,
     nickname: String,
     provider: String,
-    loginEvent: () -> Unit,
+    logoutEvent: () -> Unit,
     doOpenLicense : () -> Unit,
     onDelAccount: () -> Unit,
     onNavKakaoChat: () -> Unit,
@@ -171,7 +171,7 @@ private fun MyPageContent(
         ColumnData("개인정보 처리방침") { },
         ColumnData("버전 정보 ${APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
-        ColumnData("로그아웃") { loginEvent() },
+        ColumnData("로그아웃") { logoutEvent() },
         ColumnData("계정삭제") { onDelAccount() }
     )
 

@@ -2,23 +2,10 @@ package com.hmoa.feature_home.screen
 
 import android.Manifest
 import android.content.pm.PackageManager
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,7 +54,7 @@ private fun HomeScreen(
     val firstMenuWithBannerState by viewModel.firstMenuWithBannerState.collectAsStateWithLifecycle()
     val bottomMenuState by viewModel.bottomMenuState.collectAsStateWithLifecycle()
     val verticalScrollState = rememberScrollState()
-    var isFcmSent by rememberSaveable{mutableStateOf(false)}
+    var isFcmSent by rememberSaveable { mutableStateOf(false) }
 
     FirebaseMessaging.getInstance().token.addOnCompleteListener {
         if (!it.isSuccessful) {
@@ -78,7 +65,7 @@ private fun HomeScreen(
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            if (!isFcmSent){
+            if (!isFcmSent) {
                 viewModel.postFCMToken(it.result)
                 isFcmSent = true
             }

@@ -1,5 +1,6 @@
 package com.hmoa.app
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,17 +48,22 @@ import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
 import com.hmoa.feature_like.Screen.navigateToLike
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
     private lateinit var initialRoute: String
     private val PERMISSION_REQUEST_CODE = 1001
-    private var useNotification: Boolean = false
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
@@ -87,9 +94,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        checkToken()
         requestNotificationPermission()
-
         lifecycleScope.launch {
             val authTokenState = viewModel.authToken().stateIn(this)
             val rememberedTokenState = viewModel.rememberedToken().stateIn(this)
@@ -101,13 +106,12 @@ class MainActivity : AppCompatActivity() {
                     if (it.first == null && it.second == null) {
                         initialRoute = AuthenticationRoute.Login.name
                     } else {
+                        checkFcmToken()
                         initialRoute = HomeRoute.Home.name
                     }
                 }
             }
         }
-
-
         setContent {
             val navHostController = rememberNavController()
             var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
@@ -174,17 +178,32 @@ class MainActivity : AppCompatActivity() {
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 PERMISSION_REQUEST_CODE
             )
         }
     }
 
-    private fun checkToken() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            Log.d("TAG TEST", "token : ${it}")
-        }.addOnFailureListener {
-            Log.e("TAG TEST", "${it}")
+    private fun checkFcmToken(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            CoroutineScope(Dispatchers.IO).launch{
+                val fcmToken = viewModel.getFcmToken().stateIn(this)
+                if (fcmToken.value == null) {
+                    FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                        viewModel.saveFcmToken(it)
+                        viewModel.postFcmToken(it)
+                    }.addOnFailureListener{
+                        Log.e("Firebase Token", "Fail to save fcm token")
+                    }
+                } else {
+                    viewModel.postFcmToken(fcmToken.value!!)
+                }
+            }
         }
     }
 

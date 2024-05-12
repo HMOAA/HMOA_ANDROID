@@ -10,9 +10,9 @@ import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class FcmDataStoreImpl @Inject constructor(
+class FcmRemoteDataStoreImpl @Inject constructor(
     private val fcmDataService: FcmService
-) : FcmDataStore {
+) : FcmRemoteDataStore {
 
     override suspend fun deleteFcmToken(): ResultResponse<Any> {
         var result = ResultResponse<Any>()

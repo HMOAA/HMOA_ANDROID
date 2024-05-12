@@ -3,7 +3,7 @@ package com.hmoa.core_datastore.Fcm
 import ResultResponse
 import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 
-interface FcmDataStore {
+interface FcmRemoteDataStore {
 
     suspend fun deleteFcmToken(): ResultResponse<Any>
 

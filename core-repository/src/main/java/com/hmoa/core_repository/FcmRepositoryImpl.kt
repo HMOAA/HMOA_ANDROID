@@ -1,14 +1,14 @@
 package com.hmoa.core_repository
 
 import ResultResponse
-import com.hmoa.core_datastore.Fcm.FcmDataStore
 import com.hmoa.core_datastore.Fcm.FcmLocalDataStore
+import com.hmoa.core_datastore.Fcm.FcmRemoteDataStore
 import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FcmRepositoryImpl @Inject constructor(
-    private val fcmDataStore: FcmDataStore,
+    private val fcmDataStore: FcmRemoteDataStore,
     private val fcmLocalDataStore: FcmLocalDataStore
 ) :
     com.hmoa.core_domain.repository.FcmRepository {

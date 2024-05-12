@@ -25,18 +25,19 @@ class AppViewModel @Inject constructor(
     }
 
     suspend fun getFcmToken(): Flow<String?> {
-        return loginRepository.getFcmToken()
+        return fcmRepository.getLocalFcmToken()
     }
-    fun saveFcmToken(fcmToken : String){
-        viewModelScope.launch{
-            loginRepository.saveFcmToken(fcmToken)
+
+    fun saveFcmToken(fcmToken: String) {
+        viewModelScope.launch {
+            fcmRepository.saveLocalFcmToken(fcmToken)
         }
     }
 
-    fun postFcmToken(fcmToken : String){
-        viewModelScope.launch{
+    fun postFcmToken(fcmToken: String) {
+        viewModelScope.launch {
             val requestDto = FCMTokenSaveRequestDto(fcmToken)
-            fcmRepository.saveFcmToken(requestDto)
+            fcmRepository.postRemoteFcmToken(requestDto)
         }
     }
 }

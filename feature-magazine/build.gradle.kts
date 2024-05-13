@@ -35,7 +35,6 @@ android {
 }
 
 dependencies {
-
     val hilt_version = "2.44"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
@@ -65,4 +64,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+    testImplementation("org.testng:testng:6.9.6")
 }

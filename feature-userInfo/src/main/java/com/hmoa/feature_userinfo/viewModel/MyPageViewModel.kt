@@ -11,16 +11,7 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -113,8 +104,8 @@ class MyPageViewModel @Inject constructor(
     //로그아웃
     fun logout() {
         viewModelScope.launch {
-            fcmRepository.deleteFcmToken()
-            loginRepository.deleteFcmToken()
+            fcmRepository.deleteRemoteFcmToken()
+            fcmRepository.deleteLocalFcmToken()
             loginRepository.deleteAuthToken()
             loginRepository.deleteRememberedToken()
         }
@@ -123,8 +114,8 @@ class MyPageViewModel @Inject constructor(
     //계정 삭제
     fun delAccount() {
         viewModelScope.launch {
-            fcmRepository.deleteFcmToken()
-            loginRepository.deleteFcmToken()
+            fcmRepository.deleteRemoteFcmToken()
+            fcmRepository.deleteLocalFcmToken()
             try {
                 memberRepository.deleteMember()
             } catch (e: Exception) {

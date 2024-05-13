@@ -6,12 +6,7 @@ import android.content.ContextWrapper
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -54,9 +49,10 @@ fun requestGoogleLogin(context: Context): GoogleSignInClient {
         "feature-authentication",
         "requestGoogleLogin, clientId: ${clientId}"
     )
-    val googleSignInOption = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestServerAuthCode(clientId) // string 파일에 저장해둔 client id 를 이용해 server authcode를 요청한다.
-        .build()
+    val googleSignInOption =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .build()
+
     Log.d("feature-authentication", "requestGoogleLogin, googleSignInOption: ${googleSignInOption}")
     return GoogleSignIn.getClient(context.findActivity(), googleSignInOption)
 }
@@ -106,6 +102,7 @@ internal fun LoginRoute(
                 )
             }
         }
+
     fun handleGoogleLogin() {
         googleSignInClient.signOut()
         val signInIntent = googleSignInClient.signInIntent

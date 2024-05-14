@@ -50,6 +50,8 @@ dependencies {
 
     //coil 라이브러리
     implementation("com.github.skydoves:landscapist-glide:1.4.7")
+    implementation("io.coil-kt:coil-gif:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     //paging 라이브러리
     implementation("com.google.accompanist:accompanist-pager:0.20.0")

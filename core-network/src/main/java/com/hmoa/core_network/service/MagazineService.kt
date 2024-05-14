@@ -1,6 +1,5 @@
 package com.hmoa.core_network.service
 
-import ResultResponse
 import com.hmoa.core_model.response.MagazineListResponseDto
 import com.hmoa.core_model.response.MagazineResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
@@ -16,7 +15,7 @@ interface MagazineService {
     @GET("/magazine/{magazineId}")
     suspend fun getMagazine(
         @Path("magazineId") magazineId : Int
-    ) : ApiResponse<ResultResponse<MagazineResponseDto>>
+    ) : ApiResponse<MagazineResponseDto>
 
     @PUT("/magazine/{magazineId}/like")
     suspend fun putMagazineHeart(

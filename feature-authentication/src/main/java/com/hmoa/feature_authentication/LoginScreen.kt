@@ -44,29 +44,30 @@ fun Context.findActivity(): Activity {
 }
 
 fun requestGoogleLogin(context: Context): GoogleSignInClient {
-    val clientId = context.getString(com.hmoa.feature_authentication.R.string.google_cloud_outh_client_id)
     Log.d(
         "feature-authentication",
-        "requestGoogleLogin, clientId: ${clientId}"
+        "requestGoogleLogin, clientId: ${BuildConfig.GOOGLE_CLOUD_OAUTH_CLIENT_ID}"
     )
+
     val googleSignInOption =
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestServerAuthCode(BuildConfig.GOOGLE_CLOUD_OAUTH_CLIENT_ID)
             .build()
 
     Log.d("feature-authentication", "requestGoogleLogin, googleSignInOption: ${googleSignInOption}")
-    return GoogleSignIn.getClient(context.findActivity(), googleSignInOption)
+    return GoogleSignIn.getClient(context, googleSignInOption)
 }
 
 @Composable
-internal fun LoginRoute(
+fun LoginRoute(
     onSignup: () -> Unit,
     onHome: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val isAbleToGoHome by viewModel.isAbleToGoHome.collectAsStateWithLifecycle()
-    val isNeedToSignup by viewModel.isNeedToSignUp.collectAsStateWithLifecycle()
+    val isOauthTokenReceived by viewModel.isOauthTokenReceived.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val activity = context.findActivity()
     val googleSignInClient: GoogleSignInClient by lazy { requestGoogleLogin(context) }
     val googleAuthLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -90,8 +91,7 @@ internal fun LoginRoute(
                         "feature-authentication",
                         "googleAuthLauncher success --- userName: ${userName}, serverAuth: ${serverAuth}"
                     )
-                    onSignup()
-
+                    viewModel.getGoogleAccessToken(serverAuth)
                 } catch (e: Exception) {
                     Log.e("feature-authentication", "googleAuthLauncher error: ${e.stackTraceToString()}")
                 }
@@ -109,14 +109,19 @@ internal fun LoginRoute(
         Log.d("feature-authentication", "signInIntent: ${signInIntent}")
         googleAuthLauncher.launch(signInIntent)
     }
-    LaunchedEffect(isAbleToGoHome) {
+
+    LaunchedEffect(isAbleToGoHome, isOauthTokenReceived) {
+        Log.d("LoginScreen", "isAbleToGoHome:${isAbleToGoHome}, isOauthTokenReceived:${isOauthTokenReceived}")
         if (isAbleToGoHome) {
             onHome()
         }
-        if (isNeedToSignup) {
+
+        if (isOauthTokenReceived) {
             onSignup()
         }
+
     }
+
     LoginScreen(
         onClickKakaoLogin = { viewModel.handleKakaoLogin() },
         onClickGoogleLogin = { handleGoogleLogin() },

@@ -15,7 +15,6 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,14 +49,10 @@ import com.hmoa.feature_like.Screen.navigateToLike
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -107,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                         initialRoute = AuthenticationRoute.Login.name
                     } else {
                         checkFcmToken()
-                        initialRoute = HomeRoute.Home.name
+                        //initialRoute = HomeRoute.Home.name
                     }
                 }
             }
@@ -184,20 +179,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkFcmToken(){
+    private fun checkFcmToken() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            CoroutineScope(Dispatchers.IO).launch{
+            CoroutineScope(Dispatchers.IO).launch {
                 val fcmToken = viewModel.getFcmToken().stateIn(this)
                 if (fcmToken.value == null) {
                     FirebaseMessaging.getInstance().token.addOnSuccessListener {
                         viewModel.saveFcmToken(it)
                         viewModel.postFcmToken(it)
-                    }.addOnFailureListener{
+                    }.addOnFailureListener {
                         Log.e("Firebase Token", "Fail to save fcm token")
                     }
                 } else {

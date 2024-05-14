@@ -5,7 +5,14 @@ import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PerfumeAgeResponseDto
+import com.hmoa.core_model.response.PerfumeDetailResponseDto
+import com.hmoa.core_model.response.PerfumeDetailSecondResponseDto
+import com.hmoa.core_model.response.PerfumeGenderResponseDto
+import com.hmoa.core_model.response.PerfumeLikeResponseDto
+import com.hmoa.core_model.response.PerfumeWeatherResponseDto
+import com.hmoa.core_model.response.RecentPerfumeResponseDto
 import com.hmoa.core_network.service.PerfumeService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
@@ -106,5 +113,13 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
         }
         return result
     }
-
+    override suspend fun getRecentPerfumes(): ResultResponse<RecentPerfumeResponseDto> {
+        val result = ResultResponse<RecentPerfumeResponseDto>()
+        perfumeService.getRecentPerfumes().suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }
+        return result
+    }
 }

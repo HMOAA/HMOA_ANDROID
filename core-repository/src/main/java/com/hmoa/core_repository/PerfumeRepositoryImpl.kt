@@ -6,7 +6,14 @@ import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PerfumeAgeResponseDto
+import com.hmoa.core_model.response.PerfumeDetailResponseDto
+import com.hmoa.core_model.response.PerfumeDetailSecondResponseDto
+import com.hmoa.core_model.response.PerfumeGenderResponseDto
+import com.hmoa.core_model.response.PerfumeLikeResponseDto
+import com.hmoa.core_model.response.PerfumeWeatherResponseDto
+import com.hmoa.core_model.response.RecentPerfumeResponseDto
 import javax.inject.Inject
 
 class PerfumeRepositoryImpl @Inject constructor(private val perfumeDataStore: PerfumeDataStore) : PerfumeRepository {
@@ -58,5 +65,9 @@ class PerfumeRepositoryImpl @Inject constructor(private val perfumeDataStore: Pe
 
     override suspend fun getLikePerfumes(): ResultResponse<DataResponseDto<List<PerfumeLikeResponseDto>>> {
         return perfumeDataStore.getLikePerfumes()
+    }
+
+    override suspend fun getRecentPerfumes(): ResultResponse<RecentPerfumeResponseDto> {
+        return perfumeDataStore.getRecentPerfumes()
     }
 }

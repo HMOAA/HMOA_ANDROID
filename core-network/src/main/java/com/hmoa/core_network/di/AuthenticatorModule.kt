@@ -1,8 +1,6 @@
 package com.hmoa.core_network.di
 
-import com.hmoa.core_network.authentication.AuthAuthenticator
-import com.hmoa.core_network.authentication.RefreshTokenManager
-import com.hmoa.core_network.authentication.RefreshTokenManagerImpl
+import com.hmoa.core_network.authentication.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,4 +19,9 @@ interface AuthenticatorModule {
     @Binds
     @Singleton
     fun bindRefreshTokenManager(refreshTokenManagerImpl: RefreshTokenManagerImpl): RefreshTokenManager
+
+    @Binds
+    @Singleton
+    fun bindGoogleServerAuthCodeService(googleServerAuthCodeServiceImpl: GoogleServerAuthCodeServiceImpl): GoogleServerAuthCodeService
+
 }

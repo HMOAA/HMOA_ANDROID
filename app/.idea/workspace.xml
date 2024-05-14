@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bed8ab91-feed-43d4-8b58-859482e9cb02" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/AuthInterceptor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/AuthInterceptor.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/authentication/Authenticator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/authentication/Authenticator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/authentication/AuthenticatorImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/authentication/AuthenticatorImpl.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/di/HttpClientModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../core-network/src/main/java/com/hmoa/core_network/di/HttpClientModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hmoa/app/navigation/NavHost.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hmoa/app/navigation/NavHost.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../core-model/src/test/java/com/hmoa/core_model/DataWithEnumConstantsTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../core-model/src/test/java/com/hmoa/core_model/DataWithEnumConstantsTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../feature-authentication/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../feature-authentication/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/LoginScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/LoginScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/navigation/AuthenticationNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/navigation/AuthenticationNavigation.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/viewmodel/LoginViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/viewmodel/LoginViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,24 +31,27 @@
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2dBypWIastvjhJ2g8jW9wXzKYf9" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "android.gradle.sync.needed": "true",
-    "git-widget-placeholder": "master",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -54,6 +61,7 @@
       <option name="presentableId" value="Default" />
       <updated>1709495949316</updated>
       <workItem from="1709495950537" duration="2000" />
+      <workItem from="1715727225044" duration="7000" />
     </task>
     <servers />
   </component>

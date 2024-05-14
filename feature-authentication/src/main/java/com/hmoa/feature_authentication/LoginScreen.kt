@@ -2,7 +2,6 @@ package com.hmoa.feature_authentication
 
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,29 +32,12 @@ import com.hmoa.core_designsystem.component.OAuthLoginButton
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_authentication.viewmodel.LoginViewModel
 
-
-fun Context.findActivity(): Activity {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    throw IllegalStateException("no activity")
-}
-
 fun requestGoogleLogin(context: Context): GoogleSignInClient {
-    Log.d(
-        "feature-authentication",
-        "requestGoogleLogin, clientId: ${BuildConfig.GOOGLE_CLOUD_OAUTH_CLIENT_ID}"
-    )
-
     val googleSignInOption =
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .requestServerAuthCode(BuildConfig.GOOGLE_CLOUD_OAUTH_CLIENT_ID)
             .build()
-
-    Log.d("feature-authentication", "requestGoogleLogin, googleSignInOption: ${googleSignInOption}")
     return GoogleSignIn.getClient(context, googleSignInOption)
 }
 
@@ -72,25 +54,13 @@ fun LoginRoute(
     val googleAuthLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                Log.d(
-                    "feature-authentication",
-                    "result.data : ${result.data?.data}"
-                )
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                Log.d(
-                    "feature-authentication",
-                    "task.givenName: ${task.result.givenName} ,task.serverAuthCode: ${task.result.serverAuthCode}"
-                )
                 try {
                     val account = task.getResult(ApiException::class.java)
 
                     // 이름, 이메일 등이 필요하다면 아래와 같이 account를 통해 각 메소드를 불러올 수 있다.
                     val userName = account.givenName
                     val serverAuth = account.serverAuthCode
-                    Log.d(
-                        "feature-authentication",
-                        "googleAuthLauncher success --- userName: ${userName}, serverAuth: ${serverAuth}"
-                    )
                     viewModel.getGoogleAccessToken(serverAuth)
                 } catch (e: Exception) {
                     Log.e("feature-authentication", "googleAuthLauncher error: ${e.stackTraceToString()}")
@@ -106,12 +76,10 @@ fun LoginRoute(
     fun handleGoogleLogin() {
         googleSignInClient.signOut()
         val signInIntent = googleSignInClient.signInIntent
-        Log.d("feature-authentication", "signInIntent: ${signInIntent}")
         googleAuthLauncher.launch(signInIntent)
     }
 
     LaunchedEffect(isAbleToGoHome, isOauthTokenReceived) {
-        Log.d("LoginScreen", "isAbleToGoHome:${isAbleToGoHome}, isOauthTokenReceived:${isOauthTokenReceived}")
         if (isAbleToGoHome) {
             onHome()
         }

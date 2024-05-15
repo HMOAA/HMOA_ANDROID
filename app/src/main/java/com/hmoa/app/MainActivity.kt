@@ -46,6 +46,7 @@ import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
 import com.hmoa.feature_like.Screen.navigateToLike
+import com.hmoa.feature_magazine.Navigation.MagazineRoute
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,12 +73,13 @@ class MainActivity : AppCompatActivity() {
         UserInfoGraph.MyActivityRoute.name,
         UserInfoGraph.MyCommentRoute.name,
         UserInfoGraph.MyPostRoute.name,
-        LIKE_ROUTE
+        LIKE_ROUTE,
+        MagazineRoute.Magazine.name
     )
     private val bottomNav = listOf(
         BottomScreen.Home.name,
         BottomScreen.HPedia.name,
-        BottomScreen.Like.name,
+        BottomScreen.Magazine.name,
         BottomScreen.MyPage.name
     )
 

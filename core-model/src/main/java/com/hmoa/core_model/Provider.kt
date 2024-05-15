@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Provider {
-    APPLE, GOOGLE, KAKAO
+    GOOGLE, KAKAO
 }

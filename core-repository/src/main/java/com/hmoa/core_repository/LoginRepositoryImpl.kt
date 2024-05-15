@@ -5,8 +5,10 @@ import android.util.Log
 import com.hmoa.core_datastore.Login.LoginLocalDataStore
 import com.hmoa.core_datastore.Login.LoginRemoteDataStore
 import com.hmoa.core_model.Provider
+import com.hmoa.core_model.request.GoogleAccessTokenRequestDto
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
+import com.hmoa.core_model.response.GoogleAccessTokenResponseDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
 import kotlinx.coroutines.flow.Flow
@@ -45,6 +47,10 @@ class LoginRepositoryImpl @Inject constructor(
 
     override suspend fun postRemembered(dto: RememberedLoginRequestDto): ResultResponse<TokenResponseDto> {
         return loginRemoteDataStore.postRemembered(dto)
+    }
+
+    override suspend fun postGoogleServerAuthCode(dto: GoogleAccessTokenRequestDto): ResultResponse<GoogleAccessTokenResponseDto> {
+        return loginRemoteDataStore.postGoogleServerAuthCode(dto)
     }
 
     override suspend fun saveAuthToken(token: String) {

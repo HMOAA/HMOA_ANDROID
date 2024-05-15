@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
-        checkFcmToken()
 
         lifecycleScope.launch {
             val currentJob = coroutineContext.job
@@ -101,10 +100,10 @@ class MainActivity : AppCompatActivity() {
             }
             launch {
                 newFlow.collectLatest {
+                    checkFcmToken(it.first, it.second)
                     if (it.first == null && it.second == null) {
                         initialRoute = AuthenticationRoute.Login.name
                         currentJob.cancel()
-
                     } else {
                         initialRoute = HomeRoute.Home.name
                         currentJob.cancel()
@@ -128,7 +127,6 @@ class MainActivity : AppCompatActivity() {
                 isTopBarVisible = route in needTopBarScreens
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-
 
             Scaffold(
                 modifier = Modifier.systemBarsPadding(),
@@ -183,7 +181,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkFcmToken() {
+    private fun checkFcmToken(
+        authToken : String?,
+        rememberToken : String?
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
             ContextCompat.checkSelfPermission(
                 this,
@@ -191,16 +192,20 @@ class MainActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             CoroutineScope(Dispatchers.IO).launch {
-                val fcmToken = viewModel.getFcmToken().stateIn(this)
-                if (fcmToken.value == null) {
-                    FirebaseMessaging.getInstance().token.addOnSuccessListener {
-                        viewModel.saveFcmToken(it)
-                        viewModel.postFcmToken(it)
-                    }.addOnFailureListener {
-                        Log.e("Firebase Token", "Fail to save fcm token")
-                    }
+                if (authToken == null && rememberToken == null){
+                    return@launch
                 } else {
-                    viewModel.postFcmToken(fcmToken.value!!)
+                    val fcmToken = viewModel.getFcmToken().stateIn(this)
+                    if (fcmToken.value == null) {
+                        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                            viewModel.saveFcmToken(it)
+                            viewModel.postFcmToken(it)
+                        }.addOnFailureListener {
+                            Log.e("Firebase Token", "Fail to save fcm token")
+                        }
+                    } else {
+                        viewModel.postFcmToken(fcmToken.value!!)
+                    }
                 }
             }
         }

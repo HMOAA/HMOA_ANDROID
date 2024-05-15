@@ -39,15 +39,17 @@ fun SetUpNavGraph(
             onPerfumeClick = { navController.navigateToPerfume(it) })
 
         /** authentication 모듈 */
-        loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)
-        signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
+        loginScreen(
+            onSignupClick = { navController.navigateToSignup() },
+            onHomeClick = { navController.navigateToHome() })
+        signupScreen(onPickNicknameClick = { navController.navigateToPickNickname() })
         pickNicknameScreen(
-            onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,
-            onSignupClick = navController::navigateToSignup
+            onPickPersonalInfoClick = { navController.navigateToPickPersonalInfo() },
+            onSignupClick = { navController.navigateToSignup() }
         )
         pickPersonalInfoScreen(
             onHomeClick = navController::navigateToHome,
-            onPickNicknameClick = navController::navigateToPickNickname
+            onPickNicknameClick = { navController.navigateToPickNickname() }
         )
 
         /** like 모듈 */

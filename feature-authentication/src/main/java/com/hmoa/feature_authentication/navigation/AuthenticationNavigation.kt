@@ -9,23 +9,33 @@ import com.hmoa.feature_authentication.PickPersonalInfoRoute
 import com.hmoa.feature_authentication.SignupRoute
 
 fun NavController.navigateToLogin() = navigate("${AuthenticationRoute.Login}")
-fun NavController.navigateToSignup() = navigate("${AuthenticationRoute.Signup}")
-fun NavController.navigateToPickNickname() = navigate("${AuthenticationRoute.PickNickname}")
-fun NavController.navigateToPickPersonalInfo() = navigate("${AuthenticationRoute.PickPersonalInfo}")
+fun NavController.navigateToSignup() =
+    navigate("${AuthenticationRoute.Signup}")
+
+fun NavController.navigateToPickNickname() =
+    navigate("${AuthenticationRoute.PickNickname}")
+
+fun NavController.navigateToPickPersonalInfo() =
+    navigate("${AuthenticationRoute.PickPersonalInfo}")
+
 fun NavGraphBuilder.loginScreen(
     onSignupClick: () -> Unit,
     onHomeClick: () -> Unit
 ) {
     composable(route = "${AuthenticationRoute.Login}") {
-        LoginRoute(onSignupClick, onHomeClick)
+        LoginRoute(
+            onSignup = { onSignupClick() },
+            onHome = { onHomeClick() })
     }
 }
 
 fun NavGraphBuilder.signupScreen(
     onPickNicknameClick: () -> Unit,
 ) {
-    composable(route = "${AuthenticationRoute.Signup}") {
-        SignupRoute(onPickNicknameClick)
+    composable(
+        "${AuthenticationRoute.Signup}",
+    ) {
+        SignupRoute(onPickNicknameClick = { onPickNicknameClick() })
     }
 }
 
@@ -33,8 +43,12 @@ fun NavGraphBuilder.pickNicknameScreen(
     onPickPersonalInfoClick: () -> Unit,
     onSignupClick: () -> Unit
 ) {
-    composable(route = "${AuthenticationRoute.PickNickname}") {
-        PickNicknameRoute(onPickPersonalInfoClick, onSignupClick)
+    composable(
+        route = "${AuthenticationRoute.PickNickname}",
+    ) {
+        PickNicknameRoute(
+            onPickPersonalInfoClick = { onPickPersonalInfoClick() },
+            onSignupClick = { onSignupClick() })
     }
 }
 
@@ -43,7 +57,11 @@ fun NavGraphBuilder.pickPersonalInfoScreen(
     onHomeClick: () -> Unit,
     onPickNicknameClick: () -> Unit,
 ) {
-    composable(route = "${AuthenticationRoute.PickPersonalInfo}") {
-        PickPersonalInfoRoute(onHomeClick, onPickNicknameClick)
+    composable(
+        route = "${AuthenticationRoute.PickPersonalInfo}",
+    ) {
+        PickPersonalInfoRoute(
+            onHomeClick = { onHomeClick() },
+            onPickNicknameClick = { onPickNicknameClick() })
     }
 }

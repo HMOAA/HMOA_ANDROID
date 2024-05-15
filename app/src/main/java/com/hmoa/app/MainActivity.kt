@@ -119,7 +119,6 @@ class MainActivity : AppCompatActivity() {
             var isBottomBarVisible = true
             var isTopBarVisible = true
 
-
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
                 if (route in bottomNav) {

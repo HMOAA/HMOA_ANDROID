@@ -1,65 +1,52 @@
 package com.hmoa.core_designsystem.component
 
+import android.os.Build
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
-import kotlinx.coroutines.delay
 
 @Composable
 fun AppLoadingScreen(){
-
-    var i by remember{mutableIntStateOf(0)}
-    val loadingPainters = listOf(
-        painterResource(R.drawable.ic_loading_1),
-        painterResource(R.drawable.ic_loading_2),
-        painterResource(R.drawable.ic_loading_3)
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .components{
+            if(Build.VERSION.SDK_INT >= 28){
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }
+        .build()
+    val painter = rememberAsyncImagePainter(
+        model = R.drawable.loading,
+        imageLoader = imageLoader
     )
-
-    var currentPainter by remember{mutableStateOf(loadingPainters[0])}
-
     Box(
-        modifier = Modifier.fillMaxHeight().fillMaxWidth()
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
             .background(color = CustomColor.gray10),
         contentAlignment = Alignment.Center
     ){
-        Column(
-            modifier = Modifier.size(56.dp)
-                .background(color = Color.White, shape = CircleShape)
-                .clip(CircleShape),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Icon(
-                modifier = Modifier.fillMaxSize(),
-                painter = currentPainter,
-                contentDescription = "Loading Component"
-            )
-        }
-    }
-
-    LaunchedEffect(Unit){
-        while(true){
-            delay(300)
-            i+=1
-            currentPainter = loadingPainters[i % 3]
-        }
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painter,
+            contentDescription = "Loading GIF"
+        )
     }
 }
 

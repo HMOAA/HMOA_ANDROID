@@ -2,9 +2,10 @@ package com.hmoa.core_datastore.Magazine
 
 import ResultResponse
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_model.response.MagazineListResponseDto
 import com.hmoa.core_model.response.MagazineResponseDto
+import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_network.service.MagazineService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
@@ -44,9 +45,9 @@ class MagazineDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getMagazineList(page: Int): ResultResponse<MagazineListResponseDto> {
-        val result = ResultResponse<MagazineListResponseDto>()
-        magazineService.getMagazineList(page).suspendOnSuccess{
+    override suspend fun getMagazineList(cursor: Int): ResultResponse<PagingData<MagazineSummaryResponseDto>> {
+        val result = ResultResponse<PagingData<MagazineSummaryResponseDto>>()
+        magazineService.getMagazineList(cursor).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())

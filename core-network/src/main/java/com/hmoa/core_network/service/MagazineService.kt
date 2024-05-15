@@ -1,8 +1,9 @@
 package com.hmoa.core_network.service
 
-import com.hmoa.core_model.response.MagazineListResponseDto
 import com.hmoa.core_model.response.MagazineResponseDto
+import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
+import com.hmoa.core_model.response.PagingData
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -27,10 +28,10 @@ interface MagazineService {
         @Path("magazineId") magazineId : Int
     ) : ApiResponse<Any>
 
-    @GET("/magazine/list")
+    @GET("/magazine/list/cursor")
     suspend fun getMagazineList(
-        @Query("page") page : Int
-    ) : ApiResponse<MagazineListResponseDto>
+        @Query("cursor") cursor : Int
+    ) : ApiResponse<PagingData<MagazineSummaryResponseDto>>
 
     @GET("/magazine/tastingComment")
     suspend fun getMagazineTastingComment() : ApiResponse<MagazineTastingCommentResponseDto>

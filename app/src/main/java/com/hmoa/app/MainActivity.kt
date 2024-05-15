@@ -52,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -84,13 +85,15 @@ class MainActivity : AppCompatActivity() {
     private val needTopBarScreens = HomeRoute.Home.name
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        Log.d("TAG TEST", "${Utility.getKeyHash(this)}") 카카오 디벨로퍼에 key 등록
 
         super.onCreate(savedInstanceState)
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
+        checkFcmToken()
+
         lifecycleScope.launch {
+            val currentJob = coroutineContext.job
             val authTokenState = viewModel.authToken().stateIn(this)
             val rememberedTokenState = viewModel.rememberedToken().stateIn(this)
             val newFlow = authTokenState.zip(rememberedTokenState) { authtoken, rememberedToken ->
@@ -100,13 +103,16 @@ class MainActivity : AppCompatActivity() {
                 newFlow.collectLatest {
                     if (it.first == null && it.second == null) {
                         initialRoute = AuthenticationRoute.Login.name
+                        currentJob.cancel()
+
                     } else {
-                        checkFcmToken()
-                        //initialRoute = HomeRoute.Home.name
+                        initialRoute = HomeRoute.Home.name
+                        currentJob.cancel()
                     }
                 }
             }
         }
+
         setContent {
             val navHostController = rememberNavController()
             var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
@@ -119,7 +125,6 @@ class MainActivity : AppCompatActivity() {
                 if (route in bottomNav) {
                     currentScreen = route
                 }
-
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
             }

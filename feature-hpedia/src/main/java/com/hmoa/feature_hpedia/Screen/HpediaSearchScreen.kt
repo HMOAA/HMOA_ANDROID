@@ -46,7 +46,7 @@ fun HPediaSearchRoute(
     val result = viewModel.communityPagingSource().collectAsLazyPagingItems()
 
     HPediaSearchScreen(
-        type = type.value!!,
+        type = type.value,
         topBarState = topBarState.value,
         onChagneTopBarState = { viewModel.updateTopBarState(it) },
         searchWord = searchWord.value,
@@ -63,7 +63,7 @@ fun HPediaSearchRoute(
 
 @Composable
 fun HPediaSearchScreen(
-    type : String,
+    type : String?,
     topBarState : Boolean,
     onChagneTopBarState : (Boolean) -> Unit,
     searchWord : String,
@@ -82,7 +82,7 @@ fun HPediaSearchScreen(
             .background(color = Color.White)
     ){
         HPediaEventTopBar(
-            type = type,
+            type = type ?: "Null Type",
             topBarState = topBarState,
             onChagneTopBarState = onChagneTopBarState,
             searchWord = searchWord,
@@ -92,7 +92,7 @@ fun HPediaSearchScreen(
             onNavBack = onNavBack
         )
         HPediaSearchResult(
-            type = type,
+            type = type ?: "Null Type",
             termResult = termResult,
             noteResult = noteResult,
             perfumerResult = perfumerResult,

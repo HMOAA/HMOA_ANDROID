@@ -62,7 +62,7 @@ class LikeViewModel @Inject constructor(
             }
             emit(result.data)
         } else {
-            throw Exception(ErrorMessageType.UNKNOWN_ERROR.name)
+            throw Exception(ErrorMessageType.UNKNOWN_ERROR.message)
         }
     }.asResult().map { result ->
         when (result) {

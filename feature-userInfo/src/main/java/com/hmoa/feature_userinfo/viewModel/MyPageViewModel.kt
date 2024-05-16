@@ -11,7 +11,16 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -53,10 +62,9 @@ class MyPageViewModel @Inject constructor(
     }
 
     val uiState: StateFlow<UserInfoUiState> = flow {
+        if(authTokenState.value == null) {throw Exception(ErrorMessageType.UNKNOWN_ERROR.name)}
         val result = getUserInfoUseCase()
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage!!.message)
-        }
+        if (result.errorMessage != null) {throw Exception(result.errorMessage!!.message)}
         emit(result.data!!)
     }.asResult().map { result ->
         when (result) {

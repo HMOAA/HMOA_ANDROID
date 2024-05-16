@@ -6,16 +6,30 @@ import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LikeViewModel @Inject constructor(
-    private val perfumeRepository: PerfumeRepository
+    private val perfumeRepository: PerfumeRepository,
+    private val loginRepository: LoginRepository,
 ) : ViewModel() {
+    private val authToken = MutableStateFlow<String?>(null)
+
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -38,40 +52,30 @@ class LikeViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
+    init{getAuthToken()}
+
     val uiState: StateFlow<LikeUiState> = flow {
-        val result = perfumeRepository.getLikePerfumes()
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage?.message)
+        if (hasToken()){
+            val result = perfumeRepository.getLikePerfumes()
+            if (result.errorMessage != null) {
+                throw Exception(result.errorMessage?.message)
+            }
+            emit(result.data)
+        } else {
+            throw Exception(ErrorMessageType.UNKNOWN_ERROR.name)
         }
-        emit(result.data)
     }.asResult().map { result ->
         when (result) {
             Result.Loading -> LikeUiState.Loading
-            is Result.Success -> {
-                LikeUiState.Like(result.data?.data ?: emptyList())
-            }
-
+            is Result.Success -> LikeUiState.Like(result.data?.data ?: emptyList())
             is Result.Error -> {
                 when (result.exception.message) {
-                    ErrorMessageType.EXPIRED_TOKEN.message -> {
-                        expiredTokenErrorState.update { true }
-                    }
-
-                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                        wrongTypeTokenErrorState.update { true }
-                    }
-
-                    ErrorMessageType.UNKNOWN_ERROR.message -> {
-                        unLoginedErrorState.update { true }
-                    }
-
-                    else -> {
-                        generalErrorState.update { Pair(true, result.exception.message) }
-                    }
-                }
+                    ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
+                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
+                    ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
+                    else -> generalErrorState.update { Pair(true, result.exception.message) }                }
                 LikeUiState.Error(result.exception.toString())
             }
-
         }
     }.stateIn(
         scope = viewModelScope,
@@ -79,6 +83,15 @@ class LikeViewModel @Inject constructor(
         initialValue = LikeUiState.Loading
     )
 
+    //get token
+    private fun getAuthToken() {
+        viewModelScope.launch {
+            loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                authToken.value = it
+            }
+        }
+    }
+    fun hasToken() = authToken.value != null
 }
 
 sealed interface LikeUiState {

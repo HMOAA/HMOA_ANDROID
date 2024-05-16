@@ -55,6 +55,7 @@ fun CommunityDescriptionRoute(
     id: Int?,
     onNavCommunityEdit: (Int) -> Unit,
     onNavCommentEdit : (Int) -> Unit,
+    onNavLogin : () -> Unit,
     onNavBack : () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
@@ -109,7 +110,14 @@ fun CommunityDescriptionRoute(
             Toast.makeText(context, "댓글 삭제", Toast.LENGTH_SHORT).show()
         },
         onNavCommunityEdit = {onNavCommunityEdit(id!!)},
-        onNavCommentEdit = onNavCommentEdit
+        onNavCommentEdit = onNavCommentEdit,
+        onErrorHandleLoginAgain = {
+            if(viewModel.hasToken()){
+                onNavBack()
+            } else {
+                onNavLogin()
+            }
+        }
     )
 }
 
@@ -132,7 +140,8 @@ fun CommunityDescriptionPage(
     onDeleteComment : (Int) -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityEdit : () -> Unit,
-    onNavCommentEdit : (Int) -> Unit
+    onNavCommentEdit : (Int) -> Unit,
+    onErrorHandleLoginAgain : () -> Unit
 ){
     val scrollState = rememberScrollState()
 
@@ -256,9 +265,9 @@ fun CommunityDescriptionPage(
         }
         CommunityDescUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onConfirmClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
-                onCloseClick = onNavBack
+                onCloseClick = onErrorHandleLoginAgain
             )
         }
     }

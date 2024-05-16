@@ -122,6 +122,8 @@ class CommunityDescViewModel @Inject constructor(
             }
         }
     }
+    //token 보유 여부 return
+    fun hasToken() : Boolean = authToken.value != null
     //bottom option 상태 업데이트
     fun updateBottomOptionsState(state: Boolean) {
         _isOpenBottomOptions.update { state }

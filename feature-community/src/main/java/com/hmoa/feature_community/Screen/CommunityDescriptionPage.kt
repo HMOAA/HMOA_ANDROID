@@ -57,6 +57,7 @@ fun CommunityDescriptionRoute(
     onNavCommentEdit : (Int) -> Unit,
     onNavLogin : () -> Unit,
     onNavBack : () -> Unit,
+    onNavHPedia : () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
     viewModel.setId(id)
@@ -113,7 +114,7 @@ fun CommunityDescriptionRoute(
         onNavCommentEdit = onNavCommentEdit,
         onErrorHandleLoginAgain = {
             if(viewModel.hasToken()){
-                onNavBack()
+                onNavHPedia()
             } else {
                 onNavLogin()
             }

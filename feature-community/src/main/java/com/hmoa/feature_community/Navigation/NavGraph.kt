@@ -102,6 +102,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavCommentEdit = onNavCommunityCommentEdit,
                 onNavLogin = onNavLogin,
                 onNavBack = onNavBack,
+                onNavHPedia = onNavHPedia
             )
         }
         composable(route = CommunityRoute.CommunitySearchRoute.name) {

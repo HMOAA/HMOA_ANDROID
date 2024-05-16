@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -54,7 +55,7 @@ class CommunityDescViewModel @Inject constructor(
     private val _isLiked = MutableStateFlow(false)
     val isLiked get() = _isLiked.asStateFlow()
 
-    private val _flag = MutableStateFlow(false)
+    private val _flag = MutableStateFlow<Boolean?>(false)
 
     private var _communities = MutableStateFlow<PagingData<CommunityCommentWithLikedResponseDto>?>(null)
 
@@ -68,6 +69,11 @@ class CommunityDescViewModel @Inject constructor(
         unLoginedErrorState,
         generalErrorState
     ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        Log.d("Token Test", "expired : ${expiredTokenError}")
+        Log.d("Token Test", "wrongType : ${wrongTypeTokenError}")
+        Log.d("Token Test", "unknown : ${unknownError}")
+        Log.d("Token Test", "general : ${generalError}")
+        _flag.update{null}
         ErrorUiState.ErrorData(
             expiredTokenError = expiredTokenError,
             wrongTypeTokenError = wrongTypeTokenError,
@@ -86,6 +92,7 @@ class CommunityDescViewModel @Inject constructor(
     private val communityFlow = combine(_flag, _id) { flag, id ->
         fetchLike(isLiked.value)
         flow {
+            if(flag == null) throw Exception("Something Wrong")
             val result = communityRepository.getCommunity(id)
             if (result.errorMessage != null) {
                 throw Exception(result.errorMessage!!.message)
@@ -149,14 +156,17 @@ class CommunityDescViewModel @Inject constructor(
                     reportRepository.reportCommunity(requestDto)
                 } catch (e: Exception) {
                     generalErrorState.update{ Pair(true, e.message) }
+                    _flag.update{ null }
                 }
             }
         }
     }
     //커뮤니티 좋아요
     fun updateLike() {
+        Log.d("Token Test", "Do Update Like")
         if(authToken.value == null){
             unLoginedErrorState.update{ true }
+            Log.d("Token Test", "Update unLoginState done : ${unLoginedErrorState.value}")
         } else {
             _flag.update { true }
         }
@@ -256,7 +266,7 @@ class CommunityDescViewModel @Inject constructor(
     //좋아요 remote update
     private suspend fun fetchLike(liked: Boolean) {
         viewModelScope.launch {
-            if (_flag.value) {
+            if (_flag.value != null && _flag.value!!) {
                 if (liked) {
                     val result = communityRepository.deleteCommunityLike(id.value)
                     if (result.errorMessage != null) {

@@ -57,12 +57,10 @@ class MyPageViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    init {
-        getAuthToken()
-    }
+    init {getAuthToken()}
 
     val uiState: StateFlow<UserInfoUiState> = flow {
-        if(authTokenState.value == null) {throw Exception(ErrorMessageType.UNKNOWN_ERROR.name)}
+        if(authTokenState.value == null) {throw Exception(ErrorMessageType.UNKNOWN_ERROR.message)}
         val result = getUserInfoUseCase()
         if (result.errorMessage != null) {throw Exception(result.errorMessage!!.message)}
         emit(result.data!!)
@@ -73,24 +71,12 @@ class MyPageViewModel @Inject constructor(
                 val data = result.data
                 UserInfoUiState.User(data.profile, data.nickname, data.provider)
             }
-
             is Result.Error -> {
                 when (result.exception.message) {
-                    ErrorMessageType.EXPIRED_TOKEN.message -> {
-                        expiredTokenErrorState.update { true }
-                    }
-
-                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                        wrongTypeTokenErrorState.update { true }
-                    }
-
-                    ErrorMessageType.UNKNOWN_ERROR.message -> {
-                        unLoginedErrorState.update { true }
-                    }
-
-                    else -> {
-                        generalErrorState.update { Pair(true, result.exception.message) }
-                    }
+                    ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
+                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
+                    ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
+                    else -> generalErrorState.update { Pair(true, result.exception.message) }
                 }
                 UserInfoUiState.Error
             }
@@ -100,7 +86,6 @@ class MyPageViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = UserInfoUiState.Loading
     )
-
     private fun getAuthToken() {
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
@@ -108,7 +93,6 @@ class MyPageViewModel @Inject constructor(
             }
         }
     }
-
     //로그아웃
     fun logout() {
         viewModelScope.launch {
@@ -118,7 +102,6 @@ class MyPageViewModel @Inject constructor(
             loginRepository.deleteRememberedToken()
         }
     }
-
     //계정 삭제
     fun delAccount() {
         viewModelScope.launch {

@@ -33,6 +33,7 @@ fun NavGraphBuilder.nestedHPediaGraph(
     onNavHPediaDesc: (Int, String) -> Unit,
     onNavLogin: () -> Unit,
     onNavHome : () -> Unit,
+    onNavHPedia : () -> Unit
 ) {
     navigation(
         startDestination = HPediaRoute.HPedia.name,
@@ -48,7 +49,8 @@ fun NavGraphBuilder.nestedHPediaGraph(
             onNavCommunityCommentEdit = onNavCommunityCommentEdit,
             onErrorHandleLoginAgain = onNavLogin,
             onNavLogin = onNavLogin,
-            onNavHome = onNavHome
+            onNavHome = onNavHome,
+            onNavHPedia = onNavHPedia
         )
 
         composable("${HPediaRoute.HPediaSearchRoute.name}/{type}") {

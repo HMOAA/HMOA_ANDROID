@@ -68,6 +68,7 @@ fun CommunityDescriptionRoute(
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     var type by remember{mutableStateOf("post")}
+    val reportState = viewModel.reportState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -85,12 +86,16 @@ fun CommunityDescriptionRoute(
         onReportCommunity = {
             viewModel.reportCommunity()
             viewModel.updateBottomOptionsState(false)
-            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            if(reportState.value){
+                Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            }
         },
         onReportComment = {
             viewModel.reportComment(it)
             viewModel.updateBottomOptionsState(false)
-            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            if(reportState.value){
+                Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            }
         },
         onPostComment = {
             viewModel.postComment(it)
@@ -113,11 +118,8 @@ fun CommunityDescriptionRoute(
         onNavCommunityEdit = {onNavCommunityEdit(id!!)},
         onNavCommentEdit = onNavCommentEdit,
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){
-                onNavHPedia()
-            } else {
-                onNavLogin()
-            }
+            if(viewModel.hasToken()){onNavHPedia()}
+            else {onNavLogin()}
         }
     )
 }
@@ -151,9 +153,7 @@ fun CommunityDescriptionPage(
     val configuration = LocalConfiguration.current
 
     when (uiState) {
-        CommunityDescUiState.Loading -> {
-            AppLoadingScreen()
-        }
+        CommunityDescUiState.Loading -> AppLoadingScreen()
         is CommunityDescUiState.CommunityDesc -> {
             val community = uiState.community
             if(isOpenBottomOptions){
@@ -268,7 +268,7 @@ fun CommunityDescriptionPage(
             ErrorUiSetView(
                 onConfirmClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
-                onCloseClick = onErrorHandleLoginAgain
+                onCloseClick = onNavBack
             )
         }
     }

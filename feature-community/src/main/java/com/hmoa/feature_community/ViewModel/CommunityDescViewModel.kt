@@ -28,8 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -54,6 +52,8 @@ class CommunityDescViewModel @Inject constructor(
     //like 여부
     private val _isLiked = MutableStateFlow(false)
     val isLiked get() = _isLiked.asStateFlow()
+    private val _reportState = MutableStateFlow<Boolean>(false)
+    val reportState get() = _reportState.asStateFlow()
 
     private val _flag = MutableStateFlow<Boolean?>(false)
 
@@ -69,11 +69,7 @@ class CommunityDescViewModel @Inject constructor(
         unLoginedErrorState,
         generalErrorState
     ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
-        Log.d("Token Test", "expired : ${expiredTokenError}")
-        Log.d("Token Test", "wrongType : ${wrongTypeTokenError}")
-        Log.d("Token Test", "unknown : ${unknownError}")
-        Log.d("Token Test", "general : ${generalError}")
-        _flag.update{null}
+        if(expiredTokenError || wrongTypeTokenError || unknownError || generalError.first) {_flag.update { null }}
         ErrorUiState.ErrorData(
             expiredTokenError = expiredTokenError,
             wrongTypeTokenError = wrongTypeTokenError,
@@ -91,29 +87,22 @@ class CommunityDescViewModel @Inject constructor(
     //community flow
     private val communityFlow = combine(_flag, _id) { flag, id ->
         fetchLike(isLiked.value)
-        flow {
-            if(flag == null) throw Exception("Something Wrong")
-            val result = communityRepository.getCommunity(id)
-            if (result.errorMessage != null) {
-                throw Exception(result.errorMessage!!.message)
-            } else {
-                _isLiked.update { result.data!!.liked }
-                emit(result.data!!)
-            }
-            _flag.update { false }
-        }
-    }.flatMapLatest { flow ->
-        flow.asResult()
-    }
+        if(flag == null) throw Exception("Something Wrong")
+        val result = communityRepository.getCommunity(id)
+        if (result.errorMessage != null) throw Exception(result.errorMessage!!.message)
+        _isLiked.update { result.data!!.liked }
+        _flag.update { false }
+        result.data!!
+    }.asResult()
     //ui state
     val uiState: StateFlow<CommunityDescUiState> = combine(
         communityFlow,
         _communities
     ) { communityResult, commentsResult ->
-        when {
-            communityResult is Result.Error -> CommunityDescUiState.Error
-            communityResult is Result.Loading -> CommunityDescUiState.Loading
-            else -> CommunityDescUiState.CommunityDesc((communityResult as Result.Success).data,commentsResult)
+        when(communityResult) {
+            is Result.Error -> CommunityDescUiState.Error
+            is Result.Loading -> CommunityDescUiState.Loading
+            is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data,commentsResult)
         }
     }.stateIn(
         scope = viewModelScope,
@@ -132,9 +121,7 @@ class CommunityDescViewModel @Inject constructor(
     //token 보유 여부 return
     fun hasToken() : Boolean = authToken.value != null
     //bottom option 상태 업데이트
-    fun updateBottomOptionsState(state: Boolean) {
-        _isOpenBottomOptions.update { state }
-    }
+    fun updateBottomOptionsState(state: Boolean) = _isOpenBottomOptions.update { state }
     //커뮤니티 삭제
     fun delCommunity() {
         viewModelScope.launch {
@@ -154,9 +141,11 @@ class CommunityDescViewModel @Inject constructor(
                 try {
                     val requestDto = TargetRequestDto(targetId = id.value.toString())
                     reportRepository.reportCommunity(requestDto)
+                    _reportState.update{true}
                 } catch (e: Exception) {
                     generalErrorState.update{ Pair(true, e.message) }
                     _flag.update{ null }
+                    _reportState.update{false}
                 }
             }
         }
@@ -220,8 +209,10 @@ class CommunityDescViewModel @Inject constructor(
                 val requestDto = TargetRequestDto(id.toString())
                 try {
                     reportRepository.reportCommunityComment(requestDto)
+                    _reportState.update{ true }
                 } catch (e: Exception) {
                     generalErrorState.update { Pair(true, e.message) }
+                    _reportState.update{ false }
                 }
             }
         }
@@ -256,8 +247,7 @@ class CommunityDescViewModel @Inject constructor(
         if (id == null) {
             generalErrorState.update { Pair(true, "해당 글을 찾을 수 없습니다.") }
             return
-        } else if (
-            id == -1) {
+        } else if (id == -1) {
             generalErrorState.update { Pair(true, "이미 삭제된 게시글 입니다.") }
             return
         }

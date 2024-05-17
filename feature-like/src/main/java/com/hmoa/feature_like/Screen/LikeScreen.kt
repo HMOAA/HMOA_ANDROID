@@ -65,7 +65,6 @@ fun LikeRoute(
         uiState = uiState.value,
         type = type,
         onTypeChanged = { type = it },
-        onNavPerfumeDesc = onNavPerfumeDesc,
         errorUiState = errorUiState,
         onErrorHandleLoginAgain = {
             if(viewModel.hasToken()){
@@ -73,7 +72,9 @@ fun LikeRoute(
             } else {
                 onErrorHandleLoginAgain()
             }
-        }
+        },
+        onNavPerfumeDesc = onNavPerfumeDesc,
+        onNavHome = onNavHome,
     )
 }
 
@@ -84,6 +85,7 @@ fun LikeScreen(
     type: String,
     onTypeChanged: (String) -> Unit,
     onNavPerfumeDesc: (Int) -> Unit,
+    onNavHome: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit
 ) {
 
@@ -105,7 +107,7 @@ fun LikeScreen(
             ErrorUiSetView(
                 onConfirmClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
-                onCloseClick = { onErrorHandleLoginAgain() }
+                onCloseClick = onNavHome
             )
         }
     }

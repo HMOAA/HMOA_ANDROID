@@ -9,7 +9,6 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
-import com.hmoa.core_domain.usecase.SaveKakaoTokenUseCase
 import com.hmoa.core_model.Provider
 import com.hmoa.core_model.request.GoogleAccessTokenRequestDto
 import com.hmoa.core_model.request.OauthLoginRequestDto
@@ -28,34 +27,45 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val application: Application,
-    private val saveKakaoToken: SaveKakaoTokenUseCase,
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
     private val context = application.applicationContext
     private val _isAbleToGoHome = MutableStateFlow(false)
-    var isAbleToGoHome = _isAbleToGoHome.asStateFlow()
-    private val _isOauthTokenReceived = MutableStateFlow(false)
-    var isOauthTokenReceived = _isOauthTokenReceived.asStateFlow()
+    private val _isKakaoTokenReceived = MutableStateFlow(false)
+    private val _isGoogleTokenReceived = MutableStateFlow(false)
+
+    val uiState: StateFlow<LoginUiState> =
+        combine(
+            _isAbleToGoHome,
+            _isKakaoTokenReceived,
+            _isGoogleTokenReceived
+        ) { isAbleToGoHome, isOauthTokenReceived, isGoogleTokenReceived ->
+            LoginUiState.LoginData(
+                isAbleToGoHome = isAbleToGoHome,
+                isKakaoTokenReceived = isOauthTokenReceived,
+                isGoogleTokenReceived = isGoogleTokenReceived
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = LoginUiState.Loading
+        )
 
     suspend fun onKakaoLoginSuccess(token: String) {
-        saveKakoAccessToken(token)
-        postKakaoAccessToken(token)
+        loginRepository.saveKakaoAccessToken(token)
+        postAccessToken(token, Provider.KAKAO)
     }
 
     suspend fun onGoogleLoginSuccess(token: String) {
         loginRepository.saveGoogleAccessToken(token)
-        postGoogleAccessToken(token)
+        postAccessToken(token, Provider.GOOGLE)
     }
 
-    suspend fun saveKakoAccessToken(token: String) {
-        saveKakaoToken(token)
-    }
-
-    suspend fun postKakaoAccessToken(token: String) {
+    fun postAccessToken(token: String, loginProvider: Provider) {
         viewModelScope.launch {
             flow {
-                val result = loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.KAKAO)
+                val result = loginRepository.postOAuth(OauthLoginRequestDto(token), provider = loginProvider)
                 if (result.errorMessage != null) {
                     throw Exception(result.errorMessage!!.message)
                 } else {
@@ -65,57 +75,39 @@ class LoginViewModel @Inject constructor(
                 .collectLatest {
                     when (it) {
                         is Result.Success -> {
-                            val authToken = it.data?.authToken
-                            val rememberedToken = it.data?.rememberedToken
-                            Log.d("LoginViewModel", "authToken:${authToken},\n rememberedToken:${rememberedToken}")
-                            if (it.data != null && authToken != null && rememberedToken != null) {
-                                saveAuthAndRememberedToken(authToken, rememberedToken)
-                                checkIsExistedMember(it.data!!)
+                            if (it.data != null) {
+                                checkIsExistedMember(it.data!!, loginProvider)
                             }
                         }
 
-                        is Result.Loading -> {}
+                        is Result.Loading -> {
+                            LoginUiState.Loading
+                        }
+
                         is Result.Error -> {}
                     }
                 }
         }
     }
 
-    suspend fun postGoogleAccessToken(token: String) {
-        viewModelScope.launch {
-            flow {
-                val result = loginRepository.postOAuth(OauthLoginRequestDto(token), provider = Provider.GOOGLE)
-                if (result.errorMessage != null) {
-                    throw Exception(result.errorMessage!!.message)
-                } else {
-                    emit(result.data)
-                }
-            }.asResult()
-                .collectLatest {
-                    when (it) {
-                        is Result.Success -> {
-                            val authToken = it.data?.authToken
-                            val rememberedToken = it.data?.rememberedToken
-                            Log.d("LoginViewModel", "authToken:${authToken},\n rememberedToken:${rememberedToken}")
-                            if (it.data != null && authToken != null && rememberedToken != null) {
-                                saveAuthAndRememberedToken(authToken, rememberedToken)
-                                checkIsExistedMember(it.data!!)
-                            }
-                        }
-
-                        is Result.Loading -> {}
-                        is Result.Error -> {}
-                    }
-                }
-        }
-    }
-
-    fun checkIsExistedMember(data: MemberLoginResponseDto) {
+    fun checkIsExistedMember(data: MemberLoginResponseDto, loginProvider: Provider) {
         if (data.existedMember) {
             _isAbleToGoHome.update { true }
         } else {
-            _isOauthTokenReceived.update { true }
+            when (loginProvider) {
+                Provider.GOOGLE -> _isGoogleTokenReceived.update { true }
+                Provider.KAKAO -> _isKakaoTokenReceived.update { true }
+            }
+            initializeAuthAndRememberToken(loginProvider)
+        }
+    }
 
+    fun initializeAuthAndRememberToken(loginProvider: Provider) {
+        viewModelScope.launch(Dispatchers.IO) {
+            when (loginProvider) {
+                Provider.GOOGLE -> loginRepository.deleteGoogleAccessToken()
+                Provider.KAKAO -> loginRepository.deleteKakaoAccessToken()
+            }
         }
     }
 
@@ -174,7 +166,10 @@ class LoginViewModel @Inject constructor(
                 }.asResult().collectLatest { result ->
                     when (result) {
                         is Result.Error -> {}
-                        Result.Loading -> {}
+                        Result.Loading -> {
+                            LoginUiState.Loading
+                        }
+
                         is Result.Success -> {
                             val accessToken = result.data.data?.access_token
                             if (accessToken != null) {
@@ -186,4 +181,14 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+}
+
+
+sealed interface LoginUiState {
+    data object Loading : LoginUiState
+    data class LoginData(
+        val isAbleToGoHome: Boolean,
+        val isKakaoTokenReceived: Boolean,
+        val isGoogleTokenReceived: Boolean,
+    ) : LoginUiState
 }

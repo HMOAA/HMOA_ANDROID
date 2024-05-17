@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
-        checkFcmToken()
+        //checkFcmToken()
 
         lifecycleScope.launch {
             val currentJob = coroutineContext.job

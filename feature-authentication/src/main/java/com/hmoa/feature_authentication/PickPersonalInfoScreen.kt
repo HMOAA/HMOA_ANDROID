@@ -1,29 +1,16 @@
 package com.hmoa.feature_authentication
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -41,32 +28,32 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.RadioButtonList
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_authentication.viewmodel.PickPersonalInfoViewmodel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun PickPersonalInfoRoute(
     onHomeClick: () -> Unit,
     onPickNicknameClick: () -> Unit,
+    loginProvider: String,
     viewModel: PickPersonalInfoViewmodel = hiltViewModel()
 ) {
-    val scope = CoroutineScope(Dispatchers.IO)
     val birthYearState by viewModel.birthYearState.collectAsStateWithLifecycle()
     val sexState by viewModel.sexState.collectAsStateWithLifecycle()
     val isPostComplete by viewModel.isPostComplete.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+
     LaunchedEffect(isPostComplete) {
         if (isPostComplete) {
             onHomeClick()
         }
     }
 
+    LaunchedEffect(true) {
+        viewModel.getGoogleAccessToken()
+    }
+
     PickPersonalInfoScreen(
         onHomeClick = {
-            scope.launch {
-                viewModel.postSignup(birthYear = birthYearState, sex = sexState)
-            }
+            viewModel.signup(loginProvider = loginProvider, birthYear = birthYearState, sex = sexState)
         },
         onPickNicknameClick = { onPickNicknameClick() },
         onClickBirthYear = { viewModel.saveBirthYear(it) },
@@ -162,7 +149,8 @@ fun PickPersonalInfoScreen(
                     )
                 }
             }
-            Button(isAvailableButtonState, "시작하기", { onHomeClick() },
+            Button(
+                isAvailableButtonState, "시작하기", { onHomeClick() },
                 buttonModifier = Modifier.fillMaxWidth().height(80.dp)
             )
         }

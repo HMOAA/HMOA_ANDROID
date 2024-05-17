@@ -1,5 +1,6 @@
 package com.example.feature_userinfo.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorMessageType
@@ -96,6 +97,7 @@ class MyPageViewModel @Inject constructor(
     private fun getAuthToken() {
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                Log.d("MyPageViewmodel", "googleToken-in flow : ${it}")
                 authTokenState.value = it
             }
         }

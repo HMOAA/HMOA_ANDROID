@@ -2,7 +2,16 @@ package com.hmoa.feature_community.Screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -21,8 +30,10 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.FloatingActionBtn
-import com.hmoa.core_designsystem.component.LoginErrorDialog
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -38,33 +49,38 @@ fun CommunityPageRoute(
     onNavCommunityDescription: (Int) -> Unit,
     onNavPost: (String) -> Unit,
     onNavLogin: () -> Unit,
+    onNavHPedia : () -> Unit,
     viewModel: CommunityMainViewModel = hiltViewModel()
 ) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val type by viewModel.type.collectAsStateWithLifecycle()
 
     CommunityPage(
-        uiState = uiState,
+        uiState = uiState.value,
+        errState = errState.value,
         communities = viewModel.communityPagingSource().collectAsLazyPagingItems(),
         type = type,
-        onTypeChanged = {
-            viewModel.updateCategory(it)
-        },
+        onTypeChanged = {viewModel.updateCategory(it)},
         onNavBack = onNavBack,
         onNavSearch = onNavSearch,
         onNavCommunityDescription = onNavCommunityDescription,
-        onNavPost = onNavPost,
-        checkIsWritingAvailable = {
-            viewModel.checkIsWritingAvailable()
+        onNavPost = {
+            if (viewModel.hasToken()){onNavPost(it)}
+            else {viewModel.updateLoginError()}
         },
-        onNavLogin = onNavLogin,
+        onErrorHandleLoginAgain = {
+            if(viewModel.hasToken()){onNavHPedia()}
+            else {onNavLogin()}
+        }
     )
 }
 
 @Composable
 fun CommunityPage(
     uiState: CommunityMainUiState,
+    errState : ErrorUiState,
     communities: LazyPagingItems<CommunityByCategoryResponseDto>,
     type: Category,
     onTypeChanged: (Category) -> Unit,
@@ -72,23 +88,11 @@ fun CommunityPage(
     onNavSearch: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
     onNavPost: (String) -> Unit,
-    onNavLogin: () -> Unit,
-    checkIsWritingAvailable: () -> Unit,
+    onErrorHandleLoginAgain : () -> Unit,
 ) {
     when (uiState) {
-        is CommunityMainUiState.Loading -> {
-
-        }
-
+        is CommunityMainUiState.Loading -> AppLoadingScreen()
         is CommunityMainUiState.Community -> {
-            LoginErrorDialog(
-                enableDialog = uiState.enableLoginErrorDialog,
-                onConfirmClick = {
-                    onNavLogin()
-                },
-                onCloseClick = {}
-            )
-
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
@@ -129,9 +133,12 @@ fun CommunityPage(
                 }
             }
         }
-
         is CommunityMainUiState.Error -> {
-
+            ErrorUiSetView(
+                onConfirmClick = onErrorHandleLoginAgain,
+                errorUiState = errState,
+                onCloseClick = onErrorHandleLoginAgain
+            )
         }
     }
 }

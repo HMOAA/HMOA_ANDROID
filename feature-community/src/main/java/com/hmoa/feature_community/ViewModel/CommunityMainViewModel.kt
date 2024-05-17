@@ -6,14 +6,23 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.CommunityPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,12 +33,35 @@ class CommunityMainViewModel @Inject constructor(
     private val communityRepository: CommunityRepository,
     private val loginRepository: LoginRepository
 ) : ViewModel() {
-
+    private val authToken = MutableStateFlow<String?>(null)
     //type 정보
     private val _type = MutableStateFlow(Category.추천)
     val type get() = _type.asStateFlow()
     private var _communities = MutableStateFlow<PagingData<CommunityByCategoryResponseDto>?>(null)
     val _enableLoginErrorDialog = MutableStateFlow<Boolean>(false)
+
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
+
     val uiState: StateFlow<CommunityMainUiState> = combine(
         _communities,
         _enableLoginErrorDialog
@@ -42,10 +74,7 @@ class CommunityMainViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = CommunityMainUiState.Loading
     )
-
-    init {
-        checkIsWritingAvailable()
-    }
+    init {getAuthToken()}
 
     fun communityPagingSource(): Flow<PagingData<CommunityByCategoryResponseDto>> = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
@@ -64,16 +93,13 @@ class CommunityMainViewModel @Inject constructor(
         communityRepository = communityRepository,
         category = category
     )
-
-    fun checkIsWritingAvailable() {
-        viewModelScope.launch(Dispatchers.IO) {
-            loginRepository.getAuthToken().collectLatest {
-                if (it == null) {
-                    _enableLoginErrorDialog.update { true }
-                } else {
-                    _enableLoginErrorDialog.update { false }
-                }
-            }
+    //err state update
+    fun updateLoginError(){unLoginedErrorState.update{true}}
+    fun hasToken() = authToken.value != null
+    //get token
+    private fun getAuthToken() {
+        viewModelScope.launch {
+            loginRepository.getAuthToken().onEmpty { }.collectLatest {authToken.value = it}
         }
     }
 }

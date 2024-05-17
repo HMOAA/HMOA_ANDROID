@@ -3,7 +3,14 @@ package com.hmoa.feature_community.Screen
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -32,10 +39,11 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
-import com.hmoa.core_designsystem.component.AppDefaultDialog
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
 import com.hmoa.core_designsystem.component.CommentInputBar
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.PostContent
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
@@ -47,17 +55,20 @@ fun CommunityDescriptionRoute(
     id: Int?,
     onNavCommunityEdit: (Int) -> Unit,
     onNavCommentEdit : (Int) -> Unit,
+    onNavLogin : () -> Unit,
     onNavBack : () -> Unit,
+    onNavHPedia : () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
     viewModel.setId(id)
 
-    val errState = viewModel.errState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val isOpenBottomOptions = viewModel.isOpenBottomOptions.collectAsStateWithLifecycle()
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     var type by remember{mutableStateOf("post")}
+    val reportState = viewModel.reportState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -75,12 +86,16 @@ fun CommunityDescriptionRoute(
         onReportCommunity = {
             viewModel.reportCommunity()
             viewModel.updateBottomOptionsState(false)
-            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            if(reportState.value){
+                Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            }
         },
         onReportComment = {
             viewModel.reportComment(it)
             viewModel.updateBottomOptionsState(false)
-            Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            if(reportState.value){
+                Toast.makeText(context, "신고 완료", Toast.LENGTH_SHORT).show()
+            }
         },
         onPostComment = {
             viewModel.postComment(it)
@@ -101,13 +116,17 @@ fun CommunityDescriptionRoute(
             Toast.makeText(context, "댓글 삭제", Toast.LENGTH_SHORT).show()
         },
         onNavCommunityEdit = {onNavCommunityEdit(id!!)},
-        onNavCommentEdit = onNavCommentEdit
+        onNavCommentEdit = onNavCommentEdit,
+        onErrorHandleLoginAgain = {
+            if(viewModel.hasToken()){onNavHPedia()}
+            else {onNavLogin()}
+        }
     )
 }
 
 @Composable
 fun CommunityDescriptionPage(
-    errState : String,
+    errState : ErrorUiState,
     isOpenBottomOptions : Boolean,
     changeBottomOptionState : (Boolean) -> Unit,
     type : String,
@@ -124,7 +143,8 @@ fun CommunityDescriptionPage(
     onDeleteComment : (Int) -> Unit,
     onNavBack : () -> Unit,
     onNavCommunityEdit : () -> Unit,
-    onNavCommentEdit : (Int) -> Unit
+    onNavCommentEdit : (Int) -> Unit,
+    onErrorHandleLoginAgain : () -> Unit
 ){
     val scrollState = rememberScrollState()
 
@@ -133,14 +153,9 @@ fun CommunityDescriptionPage(
     val configuration = LocalConfiguration.current
 
     when (uiState) {
-        CommunityDescUiState.Loading -> {
-            AppLoadingScreen()
-        }
-
+        CommunityDescUiState.Loading -> AppLoadingScreen()
         is CommunityDescUiState.CommunityDesc -> {
-
             val community = uiState.community
-
             if(isOpenBottomOptions){
                 BottomOptionDialog(
                     changeBottomOptionState = changeBottomOptionState,
@@ -250,19 +265,10 @@ fun CommunityDescriptionPage(
             }
         }
         CommunityDescUiState.Error -> {
-            var isOpen by remember{mutableStateOf(true)}
-            AppDefaultDialog(
-                isOpen = isOpen,
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth(0.8f),
-                title = "오류",
-                content = errState,
-                onDismiss = {
-                    isOpen = false
-                    changeBottomOptionState(false)
-                    onNavBack()
-                }
+            ErrorUiSetView(
+                onConfirmClick = onErrorHandleLoginAgain,
+                errorUiState = errState,
+                onCloseClick = onNavBack
             )
         }
     }

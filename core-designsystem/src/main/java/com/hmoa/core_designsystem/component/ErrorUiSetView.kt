@@ -67,7 +67,10 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                         isOpen = false
                         onConfirmClick()
                     },
-                    onCloseClick = { isOpen = false }
+                    onCloseClick = {
+                        isOpen = false
+                        onCloseClick()
+                    }
                 )
             } else if (errorUiState.generalError.first) {
                 AppDefaultDialog(

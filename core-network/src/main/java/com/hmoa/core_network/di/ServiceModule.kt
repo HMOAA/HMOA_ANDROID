@@ -71,10 +71,10 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
-        var token: String? = null
+        var token: String? = ""
         CoroutineScope(Dispatchers.IO).launch {
             tokenManager.getAuthToken().collectLatest {
-                token = it
+                token = it ?: ""
             }
         }
 

@@ -37,6 +37,7 @@ import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToAllPerfume
 import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_home.navigation.perfumeSearchScreen
+import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
@@ -123,7 +124,9 @@ fun SetUpNavGraph(
             onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
             onNavHPediaDesc = navController::navigateToHPediaDescRoute,
             onNavHPediaSearch = navController::navigateToHPediaSearchRoute,
-            onNavLogin = navController::navigateToLogin
+            onNavLogin = navController::navigateToLogin,
+            onNavHome = navController::navigateToHome,
+            onNavHPedia = navController::navigateToHPedia
         )
 
         /** perfume 모듈 */

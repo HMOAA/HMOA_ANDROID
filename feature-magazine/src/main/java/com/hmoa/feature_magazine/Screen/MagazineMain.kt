@@ -1,5 +1,6 @@
 package com.hmoa.feature_magazine.Screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +20,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,6 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.ItemSnapshotList
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
@@ -40,7 +42,7 @@ import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.response.MagazineListResponseDto
+import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
 import com.hmoa.core_model.response.RecentPerfumeResponseDto
 import com.hmoa.feature_magazine.ViewModel.MagazineMainUiState
@@ -53,9 +55,12 @@ fun MagazineMainRoute(
 ){
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val magazineList = viewModel.magazinePagingSource().collectAsLazyPagingItems()
+
     MagazineMainScreen(
         uiState = uiState.value,
         errorState = errorState.value,
+        magazineList = magazineList,
         onNavHome = onNavHome,
     )
 }
@@ -64,6 +69,7 @@ fun MagazineMainRoute(
 fun MagazineMainScreen(
     uiState : MagazineMainUiState,
     errorState : ErrorUiState,
+    magazineList : LazyPagingItems<MagazineSummaryResponseDto>,
     onNavHome : () -> Unit,
 ){
     when(uiState){
@@ -72,7 +78,7 @@ fun MagazineMainScreen(
         }
         is MagazineMainUiState.MagazineMain -> {
             MagazineFullContent(
-                magazineList = uiState.magazines,
+                magazineList = magazineList.itemSnapshotList,
                 perfumeList = uiState.perfumes,
                 reviewList = uiState.reviews
             )
@@ -89,43 +95,48 @@ fun MagazineMainScreen(
 
 @Composable
 private fun MagazineFullContent(
-    magazineList : MagazineListResponseDto,
+    magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
     perfumeList : RecentPerfumeResponseDto,
     reviewList : MagazineTastingCommentResponseDto
 ){
-    val scrollState = rememberScrollState()
-    val firstMagazine = magazineList[0]
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(56.dp)
-    ){
-        item{
-            MagazineTitleBox(
-                imageUrl = firstMagazine.previewImgUrl,
-                title = firstMagazine.title,
-                preview = firstMagazine.preview
-            )
-            Spacer(Modifier.height(32.dp))
-            ReleasePerfumeList(
-                perfumeList = perfumeList
-            )
-            Spacer(Modifier.height(52.dp))
-            Top10Reviews(
-                reviews = reviewList
-            )
-            Spacer(Modifier.height(52.dp))
-            MagazineHeader()
-            Spacer(Modifier.height(24.dp))
+    if (magazineList.isNotEmpty()){
+        val firstMagazine = magazineList[0]!!
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(56.dp)
+        ){
+            item{
+                MagazineTitleBox(
+                    imageUrl = firstMagazine.previewImgUrl,
+                    title = firstMagazine.title,
+                    preview = firstMagazine.preview
+                )
+                Spacer(Modifier.height(32.dp))
+                ReleasePerfumeList(
+                    perfumeList = perfumeList
+                )
+                Spacer(Modifier.height(52.dp))
+                Top10Reviews(
+                    reviews = reviewList
+                )
+                Spacer(Modifier.height(52.dp))
+                MagazineHeader()
+                Spacer(Modifier.height(24.dp))
+            }
+            items(magazineList){magazine ->
+                if (magazine != null){
+                    MagazineContent(
+                        imageUrl = magazine.previewImgUrl,
+                        title = magazine.title,
+                        preview = magazine.preview
+                    )
+                }
+            }
         }
-        items(magazineList){magazine ->
-            MagazineContent(
-                imageUrl = magazine.previewImgUrl,
-                title = magazine.title,
-                preview = magazine.preview
-            )
-        }
+    } else {
+        Log.d("Paging Source", "Loading Screen Do Work")
+        AppLoadingScreen()
     }
 }
 

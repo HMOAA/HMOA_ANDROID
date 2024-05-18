@@ -45,8 +45,8 @@ import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
-import com.hmoa.feature_like.Screen.navigateToLike
 import com.hmoa.feature_magazine.Navigation.MagazineRoute
+import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity() {
                             initValue = currentScreen,
                             onClickHome = navHostController::navigateToHome,
                             onClickHPedia = navHostController::navigateToHPedia,
-                            onClickLike = navHostController::navigateToLike,
+                            onClickLike = navHostController::navigateToMagazineHome,
                             onClickMyPage = navHostController::navigateToUserInfoGraph
                         )
                     }

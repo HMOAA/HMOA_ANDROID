@@ -1,5 +1,6 @@
 package com.hmoa.feature_magazine
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hmoa.core_domain.repository.MagazineRepository
@@ -9,6 +10,7 @@ class MagazinePagingSource(
     private val magazineRepository: MagazineRepository,
 ) : PagingSource<Int, MagazineSummaryResponseDto>() {
 
+    private var totalCount = 0
     private var cursor = 0
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MagazineSummaryResponseDto> {
@@ -18,7 +20,9 @@ class MagazinePagingSource(
                 magazineRepository.getMagazineList(
                     cursor = cursor
                 ).data!!
-            cursor = response.data[response.data.lastIndex].magazineId
+            totalCount = response.data.size
+            cursor = response.data.last().magazineId
+            Log.d("Paging Source", "total : ${totalCount}, cursor : ${cursor}")
             val prevKey = if (pageNumber > 0) pageNumber - 1 else null
             val nextKey = if (response.lastPage) null else pageNumber + 1
 

@@ -420,12 +420,12 @@ private fun ReviewContent(
                 fontSize = 12.sp,
                 color = CustomColor.gray3
             )
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = content,
-                fontSize = 13.sp,
-                color = Color.Black
-            )
         }
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = content,
+            fontSize = 13.sp,
+            color = Color.Black
+        )
     }
 }

@@ -1,6 +1,5 @@
 package com.example.feature_userinfo.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorMessageType
@@ -12,16 +11,7 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,7 +22,7 @@ class MyPageViewModel @Inject constructor(
     private val fcmRepository: FcmRepository,
     private val getUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
-    private val authTokenState = MutableStateFlow<String?>(null)
+    private var authTokenState = MutableStateFlow<String?>(null)
 
     //Login 여부
     val isLogin = authTokenState.map { it != null }
@@ -58,12 +48,18 @@ class MyPageViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    init {getAuthToken()}
+    init {
+        getAuthToken()
+    }
 
     val uiState: StateFlow<UserInfoUiState> = flow {
-        if(authTokenState.value == null) {throw Exception(ErrorMessageType.UNKNOWN_ERROR.message)}
+        if (authTokenState.value == null) {
+            throw Exception(ErrorMessageType.UNKNOWN_ERROR.message)
+        }
         val result = getUserInfoUseCase()
-        if (result.errorMessage != null) {throw Exception(result.errorMessage!!.message)}
+        if (result.errorMessage != null) {
+            throw Exception(result.errorMessage!!.message)
+        }
         emit(result.data!!)
     }.asResult().map { result ->
         when (result) {
@@ -72,6 +68,7 @@ class MyPageViewModel @Inject constructor(
                 val data = result.data
                 UserInfoUiState.User(data.profile, data.nickname, data.provider)
             }
+
             is Result.Error -> {
                 when (result.exception.message) {
                     ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
@@ -87,14 +84,15 @@ class MyPageViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = UserInfoUiState.Loading
     )
+
     private fun getAuthToken() {
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
-                Log.d("MyPageViewmodel", "googleToken-in flow : ${it}")
                 authTokenState.value = it
             }
         }
     }
+
     //로그아웃
     fun logout() {
         viewModelScope.launch {
@@ -104,6 +102,7 @@ class MyPageViewModel @Inject constructor(
             loginRepository.deleteRememberedToken()
         }
     }
+
     //계정 삭제
     fun delAccount() {
         viewModelScope.launch {

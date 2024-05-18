@@ -20,22 +20,22 @@ class LoginRepositoryImpl @Inject constructor(
 ) : com.hmoa.core_domain.repository.LoginRepository {
     override suspend fun getAuthToken(): Flow<String?> {
         val token = loginLocalDataStore.getAuthToken()
-        Log.d("LoginRepositoryImpl", "getAuthToken:${token}")
         return token
     }
 
     override suspend fun getRememberedToken(): Flow<String?> {
         val token = loginLocalDataStore.getRememberedToken()
-        Log.d("LoginRepositoryImpl", "getRememberedToken:${token}")
         return token
     }
 
     override suspend fun getKakaoAccessToken(): Flow<String?> {
-        return loginLocalDataStore.getKakaoAccessToken()
+        val token = loginLocalDataStore.getKakaoAccessToken()
+        return token
     }
 
     override suspend fun getGoogleAccessToken(): Flow<String?> {
-        return loginLocalDataStore.getGoogleAccessToken()
+        val token = loginLocalDataStore.getGoogleAccessToken()
+        return token
     }
 
     override suspend fun postOAuth(

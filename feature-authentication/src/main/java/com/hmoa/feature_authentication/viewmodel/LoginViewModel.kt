@@ -75,8 +75,13 @@ class LoginViewModel @Inject constructor(
                 .collectLatest {
                     when (it) {
                         is Result.Success -> {
-                            if (it.data != null) {
-                                checkIsExistedMember(it.data!!, loginProvider)
+                            if (it.data != null && it.data?.authToken != null && it.data?.rememberedToken != null) {
+                                checkIsExistedMember(
+                                    it.data!!,
+                                    loginProvider,
+                                    it.data!!.authToken,
+                                    it.data!!.rememberedToken
+                                )
                             }
                         }
 
@@ -90,24 +95,28 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun checkIsExistedMember(data: MemberLoginResponseDto, loginProvider: Provider) {
+    suspend fun checkIsExistedMember(
+        data: MemberLoginResponseDto,
+        loginProvider: Provider,
+        authToken: String,
+        rememberedToken: String
+    ) {
         if (data.existedMember) {
+            saveAuthAndRememberedToken(authToken, rememberedToken)
             _isAbleToGoHome.update { true }
         } else {
             when (loginProvider) {
                 Provider.GOOGLE -> _isGoogleTokenReceived.update { true }
                 Provider.KAKAO -> _isKakaoTokenReceived.update { true }
             }
-            initializeAuthAndRememberToken(loginProvider)
+            initializeAuthAndRememberToken()
         }
     }
 
-    fun initializeAuthAndRememberToken(loginProvider: Provider) {
+    fun initializeAuthAndRememberToken() {
         viewModelScope.launch(Dispatchers.IO) {
-            when (loginProvider) {
-                Provider.GOOGLE -> loginRepository.deleteGoogleAccessToken()
-                Provider.KAKAO -> loginRepository.deleteKakaoAccessToken()
-            }
+            loginRepository.deleteAuthToken()
+            loginRepository.deleteRememberedToken()
         }
     }
 

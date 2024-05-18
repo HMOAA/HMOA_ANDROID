@@ -1,6 +1,5 @@
 package com.hmoa.feature_authentication.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
@@ -31,6 +30,29 @@ class PickPersonalInfoViewmodel @Inject constructor(
     var sexState = _sexState.asStateFlow()
     private val _isPostComplete = MutableStateFlow(false)
     var isPostComplete = _isPostComplete.asStateFlow()
+    private val googleAccessToken = MutableStateFlow<String?>(null)
+    private val kakaoAccessToken = MutableStateFlow<String?>(null)
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            getGoogleAccessToken()
+            getKakaoAccessToken()
+        }
+    }
+
+    suspend fun getGoogleAccessToken() {
+        loginRepository.getGoogleAccessToken().onEmpty { }
+            .collectLatest {
+                googleAccessToken.value = it
+            }
+    }
+
+    suspend fun getKakaoAccessToken() {
+        loginRepository.getKakaoAccessToken().onEmpty { }
+            .collectLatest {
+                kakaoAccessToken.value = it
+            }
+    }
 
     private suspend fun getSavedNickname(): String? {
         return getNickname()
@@ -46,32 +68,19 @@ class PickPersonalInfoViewmodel @Inject constructor(
 
     fun signup(loginProvider: String, birthYear: Int?, sex: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            var token: String? = ""
             when (loginProvider) {
                 Provider.GOOGLE.name -> {
-                    loginRepository.getGoogleAccessToken().collectLatest { token = it }
-                    if (token != null) {
-                        postAccessToken(token!!, Provider.GOOGLE, birthYear, sex)
+                    if (googleAccessToken.value != null) {
+                        postAccessToken(googleAccessToken.value!!, Provider.GOOGLE, birthYear, sex)
                     }
                 }
 
                 Provider.KAKAO.name -> {
-                    loginRepository.getKakaoAccessToken().collectLatest { token = it }
-                    Log.d("PickPersonalInfoViewmodel", "kakaoToken : ${token}")
-                    if (token != null) {
-                        postAccessToken(token!!, Provider.GOOGLE, birthYear, sex)
+                    if (kakaoAccessToken.value != null) {
+                        postAccessToken(kakaoAccessToken.value!!, Provider.GOOGLE, birthYear, sex)
                     }
                 }
             }
-        }
-    }
-
-    fun getGoogleAccessToken() {
-        viewModelScope.launch(Dispatchers.IO) {
-            loginRepository.getGoogleAccessToken().onEmpty { }
-                .collectLatest {
-                    Log.d("PickPersonalInfoViewmodel", "googleToken-in flow : ${it}")
-                }
         }
     }
 

@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
-        checkFcmToken()
 
         lifecycleScope.launch {
             val currentJob = coroutineContext.job
@@ -184,7 +183,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkFcmToken() {
+    private fun checkFcmToken(
+        authToken: String?,
+        rememberToken: String?
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
             ContextCompat.checkSelfPermission(
                 this,
@@ -200,8 +202,22 @@ class MainActivity : AppCompatActivity() {
                     }.addOnFailureListener {
                         Log.e("Firebase Token", "Fail to save fcm token")
                     }
-                } else {
-                    viewModel.postFcmToken(fcmToken.value!!)
+                    if (authToken != null && rememberToken != null) {
+                        viewModel.postFcmToken(fcmToken.value!!)
+                        val fcmToken = viewModel.getFcmToken().stateIn(this)
+                        if (fcmToken.value == null) {
+                            FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                                viewModel.saveFcmToken(it)
+                                viewModel.postFcmToken(it)
+                            }.addOnFailureListener {
+                                Log.e("Firebase Token", "Fail to save fcm token")
+                            }
+                        } else {
+                            viewModel.postFcmToken(fcmToken.value!!)
+                        }
+                    } else {
+                        return@launch
+                    }
                 }
             }
         }

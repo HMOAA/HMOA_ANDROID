@@ -7,6 +7,7 @@ import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_domain.usecase.*
@@ -29,8 +30,11 @@ class PerfumeViewmodel @Inject constructor(
     private val getPerfume: GetPerfumeUsecase,
     private val updateLikePerfumeComment: UpdateLikePerfumeCommentUseCase,
     private val perfumeRepository: PerfumeRepository,
-    private val reportRepository: ReportRepository
+    private val reportRepository: ReportRepository,
+    private val loginRepository: LoginRepository
 ) : ViewModel() {
+    private val authToken = MutableStateFlow<String?>(null)
+    private var hasToken = authToken.value != null
     private var perfumeState = MutableStateFlow<Perfume?>(null)
     private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
     private var genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
@@ -83,67 +87,122 @@ class PerfumeViewmodel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
+    init {
+        getAuthToken()
+    }
+
+    fun initializeErrorUiState() {
+        expiredTokenErrorState.update { false }
+        wrongTypeTokenErrorState.update { false }
+        unLoginedErrorState.update { false }
+        generalErrorState.update { Pair(false, null) }
+        Log.d(
+            "PerfumeViewmodel",
+            "expiredTokenErrorState: ${expiredTokenErrorState.value}, wrongTypeTokenErrorState:${wrongTypeTokenErrorState.value}, unLoginedErrorState:${unLoginedErrorState.value}, generalErrorState:${generalErrorState.value}"
+        )
+    }
+
+    fun getHasToken(): Boolean {
+        return hasToken
+    }
+
+    private fun getAuthToken() {
+        viewModelScope.launch {
+            loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                authToken.value = it
+            }
+        }
+    }
+
+    fun notifyLoginNeed() {
+        unLoginedErrorState.update { true }
+    }
 
     fun onChangePerfumeAge(age: Float, perfumeId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            updatePerfumeAge(age = age, perfumeId).asResult().collectLatest { result ->
-                when (result) {
-                    is Result.Success -> {
-                        ageState.update { result.data.data }
-                    }
+            if (hasToken) {
+                onUpdatePerfumeAge(age, perfumeId)
+            } else {
+                unLoginedErrorState.update { true }
+                Log.d("PerfumeViewmodel", "${unLoginedErrorState.value}")
+            }
+        }
+    }
 
-                    is Result.Error -> {
-                        when (result.exception.message) {
-                            ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                expiredTokenErrorState.update { true }
-                            }
+    suspend fun onUpdatePerfumeAge(age: Float, perfumeId: Int) {
+        updatePerfumeAge(age = age, perfumeId).asResult().collectLatest { result ->
+            when (result) {
+                is Result.Success -> {
+                    ageState.update { result.data.data }
+                }
 
-                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                wrongTypeTokenErrorState.update { true }
-                            }
+                is Result.Error -> {
+                    when (result.exception.message) {
+                        ErrorMessageType.EXPIRED_TOKEN.message -> {
+                            expiredTokenErrorState.update { true }
+                        }
 
-                            ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                unLoginedErrorState.update { true }
-                            }
+                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                            wrongTypeTokenErrorState.update { true }
+                        }
 
-                            else -> {
-                                generalErrorState.update { Pair(true, result.exception.message) }
-                            }
+                        ErrorMessageType.UNKNOWN_ERROR.message -> {
+                            unLoginedErrorState.update { true }
+                        }
+
+                        else -> {
+                            generalErrorState.update { Pair(true, result.exception.message) }
                         }
                     }
-
-                    is Result.Loading -> {}
                 }
+
+                is Result.Loading -> {}
             }
         }
     }
 
     fun onChangePerfumeGender(gender: PerfumeGender, perfumeId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            updatePerfumeGender(gender, perfumeId).asResult().collectLatest { result ->
-                when (result) {
-                    is Result.Success -> {
-                        genderState.update { result.data.data }
-                    }
+            if (hasToken) {
+                onUpdatePerfumeGender(gender, perfumeId)
+            } else {
+                unLoginedErrorState.update { true }
+            }
+        }
+    }
 
-                    is Result.Error -> {}
-                    is Result.Loading -> {}
+    suspend fun onUpdatePerfumeGender(gender: PerfumeGender, perfumeId: Int) {
+        updatePerfumeGender(gender, perfumeId).asResult().collectLatest { result ->
+            when (result) {
+                is Result.Success -> {
+                    genderState.update { result.data.data }
                 }
+
+                is Result.Error -> {}
+                is Result.Loading -> {}
             }
         }
     }
 
     fun onChangePerfumeWeather(weather: Weather, perfumeId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            updatePerfumeWeather(weather, perfumeId).asResult().collectLatest { result ->
-                when (result) {
-                    is Result.Success -> {
-                        weatherState.update { result.data.data }
-                    }
+            if (hasToken) {
+                onUpdatePerfumeWeather(weather, perfumeId)
+            } else {
+                unLoginedErrorState.update { true }
+            }
+        }
+    }
 
-                    is Result.Error -> {}
-                    is Result.Loading -> {}
+    suspend fun onUpdatePerfumeWeather(weather: Weather, perfumeId: Int) {
+        updatePerfumeWeather(weather, perfumeId).asResult().collectLatest { result ->
+            when (result) {
+                is Result.Success -> {
+                    weatherState.update { result.data.data }
                 }
+
+                is Result.Error -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -191,15 +250,13 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun updateLike(like: Boolean, perfumeId: Int) {
-        when (like) {
-            true -> {
-                viewModelScope.launch { putPerfumeLike(like, perfumeId) }
-
+        if (hasToken) {
+            when (like) {
+                true -> viewModelScope.launch { putPerfumeLike(like, perfumeId) }
+                false -> viewModelScope.launch { deletePerfumeLike(like, perfumeId) }
             }
-
-            false -> {
-                viewModelScope.launch { deletePerfumeLike(like, perfumeId) }
-            }
+        } else {
+            unLoginedErrorState.update { true }
         }
     }
 
@@ -235,27 +292,31 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun updatePerfumeCommentLike(like: Boolean, commentId: Int, index: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            updateLikePerfumeComment(like, commentId).asResult().collectLatest {
-                when (it) {
-                    is Result.Loading -> {}
-                    is Result.Success -> {
-                        val oldPerfumeComments = perfumeState.value?.commentInfo?.comments
-                        val newPerfumeComments = updatePerfumeCommentState(index, like, oldPerfumeComments)
-                        perfumeCommentsState.update {
-                            PerfumeCommentGetResponseDto(
-                                commentCount = newPerfumeComments?.size ?: 0,
-                                comments = newPerfumeComments ?: emptyList(),
-                                lastPage = false
-                            )
+        if (hasToken) {
+            viewModelScope.launch(Dispatchers.IO) {
+                updateLikePerfumeComment(like, commentId).asResult().collectLatest {
+                    when (it) {
+                        is Result.Loading -> {}
+                        is Result.Success -> {
+                            val oldPerfumeComments = perfumeState.value?.commentInfo?.comments
+                            val newPerfumeComments = updatePerfumeCommentState(index, like, oldPerfumeComments)
+                            perfumeCommentsState.update {
+                                PerfumeCommentGetResponseDto(
+                                    commentCount = newPerfumeComments?.size ?: 0,
+                                    comments = newPerfumeComments ?: emptyList(),
+                                    lastPage = false
+                                )
+                            }
+                            Log.d("PerfumeViewmodel", "새 리스트: ${newPerfumeComments}")
+                            Log.d("PerfumeViewmodel", "perfumeCommentsState: ${perfumeCommentsState.value}")
                         }
-                        Log.d("PerfumeViewmodel", "새 리스트: ${newPerfumeComments}")
-                        Log.d("PerfumeViewmodel", "perfumeCommentsState: ${perfumeCommentsState.value}")
-                    }
 
-                    is Result.Error -> {}
+                        is Result.Error -> {}
+                    }
                 }
             }
+        } else {
+            unLoginedErrorState.update { true }
         }
     }
 
@@ -282,10 +343,14 @@ class PerfumeViewmodel @Inject constructor(
     }
 
     fun reportPerfumeComment(id: Int?) {
-        if (id != null) {
-            viewModelScope.launch(Dispatchers.IO) {
-                reportRepository.reportPerfumeComment(TargetRequestDto(id.toString()))
+        if (hasToken) {
+            if (id != null) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    reportRepository.reportPerfumeComment(TargetRequestDto(id.toString()))
+                }
             }
+        } else {
+            unLoginedErrorState.update { true }
         }
     }
 

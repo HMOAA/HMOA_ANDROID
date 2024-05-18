@@ -11,13 +11,11 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +27,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.AppDesignDialog
 import com.hmoa.core_designsystem.component.CommentItem
 import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -63,11 +62,30 @@ fun PerfumeCommentScreen(
     viewModel: PerfumeCommentViewmodel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val unLoginErrorState by viewModel.unLoginedErrorState.collectAsStateWithLifecycle()
     val latestPerfumeComments = viewModel.getPagingLatestPerfumeComments(perfumeId)?.collectAsLazyPagingItems()
     val likePerfumeComments = viewModel.getPagingLikePerfumeComments(perfumeId)?.collectAsLazyPagingItems()
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    var isOpen by remember { mutableStateOf(true) }
 
     LaunchedEffect(perfumeId) {
         viewModel.savePerfumeId(perfumeId)
+    }
+
+    if (unLoginErrorState) {
+        AppDesignDialog(isOpen = isOpen,
+            modifier = Modifier.wrapContentHeight()
+                .width(screenWidth - 88.dp),
+            title = "로그인 후 이용가능한 서비스입니다",
+            content = "입력하신 내용을 다시 확인해주세요",
+            buttonTitle = "로그인 하러가기",
+            onOkClick = {
+                isOpen = false
+            },
+            onCloseClick = {
+                isOpen = false
+                viewModel.initializeUnLoginErrorState()
+            })
     }
 
 
@@ -86,15 +104,19 @@ fun PerfumeCommentScreen(
                     onBackClick = { onBackClick() },
                     onSortLikeClick = { viewModel.onClickSortLike() },
                     onSortLatestClick = { viewModel.onClickSortLatest() },
-                    onAddCommentClick = { onAddCommentClick(perfumeId) },
+                    onAddCommentClick = { if (viewModel.getHasToken()) onAddCommentClick(perfumeId) else viewModel.notifyLoginNeed() },
                     onPerfumeCommentReportClick = { viewModel.onClickReport() },
                     saveReportTargetId = { viewModel.saveTargetId(it) },
                     onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
                     onSpecificCommentLikeClick = { commentId, isLike, index ->
-                        viewModel.updatePerfumeCommentLike(commentId = commentId, like = isLike, index = index)
-                        when ((uiState as PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData).sortType) {
-                            SortType.LATEST -> latestPerfumeComments?.refresh()
-                            SortType.LIKE -> likePerfumeComments?.refresh()
+                        if (viewModel.getHasToken()) {
+                            viewModel.updatePerfumeCommentLike(commentId = commentId, like = isLike, index = index)
+                            when ((uiState as PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData).sortType) {
+                                SortType.LATEST -> latestPerfumeComments?.refresh()
+                                SortType.LIKE -> likePerfumeComments?.refresh()
+                            }
+                        } else {
+                            viewModel.notifyLoginNeed()
                         }
                     }
                 )

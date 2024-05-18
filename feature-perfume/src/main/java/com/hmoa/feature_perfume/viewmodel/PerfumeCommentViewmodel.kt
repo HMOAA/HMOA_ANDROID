@@ -9,6 +9,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_domain.usecase.UpdateLikePerfumeCommentUseCase
@@ -28,8 +29,13 @@ class PerfumeCommentViewmodel @Inject constructor(
     private val updateLikePerfumeComment: UpdateLikePerfumeCommentUseCase,
     private val perfumeCommentRepository: PerfumeCommentRepository,
     private val reportRepository: ReportRepository,
+    private val loginRepository: LoginRepository,
     private val handle: SavedStateHandle
 ) : ViewModel() {
+    private val authToken = MutableStateFlow<String?>(null)
+    private var hasToken = authToken.value != null
+    private var _unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    val unLoginedErrorState: StateFlow<Boolean> = _unLoginedErrorState
     private val TARGET_ID = "targetId"
     val PAGE_SIZE = 10
     private var _sortedLikeCommentsState = MutableStateFlow<PagingData<PerfumeCommentResponseDto>?>(null)
@@ -52,6 +58,30 @@ class PerfumeCommentViewmodel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = PerfumeCommentUiState.Loading
         )
+
+    init {
+        getAuthToken()
+    }
+
+    fun getHasToken(): Boolean {
+        return hasToken
+    }
+
+    private fun getAuthToken() {
+        viewModelScope.launch {
+            loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                authToken.value = it
+            }
+        }
+    }
+
+    fun notifyLoginNeed() {
+        _unLoginedErrorState.update { true }
+    }
+
+    fun initializeUnLoginErrorState() {
+        _unLoginedErrorState.update { false }
+    }
 
     fun latestPerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentLatestPagingSource(
         perfumeId = perfumeId,
@@ -101,16 +131,20 @@ class PerfumeCommentViewmodel @Inject constructor(
     }
 
     fun updatePerfumeCommentLike(like: Boolean, commentId: Int, index: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            updateLikePerfumeComment(like, commentId).asResult().collectLatest {
-                when (it) {
-                    is Result.Loading -> {}
-                    is Result.Success -> {}
-                    is Result.Error -> {
+        if (hasToken) {
+            viewModelScope.launch(Dispatchers.IO) {
+                updateLikePerfumeComment(like, commentId).asResult().collectLatest {
+                    when (it) {
+                        is Result.Loading -> {}
+                        is Result.Success -> {}
+                        is Result.Error -> {
 
+                        }
                     }
                 }
             }
+        } else {
+            _unLoginedErrorState.update { true }
         }
     }
 

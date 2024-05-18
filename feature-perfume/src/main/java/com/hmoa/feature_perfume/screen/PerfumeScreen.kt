@@ -87,7 +87,7 @@ fun PerfumeScreen(
     ErrorUiSetView(
         onConfirmClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
-        onCloseClick = { onBackClick() }
+        onCloseClick = { viewModel.initializeErrorUiState() }
     )
 
     when (uiState) {
@@ -100,7 +100,7 @@ fun PerfumeScreen(
                 onBackClick = { onBackClick() },
                 onHomeClick = { onHomeClick() },
                 onLikeClick = { viewModel.updateLike(it, perfumeId) },
-                onCommentAddClick = { onCommentAddClick(perfumeId) },
+                onCommentAddClick = { if (viewModel.getHasToken()) onCommentAddClick(perfumeId) else viewModel.notifyLoginNeed() },
                 onBrandClick = { onBrandClick(it) },
                 onWeatherClick = { viewModel.onChangePerfumeWeather(it, perfumeId) },
                 onGenderClick = { viewModel.onChangePerfumeGender(it, perfumeId) },

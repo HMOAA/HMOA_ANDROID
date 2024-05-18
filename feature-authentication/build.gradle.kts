@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
     kotlin("kapt")
     kotlin("plugin.serialization") version "1.5.0"
 }
@@ -23,7 +24,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         manifestPlaceholders["NATIVE_APP_KEY"] = localProperties.getProperty("NATIVE_APP_KEY")
-        buildConfigField("String", "NATIVE_APP_KEY", localProperties.getProperty("NATIVE_APP_KEY"))
+        buildConfigField(
+            "String",
+            "GOOGLE_CLOUD_CLIENT_SECRET",
+            localProperties.getProperty("GOOGLE_CLOUD_CLIENT_SECRET")
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_CLOUD_OAUTH_CLIENT_ID",
+            localProperties.getProperty("GOOGLE_CLOUD_OAUTH_CLIENT_ID")
+        )
+        buildConfigField("String", "REDIRECT_URI", localProperties.getProperty("REDIRECT_URI"))
+        buildConfigField("String", "GRANT_TYPE", localProperties.getProperty("GRANT_TYPE"))
     }
 
     buildFeatures {
@@ -95,6 +107,8 @@ dependencies {
     //goole-login
     implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.google.gms:google-services:4.4.1")
+    implementation("com.google.firebase:firebase-bom:32.0.0")
+
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("junit:junit:4.13.2")

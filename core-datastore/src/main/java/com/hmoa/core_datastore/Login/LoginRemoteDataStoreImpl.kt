@@ -3,10 +3,13 @@ package com.hmoa.core_datastore.Login
 import ResultResponse
 import com.hmoa.core_model.Provider
 import com.hmoa.core_model.data.ErrorMessage
+import com.hmoa.core_model.request.GoogleAccessTokenRequestDto
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
+import com.hmoa.core_model.response.GoogleAccessTokenResponseDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
+import com.hmoa.core_network.authentication.GoogleServerAuthCodeService
 import com.hmoa.core_network.service.LoginService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
@@ -16,6 +19,7 @@ import javax.inject.Inject
 
 class LoginRemoteDataStoreImpl @Inject constructor(
     private val loginService: LoginService,
+    private val googleServerAuthCodeService: GoogleServerAuthCodeService
 ) : LoginRemoteDataStore {
 
 
@@ -42,5 +46,9 @@ class LoginRemoteDataStoreImpl @Inject constructor(
             result.errorMessage = errorMessage
         }
         return result
+    }
+
+    override suspend fun postGoogleServerAuthCode(dto: GoogleAccessTokenRequestDto): ResultResponse<GoogleAccessTokenResponseDto> {
+        return googleServerAuthCodeService.postGoogleServerAuthCodeServiceImpl(dto)
     }
 }

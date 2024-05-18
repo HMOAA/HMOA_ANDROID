@@ -11,7 +11,13 @@ import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityPhotoDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -66,7 +72,6 @@ class CommunityEditViewModel @Inject constructor(
                 Result.Loading -> {
                     CommunityEditUiState.Loading
                 }
-
                 is Result.Success -> {
                     val data = result.data
                     _title.update { data.title }
@@ -87,7 +92,6 @@ class CommunityEditViewModel @Inject constructor(
                     _newPictures.update { data.communityPhotos.map { it.photoUrl.toUri() } }
                     CommunityEditUiState.Success
                 }
-
                 is Result.Error -> {
                     CommunityEditUiState.Error
                 }

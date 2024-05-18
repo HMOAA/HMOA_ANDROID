@@ -1,6 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,11 +11,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +45,7 @@ fun MainBottomBar(
             else painterResource(R.drawable.ic_hpedia)
         ),
         BottomNavItem(
-            name = BottomScreen.Like,
+            name = BottomScreen.Magazine,
             route = onClickLike,
             icon = if (initValue == "Like") painterResource(R.drawable.ic_nav_like_selected)
             else painterResource(R.drawable.ic_heart)

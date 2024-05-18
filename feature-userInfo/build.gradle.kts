@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("com.android.library")
@@ -8,7 +8,7 @@ plugins {
     kotlin("kapt")
 }
 
-val localProperties = Properties().apply{
+val localProperties = Properties().apply {
     load(project.rootProject.file("./feature-userInfo/local.properties").inputStream())
 }
 
@@ -21,6 +21,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_CHAT_PROFILE", localProperties.getProperty("KAKAO_CHAT_PROFILE"))
+        buildConfigField("String", "PRIVACY_POLICY_URI", localProperties.getProperty("PRIVACY_POLICY_URI"))
     }
 
     buildTypes {

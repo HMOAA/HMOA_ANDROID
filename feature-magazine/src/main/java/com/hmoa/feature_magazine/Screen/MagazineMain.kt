@@ -405,7 +405,9 @@ private fun ReviewContent(
         Text(
             text = title,
             fontSize = 16.sp,
-            color = Color.Black
+            color = Color.Black,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(Modifier.height(10.dp))
         Row(
@@ -428,7 +430,7 @@ private fun ReviewContent(
             text = content,
             fontSize = 13.sp,
             color = Color.Black,
-            maxLines = 4,
+            maxLines = 6,
             overflow = TextOverflow.Ellipsis
         )
     }

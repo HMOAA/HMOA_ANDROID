@@ -21,7 +21,6 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
     when (errorUiState) {
         is ErrorUiState.ErrorData -> {
             if (errorUiState.expiredTokenError) {
-
                 AppDesignDialog(
                     isOpen = isOpen,
                     modifier = Modifier.wrapContentHeight()

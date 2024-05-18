@@ -75,16 +75,16 @@ fun SetUpNavGraph(
 
         /** authentication 모듈 */
         loginScreen(
-            onSignupClick = { navController.navigateToSignup() },
+            onSignupClick = { navController.navigateToSignup(it) },
             onHomeClick = { navController.navigateToHome() })
-        signupScreen(onPickNicknameClick = { navController.navigateToPickNickname() })
+        signupScreen(onPickNicknameClick = { navController.navigateToPickNickname(it) })
         pickNicknameScreen(
-            onPickPersonalInfoClick = { navController.navigateToPickPersonalInfo() },
-            onSignupClick = { navController.navigateToSignup() }
+            onPickPersonalInfoClick = { navController.navigateToPickPersonalInfo(it) },
+            onSignupClick = { navController.navigateToSignup(it) }
         )
         pickPersonalInfoScreen(
             onHomeClick = navController::navigateToHome,
-            onPickNicknameClick = { navController.navigateToPickNickname() }
+            onPickNicknameClick = { navController.navigateToPickNickname(it) }
         )
 
         /** like 모듈 */

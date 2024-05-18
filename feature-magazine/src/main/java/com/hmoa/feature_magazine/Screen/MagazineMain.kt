@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -158,7 +159,7 @@ private fun MagazineTitleBox(
             height = 1f,
             backgroundColor = Color.Black,
             contentScale = ContentScale.FillBounds,
-            alpha = 0.6f
+            alpha = 0.4f
         )
 
         Column(
@@ -188,7 +189,8 @@ private fun MagazineTitleBox(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 36.dp),
+                        .padding(bottom = 36.dp)
+                        .padding(horizontal = 24.dp),
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
@@ -418,14 +420,16 @@ private fun ReviewContent(
             Text(
                 text = nickname,
                 fontSize = 12.sp,
-                color = CustomColor.gray3
+                color = CustomColor.gray3,
             )
         }
         Spacer(Modifier.height(16.dp))
         Text(
             text = content,
             fontSize = 13.sp,
-            color = Color.Black
+            color = Color.Black,
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

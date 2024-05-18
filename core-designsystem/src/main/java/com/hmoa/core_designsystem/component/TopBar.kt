@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,8 +30,9 @@ fun TopBar(
     onNavClick : () -> Unit = {}, //navigation click 이벤트
     menuIcon : Painter ?= null, //menu 버튼
     onMenuClick : () -> Unit = {}, //menu click 이벤트,
-    menuIconColor: androidx.compose.ui.graphics.Color = CustomColor.black,
-    title : String //메인 타이틀
+    menuIconColor: Color = CustomColor.black,
+    title : String, //메인 타이틀
+    titleColor : Color = Color.Black, //타이틀 글 색
 ){
     Row(
         modifier = Modifier
@@ -54,7 +56,8 @@ fun TopBar(
 
         Text(
             text = title,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            color = titleColor
         )
 
         Spacer(Modifier.weight(1f))

@@ -83,11 +83,12 @@ fun PerfumeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
+    val errorDialogAbleToPopUp = remember { mutableStateOf(true) }
 
     ErrorUiSetView(
         onConfirmClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
-        onCloseClick = { viewModel.initializeErrorUiState() }
+        onCloseClick = { onBackClick() }
     )
 
     when (uiState) {

@@ -84,7 +84,7 @@ fun PerfumeCommentScreen(
             },
             onCloseClick = {
                 isOpen = false
-                viewModel.initializeUnLoginErrorState()
+                onBackClick()
             })
     }
 

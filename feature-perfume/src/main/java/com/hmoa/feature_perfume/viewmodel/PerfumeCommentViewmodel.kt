@@ -79,10 +79,6 @@ class PerfumeCommentViewmodel @Inject constructor(
         _unLoginedErrorState.update { true }
     }
 
-    fun initializeUnLoginErrorState() {
-        _unLoginedErrorState.update { false }
-    }
-
     fun latestPerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentLatestPagingSource(
         perfumeId = perfumeId,
         perfumeCommentRepository = perfumeCommentRepository

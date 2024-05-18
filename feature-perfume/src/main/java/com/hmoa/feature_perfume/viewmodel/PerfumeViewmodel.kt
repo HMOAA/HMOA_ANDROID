@@ -91,17 +91,6 @@ class PerfumeViewmodel @Inject constructor(
         getAuthToken()
     }
 
-    fun initializeErrorUiState() {
-        expiredTokenErrorState.update { false }
-        wrongTypeTokenErrorState.update { false }
-        unLoginedErrorState.update { false }
-        generalErrorState.update { Pair(false, null) }
-        Log.d(
-            "PerfumeViewmodel",
-            "expiredTokenErrorState: ${expiredTokenErrorState.value}, wrongTypeTokenErrorState:${wrongTypeTokenErrorState.value}, unLoginedErrorState:${unLoginedErrorState.value}, generalErrorState:${generalErrorState.value}"
-        )
-    }
-
     fun getHasToken(): Boolean {
         return hasToken
     }

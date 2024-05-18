@@ -156,9 +156,9 @@ private fun MagazineTitleBox(
             imageUrl = imageUrl,
             width = 1f,
             height = 1f,
-            backgroundColor = Color.Transparent,
+            backgroundColor = Color.Black,
             contentScale = ContentScale.FillBounds,
-            alpha = 0.5f
+            alpha = 0.6f
         )
 
         Column(
@@ -168,7 +168,10 @@ private fun MagazineTitleBox(
                 .padding(bottom = 22.dp)
                 .background(color = Color.Transparent)
         ){
-            TopBar(title = "Magazine")
+            TopBar(
+                title = "Magazine",
+                titleColor = Color.White
+            )
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -218,7 +221,7 @@ private fun ReleasePerfumeList(
     ){
         Text(
             modifier = Modifier.padding(16.dp),
-            text = "출시 함수",
+            text = "출시 향수",
             fontSize = 20.sp,
             color = Color.Black
         )

@@ -10,8 +10,7 @@ import javax.inject.Inject
 class FcmRepositoryImpl @Inject constructor(
     private val fcmDataStore: FcmRemoteDataStore,
     private val fcmLocalDataStore: FcmLocalDataStore
-) :
-    com.hmoa.core_domain.repository.FcmRepository {
+) : com.hmoa.core_domain.repository.FcmRepository {
 
     override suspend fun deleteRemoteFcmToken(): ResultResponse<Any> {
         return fcmDataStore.deleteFcmToken()

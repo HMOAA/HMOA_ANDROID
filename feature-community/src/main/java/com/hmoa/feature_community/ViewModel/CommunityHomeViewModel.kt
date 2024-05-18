@@ -7,15 +7,29 @@ import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityRepository
+import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityHomeViewModel @Inject constructor(
-    private val repository: CommunityRepository
+    private val communityRepository: CommunityRepository,
+    private val loginRepository: LoginRepository,
 ) : ViewModel() {
+    private val authToken = MutableStateFlow<String?>(null)
 
     private val _community = MutableStateFlow(emptyList<CommunityByCategoryResponseDto>())
     val community get() = _community.asStateFlow()
@@ -42,8 +56,12 @@ class CommunityHomeViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
+    init{
+        getAuthToken()
+    }
+
     val uiState: StateFlow<CommunityHomeUiState> = flow {
-        val result = repository.getCommunitiesHome()
+        val result = communityRepository.getCommunitiesHome()
         if (result.errorMessage != null) {
             throw Exception(result.errorMessage!!.message)
         }
@@ -51,34 +69,16 @@ class CommunityHomeViewModel @Inject constructor(
     }.asResult()
         .map { result ->
             when (result) {
-                is Result.Loading -> {
-                    CommunityHomeUiState.Loading
-                }
-
-                is Result.Success -> {
-                    CommunityHomeUiState.Community(result.data)
-                }
-
+                is Result.Loading -> CommunityHomeUiState.Loading
+                is Result.Success -> CommunityHomeUiState.Community(result.data)
                 is Result.Error -> {
                     when (result.exception.message) {
-                        ErrorMessageType.EXPIRED_TOKEN.message -> {
-                            expiredTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                            wrongTypeTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.UNKNOWN_ERROR.message -> {
-                            unLoginedErrorState.update { true }
-                        }
-
-                        else -> {
-                            generalErrorState.update { Pair(true, result.exception.message) }
-                        }
+                        ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
+                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
+                        ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
+                        else -> generalErrorState.update { Pair(true, result.exception.message) }
                     }
                     CommunityHomeUiState.Error
-
                 }
             }
         }.stateIn(
@@ -87,6 +87,15 @@ class CommunityHomeViewModel @Inject constructor(
             initialValue = CommunityHomeUiState.Loading
         )
 
+    fun hasToken() : Boolean = authToken.value != null
+    // get token
+    private fun getAuthToken() {
+        viewModelScope.launch {
+            loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                authToken.value = it
+            }
+        }
+    }
 }
 
 sealed interface CommunityHomeUiState {

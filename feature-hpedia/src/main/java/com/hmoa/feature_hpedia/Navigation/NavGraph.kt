@@ -1,7 +1,11 @@
 package com.hmoa.feature_hpedia.Navigation
 
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.hmoa.feature_community.Navigation.nestedCommunityGraph
 import com.hmoa.feature_hpedia.Screen.HPediaDescRoute
 import com.hmoa.feature_hpedia.Screen.HPediaRoute
@@ -28,6 +32,8 @@ fun NavGraphBuilder.nestedHPediaGraph(
     onNavHPediaSearch: (String) -> Unit,
     onNavHPediaDesc: (Int, String) -> Unit,
     onNavLogin: () -> Unit,
+    onNavHome : () -> Unit,
+    onNavHPedia : () -> Unit
 ) {
     navigation(
         startDestination = HPediaRoute.HPedia.name,
@@ -41,7 +47,10 @@ fun NavGraphBuilder.nestedHPediaGraph(
             onNavCommunityDescription = onNavCommunityDesc,
             onNavCommunitySearch = onNavCommunitySearch,
             onNavCommunityCommentEdit = onNavCommunityCommentEdit,
-            onErrorHandleLoginAgain = onNavLogin
+            onErrorHandleLoginAgain = onNavLogin,
+            onNavLogin = onNavLogin,
+            onNavHome = onNavHome,
+            onNavHPedia = onNavHPedia
         )
 
         composable("${HPediaRoute.HPediaSearchRoute.name}/{type}") {
@@ -72,11 +81,11 @@ fun NavGraphBuilder.nestedHPediaGraph(
 
         composable(HPediaRoute.HPedia.name) {
             HPediaRoute(
-                onNavBack = onNavBack,
                 onNavHPediaSearch = onNavHPediaSearch,
                 onNavCommunityDesc = onNavCommunityDesc,
                 onNavCommunityGraph = onNavCommunityGraph,
-                onNavLogin = onNavLogin
+                onNavLogin = onNavLogin,
+                onNavHome = onNavHome,
             )
         }
     }

@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
-        //checkFcmToken()
+        checkFcmToken()
 
         lifecycleScope.launch {
             val currentJob = coroutineContext.job
@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
             }
             launch {
                 newFlow.collectLatest {
+                    checkFcmToken(it.first, it.second)
                     if (it.first == null && it.second == null) {
                         initialRoute = AuthenticationRoute.Login.name
                         currentJob.cancel()

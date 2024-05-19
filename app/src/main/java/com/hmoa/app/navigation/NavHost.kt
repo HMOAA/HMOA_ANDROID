@@ -45,6 +45,7 @@ import com.hmoa.feature_like.Screen.LIKE_ROUTE
 import com.hmoa.feature_like.Screen.LikeRoute
 import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
+import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
 import com.hmoa.feature_perfume.navigation.createNewPerfumeComment
 import com.hmoa.feature_perfume.navigation.editMyPerfumeComment
 import com.hmoa.feature_perfume.navigation.navigateToCreateNewperfumeComment
@@ -172,7 +173,10 @@ fun SetUpNavGraph(
 
         /** magazine 모듈 */
         magazineMain(
-            onNavHome = navController::navigateToHome
+            onNavHome = navController::navigateToHome,
+            onNavPerfumeDesc = navController::navigateToPerfume,
+            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
+            onNavMagazineDesc = navController::navigateToMagazineDesc
         )
         magazineDesc(
             onNavBack = navController::navigateToBack

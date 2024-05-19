@@ -1,6 +1,5 @@
 package com.hmoa.feature_magazine.ViewModel
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -26,12 +25,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-const val PAGE_SIZE = 10
-
 @HiltViewModel
 class MagazineDescViewModel @Inject constructor(
     private val magazineRepository: MagazineRepository
 ) : ViewModel() {
+    private val PAGE_SIZE = 5
     private val id = MutableStateFlow<Int?>(null)
     private val _isLiked = MutableStateFlow<Boolean?>(null)
     val isLiked get() = _isLiked.asStateFlow()
@@ -68,20 +66,46 @@ class MagazineDescViewModel @Inject constructor(
             Result.Loading -> MagazineDescUiState.Loading
             is Result.Success -> {
                 val data = result.data
+
+                //content 데이터 정리
                 val contents = mutableListOf<MagazineContentItem>()
                 data.contents.forEach{
-                    if(it.type == "header"){
-                        contents.add(MagazineContentItem(header = it.data, content = ""))
+                    if(it.type == "content"){
+                        contents.add(MagazineContentItem(header = "", content = it.data))
                     } else {
-                        contents[contents.lastIndex].content = it.data
+                        contents[contents.lastIndex].header = it.data
                     }
                 }
+
+                //날짜 데이터 형식 변경
+                val month = when(data.createAt.split(" ")[0]){
+                    "Jan" -> 1
+                    "Feb" -> 2
+                    "Mar" -> 3
+                    "Apr" -> 4
+                    "May" -> 5
+                    "Jun" -> 6
+                    "Jul" -> 7
+                    "Aug" -> 8
+                    "Sep" -> 9
+                    "Oct" -> 10
+                    "Nov" -> 11
+                    "Dec" -> 12
+                    else -> 0
+                }
+                val day = data.createAt.split(" ")[1].replace(",", "")
+                val year = data.createAt.split(" ")[2]
+                val newDate = "${year}.${month}.${day}"
+
+                //preview 개행 제거
+                val preview = data.preview.replace("\\n", "")
+
                 MagazineDescUiState.Success(
                     title = data.title,
-                    createAt = data.createAt,
+                    createAt = newDate,
                     previewImgUrl = data.previewImgUrl,
                     contents = contents,
-                    preview = data.preview,
+                    preview = preview,
                     tags = data.tags,
                     viewCount = data.viewCount,
                     likeCount = data.likeCount
@@ -116,7 +140,7 @@ class MagazineDescViewModel @Inject constructor(
 }
 
 data class MagazineContentItem(
-    val header : String,
+    var header : String,
     var content : String
 )
 

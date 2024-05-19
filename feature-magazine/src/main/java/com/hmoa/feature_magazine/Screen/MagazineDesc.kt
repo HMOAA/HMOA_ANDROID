@@ -56,10 +56,12 @@ fun MagazineDescRoute(
     viewModel.setId(id)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val recentMagazines = viewModel.magazinePagingSource().collectAsLazyPagingItems()
     MagazineDescScreen(
         uiState = uiState.value,
         recentMagazines = recentMagazines,
+        isLiked = isLiked.value,
         errState = errState.value,
         onNavBack = onNavBack
     )
@@ -69,6 +71,7 @@ fun MagazineDescRoute(
 fun MagazineDescScreen(
     uiState : MagazineDescUiState,
     recentMagazines : LazyPagingItems<MagazineSummaryResponseDto>,
+    isLiked : Boolean?,
     errState : ErrorUiState,
     onNavBack: () -> Unit
 ){
@@ -83,6 +86,7 @@ fun MagazineDescScreen(
                 viewCount = uiState.viewCount,
                 previewImgUrl = uiState.previewImgUrl,
                 preview = uiState.preview,
+                isLiked = isLiked,
                 likeCount = uiState.likeCount,
                 contentList = uiState.contents,
                 tagList = uiState.tags,
@@ -107,6 +111,7 @@ private fun MagazineDescContent(
     viewCount : Int,
     previewImgUrl : String,
     preview : String,
+    isLiked: Boolean?,
     likeCount : Int,
     contentList : List<MagazineContentItem>,
     tagList : List<String>,
@@ -144,10 +149,12 @@ private fun MagazineDescContent(
             Spacer(Modifier.height(48.dp))
         }
         items(contentList){content ->
-            MagazineDescData(
-                header = content.header,
-                content = content.content
-            )
+            if (content.header != null && content.content != null){
+                MagazineDescData(
+                    header = content.header!!,
+                    content = content.content!!
+                )
+            }
         }
         item{
             Spacer(Modifier.height(48.dp))
@@ -157,7 +164,10 @@ private fun MagazineDescContent(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),thickness=1.dp,color= CustomColor.gray2)
-            MagazineFooter(likeCount = likeCount)
+            MagazineFooter(
+                isLiked = isLiked ?: false,
+                likeCount = likeCount
+            )
             RecentMagazines(magazineList=magazineList)
         }
     }
@@ -290,6 +300,7 @@ private fun Tags(
 
 @Composable
 private fun MagazineFooter(
+    isLiked: Boolean,
     likeCount : Int,
 ){
     Row(
@@ -312,7 +323,7 @@ private fun MagazineFooter(
             Icon(
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_thumb_up),
                 contentDescription = "Like",
-                tint = CustomColor.gray2
+                tint = if(isLiked) CustomColor.gray3 else CustomColor.gray2
             )
             Spacer(Modifier.height(12.dp))
             Text(

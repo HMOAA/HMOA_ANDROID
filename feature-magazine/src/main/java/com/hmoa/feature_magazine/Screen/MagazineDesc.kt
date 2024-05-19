@@ -2,6 +2,7 @@ package com.hmoa.feature_magazine.Screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,9 +56,10 @@ fun MagazineDescRoute(
     viewModel.setId(id)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val recentMagazines = viewModel.magazinePagingSource().collectAsLazyPagingItems()
     MagazineDescScreen(
         uiState = uiState.value,
-        recentMagazines = viewModel.magazinePagingSource().collectAsLazyPagingItems(),
+        recentMagazines = recentMagazines,
         errState = errState.value,
         onNavBack = onNavBack
     )
@@ -203,7 +205,7 @@ private fun MagazineContent(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(start = 17.dp),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ){
             Image(
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_view_number),
@@ -252,6 +254,7 @@ private fun MagazineDescData(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(horizontal = 16.dp)
     ){
         Text(
             text = header,
@@ -275,10 +278,12 @@ private fun Tags(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .wrapContentHeight()
             .padding(horizontal = 17.dp)
     ){
         tagList.forEach{ tag ->
             MagazineTag(tag = tag)
+            Spacer(Modifier.width(8.dp))
         }
     }
 }
@@ -291,7 +296,8 @@ private fun MagazineFooter(
         modifier = Modifier
             .fillMaxWidth()
             .height(170.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ){
         Text(
             text = "매거진이 유용한 정보였다면",
@@ -326,9 +332,11 @@ private fun RecentMagazines(
         modifier = Modifier
             .fillMaxWidth()
             .height(358.dp)
+            .background(color = Color.Black)
             .padding(top = 32.dp)
     ){
         Text(
+            modifier = Modifier.padding(start = 16.dp),
             text = "최신 매거진",
             fontSize = 20.sp,
             color = Color.White
@@ -341,7 +349,10 @@ private fun RecentMagazines(
             thickness=0.5.dp,
             color=CustomColor.gray2
         )
-        LazyRow{
+        Spacer(Modifier.height(16.dp))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ){
             items(magazineList){magazine ->
                 if (magazine!=null){
                     RecentMagazineItem(

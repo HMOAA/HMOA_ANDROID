@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -281,19 +283,21 @@ private fun MagazineDescData(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Tags(
     tagList : List<String>
 ){
-    Row(
+    FlowRow(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 17.dp)
+            .padding(horizontal = 17.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ){
         tagList.forEach{ tag ->
             MagazineTag(tag = tag)
-            Spacer(Modifier.width(8.dp))
         }
     }
 }

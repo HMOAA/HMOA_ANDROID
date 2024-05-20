@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,6 +54,7 @@ import com.hmoa.feature_magazine.ViewModel.MagazineDescViewModel
 fun MagazineDescRoute(
     id : Int?,
     onNavBack: () -> Unit,
+    onNavLogin: () -> Unit,
     viewModel : MagazineDescViewModel = hiltViewModel()
 ){
     viewModel.setId(id)
@@ -64,8 +66,10 @@ fun MagazineDescRoute(
         uiState = uiState.value,
         recentMagazines = recentMagazines,
         isLiked = isLiked.value,
+        updateMagazineLike = { viewModel.updateMagazineLike() },
         errState = errState.value,
-        onNavBack = onNavBack
+        onNavBack = onNavBack,
+        onNavLogin = onNavLogin,
     )
 }
 
@@ -74,8 +78,10 @@ fun MagazineDescScreen(
     uiState : MagazineDescUiState,
     recentMagazines : LazyPagingItems<MagazineSummaryResponseDto>,
     isLiked : Boolean?,
+    updateMagazineLike : () -> Unit,
     errState : ErrorUiState,
-    onNavBack: () -> Unit
+    onNavBack: () -> Unit,
+    onNavLogin: () -> Unit,
 ){
     when(uiState){
         MagazineDescUiState.Loading -> {
@@ -89,6 +95,7 @@ fun MagazineDescScreen(
                 previewImgUrl = uiState.previewImgUrl,
                 preview = uiState.preview,
                 isLiked = isLiked,
+                updateMagazineLike = updateMagazineLike,
                 likeCount = uiState.likeCount,
                 contentList = uiState.contents,
                 tagList = uiState.tags,
@@ -98,7 +105,7 @@ fun MagazineDescScreen(
         }
         is MagazineDescUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onConfirmClick = onNavLogin,
                 errorUiState = errState,
                 onCloseClick = onNavBack
             )
@@ -114,6 +121,7 @@ private fun MagazineDescContent(
     previewImgUrl : String,
     preview : String,
     isLiked: Boolean?,
+    updateMagazineLike : () -> Unit,
     likeCount : Int,
     contentList : List<MagazineContentItem>,
     tagList : List<String>,
@@ -168,7 +176,8 @@ private fun MagazineDescContent(
                     .padding(horizontal = 16.dp),thickness=1.dp,color= CustomColor.gray2)
             MagazineFooter(
                 isLiked = isLiked ?: false,
-                likeCount = likeCount
+                likeCount = likeCount,
+                updateMagazineLike = updateMagazineLike
             )
             RecentMagazines(magazineList=magazineList)
         }
@@ -306,6 +315,7 @@ private fun Tags(
 private fun MagazineFooter(
     isLiked: Boolean,
     likeCount : Int,
+    updateMagazineLike : () -> Unit,
 ){
     Row(
         modifier = Modifier
@@ -324,11 +334,15 @@ private fun MagazineFooter(
             modifier = Modifier.wrapContentSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Icon(
-                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_thumb_up),
-                contentDescription = "Like",
-                tint = if(isLiked) CustomColor.gray3 else CustomColor.gray2
-            )
+            IconButton(
+                onClick = updateMagazineLike
+            ){
+                Icon(
+                    painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_thumb_up),
+                    contentDescription = "Like",
+                    tint = if(isLiked) CustomColor.gray4 else CustomColor.gray2
+                )
+            }
             Spacer(Modifier.height(12.dp))
             Text(
                 text = likeCount.toString(),

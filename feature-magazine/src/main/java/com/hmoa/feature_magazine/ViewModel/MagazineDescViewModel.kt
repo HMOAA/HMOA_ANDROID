@@ -165,19 +165,23 @@ class MagazineDescViewModel @Inject constructor(
         viewModelScope.launch{
             if(authToken.value == null) {
                 unLoginedErrorState.update{ true }
+                flag.update{ null }
                 return@launch
             }
             if (isLiked.value == null) {
                 generalErrorState.update{ Pair(true, "정보를 가져오지 못했습니다.")}
+                flag.update{ null }
                 return@launch
             }
             val result = if(isLiked.value!!) magazineRepository.deleteMagazineHeart(id.value!!)
                 else magazineRepository.putMagazineHeart(id.value!!)
             if (result.errorMessage is ErrorMessage){
                 generalErrorState.update{ Pair(true, result.errorMessage!!.message) }
+                flag.update{ null }
                 return@launch
             }
             _isLiked.update{ !isLiked.value!! }
+            flag.update{ !flag.value!! }
         }
     }
 }

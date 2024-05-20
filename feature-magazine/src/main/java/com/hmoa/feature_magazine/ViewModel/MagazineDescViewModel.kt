@@ -83,11 +83,17 @@ class MagazineDescViewModel @Inject constructor(
                 for(x in 0 until data.contents.size){
                     contents.add(MagazineContentItem())
                 }
+                var curIdx = 0
                 data.contents.forEachIndexed{ idx, value ->
                     if(value.type == "content"){
-                        contents[idx/2].content = value.data
-                    } else {
-                        contents[idx/2].header = value.data
+                        contents[curIdx].content = value.data
+                    } else if(value.type == "header") {
+                        contents[curIdx].header = value.data
+                    } else if(value.type == "image"){
+                        contents[curIdx].image = value.data
+                    }
+                    if(contents[curIdx].content != null && contents[curIdx].header != null){
+                        curIdx += 1
                     }
                 }
 
@@ -188,7 +194,8 @@ class MagazineDescViewModel @Inject constructor(
 
 data class MagazineContentItem(
     var header : String? = null,
-    var content : String? = null
+    var content : String? = null,
+    var image : String? = null
 )
 
 sealed interface MagazineDescUiState{

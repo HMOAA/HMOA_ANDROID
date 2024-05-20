@@ -168,7 +168,8 @@ private fun MagazineDescContent(
             if (content.header != null && content.content != null){
                 MagazineDescData(
                     header = content.header!!,
-                    content = content.content!!
+                    content = content.content!!,
+                    image = content.image
                 )
             }
         }
@@ -278,7 +279,8 @@ private fun MagazineContent(
 @Composable
 private fun MagazineDescData(
     header : String,
-    content : String
+    content : String,
+    image : String?
 ){
     Column(
         modifier = Modifier
@@ -286,6 +288,21 @@ private fun MagazineDescData(
             .wrapContentHeight()
             .padding(horizontal = 16.dp)
     ){
+        if(image != null){
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .aspectRatio(0.8f)
+            ){
+                ImageView(
+                    imageUrl = image,
+                    width = 1f,
+                    height = 1f,
+                    backgroundColor = Color.Transparent,
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+        }
         Text(
             text = header,
             fontSize = 20.sp,

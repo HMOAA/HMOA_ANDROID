@@ -6,7 +6,9 @@ import androidx.navigation.compose.composable
 import com.hmoa.feature_magazine.Screen.MagazineDescRoute
 import com.hmoa.feature_magazine.Screen.MagazineMainRoute
 
-fun NavHostController.navigateToMagazineHome() = navigate(MagazineRoute.Magazine.name)
+fun NavHostController.navigateToMagazineHome() = navigate(MagazineRoute.Magazine.name){
+    launchSingleTop = true
+}
 fun NavHostController.navigateToMagazineDesc(magazineId : Int) = navigate("${MagazineRoute.MagazineDescRoute.name}/${magazineId}")
 fun NavGraphBuilder.magazineMain(
     onNavHome : () -> Unit,

@@ -445,7 +445,8 @@ private fun ReviewContent(
         )
         Spacer(Modifier.height(10.dp))
         Row(
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier.wrapContentSize(),
+            verticalAlignment = Alignment.CenterVertically
         ){
             CircleImageView(
                 imgUrl = profileImg,

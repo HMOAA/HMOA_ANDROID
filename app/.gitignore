@@ -7,3 +7,5 @@
 /debug
 /release
 /release.keystore
+./release/app-release.aab
+lint-baseline.xml

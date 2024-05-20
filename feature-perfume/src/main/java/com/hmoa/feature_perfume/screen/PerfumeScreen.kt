@@ -234,10 +234,9 @@ fun PerfumeContent(
                     BrandCard(data.brandImgUrl, data.brandEnglishName, data.brandKoreanName)
                 }
                 TastingNoteView(
-                    notes = arrayOf(data.topNote, data.heartNote, data.baseNote),
+                    notes = arrayOf(data.topNote ?: "", data.heartNote ?: "", data.baseNote ?: ""),
                     imageUrls = data.notePhotos,
-                    noteTitle = listOf("TOP", "HEART", "BASE"),
-                    singleNote = data.singleNote ?: emptyArray()
+                    noteTitle = listOf("TOP", "HEART", "BASE")
                 )
                 PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
                 PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
@@ -367,7 +366,7 @@ fun PerfumeVolumeView(volume: Int, color: Color) {
 }
 
 @Composable
-fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: String) {
+fun BrandCard(imageUrl: String, brandEnglishName: String?, brandKoreanName: String) {
     Row(modifier = Modifier.border(border = BorderStroke(width = 1.dp, color = CustomColor.gray3))) {
         Column(
             modifier = Modifier.width(68.dp).height(68.dp),
@@ -387,7 +386,7 @@ fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: Strin
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                brandEnglishName,
+                brandEnglishName ?: "",
                 color = Color.White,
                 style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
             )
@@ -401,7 +400,7 @@ fun BrandCard(imageUrl: String, brandEnglishName: String, brandKoreanName: Strin
 }
 
 @Composable
-fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: List<String>, singleNote: Array<String>) {
+fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: List<String>) {
     Text(
         "테이스팅 노트",
         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
@@ -431,19 +430,11 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
                     modifier = Modifier.weight(1f).height(1.dp).background(color = CustomColor.gray3)
                         .widthIn(min = 12.dp)
                 )
-                if (imageUrls.size == 1) {
-                    Text(
-                        singleNote.joinToString(", "),
-                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                } else {
-                    Text(
-                        notes[index],
-                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
+                Text(
+                    notes[index],
+                    style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
         }
 

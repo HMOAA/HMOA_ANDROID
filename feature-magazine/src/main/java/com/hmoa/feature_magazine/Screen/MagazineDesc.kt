@@ -2,6 +2,7 @@ package com.hmoa.feature_magazine.Screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +56,7 @@ fun MagazineDescRoute(
     id : Int?,
     onNavBack: () -> Unit,
     onNavLogin: () -> Unit,
+    onNavDesc : (Int) -> Unit,
     viewModel : MagazineDescViewModel = hiltViewModel()
 ){
     viewModel.setId(id)
@@ -70,6 +72,7 @@ fun MagazineDescRoute(
         errState = errState.value,
         onNavBack = onNavBack,
         onNavLogin = onNavLogin,
+        onNavDesc = onNavDesc
     )
 }
 
@@ -82,6 +85,7 @@ fun MagazineDescScreen(
     errState : ErrorUiState,
     onNavBack: () -> Unit,
     onNavLogin: () -> Unit,
+    onNavDesc : (Int) -> Unit,
 ){
     when(uiState){
         MagazineDescUiState.Loading -> {
@@ -100,7 +104,8 @@ fun MagazineDescScreen(
                 contentList = uiState.contents,
                 tagList = uiState.tags,
                 magazineList = recentMagazines.itemSnapshotList,
-                onNavBack = onNavBack
+                onNavBack = onNavBack,
+                onNavDesc = onNavDesc
             )
         }
         is MagazineDescUiState.Error -> {
@@ -127,6 +132,7 @@ private fun MagazineDescContent(
     tagList : List<String>,
     magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
     onNavBack : () -> Unit,
+    onNavDesc: (Int) -> Unit,
 ){
     LazyColumn(
         modifier = Modifier
@@ -179,7 +185,10 @@ private fun MagazineDescContent(
                 likeCount = likeCount,
                 updateMagazineLike = updateMagazineLike
             )
-            RecentMagazines(magazineList=magazineList)
+            RecentMagazines(
+                magazineList=magazineList,
+                onNavDesc=onNavDesc
+            )
         }
     }
 }
@@ -355,7 +364,8 @@ private fun MagazineFooter(
 
 @Composable
 private fun RecentMagazines(
-    magazineList : ItemSnapshotList<MagazineSummaryResponseDto>
+    magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
+    onNavDesc: (Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -386,7 +396,8 @@ private fun RecentMagazines(
                 if (magazine!=null){
                     RecentMagazineItem(
                         previewImageUrl = magazine.previewImgUrl,
-                        title = magazine.title
+                        title = magazine.title,
+                        onNavDesc = {onNavDesc(magazine.magazineId)}
                     )
                 }
             }
@@ -398,11 +409,15 @@ private fun RecentMagazines(
 private fun RecentMagazineItem(
     previewImageUrl : String,
     title : String,
+    onNavDesc: () -> Unit,
 ){
     Column(
         modifier = Modifier
             .width(132.dp)
             .wrapContentHeight()
+            .clickable{
+                onNavDesc()
+            }
     ){
         Box(
             modifier = Modifier

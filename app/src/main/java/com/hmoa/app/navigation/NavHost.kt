@@ -180,7 +180,8 @@ fun SetUpNavGraph(
         )
         magazineDesc(
             onNavBack = navController::navigateToBack,
-            onNavLogin = navController::navigateToLogin
+            onNavLogin = navController::navigateToLogin,
+            onNavDesc = navController::navigateToMagazineDesc
         )
     }
 }

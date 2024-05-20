@@ -27,13 +27,15 @@ fun NavGraphBuilder.magazineMain(
 fun NavGraphBuilder.magazineDesc(
     onNavBack : () -> Unit,
     onNavLogin : () -> Unit,
+    onNavDesc : (Int) -> Unit,
 ){
     composable("${MagazineRoute.MagazineDescRoute.name}/{magazineId}"){
         val magazineId = it.arguments?.getString("magazineId")?.toInt()
         MagazineDescRoute(
             id = magazineId,
             onNavBack = onNavBack,
-            onNavLogin = onNavLogin
+            onNavLogin = onNavLogin,
+            onNavDesc = onNavDesc
         )
     }
 }

@@ -2,11 +2,7 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -21,7 +17,6 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
     when (errorUiState) {
         is ErrorUiState.ErrorData -> {
             if (errorUiState.expiredTokenError) {
-
                 AppDesignDialog(
                     isOpen = isOpen,
                     modifier = Modifier.wrapContentHeight()

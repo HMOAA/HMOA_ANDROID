@@ -268,7 +268,7 @@ fun CommunityDescriptionPage(
             ErrorUiSetView(
                 onConfirmClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
-                onCloseClick = onNavBack
+                onCloseClick = onNavBack,
             )
         }
     }

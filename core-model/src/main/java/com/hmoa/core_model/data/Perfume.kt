@@ -5,15 +5,15 @@ import com.hmoa.core_model.response.PerfumeReviewResponseDto
 import com.hmoa.core_model.response.PerfumeSimilarResponseDto
 
 data class Perfume(
-    val brandEnglishName: String,
+    val brandEnglishName: String?,
     val brandKoreanName: String,
     val brandId: String,
     val brandImgUrl: String,
     val perfumeEnglishName: String,
     val perfumeKoreanName: String,
-    val baseNote: String,
-    val heartNote: String,
-    val topNote: String,
+    val baseNote: String?,
+    val heartNote: String?,
+    val topNote: String?,
     var likedCount: Int,
     var liked: Boolean,
     val notePhotos: List<String>,
@@ -21,7 +21,6 @@ data class Perfume(
     val perfumeImageUrl: String,
     val price: String,
     val review: PerfumeReviewResponseDto?,
-    val singleNote: Array<String>?,
     val sortType: Int,
     val perfumeVolumeList: Array<Int>,
     val perfumeVolume: Int,

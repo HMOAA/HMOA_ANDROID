@@ -1,7 +1,6 @@
 package com.hmoa.core_database
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
@@ -15,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 val Context.datastore: DataStore<Preferences> by preferencesDataStore(
@@ -40,14 +38,12 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     override suspend fun getAuthToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
-            Log.d("TokenManagerImpl", "getAuthToken:${preferences[AUTH_TOKEN_KEY]}")
             preferences[AUTH_TOKEN_KEY]
         }
     }
 
     override suspend fun getRememberedToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
-            Log.d("TokenManagerImpl", "getRememeberedToken:${preferences[REMEMBERED_TOKEN_KEY]}")
             preferences[REMEMBERED_TOKEN_KEY]
         }
     }
@@ -65,7 +61,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     }
 
     override suspend fun getFcmToken(): Flow<String?> {
-        return dataStore.data.map{ preferences ->
+        return dataStore.data.map { preferences ->
             preferences[FCM_TOKEN_KEY]
         }
     }
@@ -73,24 +69,18 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     override suspend fun saveAuthToken(token: String) {
         dataStore.edit { preferences ->
             preferences[AUTH_TOKEN_KEY] = token
-            Log.d("TokenManagerImpl", "let's save authToken:${token}")
-            Log.d("TokenManagerImpl", "it's saved authToken:${preferences[AUTH_TOKEN_KEY]}")
         }
     }
 
     override suspend fun saveRememberedToken(token: String) {
         dataStore.edit { preferences ->
             preferences[REMEMBERED_TOKEN_KEY] = token
-            Log.d("TokenManagerImpl", "let's save rememberedToken:${token}}")
-            Log.d("TokenManagerImpl", "it's saved rememberedToken:${preferences[REMEMBERED_TOKEN_KEY]}")
         }
     }
 
     override suspend fun saveKakaoAccessToken(token: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStore.edit { preferences ->
-                preferences[KAKAO_ACCESS_TOKEN_KEY] = token
-            }
+        dataStore.edit { preferences ->
+            preferences[KAKAO_ACCESS_TOKEN_KEY] = token
         }
     }
 
@@ -101,7 +91,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     }
 
     override suspend fun saveFcmToken(token: String) {
-        dataStore.edit{ preferences ->
+        dataStore.edit { preferences ->
             preferences[FCM_TOKEN_KEY] = token
         }
     }
@@ -131,7 +121,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     }
 
     override suspend fun deleteFcmToken() {
-        dataStore.edit{ preferences ->
+        dataStore.edit { preferences ->
             preferences.remove(FCM_TOKEN_KEY)
         }
     }

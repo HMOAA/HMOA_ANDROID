@@ -28,8 +28,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.OAuthLoginButton
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.Provider
+import com.hmoa.feature_authentication.viewmodel.LoginUiState
 import com.hmoa.feature_authentication.viewmodel.LoginViewModel
 
 fun requestGoogleLogin(context: Context): GoogleSignInClient {
@@ -43,12 +46,11 @@ fun requestGoogleLogin(context: Context): GoogleSignInClient {
 
 @Composable
 fun LoginRoute(
-    onSignup: () -> Unit,
+    onSignup: (loginProvider: String) -> Unit,
     onHome: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val isAbleToGoHome by viewModel.isAbleToGoHome.collectAsStateWithLifecycle()
-    val isOauthTokenReceived by viewModel.isOauthTokenReceived.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val googleSignInClient: GoogleSignInClient by lazy { requestGoogleLogin(context) }
     val googleAuthLauncher =
@@ -57,19 +59,11 @@ fun LoginRoute(
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
-
-                    // 이름, 이메일 등이 필요하다면 아래와 같이 account를 통해 각 메소드를 불러올 수 있다.
-                    val userName = account.givenName
                     val serverAuth = account.serverAuthCode
                     viewModel.getGoogleAccessToken(serverAuth)
                 } catch (e: Exception) {
                     Log.e("feature-authentication", "googleAuthLauncher error: ${e.stackTraceToString()}")
                 }
-            } else if (result.resultCode == Activity.RESULT_CANCELED) {
-                Log.e(
-                    "feature-authentication",
-                    "result.data : ${result.data?.data ?: "nothing"}, resultCode:${result.resultCode}"
-                )
             }
         }
 
@@ -79,21 +73,34 @@ fun LoginRoute(
         googleAuthLauncher.launch(signInIntent)
     }
 
-    LaunchedEffect(isAbleToGoHome, isOauthTokenReceived) {
-        if (isAbleToGoHome) {
-            onHome()
-        }
+    LaunchedEffect(uiState) {
+        if (uiState is LoginUiState.LoginData) {
+            if ((uiState as LoginUiState.LoginData).isAbleToGoHome) {
+                onHome()
+            }
 
-        if (isOauthTokenReceived) {
-            onSignup()
+            if ((uiState as LoginUiState.LoginData).isKakaoTokenReceived) {
+                onSignup(Provider.KAKAO.name)
+            }
+            if ((uiState as LoginUiState.LoginData).isGoogleTokenReceived) {
+                onSignup(Provider.GOOGLE.name)
+            }
         }
 
     }
 
-    LoginScreen(
-        onClickKakaoLogin = { viewModel.handleKakaoLogin() },
-        onClickGoogleLogin = { handleGoogleLogin() },
-        onHome = { onHome() })
+    when (uiState) {
+        LoginUiState.Loading -> {
+            AppLoadingScreen()
+        }
+
+        is LoginUiState.LoginData -> {
+            LoginScreen(
+                onClickKakaoLogin = { viewModel.handleKakaoLogin() },
+                onClickGoogleLogin = { handleGoogleLogin() },
+                onHome = { onHome() })
+        }
+    }
 }
 
 @Composable

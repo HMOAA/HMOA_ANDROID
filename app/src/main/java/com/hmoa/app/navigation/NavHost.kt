@@ -179,7 +179,8 @@ fun SetUpNavGraph(
             onNavMagazineDesc = navController::navigateToMagazineDesc
         )
         magazineDesc(
-            onNavBack = navController::navigateToBack
+            onNavBack = navController::navigateToBack,
+            onNavLogin = navController::navigateToLogin
         )
     }
 }

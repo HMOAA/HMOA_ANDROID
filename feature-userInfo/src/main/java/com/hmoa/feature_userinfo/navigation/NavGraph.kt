@@ -45,6 +45,7 @@ fun NavController.navigateToMyPostPage() = navigate(UserInfoGraph.MyPostRoute.na
 fun NavController.navigateToBack() = navigateUp()
 
 fun NavGraphBuilder.nestedUserInfoGraph(
+    onNavMyPerfume : () -> Unit,
     onNavLogin: () -> Unit,
     onNavBack: () -> Unit,
     onNavCommunity: (Int) -> Unit,
@@ -64,6 +65,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     ) {
         composable(route = UserInfoGraph.MyPage.name) {
             MyPageRoute(
+                onNavMyPerfume = onNavMyPerfume,
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,

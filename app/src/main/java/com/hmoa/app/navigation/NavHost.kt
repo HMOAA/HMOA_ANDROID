@@ -43,6 +43,7 @@ import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
 import com.hmoa.feature_like.Screen.LikeRoute
+import com.hmoa.feature_like.Screen.navigateToLike
 import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
@@ -110,7 +111,8 @@ fun SetUpNavGraph(
             onNavMyPost = navController::navigateToMyPostPage,
             onNavMyComment = navController::navigateToMyCommentPage,
             onNavMyBirth = navController::navigateToMyBirth,
-            onNavMyGender = navController::navigateToMyGenderPage
+            onNavMyGender = navController::navigateToMyGenderPage,
+            onNavMyPerfume = navController::navigateToLike
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */

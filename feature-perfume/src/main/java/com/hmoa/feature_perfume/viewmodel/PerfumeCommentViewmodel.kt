@@ -32,8 +32,8 @@ class PerfumeCommentViewmodel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val handle: SavedStateHandle
 ) : ViewModel() {
-    private val authToken = MutableStateFlow<String?>(null)
-    private var hasToken = authToken.value != null
+    private var authToken = MutableStateFlow<String?>(null)
+    private var hasToken = false
     private var _unLoginedErrorState = MutableStateFlow<Boolean>(false)
     val unLoginedErrorState: StateFlow<Boolean> = _unLoginedErrorState
     private val TARGET_ID = "targetId"
@@ -71,6 +71,7 @@ class PerfumeCommentViewmodel @Inject constructor(
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
                 authToken.value = it
+                hasToken = true
             }
         }
     }

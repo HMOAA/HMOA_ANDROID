@@ -33,8 +33,8 @@ class PerfumeViewmodel @Inject constructor(
     private val reportRepository: ReportRepository,
     private val loginRepository: LoginRepository
 ) : ViewModel() {
-    private val authToken = MutableStateFlow<String?>(null)
-    private var hasToken = authToken.value != null
+    private var authToken = MutableStateFlow<String?>(null)
+    private var hasToken: Boolean = false
     private var perfumeState = MutableStateFlow<Perfume?>(null)
     private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
     private var genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
@@ -99,6 +99,7 @@ class PerfumeViewmodel @Inject constructor(
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
                 authToken.value = it
+                hasToken = true
             }
         }
     }

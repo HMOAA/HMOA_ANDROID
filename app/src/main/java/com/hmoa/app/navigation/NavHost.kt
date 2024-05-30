@@ -112,7 +112,8 @@ fun SetUpNavGraph(
             onNavMyComment = navController::navigateToMyCommentPage,
             onNavMyBirth = navController::navigateToMyBirth,
             onNavMyGender = navController::navigateToMyGenderPage,
-            onNavMyPerfume = navController::navigateToLike
+            onNavMyPerfume = navController::navigateToLike,
+            onNavPerfume = navController::navigateToPerfume
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */

@@ -101,7 +101,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         composable(route = UserInfoGraph.MyFavoriteCommentRoute.name) {
             MyFavoriteCommentRoute(
                 onNavBack = onNavBack,
-                onNavCommunity = onNavCommunity
+                onNavCommunity = onNavCommunity,
+                onNavPerfume = onNavPerfume
             )
         }
         composable(route = UserInfoGraph.MyInfoRoute.name) {

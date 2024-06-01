@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,8 +47,8 @@ import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.MagazineTag
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.data.MagazineContentItem
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
-import com.hmoa.feature_magazine.ViewModel.MagazineContentItem
 import com.hmoa.feature_magazine.ViewModel.MagazineDescUiState
 import com.hmoa.feature_magazine.ViewModel.MagazineDescViewModel
 
@@ -63,10 +64,10 @@ fun MagazineDescRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
-    val recentMagazines = viewModel.magazinePagingSource().collectAsLazyPagingItems()
+    val recentMagazineList = viewModel.magazinePagingSource().collectAsLazyPagingItems()
     MagazineDescScreen(
         uiState = uiState.value,
-        recentMagazines = recentMagazines,
+        recentMagazineList = recentMagazineList,
         isLiked = isLiked.value,
         updateMagazineLike = { viewModel.updateMagazineLike() },
         errState = errState.value,
@@ -79,7 +80,7 @@ fun MagazineDescRoute(
 @Composable
 fun MagazineDescScreen(
     uiState : MagazineDescUiState,
-    recentMagazines : LazyPagingItems<MagazineSummaryResponseDto>,
+    recentMagazineList : LazyPagingItems<MagazineSummaryResponseDto>,
     isLiked : Boolean?,
     updateMagazineLike : () -> Unit,
     errState : ErrorUiState,
@@ -92,18 +93,19 @@ fun MagazineDescScreen(
             AppLoadingScreen()
         }
         is MagazineDescUiState.Success -> {
+            val recentMagazines = remember{recentMagazineList}
             MagazineDescContent(
-                title = uiState.title,
-                releaseDate = uiState.createAt,
-                viewCount = uiState.viewCount,
-                previewImgUrl = uiState.previewImgUrl,
-                preview = uiState.preview,
+                title = uiState.magazine.title,
+                releaseDate = uiState.magazine.createAt,
+                viewCount = uiState.magazine.viewCount,
+                previewImgUrl = uiState.magazine.previewImgUrl,
+                preview = uiState.magazine.preview,
                 isLiked = isLiked,
                 updateMagazineLike = updateMagazineLike,
-                likeCount = uiState.likeCount,
-                contentList = uiState.contents,
-                tagList = uiState.tags,
-                magazineList = recentMagazines.itemSnapshotList,
+                likeCount = uiState.magazine.likeCount,
+                contentList = uiState.magazine.contents,
+                tagList = uiState.magazine.tags,
+                magazineList = recentMagazines,
                 onNavBack = onNavBack,
                 onNavDesc = onNavDesc
             )
@@ -130,7 +132,7 @@ private fun MagazineDescContent(
     likeCount : Int,
     contentList : List<MagazineContentItem>,
     tagList : List<String>,
-    magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
+    magazineList : LazyPagingItems<MagazineSummaryResponseDto>,
     onNavBack : () -> Unit,
     onNavDesc: (Int) -> Unit,
 ){
@@ -187,7 +189,7 @@ private fun MagazineDescContent(
                 updateMagazineLike = updateMagazineLike
             )
             RecentMagazines(
-                magazineList=magazineList,
+                magazineList=magazineList.itemSnapshotList,
                 onNavDesc=onNavDesc
             )
         }

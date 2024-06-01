@@ -45,7 +45,8 @@ import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
-import com.hmoa.feature_like.Screen.navigateToLike
+import com.hmoa.feature_magazine.Navigation.MagazineRoute
+import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
-        CommunityRoute.CommunityPageRoute.name,
+        CommunityRoute.CommunityPreviewRoute.name,
         HPediaRoute.HPedia.name,
         "${HPediaRoute.HPediaSearchRoute.name}/{type}",
         "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
@@ -73,12 +74,13 @@ class MainActivity : AppCompatActivity() {
         UserInfoGraph.MyActivityRoute.name,
         UserInfoGraph.MyCommentRoute.name,
         UserInfoGraph.MyPostRoute.name,
-        LIKE_ROUTE
+        LIKE_ROUTE,
+        MagazineRoute.Magazine.name
     )
     private val bottomNav = listOf(
         BottomScreen.Home.name,
         BottomScreen.HPedia.name,
-        BottomScreen.Like.name,
+        BottomScreen.Magazine.name,
         BottomScreen.MyPage.name
     )
 
@@ -139,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                             initValue = currentScreen,
                             onClickHome = navHostController::navigateToHome,
                             onClickHPedia = navHostController::navigateToHPedia,
-                            onClickLike = navHostController::navigateToLike,
+                            onClickLike = navHostController::navigateToMagazineHome,
                             onClickMyPage = navHostController::navigateToUserInfoGraph
                         )
                     }

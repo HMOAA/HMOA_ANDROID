@@ -11,6 +11,7 @@ import com.hmoa.core_network.service.CommunityCommentService
 import com.hmoa.core_network.service.CommunityService
 import com.hmoa.core_network.service.FcmService
 import com.hmoa.core_network.service.LoginService
+import com.hmoa.core_network.service.MagazineService
 import com.hmoa.core_network.service.MainService
 import com.hmoa.core_network.service.MemberService
 import com.hmoa.core_network.service.NoteService
@@ -182,5 +183,11 @@ object ServiceModule {
     @Provides
     fun providerTermService(retrofit: Retrofit): TermService {
         return retrofit.create(TermService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providerMagazineService(retrofit : Retrofit) : MagazineService{
+        return retrofit.create(MagazineService::class.java)
     }
 }

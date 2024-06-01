@@ -49,7 +49,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 fun PostContent(
     modifier : Modifier = Modifier,
     width : Dp,
-    onChangeBottomSheetState : (Boolean) -> Unit,
+    onChangeBottomSheetState : () -> Unit,
     profile : String,
     nickname : String,
     dateDiff : String,
@@ -118,7 +118,7 @@ fun PostContent(
             //menu (isWritten true >> 수정, 삭제, 취소 / false >> 신고하기, 취소
             IconButton(
                 modifier = Modifier.size(16.dp),
-                onClick = { onChangeBottomSheetState(true) }
+                onClick = { onChangeBottomSheetState() }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.three_dot_menu_vertical),

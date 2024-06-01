@@ -1,7 +1,15 @@
 package com.example.userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -15,11 +23,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.feature_userinfo.MyPageCategory
 import com.hmoa.feature_userinfo.NoDataPage
 import com.hmoa.feature_userinfo.viewModel.CommentUiState
 import com.hmoa.feature_userinfo.viewModel.CommentViewModel
@@ -28,17 +39,26 @@ import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 fun MyCommentRoute(
     onNavBack: () -> Unit,
     onNavCommunity: (Int) -> Unit,
+    onNavPerfume : (Int) -> Unit,
     viewModel: CommentViewModel = hiltViewModel()
 ) {
     //comment list
     val commentUiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val type = viewModel.type.collectAsStateWithLifecycle()
 
     MyCommentPage(
         uiState = commentUiState.value,
+        errState = errState.value,
         type = type.value,
         onNavBack = onNavBack,
-        onNavCommunity = onNavCommunity,
+        onNavParent = {
+            if (type.value == MyPageCategory.향수.name){
+                onNavPerfume(it)
+            } else {
+                onNavCommunity(it)
+            }
+        },
         onTypeChanged = {
             viewModel.changeType(it)
         }
@@ -48,16 +68,16 @@ fun MyCommentRoute(
 @Composable
 fun MyCommentPage(
     uiState: CommentUiState,
+    errState : ErrorUiState,
     type: String,
     onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
+    onNavParent : (Int) -> Unit,
     onTypeChanged: (String) -> Unit
 ) {
     when (uiState) {
-        CommentUiState.Loading -> {
+        CommentUiState.Loading -> {9
             AppLoadingScreen()
         }
-
         is CommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems().itemSnapshotList
             MyCommentContent(
@@ -65,12 +85,15 @@ fun MyCommentPage(
                 type = type,
                 onTypeChanged = onTypeChanged,
                 onNavBack = onNavBack,
-                onNavCommunity = onNavCommunity
+                onNavParent = onNavParent
             )
         }
-
         CommentUiState.Error -> {
-
+            ErrorUiSetView(
+                onConfirmClick = onNavBack,
+                errorUiState = errState,
+                onCloseClick = onNavBack
+            )
         }
     }
 }
@@ -81,7 +104,7 @@ private fun MyCommentContent(
     type: String,
     onTypeChanged: (String) -> Unit,
     onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
+    onNavParent: (Int) -> Unit,
 ) {
     val commentCount = comments.size
 
@@ -114,7 +137,7 @@ private fun MyCommentContent(
                                 comment = comment.content,
                                 isFirst = false,
                                 heartCount = comment.heartCount,
-                                onNavCommunity = { onNavCommunity(comment.parentId) },
+                                onNavCommunity = { onNavParent(comment.parentId) },
                                 onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
                                 isSelected = comment.liked,
                                 onChangeSelect = {
@@ -123,7 +146,9 @@ private fun MyCommentContent(
                             )
                             if (index < commentCount - 1) {
                                 Spacer(
-                                    modifier = Modifier.fillMaxWidth().height(1.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(1.dp)
                                         .background(color = CustomColor.gray2)
                                 )
                             }

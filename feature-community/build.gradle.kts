@@ -66,6 +66,7 @@ dependencies {
 
     //paging
     implementation("androidx.paging:paging-compose:3.2.0")
+    implementation("androidx.compose.material:material:1.2.0-beta02")
 
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")

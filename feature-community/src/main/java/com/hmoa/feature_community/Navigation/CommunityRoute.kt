@@ -5,7 +5,7 @@ enum class CommunityRoute {
     CommunityDescriptionRoute,
     CommunityEditRoute,
     CommunityHomeRoute,
-    CommunityPageRoute,
+    CommunityPreviewRoute,
     CommunityPostRoute,
     CommunitySearchRoute,
     CommunityCommentEditRoute,

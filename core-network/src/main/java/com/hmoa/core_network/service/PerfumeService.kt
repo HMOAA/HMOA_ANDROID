@@ -3,9 +3,21 @@ package com.hmoa.core_network.service
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PerfumeAgeResponseDto
+import com.hmoa.core_model.response.PerfumeDetailResponseDto
+import com.hmoa.core_model.response.PerfumeDetailSecondResponseDto
+import com.hmoa.core_model.response.PerfumeGenderResponseDto
+import com.hmoa.core_model.response.PerfumeLikeResponseDto
+import com.hmoa.core_model.response.PerfumeWeatherResponseDto
+import com.hmoa.core_model.response.RecentPerfumeResponseDto
 import com.skydoves.sandwich.ApiResponse
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface PerfumeService {
     @GET("/perfume/{perfumeId}")
@@ -49,4 +61,7 @@ interface PerfumeService {
 
     @GET("/perfume/like")
     suspend fun getLikePerfumes(): ApiResponse<DataResponseDto<List<PerfumeLikeResponseDto>>>
+
+    @GET("/perfume/recentPerfume")
+    suspend fun getRecentPerfumes() : ApiResponse<RecentPerfumeResponseDto>
 }

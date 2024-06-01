@@ -3,7 +3,13 @@ package com.hmoa.core_designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +33,44 @@ fun ReportModal(onOkClick: () -> Unit, onCancelClick: () -> Unit) {
                 "신고",
                 { onOkClick() },
                 textColor = Color.Black,
+                textSize = 20,
+                radious = 10
+            )
+            Spacer(modifier = Modifier.fillMaxWidth().background(Color.Transparent).height(10.dp))
+            ModalButton(
+                "취소",
+                { onCancelClick() },
+                textColor = Color.Black,
+                textSize = 20,
+                radious = 10
+            )
+        }
+    }
+}
+
+@Composable
+fun EditModal(
+    onDeleteClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onCancelClick: () -> Unit
+){
+    Column(
+        modifier = Modifier.fillMaxWidth().background(color = Color.Transparent),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Column(modifier = Modifier.padding(vertical = 20.dp).padding(horizontal = 20.dp).background(color = Color.Transparent)) {
+            ModalButton(
+                "수정",
+                { onEditClick() },
+                textColor = CustomColor.blue,
+                textSize = 20,
+                radious = 10
+            )
+            Spacer(modifier = Modifier.fillMaxWidth().background(Color.Transparent).height(10.dp))
+            ModalButton(
+                "삭제",
+                { onDeleteClick() },
+                textColor = CustomColor.red,
                 textSize = 20,
                 radious = 10
             )

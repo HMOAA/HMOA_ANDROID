@@ -6,7 +6,15 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -42,7 +50,7 @@ import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
 
-const val APP_VERSION = "1.0.0"
+const val APP_VERSION = "1.1.0"
 
 @Composable
 internal fun MyPageRoute(
@@ -50,6 +58,7 @@ internal fun MyPageRoute(
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
     onNavLogin: () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
@@ -86,6 +95,7 @@ internal fun MyPageRoute(
                 onNavLogin()
             },
             onNavKakaoChat = navKakao,
+            onNavMyPerfume = onNavMyPerfume,
             onNavEditProfile = onNavEditProfile,
             onNavMyActivity = onNavMyActivity,
             onNavManageMyInfo = onNavManageMyInfo,
@@ -110,6 +120,7 @@ fun MyPage(
     onDelAccount: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
     onNavKakaoChat: () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
@@ -120,7 +131,6 @@ fun MyPage(
         UserInfoUiState.Loading -> {
             AppLoadingScreen()
         }
-
         is UserInfoUiState.User -> {
             MyPageContent(
                 profile = uiState.profile,
@@ -131,12 +141,12 @@ fun MyPage(
                 openPrivacyPolicyLink = openPrivacyPolicyLink,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
+                onNavMyPerfume = onNavMyPerfume,
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
             )
         }
-
         UserInfoUiState.Error -> {
             ErrorUiSetView(
                 onConfirmClick = { onErrorHandleLoginAgain() },
@@ -144,7 +154,6 @@ fun MyPage(
                 onCloseClick = { onBackClick() }
             )
         }
-
         else -> {}
     }
 }
@@ -158,12 +167,14 @@ private fun MyPageContent(
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
     onDelAccount: () -> Unit,
+    onNavMyPerfume : () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
 ) {
     val columnInfo = listOf(
+        ColumnData("나의 향수") {onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
@@ -175,47 +186,48 @@ private fun MyPageContent(
         ColumnData("계정삭제") { onDelAccount() }
     )
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        TopBar(title = "마이페이지")
-        UserProfileInfo(
-            profile = profile,
-            nickname = nickname,
-            provider = provider,
-            onNavEditProfile = onNavEditProfile
-        )
-        ServiceAlarm()
-        HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-        LazyColumn {
-            itemsIndexed(columnInfo) { idx, it ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(46.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = it.title, fontSize = 16.sp)
+        item{
+            TopBar(title = "마이페이지")
+            UserProfileInfo(
+                profile = profile,
+                nickname = nickname,
+                provider = provider,
+                onNavEditProfile = onNavEditProfile
+            )
+            ServiceAlarm()
+            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+        }
 
-                    IconButton(
-                        modifier = Modifier.size(20.dp),
-                        onClick = it.onNavClick
-                    ) {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
-                            contentDescription = "Navigation Button",
-                            tint = CustomColor.gray2
-                        )
-                    }
+        itemsIndexed(columnInfo) { idx, it ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = it.title, fontSize = 16.sp)
+
+                IconButton(
+                    modifier = Modifier.size(20.dp),
+                    onClick = it.onNavClick
+                ) {
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
+                        contentDescription = "Navigation Button",
+                        tint = CustomColor.gray2
+                    )
                 }
-                if (idx % 3 == 2) {
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                }
+            }
+            if (idx % 3 == 2) {
+                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
             }
         }
     }

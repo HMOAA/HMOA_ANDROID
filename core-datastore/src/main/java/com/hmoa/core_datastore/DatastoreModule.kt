@@ -18,6 +18,8 @@ import com.hmoa.core_datastore.Login.LoginLocalDataStore
 import com.hmoa.core_datastore.Login.LoginLocalDataStoreImpl
 import com.hmoa.core_datastore.Login.LoginRemoteDataStore
 import com.hmoa.core_datastore.Login.LoginRemoteDataStoreImpl
+import com.hmoa.core_datastore.Magazine.MagazineDataStore
+import com.hmoa.core_datastore.Magazine.MagazineDataStoreImpl
 import com.hmoa.core_datastore.Main.MainDataStore
 import com.hmoa.core_datastore.Main.MainDataStoreImpl
 import com.hmoa.core_datastore.Member.MemberDataStore
@@ -122,5 +124,9 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun provideTermDataStore(termDataStoreImpl: TermDataStoreImpl): TermDataStore
+
+    @Singleton
+    @Binds
+    fun provideMagazineDataStore(magazineDataStoreImpl: MagazineDataStoreImpl) : MagazineDataStore
 
 }

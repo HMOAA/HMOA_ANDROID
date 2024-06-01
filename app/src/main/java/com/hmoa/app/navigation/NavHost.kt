@@ -43,6 +43,10 @@ import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
 import com.hmoa.feature_like.Screen.LikeRoute
+import com.hmoa.feature_like.Screen.navigateToLike
+import com.hmoa.feature_magazine.Navigation.magazineDesc
+import com.hmoa.feature_magazine.Navigation.magazineMain
+import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
 import com.hmoa.feature_perfume.navigation.createNewPerfumeComment
 import com.hmoa.feature_perfume.navigation.editMyPerfumeComment
 import com.hmoa.feature_perfume.navigation.navigateToCreateNewperfumeComment
@@ -74,17 +78,15 @@ fun SetUpNavGraph(
             onPerfumeClick = { navController.navigateToPerfume(it) })
 
         /** authentication 모듈 */
-        loginScreen(
-            onSignupClick = { navController.navigateToSignup(it) },
-            onHomeClick = { navController.navigateToHome() })
-        signupScreen(onPickNicknameClick = { navController.navigateToPickNickname(it) })
+        loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)
+        signupScreen(onPickNicknameClick = navController::navigateToPickNickname)
         pickNicknameScreen(
-            onPickPersonalInfoClick = { navController.navigateToPickPersonalInfo(it) },
-            onSignupClick = { navController.navigateToSignup(it) }
+            onPickPersonalInfoClick = navController::navigateToPickPersonalInfo,
+            onSignupClick = navController::navigateToSignup
         )
         pickPersonalInfoScreen(
             onHomeClick = navController::navigateToHome,
-            onPickNicknameClick = { navController.navigateToPickNickname(it) }
+            onPickNicknameClick = navController::navigateToPickNickname
         )
 
         /** like 모듈 */
@@ -109,7 +111,9 @@ fun SetUpNavGraph(
             onNavMyPost = navController::navigateToMyPostPage,
             onNavMyComment = navController::navigateToMyCommentPage,
             onNavMyBirth = navController::navigateToMyBirth,
-            onNavMyGender = navController::navigateToMyGenderPage
+            onNavMyGender = navController::navigateToMyGenderPage,
+            onNavMyPerfume = navController::navigateToLike,
+            onNavPerfume = navController::navigateToPerfume
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */
@@ -168,6 +172,19 @@ fun SetUpNavGraph(
         brandSearchScreen(
             onBackClick = navController::navigateToBack,
             onBrandClick = { navController.navigateToBrand(it.toString()) }
+        )
+
+        /** magazine 모듈 */
+        magazineMain(
+            onNavHome = navController::navigateToHome,
+            onNavPerfumeDesc = navController::navigateToPerfume,
+            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
+            onNavMagazineDesc = navController::navigateToMagazineDesc
+        )
+        magazineDesc(
+            onNavBack = navController::navigateToBack,
+            onNavLogin = navController::navigateToLogin,
+            onNavDesc = navController::navigateToMagazineDesc
         )
     }
 }

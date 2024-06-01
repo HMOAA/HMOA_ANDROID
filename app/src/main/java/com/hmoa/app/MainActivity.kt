@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
-        CommunityRoute.CommunityPageRoute.name,
+        CommunityRoute.CommunityPreviewRoute.name,
         HPediaRoute.HPedia.name,
         "${HPediaRoute.HPediaSearchRoute.name}/{type}",
         "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",

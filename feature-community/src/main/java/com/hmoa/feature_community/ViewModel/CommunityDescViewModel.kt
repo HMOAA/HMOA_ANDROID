@@ -257,10 +257,12 @@ class CommunityDescViewModel @Inject constructor(
             }
         }
     }
-    private fun getCommentPaging(id: Int) = CommunityCommentPagingSource(
-        communityCommentRepository = communityCommentRepository,
-        id = id
-    )
+    private fun getCommentPaging(id: Int) : CommunityCommentPagingSource {
+        return CommunityCommentPagingSource(
+            communityCommentRepository = communityCommentRepository,
+            id = id
+        )
+    }
 }
 
 sealed interface CommunityDescUiState {

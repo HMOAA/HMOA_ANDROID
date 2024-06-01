@@ -2,7 +2,6 @@ package com.hmoa.feature_community.Screen
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,13 +30,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
@@ -74,15 +68,12 @@ fun CommunityDescriptionRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
-    var type by remember{mutableStateOf("post")}
     val reportState = viewModel.reportState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
     CommunityDescriptionPage(
         errState = errState.value,
-        type = type,
-        onChangeType = {type = it},
         isLiked = isLiked.value,
         onChangeLike = {viewModel.updateLike()},
         uiState = uiState.value,
@@ -130,8 +121,6 @@ fun CommunityDescriptionRoute(
 @Composable
 fun CommunityDescriptionPage(
     errState : ErrorUiState,
-    type : String,
-    onChangeType : (String) -> Unit,
     uiState : CommunityDescUiState,
     commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     isLiked : Boolean,
@@ -151,10 +140,8 @@ fun CommunityDescriptionPage(
         CommunityDescUiState.Loading -> AppLoadingScreen()
         is CommunityDescUiState.CommunityDesc -> {
             CommunityDescContent(
-                type = type,
-                onChangeType = onChangeType,
                 community = uiState.community,
-                commentList = commentList.itemSnapshotList,
+                commentList = commentList,
                 isLiked = isLiked,
                 photoList = uiState.photoList,
                 onChangeLike = onChangeLike,
@@ -168,7 +155,6 @@ fun CommunityDescriptionPage(
                 onNavCommunityEdit = onNavCommunityEdit,
                 onNavCommentEdit = onNavCommentEdit,
             )
-
         }
         CommunityDescUiState.Error -> {
             ErrorUiSetView(
@@ -183,10 +169,8 @@ fun CommunityDescriptionPage(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun CommunityDescContent(
-    type : String,
-    onChangeType : (String) -> Unit,
     community : CommunityDefaultResponseDto,
-    commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
+    commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     photoList : List<String>,
     isLiked : Boolean,
     onChangeLike : () -> Unit,
@@ -200,19 +184,15 @@ private fun CommunityDescContent(
     onNavCommunityEdit : () -> Unit,
     onNavCommentEdit : (Int) -> Unit,
 ){
-    val scrollState = rememberScrollState()
+    var type by remember{mutableStateOf("post")}
+    val onChangeType : (String) -> Unit = { type = it }
     val modalSheetState = androidx.compose.material.rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded })
     var comment by remember{mutableStateOf<CommunityCommentWithLikedResponseDto?>(null)}
-    var isCommentShow by remember{mutableStateOf(false)}
-    val configuration = LocalConfiguration.current
     val scope = rememberCoroutineScope()
     val dialogOpen = { scope.launch { modalSheetState.show() } }
-    val dialogClose = {
-        scope.launch{modalSheetState.hide()}
-        isCommentShow = false
-    }
+    val dialogClose = { scope.launch { modalSheetState.hide() } }
 
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
@@ -228,7 +208,7 @@ private fun CommunityDescContent(
                 EditModal(
                     onDeleteClick = { onDeleteComment(comment!!.commentId) },
                     onEditClick = { onNavCommentEdit(comment!!.commentId) },
-                    onCancelClick = dialogClose
+                    onCancelClick = { dialogClose() }
                 )
             }
             else {
@@ -247,105 +227,138 @@ private fun CommunityDescContent(
         sheetBackgroundColor = CustomColor.gray2,
         sheetContentColor = Color.Transparent
     ) {
+        CommunityDescMainContent(
+            community = community,
+            onDialogOpen = {
+                dialogOpen()
+                onChangeType("post")
+            },
+            isLiked = isLiked,
+            onChangeLike = onChangeLike,
+            photoList = photoList,
+            commentList = commentList,
+            onChangeCommentLike = onChangeCommentLike,
+            onChangeType = onChangeType,
+            onPostComment = onPostComment,
+            setComment = { comment = it },
+            onNavBack = onNavBack,
+        )
+    }
+}
+
+@Composable
+private fun CommunityDescMainContent(
+    community: CommunityDefaultResponseDto,
+    isLiked: Boolean,
+    onChangeLike: () -> Unit,
+    photoList: List<String>,
+    commentList: LazyPagingItems<CommunityCommentWithLikedResponseDto>,
+    onChangeType: (String) -> Unit,
+    onChangeCommentLike: (Int, Boolean) -> Unit,
+    onPostComment: (String) -> Unit,
+    setComment: (CommunityCommentWithLikedResponseDto) -> Unit,
+    onDialogOpen : () -> Unit,
+    onNavBack : () -> Unit,
+){
+    val scrollState = rememberScrollState()
+    val configuration = LocalConfiguration.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ) {
+        TopBar(
+            title = "Community",
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            onNavClick = onNavBack
+        )
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.White)
-        ) {
-            TopBar(
-                title = "Community",
-                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = onNavBack
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp)
+                .verticalScroll(scrollState)
+        ){
+            Spacer(Modifier.height(16.dp))
+
+            Text(
+                modifier = Modifier.padding(start = 16.dp),
+                text = community.category,
+                fontSize = 14.sp,
+                color = CustomColor.gray2
             )
+            Spacer(Modifier.height(18.dp))
 
-            Column(
+            PostContent(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(scrollState)
+                    .fillMaxWidth(),
+                width = configuration.screenWidthDp.dp,
+                onChangeBottomSheetState = onDialogOpen,
+                profile = community.category,
+                nickname = community.author,
+                dateDiff = community.time,
+                title = community.title,
+                content = community.content,
+                heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
+                isLiked = isLiked,
+                onChangeLike = onChangeLike,
+                pictures = photoList
+            )
+            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+            Spacer(Modifier.height(32.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ){
-                Spacer(Modifier.height(16.dp))
-
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = community.category,
-                    fontSize = 14.sp,
-                    color = CustomColor.gray2
+                    text = "답변",
+                    fontSize = 16.sp,
+                    color = Color.Black
                 )
-                Spacer(Modifier.height(18.dp))
-
-                PostContent(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    width = configuration.screenWidthDp.dp,
-                    onChangeBottomSheetState = {
-                        scope.launch{modalSheetState.show()}
-                        onChangeType("post")
-                    },
-                    profile = community.category,
-                    nickname = community.author,
-                    dateDiff = community.time,
-                    title = community.title,
-                    content = community.content,
-                    heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
-                    isLiked = isLiked,
-                    onChangeLike = onChangeLike,
-                    pictures = photoList
-                )
-                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                Spacer(Modifier.height(32.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        text = "답변",
-                        fontSize = 16.sp,
-                        color = Color.Black
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = "+${commentList.size}",
-                        fontSize = 12.sp,
-                        color = Color.Black
-                    )
-                }
-
-                Spacer(Modifier.height(21.dp))
-
-                Comments(
-                    commentList = commentList,
-                    changeBottomOptionState = {dialogOpen()},
-                    onChangeType = onChangeType,
-                    onChangeCommentLike = onChangeCommentLike,
-                    setComment = {comment = it}
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = "+${commentList.itemCount}",
+                    fontSize = 12.sp,
+                    color = Color.Black
                 )
             }
-            CommentInputBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(horizontal = 16.dp)
-                    .background(color = CustomColor.gray6, shape = RoundedCornerShape(5.dp)),
-                profile = community.myProfileImgUrl,
-                onCommentApply = {onPostComment(it)}
+
+            Spacer(Modifier.height(21.dp))
+
+            Comments(
+                commentList = commentList,
+                changeBottomOptionState = { onDialogOpen() },
+                onChangeType = onChangeType,
+                onChangeCommentLike = onChangeCommentLike,
+                setComment = { setComment(it) }
             )
-            Spacer(Modifier.height(7.dp))
         }
+        CommentInputBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(horizontal = 16.dp)
+                .background(color = CustomColor.gray6, shape = RoundedCornerShape(5.dp)),
+            profile = community.myProfileImgUrl,
+            onCommentApply = {onPostComment(it)}
+        )
+        Spacer(Modifier.height(7.dp))
     }
 }
 
 @Composable
 private fun Comments(
-    commentList : ItemSnapshotList<CommunityCommentWithLikedResponseDto>,
+    commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     changeBottomOptionState : (Boolean) -> Unit,
     onChangeType: (String) -> Unit,
     onChangeCommentLike : (Int, Boolean) -> Unit,
     setComment : (CommunityCommentWithLikedResponseDto) -> Unit,
 ){
-    if (commentList.isNotEmpty()) {
-        commentList.reversed().forEachIndexed { index, comment ->
+    val comments = commentList.itemSnapshotList
+    if (comments.isNotEmpty()) {
+        comments.reversed().forEachIndexed { index, comment ->
             if (comment != null){
                 Comment(
                     isEditable = true,
@@ -364,7 +377,7 @@ private fun Comments(
                         onChangeType("comment")
                     }
                 )
-                if (index != commentList.size - 1) {
+                if (index != comments.size - 1) {
                     Spacer(Modifier.height(15.dp))
                     HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
                 }
@@ -378,153 +391,5 @@ private fun Comments(
             color = Color.Black
         )
         Spacer(Modifier.height(30.dp))
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun BottomOptionDialog(
-    changeBottomOptionState : (Boolean) -> Unit,
-    isWritten : Boolean,
-    type : String,
-    onDeleteComment: () -> Unit,
-    onDeleteCommunity: () -> Unit,
-    onReportCommunity: () -> Unit,
-    onReportComment: () -> Unit,
-    onNavCommunityEdit : () -> Unit,
-    onNavCommentEdit : () -> Unit
-){
-    val dialogDefaultTextStyle = TextStyle(
-        fontSize = 20.sp,
-        color = CustomColor.blue
-    )
-    val dialogRedTextStyle = TextStyle(
-        fontSize = 20.sp,
-        color = CustomColor.red
-    )
-
-    ModalBottomSheet(
-        onDismissRequest = { changeBottomOptionState(false) },
-        containerColor = Color.White,
-        scrimColor = Color.Black.copy(alpha = 0.3f),
-        dragHandle = null
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color.Transparent,
-                    shape = RoundedCornerShape(size = 20.dp)
-                )
-                .padding(vertical = 16.dp)
-        ) {
-            if (isWritten) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            //게시글일 경우
-                            if (type == "post") {
-                                changeBottomOptionState(false)
-                                onNavCommunityEdit()
-                            } else {
-                                changeBottomOptionState(false)
-                                onNavCommentEdit()
-                            }
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "수정",
-                        textAlign = TextAlign.Center,
-                        style = dialogDefaultTextStyle
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            //post 일 경우
-                            if (type == "post") {
-                                changeBottomOptionState(false)
-                                onDeleteCommunity()
-                            }
-                            //댓글 일 경우
-                            else {
-                                changeBottomOptionState(false)
-                                onDeleteComment()
-                            }
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "삭제",
-                        textAlign = TextAlign.Center,
-                        style = dialogDefaultTextStyle
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            changeBottomOptionState(false)
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "취소",
-                        textAlign = TextAlign.Center,
-                        style = dialogRedTextStyle
-                    )
-                }
-            } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            //게시글
-                            if (type == "post") {
-                                onReportCommunity()
-                            }
-                            //댓글
-                            else {
-                                onReportComment()
-                            }
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "신고하기",
-                        textAlign = TextAlign.Center,
-                        style = dialogDefaultTextStyle
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            changeBottomOptionState(false)
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "취소",
-                        textAlign = TextAlign.Center,
-                        style = dialogRedTextStyle
-                    )
-                }
-            }
-        }
     }
 }

@@ -45,8 +45,6 @@ class PerfumeViewmodel @Inject constructor(
     private var perfumeCommentsState = MutableStateFlow<List<PerfumeCommentResponseDto>?>(null)
     private var _perfumeCommentsCountState = MutableStateFlow<Int>(0)
     val perfumeCommentsCountState: StateFlow<Int> = _perfumeCommentsCountState
-    private var _isPerfumeCommentUpdated = MutableStateFlow<Boolean>(false)
-    val isPerfumeCommentUpdated: StateFlow<Boolean> = _isPerfumeCommentUpdated
     private var _perfumeCommentIdStateToReport = MutableStateFlow<Int?>(null)
     val perfumeCommentIdStateToReport = _perfumeCommentIdStateToReport
 
@@ -301,7 +299,6 @@ class PerfumeViewmodel @Inject constructor(
             perfumeCommentsState.value = perfumeCommentsState.value?.map { comment ->
                 if (comment.id == newPerfumeComment.id) newPerfumeComment else comment
             }
-            _isPerfumeCommentUpdated.update { !_isPerfumeCommentUpdated.value }
             viewModelScope.launch(Dispatchers.IO) {
                 updateLikePerfumeComment(like, commentId)
             }

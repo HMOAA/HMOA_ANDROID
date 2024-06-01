@@ -87,7 +87,6 @@ fun PerfumeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
     val perfumeComentCount by viewModel.perfumeCommentsCountState.collectAsStateWithLifecycle()
-    val isPerfumeCommentUpdated by viewModel.isPerfumeCommentUpdated.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
 
     ErrorUiSetView(
@@ -121,7 +120,6 @@ fun PerfumeScreen(
                 age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
                 perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
                 perfumeCommentsCount = perfumeComentCount,
-                isPerfumeCommentUpdated = isPerfumeCommentUpdated,
                 onSpecificCommentClick = { commentId, isEditable ->
                     onSpecificCommentClick(
                         commentId,
@@ -169,7 +167,6 @@ fun PerfumeContent(
     age: PerfumeAgeResponseDto?,
     perfumeComments: List<PerfumeCommentResponseDto>?,
     perfumeCommentsCount: Int,
-    isPerfumeCommentUpdated: Boolean,
     updatePerfumeCommentIdToReport: (commentId: Int) -> Unit
 ) {
     val verticalScrollState = rememberScrollState()

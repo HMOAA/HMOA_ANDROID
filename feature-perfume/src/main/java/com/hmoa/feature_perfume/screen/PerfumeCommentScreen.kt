@@ -110,7 +110,7 @@ fun PerfumeCommentScreen(
                     onSpecificCommentClick = { commentId, isEditable -> onSpecificCommentClick(commentId, isEditable) },
                     onSpecificCommentLikeClick = { commentId, isLike, index ->
                         if (viewModel.getHasToken()) {
-                            viewModel.updatePerfumeCommentLike(commentId = commentId, like = isLike, index = index)
+                            viewModel.updatePerfumeCommentLike(commentId = commentId, like = isLike)
                             when ((uiState as PerfumeCommentViewmodel.PerfumeCommentUiState.CommentData).sortType) {
                                 SortType.LATEST -> latestPerfumeComments?.refresh()
                                 SortType.LIKE -> likePerfumeComments?.refresh()
@@ -196,17 +196,18 @@ fun PerfumeCommentContent(
                         onSortLatestClick = { onSortLatestClick() },
                         sortType = sortType
                     )
-                    when (sortType) {
-                        SortType.LATEST -> PerfumeCommentList(
+                    if (sortType == SortType.LIKE) {
+                        PerfumeCommentList(
                             likePerfumeComments,
                             {
                                 saveReportTargetId(it)
                                 scope.launch { modalSheetState.show() }
                             },
                             { id, isWrited -> onSpecificCommentClick(id, isWrited) },
-                            { commentId, isLike, index -> onSpecificCommentLikeClick(commentId, isLike, index) })
-
-                        SortType.LIKE -> PerfumeCommentList(
+                            { commentId, isLike, index -> onSpecificCommentLikeClick(commentId, isLike, index) }
+                        )
+                    } else {
+                        PerfumeCommentList(
                             latestPerfumeComments,
                             {
                                 saveReportTargetId(it)
@@ -216,7 +217,6 @@ fun PerfumeCommentContent(
                             { commentId, isLike, index -> onSpecificCommentLikeClick(commentId, isLike, index) }
                         )
                     }
-
                 }
             }
             BottomCommentAddBar(onAddCommentClick = { onAddCommentClick() })

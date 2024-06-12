@@ -20,7 +20,16 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Grant execute permissions for scripts
+        run: |
+          chmod +x setup-local-properties.sh
+          chmod +x load-env-from-json.sh
+
+      - name: Run setup script
+        run: ./setup-local-properties.sh
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew build

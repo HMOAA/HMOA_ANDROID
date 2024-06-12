@@ -14,4 +14,4 @@
 .cxx
 local.properties
 deploymentTargetDropDown.xml
-./config.json
+/config.json

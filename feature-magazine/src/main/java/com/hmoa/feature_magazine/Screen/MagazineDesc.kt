@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +43,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
@@ -88,9 +91,7 @@ fun MagazineDescScreen(
     onNavDesc : (Int) -> Unit,
 ){
     when(uiState){
-        MagazineDescUiState.Loading -> {
-            AppLoadingScreen()
-        }
+        MagazineDescUiState.Loading -> AppLoadingScreen()
         is MagazineDescUiState.Success -> {
             MagazineDescContent(
                 title = uiState.title,
@@ -208,12 +209,14 @@ private fun ContentHeader(
         Text(
             text = title,
             fontSize = 24.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(16.dp))
         Text(
             text = releaseDate,
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = CustomColor.gray3
         )
     }
@@ -239,13 +242,14 @@ private fun MagazineContent(
             verticalAlignment = Alignment.CenterVertically
         ){
             Image(
-                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_view_number),
+                painter = painterResource(R.drawable.ic_view_number),
                 contentDescription = "View Number"
             )
             Spacer(Modifier.width(5.dp))
             Text(
                 text = viewCount.toString(),
                 fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 color = CustomColor.gray3
             )
         }
@@ -271,6 +275,7 @@ private fun MagazineContent(
                 .padding(horizontal = 16.dp),
             text = preview,
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = CustomColor.gray3
         )
     }
@@ -307,12 +312,14 @@ private fun MagazineDescData(
             text = header,
             fontSize = 20.sp,
             color = Color.Black,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(54.dp))
         Text(
             text = content,
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
     }
@@ -353,6 +360,7 @@ private fun MagazineFooter(
         Text(
             text = "매거진이 유용한 정보였다면",
             fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black,
         )
         Spacer(Modifier.width(54.dp))
@@ -373,6 +381,7 @@ private fun MagazineFooter(
             Text(
                 text = likeCount.toString(),
                 fontSize = 14.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 color = CustomColor.gray2
             )
         }
@@ -395,6 +404,7 @@ private fun RecentMagazines(
             modifier = Modifier.padding(start = 16.dp),
             text = "최신 매거진",
             fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.White
         )
         Spacer(Modifier.height(16.dp))
@@ -432,9 +442,7 @@ private fun RecentMagazineItem(
         modifier = Modifier
             .width(132.dp)
             .wrapContentHeight()
-            .clickable{
-                onNavDesc()
-            }
+            .clickable{onNavDesc()}
     ){
         Box(
             modifier = Modifier
@@ -453,6 +461,7 @@ private fun RecentMagazineItem(
         Text(
             text = title,
             fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.White
         )
     }

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_community.ViewModel.CommunitySearchUiState
@@ -52,13 +53,7 @@ fun CommunitySearchPage(
 ){
 
     when(uiState){
-        CommunitySearchUiState.Loading -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Yellow)
-            ){}
-        }
+        CommunitySearchUiState.Loading ->  AppLoadingScreen()
         is CommunitySearchUiState.SearchResult -> {
             Column(
                 modifier = Modifier

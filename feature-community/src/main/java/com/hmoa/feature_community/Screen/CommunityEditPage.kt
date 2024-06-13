@@ -6,7 +6,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -25,10 +35,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
@@ -95,14 +108,11 @@ fun CommunityEditPage(
     onNavBack: () -> Unit,
     onNavCommunityDesc: () -> Unit
 ) {
-    val scrollableState = rememberScrollState()
-
     when (uiState) {
-        CommunityEditUiState.Loading -> {
-            AppLoadingScreen()
-        }
-
+        CommunityEditUiState.Loading -> AppLoadingScreen()
         CommunityEditUiState.Success -> {
+            val scrollableState = rememberScrollState()
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -170,6 +180,7 @@ private fun EditTitleTextField(
         Text(
             text = "제목:",
             fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
 
@@ -187,6 +198,7 @@ private fun EditTitleTextField(
             textStyle = TextStyle(
                 fontSize = 14.sp,
                 color = Color.Black,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             ),
             maxLines = 1,
             singleLine = true,
@@ -196,6 +208,7 @@ private fun EditTitleTextField(
                 Text(
                     text = "제목을 입력해주세요",
                     fontSize = 14.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                     color = CustomColor.gray3
                 )
             }
@@ -205,6 +218,7 @@ private fun EditTitleTextField(
         Text(
             text = "${title.length}/20",
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black,
         )
     }
@@ -224,6 +238,7 @@ private fun EditContentTextField(
         },
         textStyle = TextStyle(
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
     ) {
@@ -232,6 +247,7 @@ private fun EditContentTextField(
             Text(
                 text = "내용을 입력해주세요",
                 fontSize = 14.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 color = CustomColor.gray3
             )
         }

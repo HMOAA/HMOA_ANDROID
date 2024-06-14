@@ -7,8 +7,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.hmoa.core_common.Result
-import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_domain.repository.ReportRepository
@@ -32,8 +30,8 @@ class PerfumeCommentViewmodel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val handle: SavedStateHandle
 ) : ViewModel() {
-    private val authToken = MutableStateFlow<String?>(null)
-    private var hasToken = authToken.value != null
+    private var authToken = MutableStateFlow<String?>(null)
+    private var hasToken = false
     private var _unLoginedErrorState = MutableStateFlow<Boolean>(false)
     val unLoginedErrorState: StateFlow<Boolean> = _unLoginedErrorState
     private val TARGET_ID = "targetId"
@@ -42,16 +40,15 @@ class PerfumeCommentViewmodel @Inject constructor(
     val sortedLikeCommentsState: StateFlow<PagingData<PerfumeCommentResponseDto>?> = _sortedLikeCommentsState
     private var _sortedLatestCommentsState = MutableStateFlow<PagingData<PerfumeCommentResponseDto>?>(null)
     val sortedLatestCommentsState: StateFlow<PagingData<PerfumeCommentResponseDto>?> = _sortedLatestCommentsState
-    private var isSortState = MutableStateFlow(SortType.LATEST)
+    private var sortTypeState = MutableStateFlow(SortType.LATEST)
     private var PERFUME_ID = MutableStateFlow<Int?>(null)
     val uiState: StateFlow<PerfumeCommentUiState> =
         combine(
-            _sortedLikeCommentsState,
-            sortedLatestCommentsState,
-            isSortState
-        ) { likeComments, latestComments, isLikeSort ->
+            sortTypeState,
+            _sortedLikeCommentsState
+        ) { sortType, likecomments ->
             PerfumeCommentUiState.CommentData(
-                sortType = isLikeSort,
+                sortType = sortType,
             )
         }.stateIn(
             scope = viewModelScope,
@@ -71,6 +68,7 @@ class PerfumeCommentViewmodel @Inject constructor(
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
                 authToken.value = it
+                hasToken = true
             }
         }
     }
@@ -112,11 +110,12 @@ class PerfumeCommentViewmodel @Inject constructor(
     }
 
     fun onClickSortLike() {
-        isSortState.update { SortType.LIKE }
+
+        sortTypeState.update { SortType.LIKE }
     }
 
     fun onClickSortLatest() {
-        isSortState.update { SortType.LATEST }
+        sortTypeState.update { SortType.LATEST }
     }
 
     fun onClickReport() {
@@ -126,18 +125,11 @@ class PerfumeCommentViewmodel @Inject constructor(
         }
     }
 
-    fun updatePerfumeCommentLike(like: Boolean, commentId: Int, index: Int) {
+    fun updatePerfumeCommentLike(like: Boolean, commentId: Int) {
+
         if (hasToken) {
             viewModelScope.launch(Dispatchers.IO) {
-                updateLikePerfumeComment(like, commentId).asResult().collectLatest {
-                    when (it) {
-                        is Result.Loading -> {}
-                        is Result.Success -> {}
-                        is Result.Error -> {
-
-                        }
-                    }
-                }
+                updateLikePerfumeComment(like, commentId)
             }
         } else {
             _unLoginedErrorState.update { true }

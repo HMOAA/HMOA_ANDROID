@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class PerfumeCommentResponseDto(
     var content: String,
     val createdAt: String?,
-    val heartCount: Int,
+    var heartCount: Int,
     val id: Int,
     var liked: Boolean,
     val nickname: String,

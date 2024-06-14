@@ -1,6 +1,5 @@
 package com.hmoa.feature_community.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -28,6 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -42,9 +42,6 @@ class CommunityDescViewModel @Inject constructor(
     private val loginRepository : LoginRepository,
 ) : ViewModel() {
     private val authToken = MutableStateFlow<String?>(null)
-    //바텀 다이얼로그 state
-    private val _isOpenBottomOptions = MutableStateFlow(false)
-    val isOpenBottomOptions get() = _isOpenBottomOptions.asStateFlow()
     //community id
     private val _id = MutableStateFlow(-1)
     val id get() = _id.asStateFlow()
@@ -56,8 +53,6 @@ class CommunityDescViewModel @Inject constructor(
     val reportState get() = _reportState.asStateFlow()
 
     private val _flag = MutableStateFlow<Boolean?>(false)
-
-    private var _communities = MutableStateFlow<PagingData<CommunityCommentWithLikedResponseDto>?>(null)
 
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
@@ -81,11 +76,9 @@ class CommunityDescViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ErrorUiState.Loading
     )
-    init{
-        getAuthToken()
-    }
-    //community flow
-    private val communityFlow = combine(_flag, _id) { flag, id ->
+    init{getAuthToken()}
+    //ui state
+    val uiState: StateFlow<CommunityDescUiState> = combine(_flag, _id) { flag, id ->
         fetchLike(isLiked.value)
         if(flag == null) throw Exception("Something Wrong")
         val result = communityRepository.getCommunity(id)
@@ -93,16 +86,11 @@ class CommunityDescViewModel @Inject constructor(
         _isLiked.update { result.data!!.liked }
         _flag.update { false }
         result.data!!
-    }.asResult()
-    //ui state
-    val uiState: StateFlow<CommunityDescUiState> = combine(
-        communityFlow,
-        _communities
-    ) { communityResult, commentsResult ->
+    }.asResult().map{ communityResult ->
         when(communityResult) {
             is Result.Error -> CommunityDescUiState.Error
             is Result.Loading -> CommunityDescUiState.Loading
-            is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data,commentsResult)
+            is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data)
         }
     }.stateIn(
         scope = viewModelScope,
@@ -120,8 +108,6 @@ class CommunityDescViewModel @Inject constructor(
     }
     //token 보유 여부 return
     fun hasToken() : Boolean = authToken.value != null
-    //bottom option 상태 업데이트
-    fun updateBottomOptionsState(state: Boolean) = _isOpenBottomOptions.update { state }
     //커뮤니티 삭제
     fun delCommunity() {
         viewModelScope.launch {
@@ -152,13 +138,8 @@ class CommunityDescViewModel @Inject constructor(
     }
     //커뮤니티 좋아요
     fun updateLike() {
-        Log.d("Token Test", "Do Update Like")
-        if(authToken.value == null){
-            unLoginedErrorState.update{ true }
-            Log.d("Token Test", "Update unLoginState done : ${unLoginedErrorState.value}")
-        } else {
-            _flag.update { true }
-        }
+        if(authToken.value == null){unLoginedErrorState.update{ true }}
+        else {_flag.update { true }}
     }
     //댓글 Paging
     fun commentPagingSource(): Flow<PagingData<CommunityCommentWithLikedResponseDto>> = Pager(
@@ -276,22 +257,20 @@ class CommunityDescViewModel @Inject constructor(
             }
         }
     }
-    private fun getCommentPaging(id: Int) = CommunityCommentPagingSource(
-        communityCommentRepository = communityCommentRepository,
-        id = id
-    )
+    private fun getCommentPaging(id: Int) : CommunityCommentPagingSource {
+        return CommunityCommentPagingSource(
+            communityCommentRepository = communityCommentRepository,
+            id = id
+        )
+    }
 }
 
 sealed interface CommunityDescUiState {
     data object Loading : CommunityDescUiState
     data class CommunityDesc(
         val community: CommunityDefaultResponseDto,
-        val comments: PagingData<CommunityCommentWithLikedResponseDto>?
     ) : CommunityDescUiState {
-        val photoList = community.communityPhotos.map {
-            it.photoUrl
-        }
+        val photoList = community.communityPhotos.map {it.photoUrl}
     }
-
     data object Error : CommunityDescUiState
 }

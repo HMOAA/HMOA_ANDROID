@@ -15,5 +15,5 @@
 <img src="https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/42ed4118-6cf0-4d7c-a310-7731659ec557" width=250 height = 500/>
 
 ## 프로젝트 아키텍처 및 모듈구성
-<img width="692" alt="image" src="https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/360dd95e-4d1b-4c06-b93c-53fb2014a6bc">
+<img width="692" alt="image" src="https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/a4685e8f-59cc-4279-b4c5-54f9cf0a027f">
 

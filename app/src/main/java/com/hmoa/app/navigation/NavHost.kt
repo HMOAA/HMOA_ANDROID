@@ -12,6 +12,7 @@ import com.example.feature_userinfo.navigateToMyCommentPage
 import com.example.feature_userinfo.navigateToMyFavoriteCommentPage
 import com.example.feature_userinfo.navigateToMyGenderPage
 import com.example.feature_userinfo.navigateToMyInfoPage
+import com.example.feature_userinfo.navigateToMyPage
 import com.example.feature_userinfo.navigateToMyPostPage
 import com.example.feature_userinfo.nestedUserInfoGraph
 import com.hmoa.feature_authentication.navigation.loginScreen
@@ -113,7 +114,8 @@ fun SetUpNavGraph(
             onNavMyBirth = navController::navigateToMyBirth,
             onNavMyGender = navController::navigateToMyGenderPage,
             onNavMyPerfume = navController::navigateToLike,
-            onNavPerfume = navController::navigateToPerfume
+            onNavPerfume = navController::navigateToPerfume,
+            onNavMyPage = navController::navigateToMyPage
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */

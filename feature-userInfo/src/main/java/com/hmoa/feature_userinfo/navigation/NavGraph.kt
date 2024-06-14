@@ -59,6 +59,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     onNavMyBirth: () -> Unit,
     onNavMyGender: () -> Unit,
     onNavPerfume : (Int) -> Unit,
+    onNavMyPage: () -> Unit,
 ) {
     navigation(
         startDestination = UserInfoGraph.MyPage.name,
@@ -80,7 +81,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         composable(route = UserInfoGraph.MyPostRoute.name) {
             MyPostRoute(
                 onNavBack = onNavBack,
-                onNavEditPost = onNavEditPost
+                onNavEditPost = onNavEditPost,
+                onNavMyPage = onNavMyPage
             )
         }
         composable(route = UserInfoGraph.MyActivityRoute.name) {

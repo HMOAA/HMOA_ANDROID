@@ -11,12 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescUiState
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescViewModel
 
@@ -27,10 +31,7 @@ fun HPediaDescRoute(
     onNavBack : () -> Unit,
     viewModel : HPediaDescViewModel = hiltViewModel()
 ){
-    viewModel.setInfo(
-        type = type,
-        id = id
-    )
+    viewModel.setInfo(type = type,id = id)
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val type = viewModel.type.collectAsStateWithLifecycle()
@@ -48,14 +49,9 @@ fun HPediaDescScreen(
     uiState : HPediaDescUiState,
     onNavBack : () -> Unit,
 ){
-
     when(uiState){
-        HPediaDescUiState.Error -> {
-
-        }
-        HPediaDescUiState.Loading -> {
-
-        }
+        HPediaDescUiState.Error -> {}
+        HPediaDescUiState.Loading -> AppLoadingScreen()
         is HPediaDescUiState.HPediaDesc -> {
             Column(
                 modifier = Modifier
@@ -64,7 +60,7 @@ fun HPediaDescScreen(
             ){
                 TopBar(
                     title = type,
-                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                    navIcon = painterResource(R.drawable.ic_back),
                     onNavClick = onNavBack
                 )
                 Column(
@@ -76,6 +72,7 @@ fun HPediaDescScreen(
                     Text(
                         text = uiState.title,
                         fontSize = 30.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                         color = Color.Black,
                         fontWeight = FontWeight.Bold
                     )
@@ -83,12 +80,14 @@ fun HPediaDescScreen(
                     Text(
                         text = ": ${uiState.subTitle}",
                         fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                         color = Color.Black
                     )
                     Spacer(Modifier.height(60.dp))
                     Text(
                         text = "사전 정의",
                         fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                         color = Color.Black,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -96,6 +95,7 @@ fun HPediaDescScreen(
                     Text(
                         text = uiState.content,
                         fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                         color = Color.Black
                     )
                 }

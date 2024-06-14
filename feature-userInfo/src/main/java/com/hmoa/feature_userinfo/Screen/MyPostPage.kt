@@ -23,7 +23,9 @@ import com.example.feature_userinfo.viewModel.PostUiState
 import com.example.feature_userinfo.viewModel.PostViewModel
 import com.hmoa.component.PostListItem
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 
@@ -31,22 +33,28 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 fun MyPostRoute(
     onNavBack: () -> Unit,
     onNavEditPost: (Int) -> Unit,
+    onNavMyPage: () -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
 
     MyPostPage(
         uiState = uiState.value,
+        errState = errState.value,
         onNavBack = onNavBack,
         onNavEditPost = onNavEditPost,
+        onNavMyPage = onNavMyPage
     )
 }
 
 @Composable
 fun MyPostPage(
     uiState : PostUiState,
+    errState : ErrorUiState,
     onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit
+    onNavEditPost: (Int) -> Unit,
+    onNavMyPage: () -> Unit
 ) {
     when(uiState) {
         PostUiState.Loading -> AppLoadingScreen()
@@ -59,7 +67,11 @@ fun MyPostPage(
             )
         }
         PostUiState.Error -> {
-
+            ErrorUiSetView(
+                onConfirmClick = onNavBack,
+                errorUiState = errState,
+                onCloseClick = onNavMyPage
+            )
         }
         else -> {}
     }
@@ -82,7 +94,8 @@ private fun MyPostContent(
             onNavClick = onNavBack
         )
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
         ){

@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("com.android.application")
@@ -76,7 +76,31 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
+
+    applicationVariants.all {
+        this.mergeResourcesProvider.configure {
+            doLast {
+                copy {
+                    from(":HMOA_ANDROID_SECRET")
+                }
+            }
+        }
+    }
+
+//    applicationVariants.all { variant ->
+//        variant.mergeResourcesProvider.configure {
+//            doLast {
+//                // processResources에 의존하는 작업 수행
+//                copy{
+//                    from project(':AndroidSecretSecure').file('./gabojait-android-googleapi-services.json')
+//                    into "../app"
+//                }
+//            }
+//        }
+//    }
 }
+
+
 
 dependencies {
     val hilt_version = "2.48.1"

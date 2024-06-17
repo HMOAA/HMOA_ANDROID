@@ -7,11 +7,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MainRepository
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,7 +22,6 @@ class HomeViewModel @Inject constructor(
     private var _bottomMenuState = MutableStateFlow<BottomMenuState>(BottomMenuState.Loading)
     val bottomMenuState: StateFlow<BottomMenuState> = _bottomMenuState
 
-    private val authToken = MutableStateFlow<String?>(null)
     init {
         getFirstMenuWithBanner()
         getSecondMenu()
@@ -74,6 +69,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
     sealed interface BannerWithFirstMenuState {
         data object Loading : BannerWithFirstMenuState
         data class Data(

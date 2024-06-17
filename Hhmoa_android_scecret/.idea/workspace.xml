@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d79fd2f5-dda6-4aa9-b81a-84db55e08f09" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/PickPersonalInfoScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/PickPersonalInfoScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/viewmodel/PickPersonalInfoViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../feature-authentication/src/main/java/com/hmoa/feature_authentication/viewmodel/PickPersonalInfoViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -9,4 +9,4 @@
 /release.keystore
 ./release/app-release.aab
 lint-baseline.xml
-google-service.json
+google-services.json

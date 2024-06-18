@@ -4,14 +4,32 @@ import com.google.gson.GsonBuilder
 import com.hmoa.core_database.TokenManager
 import com.hmoa.core_network.BuildConfig
 import com.hmoa.core_network.authentication.AuthAuthenticator
-import com.hmoa.core_network.service.*
+import com.hmoa.core_network.service.AdminService
+import com.hmoa.core_network.service.BrandHPediaService
+import com.hmoa.core_network.service.BrandService
+import com.hmoa.core_network.service.CommunityCommentService
+import com.hmoa.core_network.service.CommunityService
+import com.hmoa.core_network.service.FcmService
+import com.hmoa.core_network.service.LoginService
+import com.hmoa.core_network.service.MagazineService
+import com.hmoa.core_network.service.MainService
+import com.hmoa.core_network.service.MemberService
+import com.hmoa.core_network.service.NoteService
+import com.hmoa.core_network.service.PerfumeCommentService
+import com.hmoa.core_network.service.PerfumeService
+import com.hmoa.core_network.service.PerfumerService
+import com.hmoa.core_network.service.ReportService
+import com.hmoa.core_network.service.SearchService
+import com.hmoa.core_network.service.TermService
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -54,7 +72,7 @@ object ServiceModule {
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
         var token: String? = ""
-        runBlocking {
+        CoroutineScope(Dispatchers.IO).launch {
             tokenManager.getAuthToken().collectLatest {
                 token = it ?: ""
             }
@@ -169,7 +187,7 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun providerMagazineService(retrofit: Retrofit): MagazineService {
+    fun providerMagazineService(retrofit : Retrofit) : MagazineService{
         return retrofit.create(MagazineService::class.java)
     }
 }

@@ -5,10 +5,7 @@ import com.hmoa.core_database.TokenManager
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Request
 import okhttp3.Response
@@ -20,8 +17,6 @@ class AuthAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
     private val refreshTokenManager: RefreshTokenManager
 ) : okhttp3.Authenticator {
-    private var isAvailableToSendNewRequest = false
-    private lateinit var newRequest: Request
     override fun authenticate(route: Route?, response: Response): Request? {
         val rememberedToken = runBlocking {
             tokenManager.getRememberedToken().first()
@@ -31,11 +26,12 @@ class AuthAuthenticator @Inject constructor(
             response.close()
             return null
         }
-        CoroutineScope(Dispatchers.IO).launch {
+
+        var newRequest: Request? = null
+        runBlocking {
             refreshTokenManager.refreshTokens(RememberedLoginRequestDto(rememberedToken))
                 .suspendOnError {
                     if (this.response.code() == 401) {
-                        isAvailableToSendNewRequest = false
                         Log.e("AuthAuthenticator", "토큰 리프레싱 실패")
                     }
                 }
@@ -45,17 +41,13 @@ class AuthAuthenticator @Inject constructor(
                         val refreshedRememberToken = this.response.body()!!.rememberedToken
                         refreshTokenManager.saveRefreshTokens(refreshedAuthToken, refreshedRememberToken)
                         newRequest = response.request.addRefreshAuthToken(refreshedAuthToken)
-                        isAvailableToSendNewRequest = true
                         Log.d("AuthAuthenticator", "토큰 리프레싱 성공")
                     }
                 }
         }
 
-        if (isAvailableToSendNewRequest) {
-            isAvailableToSendNewRequest = false
-            return newRequest
-        }
-        return null
+        response.close()
+        return newRequest
     }
 
     fun Request.addRefreshAuthToken(token: String?): Request {

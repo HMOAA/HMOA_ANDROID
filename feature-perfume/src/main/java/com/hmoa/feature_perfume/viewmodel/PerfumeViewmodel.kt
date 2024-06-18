@@ -103,8 +103,11 @@ class PerfumeViewmodel @Inject constructor(
     private fun getAuthToken() {
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                Log.d("PerfumeViewmodel", "${it}")
                 authToken.value = it
-                hasToken = true
+                if (it != null) {
+                    hasToken = true
+                }
             }
         }
     }
@@ -119,7 +122,6 @@ class PerfumeViewmodel @Inject constructor(
                 onUpdatePerfumeAge(age, perfumeId)
             } else {
                 unLoginedErrorState.update { true }
-                Log.d("PerfumeViewmodel", "${unLoginedErrorState.value}")
             }
         }
     }
@@ -204,42 +206,38 @@ class PerfumeViewmodel @Inject constructor(
 
     fun initializePerfume(perfumeId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (hasToken) {
-                getPerfume(perfumeId.toString()).asResult().collectLatest { result ->
-                    when (result) {
-                        is Result.Success -> {
-                            perfumeState.update { result.data.data }
-                            perfumeCommentsState.update { result.data.data?.commentInfo?.comments }
-                            _perfumeCommentsCountState.update { result.data.data?.commentInfo?.commentCount ?: 0 }
-                        }
+            getPerfume(perfumeId.toString()).asResult().collectLatest { result ->
+                when (result) {
+                    is Result.Success -> {
+                        perfumeState.update { result.data.data }
+                        perfumeCommentsState.update { result.data.data?.commentInfo?.comments }
+                        _perfumeCommentsCountState.update { result.data.data?.commentInfo?.commentCount ?: 0 }
+                    }
 
-                        is Result.Loading -> {
-                            PerfumeUiState.Loading
-                        }
+                    is Result.Loading -> {
+                        PerfumeUiState.Loading
+                    }
 
-                        is Result.Error -> {
-                            when (result.exception.message) {
-                                ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                    expiredTokenErrorState.update { true }
-                                }
+                    is Result.Error -> {
+                        when (result.exception.message) {
+                            ErrorMessageType.EXPIRED_TOKEN.message -> {
+                                expiredTokenErrorState.update { true }
+                            }
 
-                                ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                    wrongTypeTokenErrorState.update { true }
-                                }
+                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                                wrongTypeTokenErrorState.update { true }
+                            }
 
-                                ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                    unLoginedErrorState.update { true }
-                                }
+                            ErrorMessageType.UNKNOWN_ERROR.message -> {
+                                unLoginedErrorState.update { true }
+                            }
 
-                                else -> {
-                                    generalErrorState.update { Pair(true, result.exception.message) }
-                                }
+                            else -> {
+                                generalErrorState.update { Pair(true, result.exception.message) }
                             }
                         }
                     }
                 }
-            } else {
-                unLoginedErrorState.update { true }
             }
         }
     }

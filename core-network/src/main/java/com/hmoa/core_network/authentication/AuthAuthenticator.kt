@@ -36,9 +36,10 @@ class AuthAuthenticator @Inject constructor(
                     }
                 }
                 .suspendOnSuccess {
-                    if (this.response.body() != null) {
-                        val refreshedAuthToken = this.response.body()!!.authToken
-                        val refreshedRememberToken = this.response.body()!!.rememberedToken
+                    val responseBody = this.response.body()
+                    if (responseBody != null) {
+                        val refreshedAuthToken = responseBody.authToken
+                        val refreshedRememberToken = responseBody.rememberedToken
                         refreshTokenManager.saveRefreshTokens(refreshedAuthToken, refreshedRememberToken)
                         newRequest = response.request.addRefreshAuthToken(refreshedAuthToken)
                         Log.d("AuthAuthenticator", "토큰 리프레싱 성공")

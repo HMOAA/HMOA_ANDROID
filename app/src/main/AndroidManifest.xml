@@ -51,7 +51,7 @@
                 <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
                 <data
                         android:host="oauth"
-                        android:scheme="${NATIVE_APP_KEY}"/>
+                        android:scheme="@string/native_app_key"/>
             </intent-filter>
         </activity> <!-- 서비스를 추가하고 인텐트 필터를 설정한다. -->
         <service

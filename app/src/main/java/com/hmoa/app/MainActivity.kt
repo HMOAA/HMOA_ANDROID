@@ -205,7 +205,6 @@ class MainActivity : AppCompatActivity() {
                         Log.e("Firebase Token", "Fail to save fcm token")
                     }
                     if (authToken != null && rememberToken != null) {
-                        viewModel.postFcmToken(fcmToken.value!!)
                         val fcmToken = viewModel.getFcmToken().stateIn(this)
                         if (fcmToken.value == null) {
                             FirebaseMessaging.getInstance().token.addOnSuccessListener {

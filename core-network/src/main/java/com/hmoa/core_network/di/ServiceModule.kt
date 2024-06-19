@@ -52,7 +52,7 @@ object ServiceModule {
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
         val token = tokenManager.getAuthTokenForHeader()
-        
+
         return Interceptor { chain ->
             with(chain) {
                 val newRequest = request().newBuilder()

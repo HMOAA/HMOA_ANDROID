@@ -53,8 +53,6 @@ import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
 
-const val APP_VERSION = "1.1.0"
-
 @Composable
 internal fun MyPageRoute(
     onNavEditProfile: () -> Unit,
@@ -181,7 +179,7 @@ private fun MyPageContent(
         ColumnData("오픈소스라이센스") { doOpenLicense() },
         ColumnData("이용 약관") { },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
-        ColumnData("버전 정보 ${APP_VERSION}") {},
+        ColumnData("버전 정보 ${BuildConfig.APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
         ColumnData("로그아웃") { logoutEvent() },
         ColumnData("계정삭제") { onDelAccount() }

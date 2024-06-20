@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PerfumerDefaultResponseDto(
     val perfumerId: Int,
-    val perfumeSubTitle: String,
+    val perfumerSubTitle: String,
     val perfumerTitle: String
 )

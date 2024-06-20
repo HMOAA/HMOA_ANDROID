@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_model.data.HpediaType
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescUiState
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescViewModel
 
@@ -27,16 +29,18 @@ fun HPediaDescRoute(
     onNavBack : () -> Unit,
     viewModel : HPediaDescViewModel = hiltViewModel()
 ){
-    viewModel.setInfo(
-        type = type,
-        id = id
-    )
+    LaunchedEffect(true){
+        viewModel.setInfo(
+            type = type,
+            id = id
+        )
+    }
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val type = viewModel.type.collectAsStateWithLifecycle()
 
     HPediaDescScreen(
-        type = type.value!!,
+        type = type.value,
         uiState = uiState.value,
         onNavBack = onNavBack,
     )
@@ -44,7 +48,7 @@ fun HPediaDescRoute(
 
 @Composable
 fun HPediaDescScreen(
-    type : String,
+    type : HpediaType,
     uiState : HPediaDescUiState,
     onNavBack : () -> Unit,
 ){
@@ -63,7 +67,7 @@ fun HPediaDescScreen(
                     .background(color = Color.White)
             ){
                 TopBar(
-                    title = type,
+                    title = type.title,
                     navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
                     onNavClick = onNavBack
                 )

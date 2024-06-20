@@ -12,7 +12,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -36,15 +35,12 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(headerInterceptor: Interceptor, authenticator: AuthAuthenticator): OkHttpClient {
-        val httpLoggingInterceptor = HttpLoggingInterceptor()
-        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
         val okHttpClientBuilder = OkHttpClient().newBuilder()
         okHttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS)
         okHttpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
         okHttpClientBuilder.authenticator(authenticator)
         okHttpClientBuilder.addInterceptor(headerInterceptor)
-        okHttpClientBuilder.addInterceptor(httpLoggingInterceptor)
         return okHttpClientBuilder.build()
     }
 
@@ -52,7 +48,7 @@ object ServiceModule {
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
         val token = tokenManager.getAuthTokenForHeader()
-        
+
         return Interceptor { chain ->
             with(chain) {
                 val newRequest = request().newBuilder()

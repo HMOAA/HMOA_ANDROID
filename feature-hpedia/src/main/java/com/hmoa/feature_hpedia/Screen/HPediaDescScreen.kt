@@ -66,7 +66,7 @@ fun HPediaDescScreen(
             ){
                 TopBar(
                     title = type.title,
-                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                    navIcon = painterResource(R.drawable.ic_back),
                     onNavClick = onNavBack
                 )
                 Column(

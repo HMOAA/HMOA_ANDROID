@@ -48,7 +48,7 @@ internal fun PickPersonalInfoRoute(
     }
 
     LaunchedEffect(true) {
-        viewModel.getGoogleAccessToken()
+        viewModel.getSocialLoginAccessToken(loginProvider)
     }
 
     PickPersonalInfoScreen(

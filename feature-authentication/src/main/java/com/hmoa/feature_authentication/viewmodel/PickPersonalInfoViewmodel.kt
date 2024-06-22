@@ -24,19 +24,22 @@ class PickPersonalInfoViewmodel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : ViewModel() {
-    private val _birthYearState = MutableStateFlow<Int?>(null)
-    var birthYearState = _birthYearState.asStateFlow()
-    private val _sexState = MutableStateFlow("여성")
-    var sexState = _sexState.asStateFlow()
-    private val _isPostComplete = MutableStateFlow(false)
-    var isPostComplete = _isPostComplete.asStateFlow()
+    private var _birthYearState = MutableStateFlow<Int?>(null)
+    val birthYearState = _birthYearState.asStateFlow()
+    private var _sexState = MutableStateFlow("여성")
+    val sexState = _sexState.asStateFlow()
+    private var _isPostComplete = MutableStateFlow(false)
+    val isPostComplete = _isPostComplete.asStateFlow()
     private val googleAccessToken = MutableStateFlow<String?>(null)
     private val kakaoAccessToken = MutableStateFlow<String?>(null)
 
-    init {
+    fun getSocialLoginAccessToken(loginProvider: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            getGoogleAccessToken()
-            getKakaoAccessToken()
+            if (loginProvider == Provider.GOOGLE.name) {
+                getGoogleAccessToken()
+            } else if (loginProvider == Provider.KAKAO.name) {
+                getKakaoAccessToken()
+            }
         }
     }
 
@@ -77,7 +80,7 @@ class PickPersonalInfoViewmodel @Inject constructor(
 
                 Provider.KAKAO.name -> {
                     if (kakaoAccessToken.value != null) {
-                        postAccessToken(kakaoAccessToken.value!!, Provider.GOOGLE, birthYear, sex)
+                        postAccessToken(kakaoAccessToken.value!!, Provider.KAKAO, birthYear, sex)
                     }
                 }
             }
@@ -85,35 +88,33 @@ class PickPersonalInfoViewmodel @Inject constructor(
     }
 
     suspend fun postAccessToken(token: String, loginProvider: Provider, birthYear: Int?, sex: String) {
-        viewModelScope.launch {
-            flow {
-                val result = loginRepository.postOAuth(OauthLoginRequestDto(token), provider = loginProvider)
-                if (result.errorMessage != null) {
-                    throw Exception(result.errorMessage!!.message)
-                } else {
-                    emit(result.data)
-                }
-            }.asResult()
-                .collectLatest {
-                    when (it) {
-                        is Result.Success -> {
-                            val authToken = it.data?.authToken
-                            val rememberedToken = it.data?.rememberedToken
-                            if (it.data != null && authToken != null && rememberedToken != null) {
-                                saveAuthAndRememberedToken(authToken, rememberedToken)
-                                postSignup(birthYear, sex)
-                            }
-
+        flow {
+            val result = loginRepository.postOAuth(OauthLoginRequestDto(token), provider = loginProvider)
+            if (result.errorMessage != null) {
+                throw Exception(result.errorMessage!!.message)
+            } else {
+                emit(result.data)
+            }
+        }.asResult()
+            .collectLatest {
+                when (it) {
+                    is Result.Success -> {
+                        val authToken = it.data?.authToken
+                        val rememberedToken = it.data?.rememberedToken
+                        if (it.data != null && authToken != null && rememberedToken != null) {
+                            saveAuthAndRememberedToken(authToken, rememberedToken)
+                            postSignup(birthYear, sex)
                         }
 
-                        is Result.Loading -> {
-                            LoginUiState.Loading
-                        }
-
-                        is Result.Error -> {}
                     }
+
+                    is Result.Loading -> {
+                        LoginUiState.Loading
+                    }
+
+                    is Result.Error -> {}
                 }
-        }
+            }
     }
 
     fun postSignup(birthYear: Int?, sex: String) {

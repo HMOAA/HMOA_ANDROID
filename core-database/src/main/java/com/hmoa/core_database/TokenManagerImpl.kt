@@ -13,7 +13,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 val Context.datastore: DataStore<Preferences> by preferencesDataStore(
@@ -34,6 +36,13 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         private val KAKAO_ACCESS_TOKEN_KEY = stringPreferencesKey("KAKAO_ACCESS_TOKEN")
         private val GOOGLE_ACCESS_TOKEN_KEY = stringPreferencesKey("GOOGLE_ACCESS_TOKEN")
         private val FCM_TOKEN_KEY = stringPreferencesKey("FCM_TOKEN")
+    }
+
+    override fun getAuthTokenForHeader(): String {
+        val token = runBlocking {
+            getAuthToken().firstOrNull()
+        }
+        return token ?: ""
     }
 
     override suspend fun getAuthToken(): Flow<String?> {

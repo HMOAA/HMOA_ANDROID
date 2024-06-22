@@ -1,5 +1,6 @@
 package com.hmoa.feature_hpedia.Screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -174,13 +175,14 @@ fun HPediaSearchResult(
             }
         }
         else if (perfumerResult != null){
+            Log.d("HOTFIX", "perfumers : ${perfumerResult.itemSnapshotList}")
             items(perfumerResult.itemSnapshotList){
                 if (it != null){
                     HPediaResultItem(
                         type = type,
                         id = it.perfumerId,
                         koTitle = it.perfumerTitle,
-                        engTitle = it.perfumeSubTitle,
+                        engTitle = it.perfumerSubTitle,
                         onNavHPediaDesc = onNavHPediaDesc
                     )
                 }

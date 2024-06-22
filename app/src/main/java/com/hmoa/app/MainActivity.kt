@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
-    private lateinit var initialRoute: String
+    private var initialRoute = AuthenticationRoute.Login.name
     private val PERMISSION_REQUEST_CODE = 1001
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
@@ -205,7 +205,6 @@ class MainActivity : AppCompatActivity() {
                         Log.e("Firebase Token", "Fail to save fcm token")
                     }
                     if (authToken != null && rememberToken != null) {
-                        viewModel.postFcmToken(fcmToken.value!!)
                         val fcmToken = viewModel.getFcmToken().stateIn(this)
                         if (fcmToken.value == null) {
                             FirebaseMessaging.getInstance().token.addOnSuccessListener {

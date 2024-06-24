@@ -76,28 +76,15 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
-
-    applicationVariants.all {
-        this.mergeResourcesProvider.configure {
-            doLast {
-                copy {
-                    from(":HMOA_ANDROID_SECRET")
-                }
+//성공
+    tasks.named("preBuild").configure {
+        doLast {
+            copy {
+                from("$rootDir/HMOA_ANDROID_SECRET/google-services.json")
+                into("$rootDir/app")
             }
         }
     }
-
-//    applicationVariants.all { variant ->
-//        variant.mergeResourcesProvider.configure {
-//            doLast {
-//                // processResources에 의존하는 작업 수행
-//                copy{
-//                    from project(':AndroidSecretSecure').file('./gabojait-android-googleapi-services.json')
-//                    into "../app"
-//                }
-//            }
-//        }
-//    }
 }
 
 

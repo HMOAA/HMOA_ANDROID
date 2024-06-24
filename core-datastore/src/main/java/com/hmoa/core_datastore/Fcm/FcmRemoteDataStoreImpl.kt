@@ -3,6 +3,8 @@ package com.hmoa.core_datastore.Fcm
 import ResultResponse
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.FCMTokenSaveRequestDto
+import com.hmoa.core_model.response.AlarmResponse
+import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_network.service.FcmService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
@@ -24,7 +26,26 @@ class FcmRemoteDataStoreImpl @Inject constructor(
         }
         return result
     }
-
+    override suspend fun getFcmList(): ResultResponse<List<AlarmResponse>> {
+        var result = ResultResponse<List<AlarmResponse>>()
+        fcmDataService.getAlarmList().suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+    override suspend fun checkAlarm(alarmId: Int): ResultResponse<DataResponseDto<Any>> {
+        var result = ResultResponse<DataResponseDto<Any>>()
+        fcmDataService.checkAlarm(alarmId).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
     override suspend fun saveFcmToken(fcmTokenSaveRequest: FCMTokenSaveRequestDto): ResultResponse<String> {
         var result = ResultResponse<String>()
         fcmDataService.saveFcmToken(fcmTokenSaveRequest).suspendOnSuccess {

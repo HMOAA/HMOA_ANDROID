@@ -1,18 +1,21 @@
 #!/bin/bash
 
 # 시크릿 또는 로컬 변수 설정
+TOKEN=""
 if [ -z "$CI" ]; then
   # 필수 환경 변수 확인
-      if [ -z "$HMOA_ANDROID_SECRET_TOKEN" ]; then
-        echo "WARNING ==== HMOA_ANDROID_SECRET_TOKEN 환경 변수를 설정해야합니다."
-        exit 1
-      fi
+  if [ -z "$HMOA_ANDROID_SECRET_TOKEN" ]; then
+    echo "WARNING ==== 로컬 환경에서 HMOA_ANDROID_SECRET_TOKEN 환경 변수를 설정해야합니다."
+    exit 1
+  fi
+  TOKEN=$HMOA_ANDROID_SECRET_TOKEN
 else
   # GitHub Actions에서는 시크릿 사용
-      if [ -z "$HMOA_ANDROID_SECRET_TOKEN" ]; then
-        echo "WARNING ==== GitHub Actions에서는 HMOA_ANDROID_SECRET_TOKEN 시크릿이 필요합니다."
-        exit 1
-      fi
+  if [ -z "${secrets.HMOA_ANDROID_SECRET_TOKEN}" ]; then
+    echo "WARNING ==== GitHub Actions에서 HMOA_ANDROID_SECRET_TOKEN 시크릿이 필요합니다."
+    exit 1
+  fi
+  TOKEN=${{ secrets.HMOA_ANDROID_SECRET_TOKEN}}
 fi
 
 
@@ -40,7 +43,7 @@ for index in "${!FILE_PATHS[@]}"; do
 
   # GitHub API를 통해 파일 내용 가져오기
   file_contents=$(curl -sSL \
-    -H "Authorization: token $HMOA_ANDROID_SECRET_TOKEN" \
+    -H "Authorization: token $TOKEN" \
     -H "Accept: application/vnd.github.v3.raw" \
     "https://api.github.com/repos/$REPO/contents/$FILE_PATH")
 

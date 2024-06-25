@@ -22,11 +22,10 @@ jobs:
 
       - name: Grant execute permissions for scripts
         run: |
-          chmod +x setup-local-properties.sh
-          chmod +x load-env-from-json.sh
+          chmod +x copy-hmoa-android-secrets.sh
 
-      - name: Run setup script
-        run: ./setup-local-properties.sh
+      - name: Run copy google-service.json
+        run: ./copy-hmoa-android-secrets.sh
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

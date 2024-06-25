@@ -76,15 +76,6 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
-//성공
-    tasks.named("preBuild").configure {
-        doLast {
-            copy {
-                from("$rootDir/HMOA_ANDROID_SECRET/google-services.json")
-                into("$rootDir/app")
-            }
-        }
-    }
 }
 
 

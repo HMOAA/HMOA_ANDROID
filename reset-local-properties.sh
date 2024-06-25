@@ -2,6 +2,7 @@
 
 # 삭제할 파일 목록
 FILES=(
+  "./app/google-services.json"
   "./app/local.properties"
   "./core-network/local.properties"
   "./feature-authentication/local.properties"

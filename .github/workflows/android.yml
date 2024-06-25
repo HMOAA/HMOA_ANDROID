@@ -25,7 +25,7 @@ jobs:
           chmod +x copy-hmoa-android-secrets.sh
 
       - name: Check github secrets
-        run: echo "${{screts.HMOA_ANDROID_SECRET_TOKEN}}"
+        run: echo "${{secrets.HMOA_ANDROID_SECRET_TOKEN}}"
 
       - name: Run copy secrets
         run: ./copy-hmoa-android-secrets.sh

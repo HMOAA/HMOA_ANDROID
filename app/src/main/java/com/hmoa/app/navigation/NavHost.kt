@@ -32,6 +32,7 @@ import com.hmoa.feature_community.Navigation.navigateToCommunityPage
 import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunitySearchRoute
+import com.hmoa.feature_fcm.alarmRoute
 import com.hmoa.feature_home.navigation.allPerfumeScreen
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToAllPerfume
@@ -76,6 +77,9 @@ fun SetUpNavGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
             onPerfumeClick = { navController.navigateToPerfume(it) })
+
+        /** fcm 모듈 */
+        alarmRoute(onNavBack = navController::navigateToBack)
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)

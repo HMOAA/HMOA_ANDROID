@@ -10,15 +10,14 @@ if [ -z "$CI" ]; then
   fi
   TOKEN=$HMOA_ANDROID_SECRET_TOKEN
 else
-  SECRET=${{secrets.HMOA_ANDROID_SECRET_TOKEN}}
-  echo "HMOA_ANDROID_SECRET_TOKEN: ${SECRET}"
+  echo "github secrets token: ${{secrets.HMOA_ANDROID_SECRET_TOKEN}}"
   # GitHub Actions에서는 시크릿 사용
-  if [ -z $SECRET ]; then
-    echo "WARNING ==== GitHub Actions에서 HMOA_ANDROID_SECRET_TOKEN 시크릿이 필요합니다."
-    exit 1
-  else
-  TOKEN=SECRET
-  fi
+#  if [ -z ${{secrets.HMOA_ANDROID_SECRET_TOKEN}} ]; then
+#    echo "WARNING ==== GitHub Actions에서 HMOA_ANDROID_SECRET_TOKEN 시크릿이 필요합니다."
+#    exit 1
+#  else
+  TOKEN=${{secrets.HMOA_ANDROID_SECRET_TOKEN}}
+#  fi
 fi
 echo "TOKEN: $TOKEN"
 

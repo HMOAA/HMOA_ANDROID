@@ -40,7 +40,7 @@ for index in "${!FILE_PATHS[@]}"; do
 
   # GitHub API를 통해 파일 내용 가져오기
   file_contents=$(curl -sSL \
-    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Authorization: token $HMOA_ANDROID_SECRET_TOKEN" \
     -H "Accept: application/vnd.github.v3.raw" \
     "https://api.github.com/repos/$REPO/contents/$FILE_PATH")
 

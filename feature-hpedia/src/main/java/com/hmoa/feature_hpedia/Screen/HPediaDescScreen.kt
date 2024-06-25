@@ -39,7 +39,6 @@ fun HPediaDescRoute(
             id = id
         )
     }
-
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val type = viewModel.type.collectAsStateWithLifecycle()
 

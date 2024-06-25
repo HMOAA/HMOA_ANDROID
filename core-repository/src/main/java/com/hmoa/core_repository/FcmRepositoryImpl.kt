@@ -13,6 +13,13 @@ class FcmRepositoryImpl @Inject constructor(
     private val fcmDataStore: FcmRemoteDataStore,
     private val fcmLocalDataStore: FcmLocalDataStore
 ) : com.hmoa.core_domain.repository.FcmRepository {
+    override suspend fun saveNotificationEnabled(isEnabled: Boolean) {
+        fcmLocalDataStore.saveNotificationEnabled(isEnabled)
+    }
+
+    override suspend fun getNotificationEnabled(): Flow<Boolean> {
+        return fcmLocalDataStore.getNotificationEnabled()
+    }
 
     override suspend fun deleteRemoteFcmToken(): ResultResponse<Any> {
         return fcmDataStore.deleteFcmToken()

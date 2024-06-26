@@ -26,9 +26,6 @@ jobs:
         run: |
           chmod +x copy-hmoa-android-secrets.sh
 
-      - name: Set up Git
-        run: git config --global user.email "0517yongin@gmail.com" && git config --global user.name "Lee YongIn"
-        
       - name: Generate release.keystore
         run: echo '${{ secrets.RELEASE_KEYSTORE }}' | base64 --d > ./app/release.keystore
 

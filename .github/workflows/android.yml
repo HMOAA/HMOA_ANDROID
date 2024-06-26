@@ -10,7 +10,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      HMOA_ANDROID_SECRET_TOKEN: ${{secrets.HMOA_ANDROID_SECRET_TOKEN}}
     steps:
       - uses: actions/checkout@v4
       - name: set up JDK 17
@@ -26,11 +27,6 @@ jobs:
 
       - name: Set up Git
         run: git config --global user.email "0517yongin@gmail.com" && git config --global user.name "Lee YongIn"
-
-      - name: Check github secrets
-        run: |
-          echo "${{github.HMOA_ANDROID_SECRET_TOKEN}}"
-          echo "${{secrets.HMOA_ANDROID_SECRET_TOKEN}}"
 
       - name: Run copy secrets
         run: ./copy-hmoa-android-secrets.sh

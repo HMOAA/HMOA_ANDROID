@@ -1,17 +1,12 @@
 #!/bin/bash
 
-# 시크릿 또는 로컬 변수 설정
-TOKEN=""
+#로컬 변수 설정
 if [ -z "$CI" ]; then
   # 필수 환경 변수 확인
   if [ -z "$HMOA_ANDROID_SECRET_TOKEN" ]; then
     echo "WARNING ==== 로컬 환경에서 HMOA_ANDROID_SECRET_TOKEN 환경 변수를 설정해야합니다."
     exit 1
   fi
-  TOKEN=$HMOA_ANDROID_SECRET_TOKEN
-else
-  echo "HMOA_ANDROID_SECRET_TOKEN:${{github.HMOA_ANDROID_SECRET_TOKEN}}"
-  TOKEN=${{github.HMOA_ANDROID_SECRET_TOKEN}}
 fi
 
 # 변수 정의
@@ -38,7 +33,7 @@ for index in "${!FILE_PATHS[@]}"; do
 
   # GitHub API를 통해 파일 내용 가져오기
   file_contents=$(curl -sSL \
-    -H "Authorization: token $TOKEN" \
+    -H "Authorization: token $HMOA_ANDROID_SECRET_TOKEN" \
     -H "Accept: application/vnd.github.v3.raw" \
     "https://api.github.com/repos/$REPO/contents/$FILE_PATH")
 

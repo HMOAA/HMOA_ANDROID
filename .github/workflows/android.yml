@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HMOA_ANDROID_SECRET_TOKEN: ${{secrets.HMOA_ANDROID_SECRET_TOKEN}}
+      RELEASE_KEYSTORE: ${{secrets.RELEASE_KEYSTORE}}
     steps:
       - uses: actions/checkout@v4
       - name: set up JDK 17
@@ -27,6 +28,9 @@ jobs:
 
       - name: Set up Git
         run: git config --global user.email "0517yongin@gmail.com" && git config --global user.name "Lee YongIn"
+        
+      - name: Generate release.keystore
+        run: echo '${{ secrets.RELEASE_KEYSTORE }}' | base64 --d > ./app/release.keystore
 
       - name: Run copy secrets
         run: ./copy-hmoa-android-secrets.sh

@@ -14,13 +14,11 @@ REPO="HMOAA/HMOA_ANDROID_SECRET"
 FILE_PATHS=(
   "app/local.properties"
   "app/google-services.json"
-  "app/release.keystore"
   "feature-userInfo/local.properties"
   "core-network/local.properties"
   "feature-authentication/local.properties"
 )
 DEST_DIRS=(
-  "./app"
   "./app"
   "./app"
   "./feature-userInfo"

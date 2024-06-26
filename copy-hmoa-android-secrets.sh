@@ -14,11 +14,13 @@ REPO="HMOAA/HMOA_ANDROID_SECRET"
 FILE_PATHS=(
   "app/local.properties"
   "app/google-services.json"
+  "app/release.keystore"
   "feature-userInfo/local.properties"
   "core-network/local.properties"
   "feature-authentication/local.properties"
 )
 DEST_DIRS=(
+  "./app"
   "./app"
   "./app"
   "./feature-userInfo"
@@ -43,11 +45,6 @@ for index in "${!FILE_PATHS[@]}"; do
   # 파일을 임시 파일에 저장
   temp_file=$(mktemp)
   echo "$file_contents" > "$temp_file"
-
-  # 파일 내용 출력
-  echo "다음 파일 내용을 가져왔습니다: $FILE_PATH"
-  echo "$file_contents"
-  echo
 
   # 목적 디렉토리로 복사 (파일 이름 그대로 유지)
   cp "$temp_file" "$DEST_DIR/$FILE_NAME"

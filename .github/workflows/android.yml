@@ -24,6 +24,9 @@ jobs:
         run: |
           chmod +x copy-hmoa-android-secrets.sh
 
+      - name: Set up Git
+        run: git config --global user.email "0517yongin@gmail.com" && git config --global user.name "Lee YongIn"
+
       - name: Check github secrets
         run: echo "${{secrets.HMOA_ANDROID_SECRET_TOKEN}}"
 

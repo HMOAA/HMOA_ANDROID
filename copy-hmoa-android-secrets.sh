@@ -10,16 +10,9 @@ if [ -z "$CI" ]; then
   fi
   TOKEN=$HMOA_ANDROID_SECRET_TOKEN
 else
-  echo "github secrets token: ${{secrets.HMOA_ANDROID_SECRET_TOKEN}}"
-  # GitHub Actions에서는 시크릿 사용
-#  if [ -z ${{secrets.HMOA_ANDROID_SECRET_TOKEN}} ]; then
-#    echo "WARNING ==== GitHub Actions에서 HMOA_ANDROID_SECRET_TOKEN 시크릿이 필요합니다."
-#    exit 1
-#  else
-  TOKEN=${{secrets.HMOA_ANDROID_SECRET_TOKEN}}
-#  fi
+  echo "HMOA_ANDROID_SECRET_TOKEN: $HMOA_ANDROID_SECRET_TOKEN"
+  TOKEN=$HMOA_ANDROID_SECRET_TOKEN
 fi
-echo "TOKEN: $TOKEN"
 
 # 변수 정의
 REPO="HMOAA/HMOA_ANDROID_SECRET"
@@ -55,6 +48,11 @@ for index in "${!FILE_PATHS[@]}"; do
   # 파일을 임시 파일에 저장
   temp_file=$(mktemp)
   echo "$file_contents" > "$temp_file"
+
+  # 파일 내용 출력
+  echo "다음 파일 내용을 가져왔습니다: $FILE_PATH"
+  echo "$file_contents"
+  echo
 
   # 목적 디렉토리로 복사 (파일 이름 그대로 유지)
   cp "$temp_file" "$DEST_DIR/$FILE_NAME"

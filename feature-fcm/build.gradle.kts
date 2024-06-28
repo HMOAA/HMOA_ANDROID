@@ -67,12 +67,6 @@ dependencies {
     //collectAsStateWithLifecycle 함수
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
 
-    //paging
-    implementation("androidx.paging:paging-compose:3.2.0")
-
-    //open licence
-    implementation("com.google.android.gms:play-services-oss-licenses:17.0.0")
-
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
@@ -93,4 +87,15 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
+
+    //unit test
+    val mockito_version = "4.8.0"
+    testImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
+    testImplementation("org.mockito:mockito-core:$mockito_version")
+    testImplementation("org.mockito:mockito-inline:$mockito_version")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
+    kaptTest("com.google.dagger:hilt-android-compiler:$hilt_version")
+
+    testImplementation(project(":core-common"))
 }

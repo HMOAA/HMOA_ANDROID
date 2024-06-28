@@ -8,6 +8,6 @@ data class AlarmResponse(
     val createdAt: String,
     val deeplink: String,
     val id: Int,
-    val read: Boolean,
+    var read: Boolean,
     val title: String
 )

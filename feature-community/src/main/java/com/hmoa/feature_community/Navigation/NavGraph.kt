@@ -2,8 +2,11 @@ package com.hmoa.feature_community.Navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
 import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
 import com.hmoa.feature_community.Screen.CommunityEditRoute
@@ -93,11 +96,18 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavCommunityDesc = onNavCommunityDescription
             )
         }
-        composable(route = "${CommunityRoute.CommunityDescriptionRoute.name}/{id}") {
-            val id = it.arguments?.getString("id") ?: "0"
+        composable(
+            route = "${CommunityRoute.CommunityDescriptionRoute.name}/{id}",
+            arguments = listOf(navArgument("id"){type = NavType.IntType}),
+            deepLinks = listOf(
+                navDeepLink{uriPattern = "hmoa://community_like/${id}"},
+                navDeepLink { uriPattern = "hmoa://community_comment/${id}" }
+            )
+        ) {
+            val id = it.arguments?.getInt("id")
 
             CommunityDescriptionRoute(
-                id = id.toInt(),
+                id = id,
                 onNavCommunityEdit = onNavCommunityEdit,
                 onNavCommentEdit = onNavCommunityCommentEdit,
                 onNavLogin = onNavLogin,

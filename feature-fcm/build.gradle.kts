@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -8,20 +6,14 @@ plugins {
     kotlin("kapt")
 }
 
-val localProperties = Properties().apply {
-    load(project.rootProject.file("./feature-userInfo/local.properties").inputStream())
-}
-
 android {
-    namespace = "com.hmoa.feature_userinfo"
+    namespace = "com.hmoa.feature_fcm"
     compileSdk = 34
 
     defaultConfig {
         minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "KAKAO_CHAT_PROFILE", localProperties.getProperty("KAKAO_CHAT_PROFILE"))
-        buildConfigField("String", "PRIVACY_POLICY_URI", localProperties.getProperty("PRIVACY_POLICY_URI"))
     }
 
     buildTypes {
@@ -40,17 +32,16 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    composeOptions {
+    composeOptions{
         kotlinCompilerExtensionVersion = "1.5.0"
     }
-    buildFeatures {
+    buildFeatures{
         compose = true
         buildConfig = true
     }
 }
 
 dependencies {
-
     val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
@@ -76,12 +67,6 @@ dependencies {
     //collectAsStateWithLifecycle 함수
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
 
-    //paging
-    implementation("androidx.paging:paging-compose:3.2.0")
-
-    //open licence
-    implementation("com.google.android.gms:play-services-oss-licenses:17.0.0")
-
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
@@ -103,12 +88,14 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
 
-    //hilt test
-    testImplementation("com.google.dagger:hilt-android-testing:2.44")
-    kaptTest("com.google.dagger:hilt-android:compiler:2.44")
-    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
+    //unit test
+    val mockito_version = "4.8.0"
+    testImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
+    testImplementation("org.mockito:mockito-core:$mockito_version")
+    testImplementation("org.mockito:mockito-inline:$mockito_version")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
+    kaptTest("com.google.dagger:hilt-android-compiler:$hilt_version")
 
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
-    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
+    testImplementation(project(":core-common"))
 }

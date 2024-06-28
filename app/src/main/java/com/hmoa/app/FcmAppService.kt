@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -24,7 +23,6 @@ class FcmAppService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Log.i("TAG TEST", "onMessageReceived : ${remoteMessage}")
 
         if(remoteMessage.notification != null){
             sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
@@ -38,7 +36,7 @@ class FcmAppService : FirebaseMessagingService() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
 
-        val channelId = ""
+        val channelId = "hmoa_channel"
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)

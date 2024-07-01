@@ -17,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun SurveyOptionItem(text: String, onClick: () -> Unit, isSelected: Boolean) {
@@ -45,7 +47,7 @@ fun SurveyOptionItem(text: String, onClick: () -> Unit, isSelected: Boolean) {
         )
         Text(
             text = text,
-            style = TextStyle(fontSize = 14.sp, color = if (isSelected.value) Color.White else CustomColor.gray5)
+            style = TextStyle(fontSize = 14.sp, fontFamily = pretendard, fontWeight = FontWeight.Medium, color = if (isSelected.value) Color.White else CustomColor.gray5)
         )
     }
 }

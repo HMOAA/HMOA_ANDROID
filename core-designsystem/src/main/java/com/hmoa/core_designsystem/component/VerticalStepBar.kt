@@ -10,10 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun VerticalStepBar(titles: Array<String>, contents: Array<String>) {
@@ -36,18 +38,24 @@ fun VerticalStepBar(titles: Array<String>, contents: Array<String>) {
                         (index + 1).toString(),
                         style = TextStyle(
                             fontSize = 12.sp,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Medium
                         )
                     )
                 }
-                Text(titles[index], style = TextStyle(fontSize = 14.sp), modifier = Modifier.padding(start = 12.dp))
+                Text(
+                    titles[index],
+                    style = TextStyle(fontSize = 14.sp, fontFamily = pretendard, fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(start = 12.dp)
+                )
             }
             Row(modifier = Modifier.padding(start = 10.dp)) {
-                if (titles.size-1 > index){
+                if (titles.size - 1 > index) {
                     VerticalDivider(modifier = Modifier.border(width = 1.dp, color = CustomColor.gray6).height(60.dp))
                 }
                 Text(
                     contents[index],
-                    style = TextStyle(fontSize = 12.sp, color = CustomColor.gray5),
+                    style = TextStyle(fontSize = 12.sp, color = CustomColor.gray5,fontFamily = pretendard, fontWeight = FontWeight.Normal),
                     modifier = Modifier.padding(start = 22.dp, top = 6.dp)
                 )
             }

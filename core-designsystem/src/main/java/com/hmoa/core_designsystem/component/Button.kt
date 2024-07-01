@@ -26,23 +26,25 @@ fun Button(
     textSize: Int = 20,
     radious: Int? = 0,
 ) {
-    val roundCorner = if(radious != null) radious else 0
+    val roundCorner = if (radious != null) radious else 0
     Row(
         modifier = Modifier
             .background(
-                color = if (isEnabled) Color.Black else Color(0xFFBBBBBB),
+                color = if (isEnabled) Color.Black else CustomColor.gray2,
                 shape = RoundedCornerShape(roundCorner)
             )
             .clickable {
                 if (isEnabled) {
                     onClick()
                 }
-            }.clip(RoundedCornerShape(size = roundCorner.dp)).addModifier(buttonModifier).border(width = 1.dp, color = Color.Transparent, shape = RoundedCornerShape(
-                topStart = roundCorner.dp,
-                topEnd = roundCorner.dp,
-                bottomStart = roundCorner.dp,
-                bottomEnd = roundCorner.dp
-            )),
+            }.clip(RoundedCornerShape(size = roundCorner.dp)).addModifier(buttonModifier).border(
+                width = 1.dp, color = Color.Transparent, shape = RoundedCornerShape(
+                    topStart = roundCorner.dp,
+                    topEnd = roundCorner.dp,
+                    bottomStart = roundCorner.dp,
+                    bottomEnd = roundCorner.dp
+                )
+            ),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -63,7 +65,8 @@ fun TestBottomButton() {
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
             isEnabled = false,
@@ -71,6 +74,9 @@ fun TestBottomButton() {
             onClick = {
                 text = "btn clicked"
             },
+            radious = 20,
+            textSize = 18,
+            buttonModifier = Modifier.fillMaxWidth(0.9f).height(40.dp)
         )
 
         Spacer(Modifier.height(50.dp))

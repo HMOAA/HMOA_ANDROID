@@ -10,5 +10,5 @@ data class AlarmResponse(
     val deeplink: String,
     val senderProfileImg : String?,
     val createdAt: String,
-    val read: Boolean
+    var read: Boolean
 )

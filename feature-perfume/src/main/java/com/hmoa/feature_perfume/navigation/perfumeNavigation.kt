@@ -39,7 +39,6 @@ fun NavGraphBuilder.perfumeScreen(
     composable(
         route = "${PerfumeRoute.Perfume.name}/{perfumeId}",
         arguments = listOf(navArgument("perfumeId") { type = NavType.StringType }),
-        deepLinks = listOf(navDeepLink { uriPattern="hmoa://perfume_comment/{perfumeId}" })
     ) {
         val perfumeId = it.arguments?.getString("perfumeId")
         PerfumeRoute(
@@ -63,7 +62,8 @@ fun NavGraphBuilder.perfumeComment(
 ) {
     composable(
         route = "${PerfumeRoute.PerfumeComment.name}/{perfumeId}",
-        arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })
+        arguments = listOf(navArgument("perfumeId") { type = NavType.IntType }),
+        deepLinks = listOf(navDeepLink { uriPattern="hmoa://perfume_comment/{perfumeId}" })
     ) {
         val perfumeId = it.arguments?.getInt("perfumeId")
         PerfumeCommentRoute(

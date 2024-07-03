@@ -57,7 +57,7 @@ class AlarmViewModel @Inject constructor(
                 AlarmUiState.Error
             }
             Result.Loading -> AlarmUiState.Loading
-            is Result.Success -> AlarmUiState.Success(result.data.data!!)
+            is Result.Success -> AlarmUiState.Success(result.data.data!!.data)
         }
     }.stateIn(
         scope = viewModelScope,

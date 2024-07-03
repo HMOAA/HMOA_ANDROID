@@ -26,8 +26,8 @@ class FcmRemoteDataStoreImpl @Inject constructor(
         }
         return result
     }
-    override suspend fun getFcmList(): ResultResponse<List<AlarmResponse>> {
-        var result = ResultResponse<List<AlarmResponse>>()
+    override suspend fun getFcmList(): ResultResponse<DataResponseDto<List<AlarmResponse>>> {
+        var result = ResultResponse<DataResponseDto<List<AlarmResponse>>>()
         fcmDataService.getAlarmList().suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{

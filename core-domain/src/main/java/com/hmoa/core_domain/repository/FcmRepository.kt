@@ -10,7 +10,7 @@ interface FcmRepository {
     suspend fun deleteRemoteFcmToken(): ResultResponse<Any>
 
     suspend fun postRemoteFcmToken(fcmTokenSaveRequest: FCMTokenSaveRequestDto): ResultResponse<String>
-    suspend fun getFcmList() : ResultResponse<List<AlarmResponse>>
+    suspend fun getFcmList() : ResultResponse<DataResponseDto<List<AlarmResponse>>>
     suspend fun checkAlarm(alarmId : Int) : ResultResponse<DataResponseDto<Any>>
     suspend fun getLocalFcmToken(): Flow<String?>
     suspend fun saveLocalFcmToken(token: String)

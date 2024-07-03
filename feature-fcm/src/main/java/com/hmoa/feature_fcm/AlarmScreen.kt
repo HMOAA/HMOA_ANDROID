@@ -51,6 +51,7 @@ fun AlarmScreenRoute(
                 "perfume_comment" -> onNavPerfumeComment(id)
                 else -> {Log.d("NAVIGATION TEST", "type : ${type}")}
             }
+            viewModel.checkAlarm(id)
         },
         onNavBack = onNavBack
     )

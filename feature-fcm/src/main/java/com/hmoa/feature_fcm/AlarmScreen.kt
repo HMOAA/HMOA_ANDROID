@@ -144,7 +144,8 @@ fun PrevAlarmScreen(){
                 deeplink = "",
                 id = 0,
                 read = true,
-                title = "Event"
+                title = "Event",
+                senderProfileImg = null
             )
         )),
         errState = ErrorUiState.Loading

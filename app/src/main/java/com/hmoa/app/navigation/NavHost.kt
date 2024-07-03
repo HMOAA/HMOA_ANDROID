@@ -32,6 +32,7 @@ import com.hmoa.feature_community.Navigation.navigateToCommunityPage
 import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunitySearchRoute
+import com.hmoa.feature_community.Navigation.nestedCommunityGraph
 import com.hmoa.feature_fcm.alarmRoute
 import com.hmoa.feature_home.navigation.allPerfumeScreen
 import com.hmoa.feature_home.navigation.homeScreen
@@ -123,15 +124,22 @@ fun SetUpNavGraph(
         /** HPedia 모듈 (내부에 Community 모듈 포함) */
         this.nestedHPediaGraph(
             onNavBack = navController::navigateToBack,
-            onNavCommunityPost = navController::navigateToCommunityPostRoute,
-            onNavCommunityEdit = navController::navigateToCommunityEditRoute,
             onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunityPage = navController::navigateToCommunityPage,
             onNavCommunityGraph = navController::navigateToCommunityRoute,
-            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
-            onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
             onNavHPediaDesc = navController::navigateToHPediaDescRoute,
             onNavHPediaSearch = navController::navigateToHPediaSearchRoute,
+            onNavLogin = navController::navigateToLogin,
+            onNavHome = navController::navigateToHome,
+        )
+        this.nestedCommunityGraph(
+            onNavBack = navController::navigateToBack,
+            onNavCommunityPage = navController::navigateToCommunityPage,
+            onNavCommunityPost = navController::navigateToCommunityPostRoute,
+            onNavCommunityEdit = navController::navigateToCommunityEditRoute,
+            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
+            onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
+            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
+            onErrorHandleLoginAgain = navController::navigateToLogin,
             onNavLogin = navController::navigateToLogin,
             onNavHome = navController::navigateToHome,
             onNavHPedia = navController::navigateToHPedia

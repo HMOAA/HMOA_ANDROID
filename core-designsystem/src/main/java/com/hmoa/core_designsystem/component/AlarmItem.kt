@@ -43,7 +43,7 @@ fun AlarmItem(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
-            .background(color = if (isRead) CustomColor.gray3 else Color.White)
+            .background(color = if (isRead) CustomColor.gray1 else Color.White)
             .clickable{onNavTarget()}
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,

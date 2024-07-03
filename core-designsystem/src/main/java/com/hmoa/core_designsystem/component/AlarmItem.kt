@@ -1,6 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,13 +36,15 @@ fun AlarmItem(
     category : String,
     content : String,
     time : String,
-    profile : String? = null
+    profile : String? = null,
+    onNavTarget : () -> Unit,
 ){
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(height)
             .background(color = if (isRead) CustomColor.gray3 else Color.White)
+            .clickable{onNavTarget()}
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -92,6 +95,7 @@ fun PrevAlarmItem(){
         isRead = true,
         category = "Event",
         content = "지금 향모아만의 초특가 할인 상품을 만나보세요",
-        time = "10/04 14:30"
+        time = "10/04 14:30",
+        onNavTarget = {}
     )
 }

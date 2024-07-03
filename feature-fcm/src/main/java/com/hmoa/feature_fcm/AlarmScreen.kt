@@ -1,5 +1,7 @@
 package com.hmoa.feature_fcm
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +34,8 @@ import com.hmoa.core_model.response.AlarmResponse
 @Composable
 fun AlarmScreenRoute(
     onNavBack : () -> Unit,
+    onNavCommunityDesc : (Int) -> Unit,
+    onNavPerfumeComment : (Int) -> Unit,
     viewModel : AlarmViewModel = hiltViewModel()
 ){
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -40,6 +43,15 @@ fun AlarmScreenRoute(
     AlarmScreen(
         uiState = uiState.value,
         errState = errorState.value,
+        onNavTarget = { id, type ->
+            val uri = Uri.parse(type)
+            val type = uri.host
+            when(type){
+                "community" -> onNavCommunityDesc(id)
+                "perfume_comment" -> onNavPerfumeComment(id)
+                else -> {Log.d("NAVIGATION TEST", "type : ${type}")}
+            }
+        },
         onNavBack = onNavBack
     )
 }
@@ -48,6 +60,7 @@ fun AlarmScreenRoute(
 fun AlarmScreen(
     uiState: AlarmUiState,
     errState: ErrorUiState,
+    onNavTarget: (id : Int, type : String) -> Unit,
     onNavBack: () -> Unit
 ){
     when(uiState){
@@ -62,7 +75,8 @@ fun AlarmScreen(
         is AlarmUiState.Success -> {
             AlarmContent(
                 alarms = uiState.alarms,
-                onNavBack = onNavBack,
+                onNavTarget = onNavTarget,
+                onNavBack = onNavBack
             )
         }
     }
@@ -71,7 +85,8 @@ fun AlarmScreen(
 @Composable
 private fun AlarmContent(
     alarms : List<AlarmResponse>,
-    onNavBack: () -> Unit
+    onNavTarget : (id : Int, Type : String) -> Unit,
+    onNavBack: () -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -92,7 +107,8 @@ private fun AlarmContent(
                         isRead = alarm.read,
                         category = alarm.title,
                         content = alarm.content,
-                        time = alarm.createdAt
+                        time = alarm.createdAt,
+                        onNavTarget = { onNavTarget(alarm.id, alarm.deeplink) }
                     )
                 }
             }
@@ -130,24 +146,4 @@ private fun EmptyScreen(){
             fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PrevAlarmScreen(){
-    AlarmScreen(
-        onNavBack = {},
-        uiState = AlarmUiState.Success(listOf(
-            AlarmResponse(
-                content = "지금 향모아만의 초특가 할인 상품을 만나보세요",
-                createdAt = "10.04 14:30",
-                deeplink = "",
-                id = 0,
-                read = true,
-                title = "Event",
-                senderProfileImg = null
-            )
-        )),
-        errState = ErrorUiState.Loading
-    )
 }

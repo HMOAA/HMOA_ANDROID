@@ -41,7 +41,7 @@ fun AlarmItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
-            .background(color = if(isRead) CustomColor.gray3 else Color.White)
+            .background(color = if (isRead) CustomColor.gray3 else Color.White)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -50,10 +50,14 @@ fun AlarmItem(
             modifier = Modifier.size(40.dp),
             contentAlignment = Alignment.Center
         ){
-            Icon(
-                painter = painterResource(R.drawable.ic_fab),
-                contentDescription = "App Default Icon"
-            )
+            if (profile != null){
+                CircleImageView(imgUrl = profile,width = 40,height = 40)
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.ic_fab),
+                    contentDescription = "App Default Icon"
+                )
+            }
         }
         Spacer(Modifier.width(16.dp))
         Column(

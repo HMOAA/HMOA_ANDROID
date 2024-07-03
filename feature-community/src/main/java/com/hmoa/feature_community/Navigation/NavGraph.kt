@@ -59,7 +59,9 @@ fun NavGraphBuilder.nestedCommunityGraph(
 ) {
     navigation(
         startDestination = CommunityRoute.CommunityPreviewRoute.name,
-        route = CommunityRoute.CommunityGraphRoute.name
+        route = CommunityRoute.CommunityGraphRoute.name,
+        deepLinks = listOf(navDeepLink { uriPattern="hmoa://community/{id}" }),
+        arguments = listOf(navArgument("id"){type = NavType.IntType})
     ) {
         composable(route = CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
@@ -99,10 +101,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
         composable(
             route = "${CommunityRoute.CommunityDescriptionRoute.name}/{id}",
             arguments = listOf(navArgument("id"){type = NavType.IntType}),
-            deepLinks = listOf(
-                navDeepLink{uriPattern = "hmoa://community_like/${id}"},
-                navDeepLink { uriPattern = "hmoa://community_comment/${id}" }
-            )
+            deepLinks = listOf(navDeepLink{uriPattern = "hmoa://community/{id}"})
         ) {
             val id = it.arguments?.getInt("id")
 

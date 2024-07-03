@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -19,15 +20,17 @@ class FcmAppService : FirebaseMessagingService() {
         val editor = pref.edit()
         editor.putString("token", token).apply()
         editor.commit()
+        Log.d("FCM TEST", "token : ${token}")
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
+        Log.d("FCM TEST", "message : ${remoteMessage}")
         if(remoteMessage.notification != null){
             sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
         } else if (remoteMessage.data.isNotEmpty()) {
-            sendTopNotification(remoteMessage.data["title"].toString(), remoteMessage.data["body"].toString())
+            sendTopNotification(remoteMessage.data)
         }
     }
     private fun sendNotification(title : String?, body : String?){
@@ -55,17 +58,19 @@ class FcmAppService : FirebaseMessagingService() {
         }
         notificationManager.notify(uniId, notificationBuilder.build())
     }
-    private fun sendTopNotification(title : String?, body : String?){
+    private fun sendTopNotification(fcmData : Map<String, String>){
         val CHANNEL_DEFAULT_IMPORTANCE = "channelId"
         val ONGOING_NOTIFICATION = 1
 
-        val notificationIntent = Intent(this, MainActivity::class.java)
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val notificationIntent = Intent(this, MainActivity::class.java).apply{
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra("DEEPLINK",fcmData["deeplink"])
+        }
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
 
         val notification = Notification.Builder(this, CHANNEL_DEFAULT_IMPORTANCE)
-            .setContentTitle(title)
-            .setContentText(body)
+            .setContentTitle(fcmData["title"])
+            .setContentText(fcmData["content"])
             .setSmallIcon(com.hmoa.core_designsystem.R.drawable.ic_app_default_1)
             .setContentIntent(pendingIntent)
             .build()

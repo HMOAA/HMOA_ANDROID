@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 class TestFcmRepository : FcmRepository {
 
-    private val testFcmData : MutableList<AlarmResponse> = mutableListOf()
+    private val testFcmData : DataResponseDto<MutableList<AlarmResponse>> = DataResponseDto(data = mutableListOf())
     private var type = ""
     override suspend fun deleteRemoteFcmToken(): ResultResponse<Any> {
         TODO("Not yet implemented")
@@ -18,16 +18,16 @@ class TestFcmRepository : FcmRepository {
     override suspend fun postRemoteFcmToken(fcmTokenSaveRequest: FCMTokenSaveRequestDto): ResultResponse<String> {
         TODO("Not yet implemented")
     }
-    override suspend fun getFcmList(): ResultResponse<List<AlarmResponse>> {
+    override suspend fun getFcmList(): ResultResponse<DataResponseDto<List<AlarmResponse>>> {
         return when(type) {
             "loading" -> ResultResponse()
             "error" -> ResultResponse(errorMessage = ErrorMessage(code = "400", message = "Login Error"))
-            "success" -> ResultResponse(testFcmData)
+            "success" -> ResultResponse(DataResponseDto((testFcmData.data).toList()))
             else -> ResultResponse(errorMessage = ErrorMessage(code = "0", message = "type error"))
         }
     }
     override suspend fun checkAlarm(alarmId: Int): ResultResponse<DataResponseDto<Any>> {
-        testFcmData.forEach{
+        testFcmData.data.forEach{
             if (it.id == alarmId) it.read = !it.read
         }
         return ResultResponse(DataResponseDto("Success"))
@@ -48,7 +48,7 @@ class TestFcmRepository : FcmRepository {
         TODO("Not yet implemented")
     }
     fun setTestData(alarm : AlarmResponse){
-        testFcmData.add(alarm)
+        testFcmData.data.add(alarm)
     }
     fun setType(type : String) {
         this.type = type

@@ -96,6 +96,4 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     kaptTest("com.google.dagger:hilt-android-compiler:$hilt_version")
-
-    testImplementation(project(":core-common"))
 }

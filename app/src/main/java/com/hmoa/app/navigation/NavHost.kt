@@ -80,7 +80,11 @@ fun SetUpNavGraph(
             onPerfumeClick = { navController.navigateToPerfume(it) })
 
         /** fcm 모듈 */
-        alarmRoute(onNavBack = navController::navigateToBack)
+        alarmRoute(
+            onNavBack = navController::navigateToBack,
+            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
+            onNavPerfumeComment = navController::navigateToPerfumeComment
+        )
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)

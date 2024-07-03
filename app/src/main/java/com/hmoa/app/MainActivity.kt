@@ -1,7 +1,9 @@
 package com.hmoa.app
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +17,7 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +51,7 @@ import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
 import com.hmoa.feature_magazine.Navigation.MagazineRoute
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
+import com.hmoa.feature_perfume.navigation.PerfumeRoute
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -103,11 +107,14 @@ class MainActivity : AppCompatActivity() {
             }
             launch {
                 newFlow.collectLatest {
+                    Log.d("FCM TEST","launch scope")
+                    Log.d("FCM TEST","before checkFcmToken Function")
                     checkFcmToken(it.first, it.second)
+                    Log.d("FCM TEST","after checkFcmToken Function")
+                    Log.d("LOGIN TOKEN","access : ${it.first} refresh : ${it.second}")
                     if (it.first == null && it.second == null) {
                         initialRoute = AuthenticationRoute.Login.name
                         currentJob.cancel()
-
                     } else {
                         initialRoute = HomeRoute.Home.name
                         currentJob.cancel()
@@ -131,7 +138,7 @@ class MainActivity : AppCompatActivity() {
                 isTopBarVisible = route in needTopBarScreens
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-
+            val deeplink = remember{ handleDeeplink(intent) }
 
             Scaffold(
                 modifier = Modifier.systemBarsPadding(),
@@ -165,9 +172,23 @@ class MainActivity : AppCompatActivity() {
                 Box(
                     modifier = Modifier.padding(bottom = it.calculateBottomPadding())
                 ) {
-                    SetUpNavGraph(navHostController, initialRoute)
+                    SetUpNavGraph(navHostController,initialRoute)
+                    LaunchedEffect(Unit){if (deeplink != null) navHostController.navigate(deeplink)}
                 }
             }
+        }
+    }
+
+    //deeplink 처리 함수
+    private fun handleDeeplink(intent : Intent?) : String? {
+        val deeplink: String = intent?.getStringExtra("deeplink") ?: return null
+        val uri = Uri.parse(deeplink)
+        val host = uri.host
+        val targetId = uri.lastPathSegment?.toInt()
+        return when (host){
+            "community" -> "${CommunityRoute.CommunityDescriptionRoute.name}/${targetId}"
+            "perfume_comment" -> "${PerfumeRoute.PerfumeComment.name}/${targetId}"
+            else -> null
         }
     }
 
@@ -198,6 +219,7 @@ class MainActivity : AppCompatActivity() {
         ) {
             CoroutineScope(Dispatchers.IO).launch {
                 val fcmToken = viewModel.getFcmToken().stateIn(this)
+                Log.d("FCM TEST", "fcm token : ${fcmToken.value}")
                 if (fcmToken.value == null) {
                     FirebaseMessaging.getInstance().token.addOnSuccessListener {
                         viewModel.saveFcmToken(it)
@@ -224,7 +246,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

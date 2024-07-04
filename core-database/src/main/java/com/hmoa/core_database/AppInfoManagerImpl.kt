@@ -24,7 +24,7 @@ class AppInfoManagerImpl @Inject constructor(
 
     override suspend fun getNotificationEnabled(): Flow<Boolean> {
         return dataStore.data.map{
-            it[IS_NOTIFICATION_ENABLED] ?: true
+            it[IS_NOTIFICATION_ENABLED] ?: false
         }
     }
 }

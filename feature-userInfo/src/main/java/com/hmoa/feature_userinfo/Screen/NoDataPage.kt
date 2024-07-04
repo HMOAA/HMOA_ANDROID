@@ -9,9 +9,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.R
 
 //Data가 없는 화면
 @Composable
@@ -28,6 +31,7 @@ fun NoDataPage(
 
         Text(
             text = mainMsg,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             fontSize = 30.sp
         )
 
@@ -35,6 +39,7 @@ fun NoDataPage(
 
         Text(
             text = subMsg,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             fontSize = 16.sp
         )
     }

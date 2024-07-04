@@ -156,9 +156,7 @@ fun CommunityMainTypes(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TypeBadge(
-            onClickItem = {
-                onTypeChanged(Category.추천)
-            },
+            onClickItem = {onTypeChanged(Category.추천)},
             roundedCorner = 20.dp,
             type = Category.추천.name,
             fontSize = 14.sp,
@@ -182,9 +180,7 @@ fun CommunityMainTypes(
         Spacer(Modifier.width(8.dp))
 
         TypeBadge(
-            onClickItem = {
-                onTypeChanged(Category.자유)
-            },
+            onClickItem = {onTypeChanged(Category.자유)},
             roundedCorner = 20.dp,
             type = Category.자유.name,
             fontSize = 14.sp,

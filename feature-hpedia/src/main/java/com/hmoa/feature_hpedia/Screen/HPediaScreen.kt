@@ -19,8 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.R
 import com.hmoa.feature_community.Screen.CommunityHomeRoute
 
 @Composable
@@ -84,6 +87,7 @@ fun HPediaScreenTitle(title: String) {
     ) {
         Text(
             text = title,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             fontSize = 22.sp,
         )
     }
@@ -101,6 +105,7 @@ fun SelectSearchType(
 
     val textStyle = TextStyle(
         color = Color.White,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         fontSize = 16.sp
     )
 

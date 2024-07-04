@@ -75,9 +75,7 @@ fun MyCommentPage(
     onTypeChanged: (String) -> Unit
 ) {
     when (uiState) {
-        CommentUiState.Loading -> {9
-            AppLoadingScreen()
-        }
+        CommentUiState.Loading -> AppLoadingScreen()
         is CommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems().itemSnapshotList
             MyCommentContent(

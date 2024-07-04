@@ -37,12 +37,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -72,23 +74,28 @@ fun PostContent(
 
     val nicknameTextStyle = TextStyle(
         fontSize = 14.sp,
-        color = Color.Black
+        color = Color.Black,
+        fontWeight = FontWeight.Normal,fontFamily = pretendard
     )
     val dateDiffTextStyle = TextStyle(
         fontSize = 12.sp,
-        color = CustomColor.gray3
+        color = CustomColor.gray3,
+        fontWeight = FontWeight.Normal,fontFamily = pretendard
     )
     val titleTextStyle = TextStyle(
         fontSize = 20.sp,
-        color = Color.Black
+        color = Color.Black,
+        fontWeight = FontWeight.Normal,fontFamily = pretendard
     )
     val contentTextStyle = TextStyle(
         fontSize = 16.sp,
-        color = Color.Black
+        color = Color.Black,
+        fontWeight = FontWeight.Normal,fontFamily = pretendard
     )
     val viewNumberTextStyle = TextStyle(
         fontSize = 14.sp,
-        color = Color.Black
+        color = Color.Black,
+        fontWeight = FontWeight.Normal,fontFamily = pretendard
     )
 
     Column(

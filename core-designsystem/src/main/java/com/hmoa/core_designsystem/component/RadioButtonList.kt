@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun RadioButtonList(
@@ -47,7 +48,7 @@ fun RadioButtonList(
                 )
                 Text(
                     text = it,
-                    style = TextStyle(color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Medium),
+                    style = TextStyle(color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Normal,fontFamily = pretendard),
                 )
             }
         }

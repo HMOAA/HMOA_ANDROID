@@ -88,7 +88,10 @@ class CommunityDescViewModel @Inject constructor(
         result.data!!
     }.asResult().map{ communityResult ->
         when(communityResult) {
-            is Result.Error -> CommunityDescUiState.Error
+            is Result.Error -> {
+                generalErrorState.update{ Pair(true, communityResult.exception.message)}
+                CommunityDescUiState.Error
+            }
             is Result.Loading -> CommunityDescUiState.Loading
             is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data)
         }

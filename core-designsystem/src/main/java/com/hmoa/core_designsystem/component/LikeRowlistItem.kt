@@ -3,17 +3,7 @@ package com.hmoa.core_designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -26,20 +16,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun LikeRowItem(
-    brand : String,
-    itemPicture : String,
-    price : String,
-    itemNameKo : String,
-    itemNameEng : String,
-    onClickClose : () -> Unit,
-    onNavPerfumeDesc : () -> Unit,
-){
+    brand: String,
+    itemPicture: String,
+    price: String,
+    itemNameKo: String,
+    itemNameEng: String,
+    onClickClose: () -> Unit,
+    onNavPerfumeDesc: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -55,11 +48,11 @@ fun LikeRowItem(
                 elevation = 4.dp,
                 spotColor = Color(0x33000000),
                 ambientColor = Color(0x33000000)
-            ).clickable{
+            ).clickable {
                 onNavPerfumeDesc()
             },
         horizontalAlignment = Alignment.CenterHorizontally,
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,7 +65,7 @@ fun LikeRowItem(
             IconButton(
                 modifier = Modifier.size(16.dp),
                 onClick = onClickClose
-            ){
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "Close Button",
@@ -86,7 +79,8 @@ fun LikeRowItem(
                 text = brand,
                 fontSize = 14.sp,
                 lineHeight = 14.sp,
-                fontWeight = FontWeight(500),
+                fontWeight = FontWeight.Normal,
+                fontFamily = pretendard,
                 color = Color.White
             )
 
@@ -97,7 +91,7 @@ fun LikeRowItem(
         Spacer(Modifier.weight(1f))
         Box(
             modifier = Modifier.size(120.dp)
-        ){
+        ) {
             ImageView(
                 imageUrl = itemPicture,
                 width = 1f,
@@ -111,12 +105,13 @@ fun LikeRowItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-        ){
+        ) {
             Text(
                 text = itemNameKo,
                 fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                fontFamily = pretendard,
                 lineHeight = 14.sp,
-                fontWeight = FontWeight(400),
                 color = Color.Black
             )
 
@@ -126,7 +121,8 @@ fun LikeRowItem(
                 text = itemNameEng,
                 fontSize = 12.sp,
                 lineHeight = 12.sp,
-                fontWeight = FontWeight(400),
+                fontWeight = FontWeight.Normal,
+                fontFamily = pretendard,
                 color = Color.Black
             )
 
@@ -140,14 +136,16 @@ fun LikeRowItem(
                     text = "Price",
                     fontSize = 14.sp,
                     lineHeight = 14.sp,
-                    fontWeight = FontWeight(400)
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = pretendard,
                 )
 
                 Text(
                     text = "₩${price}~",
                     fontSize = 14.sp,
                     lineHeight = 14.sp,
-                    fontWeight = FontWeight(400),
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = pretendard,
                     color = Color.Black
                 )
             }

@@ -16,11 +16,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +50,7 @@ fun SearchTopBar(
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,fontFamily = pretendard
                 ),
                 keyboardActions = KeyboardActions(onDone = {onClickSearch()}, onGo = {onClickSearch()}, onSend = {onClickSearch()}, onSearch = {onClickSearch()})
             ) {
@@ -58,6 +61,7 @@ fun SearchTopBar(
                         Text(
                             text = "키워드를 검색해보세요",
                             fontSize = 16.sp,
+                            style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard),
                             color = CustomColor.gray3
                         )
                     } else {

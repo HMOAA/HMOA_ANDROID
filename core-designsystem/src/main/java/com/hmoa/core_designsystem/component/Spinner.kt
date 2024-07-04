@@ -10,12 +10,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun Spinner(
@@ -61,6 +64,7 @@ fun Spinner(
             Text(
                 text = handlePlaceHolder(value, placeholder),
                 fontSize = 16.sp,
+                style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard),
                 color = handleColor()
             )
 

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun PerfumeWithCountItemView(
@@ -62,7 +63,8 @@ fun PerfumeWithCountItemView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
+                text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal,
+                    fontFamily = pretendard),
             )
             TypeBadge(
                 roundedCorner = 20.dp,
@@ -79,7 +81,10 @@ fun PerfumeWithCountItemView(
         }
         Text(
             text = perfumeName,
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light, textAlign = TextAlign.Start),
+            style = TextStyle(
+                fontSize = 12.sp, fontWeight = FontWeight.Normal,
+                fontFamily = pretendard, textAlign = TextAlign.Start
+            ),
             modifier = Modifier.width(containerWidth.dp).padding(end = 4.dp).padding(bottom = 2.dp),
             softWrap = true
         )

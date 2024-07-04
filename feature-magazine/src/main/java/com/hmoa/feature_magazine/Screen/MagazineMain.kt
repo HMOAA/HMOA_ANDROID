@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
@@ -84,9 +87,7 @@ fun MagazineMainScreen(
     onNavMagazineDesc: (Int) -> Unit
 ){
     when(uiState){
-        MagazineMainUiState.Loading -> {
-            AppLoadingScreen()
-        }
+        MagazineMainUiState.Loading -> AppLoadingScreen()
         is MagazineMainUiState.MagazineMain -> {
             MagazineFullContent(
                 magazineList = magazineList.itemSnapshotList,
@@ -217,12 +218,14 @@ private fun MagazineTitleBox(
                         text = title,
                         fontSize = 24.sp,
                         color = Color.White,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
                         text = preview,
                         fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                         color = Color.White,
                     )
                 }
@@ -245,6 +248,7 @@ private fun ReleasePerfumeList(
             modifier = Modifier.padding(16.dp),
             text = "출시 향수",
             fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(12.dp))
@@ -252,6 +256,7 @@ private fun ReleasePerfumeList(
             modifier = Modifier.padding(16.dp),
             text = "새롭게 출시된 향수를 확인해보세요",
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(20.dp))
@@ -282,6 +287,7 @@ private fun Top10Reviews(
             modifier = Modifier.padding(start = 16.dp),
             text = "TOP 10 시향기",
             fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(10.dp))
@@ -289,6 +295,7 @@ private fun Top10Reviews(
             modifier = Modifier.padding(start = 16.dp),
             text = "리뷰로 느껴보는 향수",
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(20.dp))
@@ -320,12 +327,14 @@ private fun MagazineHeader(){
         Text(
             text = "HMOA\nNEWS / 매거진",
             fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(12.dp))
         Text(
             text="향모아가 전하는 향수 트렌드 이슈",
             fontSize=14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
     }
@@ -360,12 +369,14 @@ private fun MagazineContent(
         Text(
             text = title,
             fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(12.dp))
         Text(
             text = preview,
             fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
     }
@@ -399,18 +410,21 @@ private fun PerfumeDescItem(
         Text(
             text = brandName,
             fontSize = 10.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = CustomColor.gray3
         )
         Spacer(Modifier.height(6.dp))
         Text(
             text = perfumeName,
             fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = releaseDate,
             fontSize = 10.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = CustomColor.gray3
         )
     }
@@ -439,6 +453,7 @@ private fun ReviewContent(
         Text(
             text = title,
             fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -457,6 +472,7 @@ private fun ReviewContent(
             Text(
                 text = nickname,
                 fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 color = CustomColor.gray3,
             )
         }
@@ -464,6 +480,7 @@ private fun ReviewContent(
         Text(
             text = content,
             fontSize = 13.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black,
             maxLines = 6,
             overflow = TextOverflow.Ellipsis

@@ -2,7 +2,6 @@ package com.hmoa.feature_community.Screen
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -37,10 +36,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -64,26 +66,15 @@ fun CommunityPostRoute(
     PostCommunityPage(
         errState = errState.value,
         title = title.value,
-        onTitleChanged = {
-            viewModel.updateTitle(it)
-        },
+        onTitleChanged = {viewModel.updateTitle(it)},
         content = content.value,
-        onContentChanged = {
-            viewModel.updateContent(it)
-        },
+        onContentChanged = {viewModel.updateContent(it)},
         category = category.value,
         pictures = pictures.value,
-        onUpdatePictures = {
-            viewModel.updatePictures(it)
-        },
-        onDeletePictures = {
-            viewModel.deletePicture(it)
-        },
+        onUpdatePictures = {viewModel.updatePictures(it)},
+        onDeletePictures = {viewModel.deletePicture(it)},
         onNavBack = onNavBack,
-        onPostCommunity = {
-            //view model의 post 사용
-            viewModel.postCommunity()
-        }
+        onPostCommunity = {viewModel.postCommunity()}
     )
 }
 
@@ -152,10 +143,12 @@ fun CommunityPostTopBar(
 ){
     val sideTopBarTextStyle = TextStyle(
         fontSize = 16.sp,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         color = Color.Black
     )
     val mainTopBarTextStyle = TextStyle(
         fontSize = 18.sp,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         color = Color.Black
     )
 
@@ -205,14 +198,17 @@ fun TextFieldTitle(
 ){
     val titleTextIntroTextStyle = TextStyle(
         fontSize = 16.sp,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         color = Color.Black
     )
     val titleInputTextStyle = TextStyle(
         fontSize = 14.sp,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         color = Color.Black
     )
     val placeholderTextStyle = TextStyle(
         fontSize = 14.sp,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         color = CustomColor.gray3
     )
 
@@ -278,10 +274,12 @@ fun TextFieldContent(
 
     val contentInputTextStyle = TextStyle(
         fontSize = 14.sp,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         color = Color.Black
     )
     val placeholderTextStyle = TextStyle(
         fontSize = 14.sp,
+        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         color = CustomColor.gray3
     )
 

@@ -39,6 +39,7 @@ import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.feature_authentication.navigation.AuthenticationRoute
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
 import com.hmoa.feature_community.Navigation.CommunityRoute
+import com.hmoa.feature_fcm.navigateToAlarmScreen
 import com.hmoa.feature_home.navigation.HomeRoute
 import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
@@ -152,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                         HomeTopBar(
                             onDrawerClick = { navHostController.navigateToBrandSearch() },
                             onSearchClick = { navHostController.navigateToPerfumeSearch() },
-                            onNotificationClick = {},
+                            onNotificationClick = { navHostController.navigateToAlarmScreen() },
                             drawerIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_drawer),
                             searchIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
                             notificationIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_bell)

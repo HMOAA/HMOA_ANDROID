@@ -30,6 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -287,6 +289,7 @@ private fun CommunityDescMainContent(
                 modifier = Modifier.padding(start = 16.dp),
                 text = community.category,
                 fontSize = 14.sp,
+                fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
                 color = CustomColor.gray2
             )
             Spacer(Modifier.height(18.dp))
@@ -315,12 +318,14 @@ private fun CommunityDescMainContent(
                 Text(
                     text = "답변",
                     fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
                     color = Color.Black
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
                     text = "+${commentList.itemCount}",
                     fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
                     color = Color.Black
                 )
             }
@@ -388,6 +393,7 @@ private fun Comments(
         Text(
             text = "아직 작성한 댓글이 없습니다",
             fontSize = 20.sp,
+            fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
             color = Color.Black
         )
         Spacer(Modifier.height(30.dp))

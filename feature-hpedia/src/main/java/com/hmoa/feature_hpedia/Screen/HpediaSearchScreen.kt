@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_model.response.NoteDefaultResponseDto
 import com.hmoa.core_model.response.PerfumerDefaultResponseDto
@@ -210,12 +213,14 @@ fun HPediaResultItem(
         Text(
             text = engTitle,
             fontSize = 22.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             fontWeight = FontWeight.Bold
         )
 
         Text(
             text = koTitle,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular))
         )
     }
 }

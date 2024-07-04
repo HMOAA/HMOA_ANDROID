@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,7 +26,6 @@ fun HomeTopBar(
     drawerIcon: Painter,
     searchIcon: Painter,
     notificationIcon: Painter,
-    title: String
 ) {
     Row(
         modifier = Modifier
@@ -41,11 +41,31 @@ fun HomeTopBar(
             contentDescription = "Drawer Button"
         )
 
-        Text(
-            text = title,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
+        Row{
+            Image(
+                modifier = Modifier.size(15.dp),
+                painter = painterResource(R.drawable.ic_alphabet_h),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.padding(end= 14.dp))
+            Image(
+                modifier = Modifier.size(15.dp),
+                painter = painterResource(R.drawable.ic_alphabet_m),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.padding(end= 14.dp))
+            Image(
+                modifier = Modifier.size(15.dp),
+                painter = painterResource(R.drawable.ic_alphabet_o),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.padding(end= 14.dp))
+            Image(
+                modifier = Modifier.size(15.dp),
+                painter = painterResource(R.drawable.ic_alphabet_a),
+                contentDescription = null,
+            )
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -66,7 +86,6 @@ fun HomeTopBar(
 @Composable
 fun HomeTopBarPreview() {
     HomeTopBar(
-        title = "H M O A",
         onDrawerClick = { },
         onSearchClick = {},
         onNotificationClick = {},

@@ -151,7 +151,6 @@ class MainActivity : AppCompatActivity() {
                 topBar = {
                     if (isTopBarVisible) {
                         HomeTopBar(
-                            title = "H M O A",
                             onDrawerClick = { navHostController.navigateToBrandSearch() },
                             onSearchClick = { navHostController.navigateToPerfumeSearch() },
                             onNotificationClick = { navHostController.navigateToAlarmScreen() },

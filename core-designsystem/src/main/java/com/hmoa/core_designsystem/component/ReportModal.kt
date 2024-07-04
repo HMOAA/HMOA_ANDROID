@@ -17,10 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun ReportModal(onOkClick: () -> Unit, onCancelClick: () -> Unit) {
@@ -119,7 +122,8 @@ private fun ModalButton(
                 text = btnText,
                 fontSize = textSize.sp,
                 color = textColor,
-                maxLines = 1
+                maxLines = 1,
+                style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard)
             )
         }
     }

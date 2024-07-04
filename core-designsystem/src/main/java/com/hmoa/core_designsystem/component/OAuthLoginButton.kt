@@ -14,11 +14,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun OAuthLoginButton(
@@ -57,7 +60,10 @@ fun OAuthLoginButton(
             text = buttonText,
             fontSize = textSize.sp,
             color = textColor,
-            modifier = Modifier.padding(start = 20.dp)
+            modifier = Modifier.padding(start = 20.dp),
+            style = TextStyle(fontWeight = FontWeight.Normal,
+                fontFamily = pretendard
+            )
         )
 
     }

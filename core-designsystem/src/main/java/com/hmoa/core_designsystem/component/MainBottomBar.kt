@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.BottomNavItem
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun MainBottomBar(
@@ -58,7 +59,7 @@ fun MainBottomBar(
         ),
     )
 
-    NavigationBar(containerColor = Color.White) {
+    NavigationBar(containerColor = Color.Black) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -77,13 +78,13 @@ fun MainBottomBar(
                                 modifier = Modifier.size(25.dp),
                                 painter = item.icon,
                                 contentDescription = "${item.name}아이템",
-                                tint = Color.Black
+                                tint = Color.White
                             )
 
                             Spacer(Modifier.height(5.dp))
 
                             if (initValue == item.name.name) {
-                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Black)
+                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, fontFamily = pretendard, color = Color.White)
                             }
                         }
                     }

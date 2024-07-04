@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun TopBar(
@@ -57,7 +59,9 @@ fun TopBar(
         Text(
             text = title,
             fontSize = 20.sp,
-            color = titleColor
+            color = titleColor,
+            fontWeight = FontWeight.Normal,
+            fontFamily = pretendard
         )
 
         Spacer(Modifier.weight(1f))

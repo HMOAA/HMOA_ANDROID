@@ -29,7 +29,7 @@ class FcmRepositoryImpl @Inject constructor(
         return fcmDataStore.saveFcmToken(fcmTokenSaveRequest)
     }
 
-    override suspend fun getFcmList(): ResultResponse<List<AlarmResponse>> {
+    override suspend fun getFcmList(): ResultResponse<DataResponseDto<List<AlarmResponse>>> {
         return fcmDataStore.getFcmList()
     }
 

@@ -1,5 +1,7 @@
 package com.hmoa.core_designsystem.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -23,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
 fun AlarmItem(
@@ -32,12 +36,15 @@ fun AlarmItem(
     category : String,
     content : String,
     time : String,
-    profile : String? = null
+    profile : String? = null,
+    onNavTarget : () -> Unit,
 ){
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(height)
+            .background(color = if (isRead) CustomColor.gray1 else Color.White)
+            .clickable{onNavTarget()}
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -46,16 +53,12 @@ fun AlarmItem(
             modifier = Modifier.size(40.dp),
             contentAlignment = Alignment.Center
         ){
-            if (category == "Event"){
+            if (profile != null){
+                CircleImageView(imgUrl = profile,width = 40,height = 40)
+            } else {
                 Icon(
                     painter = painterResource(R.drawable.ic_fab),
                     contentDescription = "App Default Icon"
-                )
-            } else {
-                CircleImageView(
-                    imgUrl = profile ?: "",
-                    width = 40,
-                    height = 40
                 )
             }
         }
@@ -89,9 +92,10 @@ fun AlarmItem(
 fun PrevAlarmItem(){
     AlarmItem(
         height= 94.dp,
-        isRead = false,
+        isRead = true,
         category = "Event",
         content = "지금 향모아만의 초특가 할인 상품을 만나보세요",
-        time = "10/04 14:30"
+        time = "10/04 14:30",
+        onNavTarget = {}
     )
 }

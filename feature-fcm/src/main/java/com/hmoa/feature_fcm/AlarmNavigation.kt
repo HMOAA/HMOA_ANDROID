@@ -9,9 +9,15 @@ const val ALARM_ROUTE = "ALARM_ROUTE"
 fun NavController.navigateToAlarmScreen() = navigate(ALARM_ROUTE)
 
 fun NavGraphBuilder.alarmRoute(
-    onNavBack : () -> Unit
+    onNavBack : () -> Unit,
+    onNavCommunityDesc : (Int) -> Unit,
+    onNavPerfumeComment : (Int) -> Unit,
 ){
     composable(route = ALARM_ROUTE){
-        AlarmScreenRoute(onNavBack = onNavBack)
+        AlarmScreenRoute(
+            onNavBack = onNavBack,
+            onNavCommunityDesc = onNavCommunityDesc,
+            onNavPerfumeComment = onNavPerfumeComment
+        )
     }
 }

@@ -16,7 +16,7 @@ interface FcmService {
     suspend fun deleteFcmToken(): ApiResponse<DataResponseDto<Any>>
 
     @GET("/fcm/list")
-    suspend fun getAlarmList(): ApiResponse<List<AlarmResponse>>
+    suspend fun getAlarmList(): ApiResponse<DataResponseDto<List<AlarmResponse>>>
 
     @PUT("/fcm/read/{alarmId}")
     suspend fun checkAlarm(

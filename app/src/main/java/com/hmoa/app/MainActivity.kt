@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -106,13 +107,9 @@ class MainActivity : AppCompatActivity() {
                 Pair<String?, String?>(authtoken, rememberedToken)
             }
             launch {
-                newFlow.collectLatest {
-                    Log.d("FCM TEST","launch scope")
-                    Log.d("FCM TEST","before checkFcmToken Function")
-                    checkFcmToken(it.first, it.second)
-                    Log.d("FCM TEST","after checkFcmToken Function")
-                    Log.d("LOGIN TOKEN","access : ${it.first} refresh : ${it.second}")
-                    if (it.first == null && it.second == null) {
+                newFlow.collectLatest { token ->
+                    Log.d("LOGIN TOKEN","access : ${token.first} refresh : ${token.second}")
+                    if (token.first == null && token.second == null) {
                         initialRoute = AuthenticationRoute.Login.name
                         currentJob.cancel()
                     } else {
@@ -120,6 +117,16 @@ class MainActivity : AppCompatActivity() {
                         currentJob.cancel()
                     }
                 }
+            }
+            FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                CoroutineScope(Dispatchers.IO).launch{
+                    if (viewModel.getFcmToken().stateIn(this).value != it){
+                        Log.d("FCM TEST", "check fcm token : ${it}")
+                        checkFcmToken(authTokenState.value, rememberedTokenState.value, it)
+                    }
+                }
+            }.addOnFailureListener{
+                Log.e("FCM TEST", "Token Failure")
             }
         }
 
@@ -192,8 +199,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkFcmToken(
+        authToken: String?,
+        rememberToken: String?,
+        fcmToken : String?
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val isEnabled = viewModel.getNotificationEnabled().stateIn(this)
+            // isEnabled 가 true 면
+            if (isEnabled.value){
+                if (fcmToken != null && authToken != null && rememberToken != null) {
+                    viewModel.postFcmToken(fcmToken)
+                } else {
+                    return@launch
+                }
+            } else {
+                viewModel.delFcmToken()
+            }
+        }
+    }
+
     private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.POST_NOTIFICATIONS
@@ -204,45 +231,12 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 PERMISSION_REQUEST_CODE
             )
-        }
-    }
-
-    private fun checkFcmToken(
-        authToken: String?,
-        rememberToken: String?
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val fcmToken = viewModel.getFcmToken().stateIn(this)
-                Log.d("FCM TEST", "fcm token : ${fcmToken.value}")
-                if (fcmToken.value == null) {
-                    FirebaseMessaging.getInstance().token.addOnSuccessListener {
-                        viewModel.saveFcmToken(it)
-                        viewModel.postFcmToken(it)
-                    }.addOnFailureListener {
-                        Log.e("Firebase Token", "Fail to save fcm token")
-                    }
-                    if (authToken != null && rememberToken != null) {
-                        val fcmToken = viewModel.getFcmToken().stateIn(this)
-                        if (fcmToken.value == null) {
-                            FirebaseMessaging.getInstance().token.addOnSuccessListener {
-                                viewModel.saveFcmToken(it)
-                                viewModel.postFcmToken(it)
-                            }.addOnFailureListener {
-                                Log.e("Firebase Token", "Fail to save fcm token")
-                            }
-                        } else {
-                            viewModel.postFcmToken(fcmToken.value!!)
-                        }
-                    } else {
-                        return@launch
-                    }
-                }
+            CoroutineScope(Dispatchers.IO).launch{
+                viewModel.saveNotificationEnabled(false)
+            }
+        } else {
+            CoroutineScope(Dispatchers.IO).launch{
+                viewModel.saveNotificationEnabled(true)
             }
         }
     }
@@ -252,12 +246,19 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                /** 권한 부여되면 처리할 작업? */
+        // android 13 미만인 버전에서는 notification 권한이 필요 없음
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && requestCode == PERMISSION_REQUEST_CODE){
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                // 권한 부여되면 그 때 fcm token을 서버에 보내도록 해야 할 듯?
+                CoroutineScope(Dispatchers.IO).launch{
+                    viewModel.saveNotificationEnabled(true)
+                }
             } else {
-                /** 권한 거부 시 사용자에게 설명 혹은 재요청 가능 */
+                // 알림 권한 설정을 안할 시 알림을 받지 않도록 함
+                Toast.makeText(this, "알림을 받고 싶다면 별도로 설정해주세요.", Toast.LENGTH_SHORT).show()
+                lifecycleScope.launch{
+                    viewModel.saveNotificationEnabled(false)
+                }
             }
         }
     }

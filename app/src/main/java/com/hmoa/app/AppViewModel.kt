@@ -1,6 +1,5 @@
 package com.hmoa.app
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.FcmRepository
@@ -26,11 +25,9 @@ class AppViewModel @Inject constructor(
     }
 
     suspend fun getFcmToken(): Flow<String?> {
-        Log.d("FCM TEST", "get token call")
         return fcmRepository.getLocalFcmToken()
     }
     fun delFcmToken() {
-        Log.d("FCM TEST", "delete token call")
         viewModelScope.launch{
             fcmRepository.deleteLocalFcmToken()
             fcmRepository.deleteRemoteFcmToken()
@@ -38,13 +35,14 @@ class AppViewModel @Inject constructor(
     }
 
     fun postFcmToken(fcmToken: String) {
-        Log.d("FCM TEST", "post fcm token")
         viewModelScope.launch {
             fcmRepository.saveLocalFcmToken(fcmToken)
             val requestDto = FCMTokenSaveRequestDto(fcmToken)
             fcmRepository.postRemoteFcmToken(requestDto)
         }
     }
+
+    fun checkAlarm(id : Int) = viewModelScope.launch{fcmRepository.checkAlarm(id)}
 
     suspend fun getNotificationEnabled() : Flow<Boolean> = fcmRepository.getNotificationEnabled()
 

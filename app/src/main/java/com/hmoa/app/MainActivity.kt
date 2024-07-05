@@ -119,9 +119,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                Log.d("FCM TEST", "token : ${it}")
                 CoroutineScope(Dispatchers.IO).launch{
                     if (viewModel.getFcmToken().stateIn(this).value != it){
-                        Log.d("FCM TEST", "check fcm token : ${it}")
                         checkFcmToken(authTokenState.value, rememberedTokenState.value, it)
                     }
                 }
@@ -179,23 +179,31 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.padding(bottom = it.calculateBottomPadding())
                 ) {
                     SetUpNavGraph(navHostController,initialRoute)
-                    LaunchedEffect(Unit){if (deeplink != null) navHostController.navigate(deeplink)}
+                    LaunchedEffect(Unit){
+                        if (deeplink.first != null) {
+                            navHostController.navigate(deeplink.first!!)
+                            viewModel.checkAlarm(deeplink.second!!)
+                        }
+                    }
                 }
             }
         }
     }
 
     //deeplink 처리 함수
-    private fun handleDeeplink(intent : Intent?) : String? {
-        val deeplink: String = intent?.getStringExtra("deeplink") ?: return null
+    private fun handleDeeplink(intent : Intent?) : Pair<String?, Int?> {
+        var deeplink: String? = intent?.getStringExtra("deeplink") ?: return Pair(null, null)
+        val alarm_id = intent.extras?.getString("id")?.toInt() ?: return Pair(null, null)
+
         val uri = Uri.parse(deeplink)
         val host = uri.host
         val targetId = uri.lastPathSegment?.toInt()
-        return when (host){
+        deeplink = when (host){
             "community" -> "${CommunityRoute.CommunityDescriptionRoute.name}/${targetId}"
             "perfume_comment" -> "${PerfumeRoute.PerfumeComment.name}/${targetId}"
             else -> null
         }
+        return Pair(deeplink, alarm_id)
     }
 
     private fun checkFcmToken(

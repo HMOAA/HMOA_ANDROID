@@ -189,7 +189,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     //deeplink 처리 함수
     private fun handleDeeplink(intent : Intent?) : Pair<String?, Int?> {
         var deeplink: String? = intent?.getStringExtra("deeplink") ?: return Pair(null, null)
@@ -203,6 +202,7 @@ class MainActivity : AppCompatActivity() {
             "perfume_comment" -> "${PerfumeRoute.PerfumeComment.name}/${targetId}"
             else -> null
         }
+        Log.d("FCM TEST", "deeplink : ${deeplink} / alarm id : ${alarm_id}")
         return Pair(deeplink, alarm_id)
     }
 

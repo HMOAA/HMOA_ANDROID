@@ -14,19 +14,19 @@ class FcmAppService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
 
         if(remoteMessage.data.isNotEmpty()){
-            sendTopNotification(remoteMessage.data)
+            sendNotification(remoteMessage.data)
         }
     }
-    private fun sendTopNotification(fcmData : Map<String, String>){
+    private fun sendNotification(fcmData : Map<String, String>){
         val CHANNEL_DEFAULT_IMPORTANCE = "channelId"
         val ONGOING_NOTIFICATION = 1
 
         val notificationIntent = Intent(this, MainActivity::class.java).apply{
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra("deeplink",fcmData["deeplink"])
             putExtra("id",fcmData["id"])
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notification = Notification.Builder(this, CHANNEL_DEFAULT_IMPORTANCE)
             .setContentTitle(fcmData["title"])

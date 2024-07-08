@@ -35,7 +35,10 @@ fun HomeRoute(
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
     onHbtiClick: () -> Unit
 ) {
-    HomeScreen(onPerfumeClick = { onPerfumeClick(it) }, onAllPerfumeClick = { onAllPerfumeClick(it) }, onHbtiClick = {onHbtiClick()})
+    HomeScreen(
+        onPerfumeClick = { onPerfumeClick(it) },
+        onAllPerfumeClick = { onAllPerfumeClick(it) },
+        onHbtiClick = { onHbtiClick() })
 }
 
 @Composable
@@ -70,7 +73,7 @@ private fun HomeScreen(
                     )
                     Button(
                         isEnabled = true,
-                        btnText = "향bti 검사하기",
+                        btnText = "# 향bti 검사하기",
                         onClick = { onHbtiClick() },
                         buttonModifier = Modifier.background(color = Color.Black).fillMaxWidth(0.9f).height(47.dp),
                         textColor = Color.White,

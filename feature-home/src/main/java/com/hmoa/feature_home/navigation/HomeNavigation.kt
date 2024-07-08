@@ -17,10 +17,11 @@ fun NavController.navigateToAllPerfume(screenId: AllPerfumeScreenId) = navigate(
 
 fun NavGraphBuilder.homeScreen(
     onPerfumeClick: (perfumeId: Int) -> Unit,
-    onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit
+    onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
+    onHbtiClick:()->Unit
 ) {
     composable(route = "${HomeRoute.Home}") {
-        HomeRoute(onPerfumeClick = { onPerfumeClick(it) }, onAllPerfumeClick = { onAllPerfumeClick(it) })
+        HomeRoute(onPerfumeClick = { onPerfumeClick(it) }, onAllPerfumeClick = { onAllPerfumeClick(it) }, onHbtiClick = {onHbtiClick()})
     }
 }
 

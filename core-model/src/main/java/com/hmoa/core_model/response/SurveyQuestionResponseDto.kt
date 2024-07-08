@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SurveyQuestionResponseDto(
-    val answers: List<SurveyAnswerResponseDto>,
+    val answers: List<SurveyOptionResponseDto>,
     val content: String,
     val questionId: Int
 )

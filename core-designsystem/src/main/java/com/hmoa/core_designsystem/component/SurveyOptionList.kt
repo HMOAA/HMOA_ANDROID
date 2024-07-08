@@ -35,14 +35,16 @@ fun SurveyOptionList(
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         surveyOptions.forEach {
-            SurveyOptionItem(
-                text = it,
-                onClick = {
-                    onOptionSelected(it)
-                    onButtonClick(it)
-                },
-                isSelected = (it == selectedOption)
-            )
+            Column(modifier = Modifier.padding(bottom = 16.dp)) {
+                SurveyOptionItem(
+                    text = it,
+                    onClick = {
+                        onOptionSelected(it)
+                        onButtonClick(it)
+                    },
+                    isSelected = (it == selectedOption)
+                )
+            }
         }
     }
 }

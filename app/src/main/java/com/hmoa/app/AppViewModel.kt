@@ -18,6 +18,7 @@ class AppViewModel @Inject constructor(
     suspend fun authToken(): Flow<String?> = loginRepository.getAuthToken()
     suspend fun rememberedToken(): Flow<String?> = loginRepository.getRememberedToken()
     suspend fun getFcmToken(): Flow<String?> = fcmRepository.getLocalFcmToken()
+
     fun delFcmToken() {
         viewModelScope.launch{
             fcmRepository.deleteLocalFcmToken()
@@ -26,11 +27,11 @@ class AppViewModel @Inject constructor(
     }
     fun postFcmToken(fcmToken: String) {
         viewModelScope.launch {
-            fcmRepository.saveLocalFcmToken(fcmToken)
             val requestDto = FCMTokenSaveRequestDto(fcmToken)
             fcmRepository.postRemoteFcmToken(requestDto)
         }
     }
+    fun saveFcmToken(token : String) = viewModelScope.launch{fcmRepository.saveLocalFcmToken(token)}
     fun checkAlarm(id : Int) = viewModelScope.launch{fcmRepository.checkAlarm(id)}
     suspend fun getNotificationEnabled() : Flow<Boolean> = fcmRepository.getNotificationEnabled()
     suspend fun saveNotificationEnabled(isEnabled : Boolean) = fcmRepository.saveNotificationEnabled(isEnabled)

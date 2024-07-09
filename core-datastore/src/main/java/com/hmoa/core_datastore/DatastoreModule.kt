@@ -38,6 +38,8 @@ import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_datastore.Search.SearchDataStoreImpl
 import com.hmoa.core_datastore.Signup.SignupDataStore
 import com.hmoa.core_datastore.Signup.SignupDataStoreImpl
+import com.hmoa.core_datastore.Survey.SurveyDataStore
+import com.hmoa.core_datastore.Survey.SurveyDataStoreImpl
 import com.hmoa.core_datastore.Term.TermDataStore
 import com.hmoa.core_datastore.Term.TermDataStoreImpl
 import dagger.Binds
@@ -127,6 +129,10 @@ interface DatastoreModule {
 
     @Singleton
     @Binds
-    fun provideMagazineDataStore(magazineDataStoreImpl: MagazineDataStoreImpl) : MagazineDataStore
+    fun provideMagazineDataStore(magazineDataStoreImpl: MagazineDataStoreImpl): MagazineDataStore
+
+    @Singleton
+    @Binds
+    fun provideSurveyDataStore(surveyDataStoreImpl: SurveyDataStoreImpl): SurveyDataStore
 
 }

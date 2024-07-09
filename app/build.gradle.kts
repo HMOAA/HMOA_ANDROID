@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("com.android.application")
@@ -117,6 +117,7 @@ dependencies {
     implementation(project(":feature-like"))
     implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
+    implementation(project(":feature-hbti"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
     implementation(project(":core-domain"))

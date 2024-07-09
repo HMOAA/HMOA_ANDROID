@@ -25,7 +25,7 @@ import com.hmoa.core_designsystem.theme.pretendard
 fun SurveyOptionList(
     initValue: String? = null,
     surveyOptions: List<String>,
-    onButtonClick: (value: String) -> Unit
+    onButtonClick: (optionIndex:Int) -> Unit
 ) {
     val surveyOptions = surveyOptions
     val (selectedOption, onOptionSelected) = remember {
@@ -34,13 +34,13 @@ fun SurveyOptionList(
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        surveyOptions.forEach {
+        surveyOptions.forEachIndexed { index, it ->
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
                 SurveyOptionItem(
                     text = it,
                     onClick = {
                         onOptionSelected(it)
-                        onButtonClick(it)
+                        onButtonClick(index)
                     },
                     isSelected = (it == selectedOption)
                 )

@@ -12,7 +12,9 @@ import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_fcm.alarmRoute
 import com.hmoa.feature_hbti.navigation.hbtiScreen
+import com.hmoa.feature_hbti.navigation.hbtiSurveyScreen
 import com.hmoa.feature_hbti.navigation.navigateToHbti
+import com.hmoa.feature_hbti.navigation.navigateToHbtiSurvey
 import com.hmoa.feature_home.navigation.*
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
@@ -174,6 +176,7 @@ fun SetUpNavGraph(
         )
 
         /** hbti 모듈 */
-        hbtiScreen()
+        hbtiScreen(onHbtiSurveyClick = navController::navigateToHbtiSurvey)
+        hbtiSurveyScreen(onBackClick = navController::navigateToBack, onErrorHandleLoginAgain = navController::navigateToLogin)
     }
 }

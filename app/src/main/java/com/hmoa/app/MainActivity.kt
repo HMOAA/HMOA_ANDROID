@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +29,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -56,11 +56,14 @@ import com.hmoa.feature_perfume.navigation.PerfumeRoute
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -98,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
+        initFirebaseSetting()
 
         lifecycleScope.launch {
             val currentJob = coroutineContext.job
@@ -118,15 +122,21 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            FirebaseMessaging.getInstance().token.addOnSuccessListener {
-                Log.d("FCM TEST", "token : ${it}")
-                CoroutineScope(Dispatchers.IO).launch{
-                    if (viewModel.getFcmToken().stateIn(this).value != it){
-                        checkFcmToken(authTokenState.value, rememberedTokenState.value, it)
-                    }
+        }
+
+        //fcm token post
+        lifecycleScope.launch{
+            val authToken = viewModel.authToken()
+            val rememberToken = viewModel.rememberedToken()
+            val fcmToken = viewModel.getFcmToken()
+            combine(authToken, rememberToken, fcmToken){authToken, rememberToken, fcmToken->}.collectLatest{
+                val auth = authToken.stateIn(this).value
+                val remember = rememberToken.stateIn(this).value
+                val fcm = fcmToken.stateIn(this).value
+                if (auth != null && remember != null && fcm != null){
+                    withContext(Dispatchers.IO){checkFcmToken(fcm)}
+                    lifecycle.coroutineScope.cancel()
                 }
-            }.addOnFailureListener{
-                Log.e("FCM TEST", "Token Failure")
             }
         }
 
@@ -138,9 +148,7 @@ class MainActivity : AppCompatActivity() {
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
-                if (route in bottomNav) {
-                    currentScreen = route
-                }
+                if (route in bottomNav) {currentScreen = route}
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
             }
@@ -189,6 +197,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    //firebase 초기 토큰 처리
+    private fun initFirebaseSetting(){
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            CoroutineScope(Dispatchers.IO).launch{
+                val fcmToken = viewModel.getFcmToken().stateIn(this).value
+                Log.d("FCM TEST", "fcm token : ${fcmToken}")
+                if (it != fcmToken){
+                    Log.d("FCM TEST", "firebase messaging fcm token : ${it}")
+                    viewModel.saveFcmToken(it)
+                }
+            }
+        }.addOnFailureListener{
+            Log.e("FCM TEST", "${it.message} \n ${it.stackTrace}")
+        }
+    }
+
     //deeplink 처리 함수
     private fun handleDeeplink(intent : Intent?) : Pair<String?, Int?> {
         var deeplink: String? = intent?.getStringExtra("deeplink") ?: return Pair(null, null)
@@ -206,21 +230,17 @@ class MainActivity : AppCompatActivity() {
         return Pair(deeplink, alarm_id)
     }
 
-    private fun checkFcmToken(
-        authToken: String?,
-        rememberToken: String?,
-        fcmToken : String?
+    private suspend fun checkFcmToken(
+        fcmToken : String
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             val isEnabled = viewModel.getNotificationEnabled().stateIn(this)
             // isEnabled 가 true 면
             if (isEnabled.value){
-                if (fcmToken != null && authToken != null && rememberToken != null) {
-                    viewModel.postFcmToken(fcmToken)
-                } else {
-                    return@launch
-                }
+                Log.d("FCM TEST", "post fcm token")
+                viewModel.postFcmToken(fcmToken)
             } else {
+                Log.d("FCM TEST", "delete fcm token")
                 viewModel.delFcmToken()
             }
         }
@@ -262,10 +282,13 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 // 알림 권한 설정을 안할 시 알림을 받지 않도록 함
-                Toast.makeText(this, "알림을 받고 싶다면 별도로 설정해주세요.", Toast.LENGTH_SHORT).show()
                 lifecycleScope.launch{
                     viewModel.saveNotificationEnabled(false)
                 }
+            }
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+            CoroutineScope(Dispatchers.IO).launch{
+                viewModel.saveNotificationEnabled(true)
             }
         }
     }

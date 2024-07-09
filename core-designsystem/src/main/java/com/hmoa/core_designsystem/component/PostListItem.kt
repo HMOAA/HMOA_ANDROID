@@ -77,9 +77,9 @@ fun PostListItem(
                         icon = R.drawable.ic_heart_filled,
                         count = heartCount
                     )
-                    Spacer(Modifier.width(8.dp))
                 }
                 if (commentCount > 0) {
+                    Spacer(Modifier.width(8.dp))
                     CountBadge(
                         icon = R.drawable.ic_kakao,
                         count = commentCount
@@ -98,40 +98,6 @@ fun PostListItem(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun TestPostListItem(){
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        PostListItem (
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
-            onPostClick = {},
-            postType = "추천해주세요",
-            postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
-            heartCount = 10,
-            commentCount = 10
-        )
-        Spacer(Modifier.height(10.dp))
-        PostListItem (
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
-            onPostClick = {},
-            postType = "추천해주세요",
-            postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
-            heartCount = 10,
-            commentCount = 0
-        )
-
-    }
-}
-
 @Composable
 fun CountBadge(
     icon : Int,
@@ -159,5 +125,47 @@ fun CountBadge(
             fontSize = 12.sp,
             color = Color.Black,
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TestPostListItem(){
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .height(200.dp)
+        ){
+            PostListItem (
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
+                onPostClick = {},
+                postType = "추천해주세요",
+                postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
+                heartCount = 10,
+                commentCount = 10
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .height(200.dp)
+        ){
+            PostListItem (
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
+                onPostClick = {},
+                postType = "추천해주세요",
+                postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
+                heartCount = 0,
+                commentCount = 10
+            )
+        }
     }
 }

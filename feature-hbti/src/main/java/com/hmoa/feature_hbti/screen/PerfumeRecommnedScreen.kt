@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -24,17 +27,25 @@ import com.hmoa.core_designsystem.component.Button
 fun PerfumeRecommendRoute(
     onNavBack: () -> Unit
 ){
-    var curIdx = remember{mutableIntStateOf(0)}
+    var curIdx by remember{mutableIntStateOf(0)}
+    val values = mutableMapOf<Int, String>()
+    var isEnabledBtn by remember{mutableStateOf(values[curIdx] != null)}
     PerfumeRecommendScreen(
+        values = values,
+        curIdx = curIdx,
+        isEnabledBtn = isEnabledBtn,
         onNavBack = onNavBack,
-        curIdx = curIdx.intValue
+        onNavNext = {curIdx = (curIdx + 1) % 2}
     )
 }
 
 @Composable
 fun PerfumeRecommendScreen(
+    values : MutableMap<Int,String>,
+    curIdx : Int,
+    isEnabledBtn : Boolean,
     onNavBack : () -> Unit,
-    curIdx : Int
+    onNavNext : () -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -63,15 +74,16 @@ fun PerfumeRecommendScreen(
             Spacer(Modifier.height(40.dp))
             QuestionContent(
                 modifier = Modifier.weight(1f),
+                values = values,
                 curIdx = curIdx
             )
             Button(
                 buttonModifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
-                isEnabled = true,
+                isEnabled = isEnabledBtn,
                 btnText = "다음",
-                onClick = {}
+                onClick = onNavNext
             )
         }
     }
@@ -80,6 +92,7 @@ fun PerfumeRecommendScreen(
 @Composable
 private fun QuestionContent(
     modifier : Modifier,
+    values : MutableMap<Int, String>,
     curIdx : Int
 ){
     Column(
@@ -87,10 +100,14 @@ private fun QuestionContent(
     ){
         when(curIdx) {
             0 -> SelectPriceScreen(
-                value = ""
-            ) {
+                value = values[0],
+                onChangedValue = {
+                    values[0] = it
+                }
+            )
+            1 -> SelectSpiceScreen(
 
-            }
+            )
         }
     }
 }
@@ -100,6 +117,9 @@ private fun QuestionContent(
 private fun PreviewScreen(){
     PerfumeRecommendScreen(
         onNavBack = {},
-        curIdx = 0
+        curIdx = 0,
+        values = mutableMapOf<Int, String>(),
+        isEnabledBtn = false,
+        onNavNext = {}
     )
 }

@@ -101,13 +101,10 @@ private fun QuestionContent(
         when(curIdx) {
             0 -> SelectPriceScreen(
                 value = values[0],
-                onChangedValue = {
-                    values[0] = it
-                }
+                onChangedValue = {values[0] = it}
             )
-            1 -> SelectSpiceScreen(
-
-            )
+            1 -> SelectSpiceScreen()
+            else -> throw IllegalArgumentException("EXCEPTION")
         }
     }
 }

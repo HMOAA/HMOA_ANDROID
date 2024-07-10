@@ -18,7 +18,7 @@ import com.hmoa.core_designsystem.component.SurveyOptionList
 
 @Composable
 fun SelectPriceScreen(
-    value : String,
+    value : String?,
     onChangedValue : (value : String) -> Unit,
 ){
     val surveyOptions = listOf("5만원 이하", "5만원 이상", "10만원 이상", "가격 상관 없음")
@@ -31,7 +31,7 @@ fun SelectPriceScreen(
         Spacer(Modifier.height(32.dp))
         SurveyOptionList(
             surveyOptions = surveyOptions,
-            initValue = null,
+            initValue = value,
             onButtonClick = onChangedValue
         )
     }

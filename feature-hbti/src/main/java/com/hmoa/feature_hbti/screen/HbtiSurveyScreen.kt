@@ -1,7 +1,7 @@
 package com.hmoa.feature_hbti.screen
 
-//import com.hmoa.feature_hbti.viewmodel.HbtiSurveyUiState
-//import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
+import com.hmoa.feature_hbti.viewmodel.HbtiSurveyUiState
+import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +15,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,8 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ProgressBar
 import com.hmoa.core_designsystem.component.SurveyOptionList
 import com.hmoa.core_designsystem.component.loadProgress
@@ -38,45 +42,45 @@ import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_model.response.SurveyOptionResponseDto
 import kotlinx.coroutines.launch
 
-//@Composable
-//fun HbtiSurveyRoute(
-//    onErrorHandleLoginAgain: () -> Unit,
-//    onBackClick: () -> Unit,
-//) {
-//    HbtiSurveyScreen(onErrorHandleLoginAgain = { onErrorHandleLoginAgain() }, onBackClick = { onBackClick })
-//}
-//
-//@Composable
-//fun HbtiSurveyScreen(
-//    onErrorHandleLoginAgain: () -> Unit,
-//    onBackClick: () -> Unit,
-//    viewModel: HbtiSurveyViewmodel = hiltViewModel()
-//) {
-//    LaunchedEffect(true) {
-//        viewModel.getSurveyQuestions()
-//    }
-//
-//    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-//    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-//
-//    ErrorUiSetView(
-//        onConfirmClick = { onErrorHandleLoginAgain() },
-//        errorUiState = errorUiState,
-//        onCloseClick = { onBackClick() })
-//
-//    when (uiState) {
-//        HbtiSurveyUiState.Loading -> AppLoadingScreen()
-//        is HbtiSurveyUiState.HbtiData -> {
-//            HbtiSurveyContent(
-//                questions = (uiState as HbtiSurveyUiState.HbtiData).questions,
-//                optionsContents = (uiState as HbtiSurveyUiState.HbtiData).optionsContent,
-//                options = (uiState as HbtiSurveyUiState.HbtiData).options,
-//                onClickOption = { optionId -> },
-//                onClickPreviousQuestionClick = {}
-//            )
-//        }
-//    }
-//}
+@Composable
+fun HbtiSurveyRoute(
+    onErrorHandleLoginAgain: () -> Unit,
+    onBackClick: () -> Unit,
+) {
+    HbtiSurveyScreen(onErrorHandleLoginAgain = { onErrorHandleLoginAgain() }, onBackClick = { onBackClick })
+}
+
+@Composable
+fun HbtiSurveyScreen(
+    onErrorHandleLoginAgain: () -> Unit,
+    onBackClick: () -> Unit,
+    viewModel: HbtiSurveyViewmodel = hiltViewModel()
+) {
+    LaunchedEffect(true) {
+        viewModel.getSurveyQuestions()
+    }
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
+
+    ErrorUiSetView(
+        onConfirmClick = { onErrorHandleLoginAgain() },
+        errorUiState = errorUiState,
+        onCloseClick = { onBackClick() })
+
+    when (uiState) {
+        HbtiSurveyUiState.Loading -> AppLoadingScreen()
+        is HbtiSurveyUiState.HbtiData -> {
+            HbtiSurveyContent(
+                questions = (uiState as HbtiSurveyUiState.HbtiData).questions,
+                optionsContents = (uiState as HbtiSurveyUiState.HbtiData).optionsContent,
+                options = (uiState as HbtiSurveyUiState.HbtiData).options,
+                onClickOption = { optionId -> },
+                onClickPreviousQuestionClick = {}
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -155,9 +159,9 @@ fun HbtiSurveyContent(
                                 initValue = null,
                                 surveyOptions = optionsContents?.get(page)!!,
                                 onButtonClick = { optionIndex ->
-//                                    onClickOption(
-//                                        options?.get(page)?.get(optionIndex)?.optionId!!
-//                                    )
+                                    onClickOption(
+                                        options?.get(page)?.get(optionIndex)?.optionId!!
+                                    )
                                 }
                             )
                         }

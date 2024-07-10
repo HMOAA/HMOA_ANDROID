@@ -21,7 +21,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
-fun MagazineTag(
+fun TagBadge(
     tag : String
 ){
     Text(
@@ -46,6 +46,6 @@ fun TestMagazineTag(){
     Row(
         modifier = Modifier.fillMaxSize().background(color = Color.White)
     ){
-        MagazineTag(tag = "#Test")
+        TagBadge(tag = "#Test")
     }
 }

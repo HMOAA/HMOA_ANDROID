@@ -57,20 +57,37 @@ class HbitSurveyViewModelTest : TestCase() {
 
     @Test
     fun testUpdateQuestion() = coroutineRule.runTest {
-        Assert.assertEquals(fakeQuestions.map { it.content }, viewModel.updateQuestionState(fakeResponse.data))
+        Assert.assertEquals(
+            listOf("좋아하는 계절이 무엇입니까?", "좋아하는 여행지는 무엇입니까?"),
+            viewModel.updateQuestionState(fakeResponse.data)
+        )
     }
 
     @Test
     fun testUpdateOptionContent() = coroutineRule.runTest {
         Assert.assertEquals(
-            fakeQuestions.map { it.answers.map { it.option } },
+            listOf(listOf("봄", "여름", "가을", "겨울"), listOf("도시", "숲", "바다", "호수")),
             viewModel.updateOptionContentState(fakeResponse.data)
         )
     }
 
     @Test
     fun testUpdateOptions() = coroutineRule.runTest {
-        Assert.assertEquals(fakeQuestions.map { it.answers }, viewModel.updateOptionsState(fakeResponse.data))
+        Assert.assertEquals(
+            listOf(
+                listOf(
+                    SurveyOptionResponseDto(option = "봄", optionId = 0),
+                    SurveyOptionResponseDto(option = "여름", optionId = 1),
+                    SurveyOptionResponseDto(option = "가을", optionId = 2),
+                    SurveyOptionResponseDto(option = "겨울", optionId = 3)
+                ), listOf(
+                    SurveyOptionResponseDto(option = "도시", optionId = 0),
+                    SurveyOptionResponseDto(option = "숲", optionId = 1),
+                    SurveyOptionResponseDto(option = "바다", optionId = 2),
+                    SurveyOptionResponseDto(option = "호수", optionId = 3)
+                )
+            ), viewModel.updateOptionsState(fakeResponse.data)
+        )
     }
 
 
@@ -80,8 +97,22 @@ class HbitSurveyViewModelTest : TestCase() {
         val questionsResult = viewModel.questionsState.value
         val optionsContentResult = viewModel.optionsContentState.value
         val optionsResult = viewModel.optionsState.value
-        Assert.assertEquals(fakeQuestions.map { it.content }, questionsResult)
-        Assert.assertEquals(fakeQuestions.map { it.answers.map { it.option } }, optionsContentResult)
-        Assert.assertEquals(fakeQuestions.map { it.answers }, optionsResult)
+        Assert.assertEquals(listOf("좋아하는 계절이 무엇입니까?", "좋아하는 여행지는 무엇입니까?"), questionsResult)
+        Assert.assertEquals(listOf(listOf("봄", "여름", "가을", "겨울"), listOf("도시", "숲", "바다", "호수")), optionsContentResult)
+        Assert.assertEquals(
+            listOf(
+                listOf(
+                    SurveyOptionResponseDto(option = "봄", optionId = 0),
+                    SurveyOptionResponseDto(option = "여름", optionId = 1),
+                    SurveyOptionResponseDto(option = "가을", optionId = 2),
+                    SurveyOptionResponseDto(option = "겨울", optionId = 3)
+                ), listOf(
+                    SurveyOptionResponseDto(option = "도시", optionId = 0),
+                    SurveyOptionResponseDto(option = "숲", optionId = 1),
+                    SurveyOptionResponseDto(option = "바다", optionId = 2),
+                    SurveyOptionResponseDto(option = "호수", optionId = 3)
+                )
+            ), optionsResult
+        )
     }
 }

@@ -23,12 +23,12 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
-fun HbtiRoute(onHbtiTestClick: () -> Unit, onAfterOrderClick: () -> Unit) {
-    HbtiScreen(onHbtiTestClick, onAfterOrderClick)
+fun HbtiRoute(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
+    HbtiScreen(onHbtiSurveyClick = { onHbtiSurveyClick() }, onAfterOrderClick = { onAfterOrderClick() })
 }
 
 @Composable
-fun HbtiScreen(onHbtiTestClick: () -> Unit, onAfterOrderClick: () -> Unit) {
+fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier.background(color = Color.Black).fillMaxSize().padding(horizontal = 16.dp)
@@ -56,7 +56,7 @@ fun HbtiScreen(onHbtiTestClick: () -> Unit, onAfterOrderClick: () -> Unit) {
         )
 
         Row(modifier = Modifier.padding(top = 20.dp, bottom = 32.dp)) {
-            Box(Modifier.padding(end = 15.dp).fillMaxWidth(0.5f).height(107.dp).clickable { onHbtiTestClick() }
+            Box(Modifier.padding(end = 15.dp).fillMaxWidth(0.5f).height(107.dp).clickable { onHbtiSurveyClick() }
                 .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp))) {
                 ImageView(
                     imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/122bc5b1-1cc1-44b3-a468-1b56f9998994",

@@ -26,18 +26,18 @@ import com.hmoa.core_designsystem.component.LikeRowItem
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
 
 @Composable
-fun PerfumeRecommendResultRoute(
+fun PerfumeRecommendationResultRoute(
     onNavBack: () -> Unit,
     onNavPerfumeDesc : (Int) -> Unit,
 ){
-    PerfumeRecommendResultScreen (
+    PerfumeRecommendationResultScreen (
         onNavBack = onNavBack,
         onNavPerfumeDesc = onNavPerfumeDesc,
     )
 }
 
 @Composable
-fun PerfumeRecommendResultScreen(
+fun PerfumeRecommendationResultScreen(
     onNavBack : () -> Unit,
     onNavPerfumeDesc : (Int) -> Unit,
 ){
@@ -139,8 +139,8 @@ private fun PerfumeResult(
 
 @Preview
 @Composable
-private fun TestPerfumeRecommendResult(){
-    PerfumeRecommendResultScreen(
+private fun TestPerfumeRecommendationResult(){
+    PerfumeRecommendationResultScreen(
         onNavBack = {},
         onNavPerfumeDesc = {}
     )

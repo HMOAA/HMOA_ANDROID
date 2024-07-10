@@ -24,13 +24,13 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Button
 
 @Composable
-fun PerfumeRecommendRoute(
+fun PerfumeRecommendationRoute(
     onNavBack: () -> Unit
 ){
     var curIdx by remember{mutableIntStateOf(0)}
     val values = mutableMapOf<Int, String>()
     var isEnabledBtn by remember{mutableStateOf(values[curIdx] != null)}
-    PerfumeRecommendScreen(
+    PerfumeRecommendationScreen(
         values = values,
         curIdx = curIdx,
         isEnabledBtn = isEnabledBtn,
@@ -40,7 +40,7 @@ fun PerfumeRecommendRoute(
 }
 
 @Composable
-fun PerfumeRecommendScreen(
+fun PerfumeRecommendationScreen(
     values : MutableMap<Int,String>,
     curIdx : Int,
     isEnabledBtn : Boolean,
@@ -112,7 +112,7 @@ private fun QuestionContent(
 @Preview
 @Composable
 private fun PreviewScreen(){
-    PerfumeRecommendScreen(
+    PerfumeRecommendationScreen(
         onNavBack = {},
         curIdx = 0,
         values = mutableMapOf<Int, String>(),

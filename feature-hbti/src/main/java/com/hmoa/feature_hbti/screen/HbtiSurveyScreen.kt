@@ -85,9 +85,9 @@ fun HbtiSurveyScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HbtiSurveyContent(
-    questions: Array<String>?,
-    optionsContents: Array<List<String>>?,
-    options: Array<List<SurveyOptionResponseDto>>?,
+    questions: List<String>?,
+    optionsContents: List<List<String>>?,
+    options: List<List<SurveyOptionResponseDto>>?,
     onClickOption: (optionId: Int) -> Unit,
     onClickPreviousQuestionClick: () -> Unit
 ) {
@@ -187,7 +187,7 @@ fun HbtiSurveyContent(
 @Preview
 @Composable
 fun HbtiSurveyScreenPreview() {
-    HbtiSurveyContent(questions = arrayOf("사과는 무슨 색인가요?", "바나나는 무슨 색인가요?", "오렌지는 무슨 색인가요?"), optionsContents = arrayOf(
+    HbtiSurveyContent(questions = listOf("사과는 무슨 색인가요?", "바나나는 무슨 색인가요?", "오렌지는 무슨 색인가요?"), optionsContents = listOf(
         listOf("주황", "노랑", "빨강", "파랑"), listOf("주황", "노랑", "빨강", "파랑"), listOf("주황", "노랑", "빨강", "파랑")
     ), options = null, onClickOption = {}, onClickPreviousQuestionClick = {})
 }

@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SurveyRespondRequestDto(
-    val optionIds: List<Int>
+    val optionIds: MutableList<Int>
 )

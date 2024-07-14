@@ -142,6 +142,7 @@ fun HbtiSurveyContent(
             ) {
                 ProgressBar(percentage = currentProgress)
                 HorizontalPager(
+                    userScrollEnabled = false,
                     modifier = Modifier.fillMaxWidth(),
                     state = pagerState,
                     verticalAlignment = Alignment.Top

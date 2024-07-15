@@ -20,15 +20,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.LikeRowItem
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
+import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationViewModel
 
 @Composable
 fun PerfumeRecommendationResultRoute(
     onNavBack: () -> Unit,
     onNavPerfumeDesc : (Int) -> Unit,
+    viewModel: PerfumeRecommendationViewModel = hiltViewModel()
 ){
     PerfumeRecommendationResultScreen (
         onNavBack = onNavBack,
@@ -82,7 +85,8 @@ fun PerfumeRecommendationResultScreen(
             Spacer(Modifier.height(30.dp))
             Button(
                 //여기서 버튼이 활성화되지 않을 것도 있나?
-                buttonModifier = Modifier.fillMaxWidth()
+                buttonModifier = Modifier
+                    .fillMaxWidth()
                     .height(52.dp),
                 isEnabled = true,
                 btnText = "다음",

@@ -38,8 +38,10 @@ import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_datastore.Search.SearchDataStoreImpl
 import com.hmoa.core_datastore.Signup.SignupDataStore
 import com.hmoa.core_datastore.Signup.SignupDataStoreImpl
-import com.hmoa.core_datastore.Survey.SurveyDataStore
-import com.hmoa.core_datastore.Survey.SurveyDataStoreImpl
+import com.hmoa.core_datastore.Survey.SurveyLocalDataStore
+import com.hmoa.core_datastore.Survey.SurveyLocalDataStoreImpl
+import com.hmoa.core_datastore.Survey.SurveyRemoteDataStore
+import com.hmoa.core_datastore.Survey.SurveyRemoteDataStoreImpl
 import com.hmoa.core_datastore.Term.TermDataStore
 import com.hmoa.core_datastore.Term.TermDataStoreImpl
 import dagger.Binds
@@ -133,6 +135,9 @@ interface DatastoreModule {
 
     @Singleton
     @Binds
-    fun provideSurveyDataStore(surveyDataStoreImpl: SurveyDataStoreImpl): SurveyDataStore
+    fun provideSurveyRemoteDataStore(surveyRemoteDataStoreImpl: SurveyRemoteDataStoreImpl): SurveyRemoteDataStore
 
+    @Singleton
+    @Binds
+    fun provideSurveyLocalDataStore(surveyLocalDataStore: SurveyLocalDataStoreImpl): SurveyLocalDataStore
 }

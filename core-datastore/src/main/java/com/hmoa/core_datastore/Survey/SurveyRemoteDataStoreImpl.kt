@@ -12,7 +12,7 @@ import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class SurveyDataStoreImpl @Inject constructor(private val surveyService: SurveyService) : SurveyDataStore {
+class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: SurveyService) : SurveyRemoteDataStore {
     override suspend fun getSurveyQuestions(): ResultResponse<SurveyQuestionsResponseDto> {
         val result = ResultResponse<SurveyQuestionsResponseDto>()
         surveyService.getSurveyQuestions().suspendOnSuccess {

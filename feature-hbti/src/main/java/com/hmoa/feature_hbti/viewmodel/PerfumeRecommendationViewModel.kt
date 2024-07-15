@@ -28,6 +28,8 @@ class PerfumeRecommendationViewModel @Inject constructor(
     //설문 조사 저장
     fun saveSurveyResult(ids: List<Int>){
         viewModelScope.launch{
+            /** 여기는 서버에 저장하는 부분
+             * API 변경되면 그 때 마저 변경 **/
             val dto = SurveyRespondRequestDto(optionIds = ids)
             surveyRepository.postSurveyResponds(dto)
         }

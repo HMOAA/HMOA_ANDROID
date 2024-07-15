@@ -21,19 +21,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.LikeRowItem
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
-import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationViewModel
+import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationResultViewModel
+import com.hmoa.feature_hbti.viewmodel.PerfumeResultUiState
 
 @Composable
 fun PerfumeRecommendationResultRoute(
     onNavBack: () -> Unit,
     onNavPerfumeDesc : (Int) -> Unit,
-    viewModel: PerfumeRecommendationViewModel = hiltViewModel()
+    viewModel: PerfumeRecommendationResultViewModel = hiltViewModel()
 ){
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errorState = viewModel.errorState.collectAsStateWithLifecycle()
     PerfumeRecommendationResultScreen (
+        uiState = uiState.value,
+        errorState = errorState.value,
         onNavBack = onNavBack,
         onNavPerfumeDesc = onNavPerfumeDesc,
     )
@@ -41,8 +50,35 @@ fun PerfumeRecommendationResultRoute(
 
 @Composable
 fun PerfumeRecommendationResultScreen(
+    uiState: PerfumeResultUiState,
+    errorState: ErrorUiState,
     onNavBack : () -> Unit,
     onNavPerfumeDesc : (Int) -> Unit,
+){
+    when(uiState){
+        PerfumeResultUiState.Loading -> AppLoadingScreen()
+        is PerfumeResultUiState.Success -> {
+            PerfumeCommentResultContent(
+                onNavBack = onNavBack,
+                onNavPerfumeDesc = onNavPerfumeDesc
+            )
+        }
+        PerfumeResultUiState.Error -> {
+            /** Error 발생 시 어디로 가는 것이 좋을까? **/
+            ErrorUiSetView(
+                onConfirmClick = { /*TODO*/ },
+                errorUiState = errorState,
+                onCloseClick = {}
+            )
+        }
+    }
+
+}
+
+@Composable
+private fun PerfumeCommentResultContent(
+    onNavBack: () -> Unit,
+    onNavPerfumeDesc: (Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -139,13 +175,4 @@ private fun PerfumeResult(
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun TestPerfumeRecommendationResult(){
-    PerfumeRecommendationResultScreen(
-        onNavBack = {},
-        onNavPerfumeDesc = {}
-    )
 }

@@ -51,7 +51,7 @@ fun PerfumeRecommendationRoute(
         isEnabledBtn = isEnabledBtn.value,
         onClickNext = {
             if(selectedOption.value != null && isEnabledBtn.value){
-                viewModel.saveSurveyResult()
+                viewModel.postSurveyResult()
                 onNavNext()
             } else {
                 Toast.makeText(context, "선택지를 골라주세요", Toast.LENGTH_SHORT).show()

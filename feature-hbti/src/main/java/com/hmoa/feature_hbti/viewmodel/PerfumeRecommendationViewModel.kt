@@ -26,7 +26,7 @@ class PerfumeRecommendationViewModel @Inject constructor(
     fun changeOption(changedOption : String?) {_selectedOption.update{ changedOption }}
 
     //설문 조사 저장
-    fun saveSurveyResult(){
+    fun postSurveyResult(){
         viewModelScope.launch{
             /** 여기는 서버에 저장하는 부분
              * API 변경되면 그 때 마저 변경 **/

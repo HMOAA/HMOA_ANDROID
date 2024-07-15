@@ -33,44 +33,118 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.data.Spice
+import com.hmoa.feature_hbti.viewmodel.SelectSpiceViewModel
+
+@Composable
+fun SelectSpiceRoute(
+    onNavBack: () -> Unit,
+    onNavNext: () -> Unit,
+    viewModel: SelectSpiceViewModel = hiltViewModel()
+){
+    val spices = listOf(
+        Spice("스파이스", listOf("통카빈","페퍼")),
+        Spice("플로럴", listOf("네롤리","라벤더","핑크 로즈","수선화","화이트 로즈")),
+        Spice("시트러스", listOf("만다린","귤","베르가못")),
+    )
+    // 선택된 태그들에 대한 리스트
+    val selectedTags = viewModel.selectedSpices.collectAsStateWithLifecycle()
+    val isEnabledBtn = viewModel.isEnabledBtn.collectAsStateWithLifecycle(false)
+
+    SelectSpiceScreen(
+        spices = spices,
+        selectedTags = selectedTags.value,
+        isEnabledBtn = isEnabledBtn.value,
+        onDeleteAllTags = { viewModel.deleteAllTags() },
+        onDeleteTag = {viewModel.deleteTag(it)},
+        onClickTag = {
+            if (it in selectedTags.value){
+                viewModel.deleteTag(it)
+            } else {
+                viewModel.addTag(it)
+            }
+        },
+        onNavBack = onNavBack,
+        onNavNext = {
+            viewModel.postSurveyResult()
+            onNavNext()
+        }
+    )
+}
 
 @Composable
 fun SelectSpiceScreen(
-    // 여기서 향료에 대한 데이터를 받는게 좋을 것 같음
+    spices: List<Spice>,
+    selectedTags: MutableList<String>,
+    isEnabledBtn: Boolean,
+    onDeleteAllTags: () -> Unit,
+    onDeleteTag: (String) -> Unit,
+    onClickTag: (tag: String) -> Unit,
+    onNavBack: () -> Unit,
+    onNavNext: () -> Unit
 ){
-    val spices = listOf<TmpSpiceDto>(
-        TmpSpiceDto("스파이스", listOf("통카빈","페퍼")),
-        TmpSpiceDto("플로럴", listOf("네롤리","라벤더","핑크 로즈","수선화","화이트 로즈")),
-        TmpSpiceDto("시트러스", listOf("만다린","귤","베르가못")),
-    )
-    /** 저 향료들이 서버에서 정해주는 향료인지 아니면 고정되어 있는 것인지를 아직 잘 모르겠넴.. */
-    /** 서버에서 주는 거라고 생각하고 해볼까? */
-
-    /** 선택된 태그들에 대한 리스트 */
-    val selectedTags = remember{ mutableStateListOf<String>() }
-
-    Column{
-        if(selectedTags.isNotEmpty()){
-            TagBadges(
-                tags = selectedTags,
-                onDeleteAll = {selectedTags.clear()},
-                onDeleteTag = { selectedTags.remove(it) }
-            )
-        }
-        Text(
-            text = "시향 후 마음에 드는 향료를\n골라주세요",
-            fontSize = 20.sp,
-            fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+            .padding(bottom = 40.dp)
+    ){
+        TopBar(
+            title = "향BTI",
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            onNavClick = onNavBack,
         )
-        Spacer(Modifier.height(16.dp))
-        spices.forEach{
-            SpiceDescContent(
-                title = it.spiceTitle,
-                itemNames = it.itemNames,
-                selectedTags = selectedTags,
-                onSelectTag = {selectedTags.add(it)}
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ){
+            Spacer(Modifier.height(15.dp))
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color.Black, shape = RoundedCornerShape(size = 100.dp)),
+                thickness = 5.dp,
+                color = Color.Black
+            )
+            Spacer(Modifier.height(24.dp))
+            Column{
+                if(selectedTags.isNotEmpty()){
+                    TagBadges(
+                        tags = selectedTags,
+                        onDeleteAll = onDeleteAllTags,
+                        onDeleteTag = onDeleteTag
+                    )
+                }
+                Text(
+                    text = "시향 후 마음에 드는 향료를\n골라주세요",
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
+                )
+                Spacer(Modifier.height(16.dp))
+                spices.forEach{
+                    SpiceDescContent(
+                        title = it.spiceTitle,
+                        itemNames = it.itemNames,
+                        selectedTags = selectedTags,
+                        onClickTag = onClickTag
+                    )
+                }
+            }
+            Spacer(Modifier.weight(1f))
+            Button(
+                buttonModifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                isEnabled = isEnabledBtn,
+                btnText = "다음",
+                onClick = onNavNext
             )
         }
     }
@@ -79,10 +153,10 @@ fun SelectSpiceScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SpiceDescContent(
-    title : String,
-    itemNames : List<String>,
-    selectedTags : MutableList<String>,
-    onSelectTag : (tag : String) -> Unit,
+    title: String,
+    itemNames: List<String>,
+    selectedTags: MutableList<String>,
+    onClickTag: (tag: String) -> Unit,
 ){
     Column{
         HorizontalDivider(
@@ -108,8 +182,8 @@ private fun SpiceDescContent(
                     textColor = if(it in selectedTags) Color.White else Color.Black,
                     tag = it,
                     isClickable = true,
-                    onClick = onSelectTag,
-                    height = 30.dp
+                    onClick = onClickTag,
+                    height = 32.dp
                 )
             }
         }
@@ -117,19 +191,15 @@ private fun SpiceDescContent(
     }
 }
 
-data class TmpSpiceDto(
-    val spiceTitle : String,
-    val itemNames : List<String>
-)
-
 @Composable
 private fun TagBadges(
-    tags : List<String>,
-    onDeleteAll : () -> Unit,
+    tags: List<String>,
+    onDeleteAll: () -> Unit,
     onDeleteTag: (String) -> Unit
 ){
     LazyRow(
-        modifier = Modifier.height(52.dp)
+        modifier = Modifier
+            .height(52.dp)
             .padding(bottom = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -154,8 +224,8 @@ private fun TagBadges(
 
 @Composable
 private fun DeletableTag(
-    tag : String,
-    onDeleteTag : (String) -> Unit
+    tag: String,
+    onDeleteTag: (String) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -190,12 +260,33 @@ private fun DeletableTag(
 @Preview
 @Composable
 private fun TestScreen(){
+    val spices = listOf(
+        Spice("스파이스", listOf("통카빈","페퍼")),
+        Spice("플로럴", listOf("네롤리","라벤더","핑크 로즈","수선화","화이트 로즈")),
+        Spice("시트러스", listOf("만다린","귤","베르가못")),
+    )
+    val selectedTags = remember{mutableStateListOf<String>()}
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
             .padding(horizontal = 16.dp)
     ){
-        SelectSpiceScreen()
+        SelectSpiceScreen(
+            spices = spices,
+            selectedTags = selectedTags,
+            isEnabledBtn = false,
+            onDeleteAllTags = {selectedTags.clear()},
+            onDeleteTag = {selectedTags.remove(it)},
+            onClickTag = {
+                if (it in selectedTags){
+                    selectedTags.remove(it)
+                } else {
+                    selectedTags.add(it)
+                }
+            },
+            onNavBack = {},
+            onNavNext = {}
+        )
     }
 }

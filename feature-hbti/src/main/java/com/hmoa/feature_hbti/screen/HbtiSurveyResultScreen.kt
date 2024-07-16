@@ -30,7 +30,6 @@ import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyResultUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyResultViewmodel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun HbtiSurveyResultRoute(onErrorHandleLoginAgain: () -> Unit, onBackClick: () -> Unit, onNextClick: () -> Unit) {
@@ -104,7 +103,6 @@ private fun HbtiSurveyResultLoading(userName: String) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onNextClick: () -> Unit) {
-    val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { surveyResult.size })
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White).padding(start = 16.dp, bottom = 40.dp),
@@ -188,7 +186,7 @@ private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onNextC
                     isEnabled = true,
                     btnText = "다음",
                     onClick = {
-                        scope.launch { onNextClick() }
+                        onNextClick()
                     },
                     buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
                     textSize = 18,

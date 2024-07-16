@@ -10,6 +10,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,17 +42,23 @@ fun OnAndOffBtn(
 @Composable
 fun TestOnAndOffBtn(){
     var checked by remember{mutableStateOf(false)}
+    var text by remember{mutableStateOf("알림 설정 해제")}
     Box(
         modifier = Modifier.fillMaxSize().background(color = Color.White),
         contentAlignment = Alignment.Center
     ){
-        Column{
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
             OnAndOffBtn(
                 isChecked = checked,
                 onChangeChecked = {checked = it}
             )
             Spacer(Modifier.height(20.dp))
-            Text(text = checked.toString())
+            Text(text = text)
+        }
+        LaunchedEffect(checked){
+            text = if(checked) "알림 설정" else "알림 설정 해제"
         }
     }
 }

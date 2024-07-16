@@ -11,7 +11,7 @@ import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
 fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
 
-fun NavController.navigateToHbtiSurveyResult(surveyResult: RecommendNotesResponseDto) =
+fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}")
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
@@ -23,7 +23,7 @@ fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
 fun NavGraphBuilder.hbtiSurveyScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onHbtiSurveyResultClick: (surveyResult: String) -> Unit
+    onHbtiSurveyResultClick: () -> Unit
 ) {
     composable(route = "${HbtiRoute.HbtiSurvey}") {
         HbtiSurveyRoute(

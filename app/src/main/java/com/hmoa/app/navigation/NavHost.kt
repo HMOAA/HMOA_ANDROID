@@ -177,7 +177,8 @@ fun SetUpNavGraph(
         hbtiSurveyScreen(
             onBackClick = navController::navigateToBack,
             onErrorHandleLoginAgain = navController::navigateToLogin,
-            onHbtiSurveyResultClick = { surveyResult -> navController.navigateToHbtiSurveyResult() })
+            onHbtiSurveyResultClick = navController::navigateToHbtiSurveyResult
+        )
         hbtiSurveyResultScreen()
     }
 }

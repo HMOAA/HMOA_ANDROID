@@ -124,6 +124,10 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         }
     }
 
+    fun updateIsCompletedSurvey(value: Boolean) {
+        _isCompletedSurvey.update { value }
+    }
+
     fun postSurveyResponds() {
         if (_answersState.value != null) {
             viewModelScope.launch {
@@ -135,7 +139,7 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
                                     val jobSavesurveyResult =
                                         launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }
                                     jobSavesurveyResult.join()
-                                    _isCompletedSurvey.update { true }
+                                    updateIsCompletedSurvey(true)
                                 }
                             }
 

@@ -9,10 +9,12 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class HbtiSurveyResultViewmodel @Inject constructor(
     private val memberRepository: MemberRepository,
     private val surveyRepository: SurveyRepository

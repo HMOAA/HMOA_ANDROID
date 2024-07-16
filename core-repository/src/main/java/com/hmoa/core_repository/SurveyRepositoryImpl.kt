@@ -3,7 +3,6 @@ package com.hmoa.core_repository
 import ResultResponse
 import com.hmoa.core_datastore.Survey.SurveyLocalDataStore
 import com.hmoa.core_datastore.Survey.SurveyRemoteDataStore
-import com.hmoa.core_datastore.mapToNote
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
@@ -24,7 +23,7 @@ class SurveyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllSurveyResult(): List<NoteResponseDto> {
-        return surveyLocalDataStore.getAllSurveyResult().map { mapToNote(it) }
+        return surveyLocalDataStore.getAllSurveyResult()
     }
 
     override suspend fun insertSurveryResult(note: NoteResponseDto) {

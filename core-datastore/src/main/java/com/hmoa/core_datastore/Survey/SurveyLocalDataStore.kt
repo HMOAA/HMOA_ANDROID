@@ -4,7 +4,7 @@ import com.hmoa.core_model.request.NoteResponseDto
 
 
 interface SurveyLocalDataStore {
-    suspend fun getAllSurveyResult(): List<com.hmoa.core_database.room.RoomNote>
+    suspend fun getAllSurveyResult(): List<NoteResponseDto>
     suspend fun insertSurveyResult(note: NoteResponseDto)
 
     suspend fun updateSurveyResult(note: NoteResponseDto)

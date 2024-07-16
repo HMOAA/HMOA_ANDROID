@@ -10,10 +10,11 @@ import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
 
 fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
-fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}")
-
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}")
+
+fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}")
+
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -30,7 +31,8 @@ fun NavGraphBuilder.hbtiSurveyScreen(
         HbtiSurveyRoute(
             onBackClick = { onBackClick() },
             onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
-            onClickHbtiSurveyResultScreen = { onHbtiSurveyResultClick() })
+            onClickHbtiSurveyResultScreen = { onHbtiSurveyResultClick() }
+        )
     }
 }
 

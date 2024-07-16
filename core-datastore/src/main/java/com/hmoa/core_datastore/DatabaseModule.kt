@@ -1,4 +1,4 @@
-package com.hmoa.core_database
+package com.hmoa.core_datastore
 
 import android.content.Context
 import androidx.room.Room
@@ -11,8 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@Module
 @InstallIn(SingletonComponent::class)
+@Module
 object DatabaseModule {
     @Provides
     @Singleton
@@ -23,7 +23,6 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideNoteDao(database: AppDatabase): NoteDao {
-        return database.noteDao()
-    }
+    @Singleton
+    fun provideNoteDao(database: AppDatabase): NoteDao = database.noteDao()
 }

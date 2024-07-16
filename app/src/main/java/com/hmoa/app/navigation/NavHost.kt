@@ -179,6 +179,11 @@ fun SetUpNavGraph(
             onErrorHandleLoginAgain = navController::navigateToLogin,
             onHbtiSurveyResultClick = navController::navigateToHbtiSurveyResult
         )
-        hbtiSurveyResultScreen()
+        hbtiSurveyResultScreen(
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onBackClick = navController::navigateToBack,
+            onHbtiProcessClick = navController::navigateToHbtiProcess
+        )
+        hbtiProcessScreen(onNotePickClick = {})
     }
 }

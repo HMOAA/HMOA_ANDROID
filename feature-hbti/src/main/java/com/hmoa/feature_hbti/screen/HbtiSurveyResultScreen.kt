@@ -32,15 +32,15 @@ import com.hmoa.feature_hbti.viewmodel.HbtiSurveyResultViewmodel
 import kotlinx.coroutines.delay
 
 @Composable
-fun HbtiSurveyResultRoute(onErrorHandleLoginAgain: () -> Unit, onBackClick: () -> Unit, onNextClick: () -> Unit) {
-    HbtiSurveyResultScreen(onErrorHandleLoginAgain = {}, onBackClick = {}, onNextClick = {})
+fun HbtiSurveyResultRoute(onErrorHandleLoginAgain: () -> Unit, onBackClick: () -> Unit, onHbtiProcessClick: () -> Unit) {
+    HbtiSurveyResultScreen(onErrorHandleLoginAgain = {onErrorHandleLoginAgain()}, onBackClick = {onBackClick()}, onHbtiProcessClick = {onHbtiProcessClick()})
 }
 
 @Composable
 private fun HbtiSurveyResultScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onHbtiProcessClick: () -> Unit,
     viewmodel: HbtiSurveyResultViewmodel = hiltViewModel()
 ) {
     var showLoading by remember { mutableStateOf(true) }
@@ -65,7 +65,7 @@ private fun HbtiSurveyResultScreen(
             } else {
                 HbtiSurveyResultContent(
                     surveyResult = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).surveyResult,
-                    onNextClick = { onNextClick() })
+                    onHbtiProcessClick = { onHbtiProcessClick() })
             }
         }
 
@@ -102,7 +102,7 @@ private fun HbtiSurveyResultLoading(userName: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onNextClick: () -> Unit) {
+private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onHbtiProcessClick: () -> Unit) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { surveyResult.size })
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White).padding(start = 16.dp, bottom = 40.dp),
@@ -186,7 +186,7 @@ private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onNextC
                     isEnabled = true,
                     btnText = "다음",
                     onClick = {
-                        onNextClick()
+                        onHbtiProcessClick()
                     },
                     buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
                     textSize = 18,

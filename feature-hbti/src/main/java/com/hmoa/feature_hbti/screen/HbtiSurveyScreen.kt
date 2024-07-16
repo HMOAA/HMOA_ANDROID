@@ -26,6 +26,10 @@ import com.hmoa.feature_hbti.viewmodel.HbtiSurveyUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
 import kotlinx.coroutines.launch
 
+fun calculateProgressStepSize(questions: List<String>?): Float {
+    return ((100).div(questions?.size ?: 10)).div(100.0).toFloat()
+}
+
 @Composable
 fun HbtiSurveyRoute(
     onErrorHandleLoginAgain: () -> Unit,
@@ -54,7 +58,9 @@ fun HbtiSurveyScreen(
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(isCompletedSurvey) {
-        onClickFinishSurvey()
+        if (isCompletedSurvey) {
+            onClickFinishSurvey()
+        }
     }
 
     ErrorUiSetView(
@@ -91,11 +97,13 @@ fun HbtiSurveyContent(
     onClickOption: (optionId: Int, page: Int) -> Unit,
     onClickFinishSurvey: () -> Unit
 ) {
+
     var currentProgress by remember { mutableStateOf(0f) }
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
-    val additionalProgress = 0.1f
+    val additionalProgress = calculateProgressStepSize(questions)
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { questions?.size ?: 0 })
+
 
     fun addProgress() {
         targetProgress += additionalProgress
@@ -126,15 +134,15 @@ fun HbtiSurveyContent(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             onNavClick = {
                 subtractProgress()
-                scope.launch { pagerState.scrollToPage(pagerState.currentPage + 1) }
+                scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
             }
         )
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f),
-            verticalArrangement = Arrangement.Top
+            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth().background(color = Color.White).padding(top = 12.dp)
             ) {
                 ProgressBar(percentage = currentProgress)
@@ -165,24 +173,27 @@ fun HbtiSurveyContent(
                                 }
                             )
                         }
-                        Button(
-                            isEnabled = true,
-                            btnText = "다음",
-                            onClick = {
-                                if (page < pagerState.pageCount - 1) {
-                                    addProgress()
-                                    scope.launch { pagerState.scrollToPage(page - 1) }
-                                } else {
-                                    onClickFinishSurvey()
-                                }
-                            },
-                            buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
-                            textSize = 18,
-                            textColor = Color.White,
-                            radious = 5
-                        )
+
                     }
                 }
+                Button(
+                    isEnabled = true,
+                    btnText = "다음",
+                    onClick = {
+                        if (pagerState.currentPage < pagerState.pageCount - 1) {
+                            addProgress()
+                            scope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        } else {
+                            onClickFinishSurvey()
+                        }
+                    },
+                    buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
+                    textSize = 18,
+                    textColor = Color.White,
+                    radious = 5
+                )
             }
         }
     }

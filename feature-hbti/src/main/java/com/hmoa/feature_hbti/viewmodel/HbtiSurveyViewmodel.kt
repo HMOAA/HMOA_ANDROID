@@ -7,8 +7,8 @@ import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.SurveyRepository
+import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyOptionResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +23,8 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     private var _optionsState = MutableStateFlow<List<List<SurveyOptionResponseDto>>?>(null)
     private var _answersState =
         MutableStateFlow<SurveyRespondRequestDto?>(SurveyRespondRequestDto(optionIds = arrayListOf(10)))
-    private var _surveyResultState = MutableStateFlow<RecommendNotesResponseDto?>(null)
-    val surveyResultState = _surveyResultState
+    private var _isCompletedSurvey = MutableStateFlow<Boolean>(false)
+    val isCompletedSurvey = _isCompletedSurvey
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -118,6 +118,12 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         }
     }
 
+    suspend fun saveSurveyResultToLocalDB(result: List<NoteResponseDto>?) {
+        result?.forEach {
+            surveyRepository.insertSurveryResult(it)
+        }
+    }
+
     fun postSurveyResponds() {
         if (_answersState.value != null) {
             viewModelScope.launch {
@@ -125,7 +131,12 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
                     .collectLatest { result ->
                         when (result) {
                             is Result.Success -> {
-                                _surveyResultState.update { result.data.data }
+                                viewModelScope.launch {
+                                    val jobSavesurveyResult =
+                                        launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }
+                                    jobSavesurveyResult.join()
+                                    _isCompletedSurvey.update { true }
+                                }
                             }
 
                             is Result.Error -> {

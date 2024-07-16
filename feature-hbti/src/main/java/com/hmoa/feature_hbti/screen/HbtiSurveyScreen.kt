@@ -21,7 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.pretendard
-import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyOptionResponseDto
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
@@ -31,19 +30,19 @@ import kotlinx.coroutines.launch
 fun HbtiSurveyRoute(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onClickHbtiSurveyResultScreen: (surveyResult:RecommendNotesResponseDto) -> Unit,
+    onClickHbtiSurveyResultScreen: () -> Unit,
 ) {
     HbtiSurveyScreen(
         onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
         onBackClick = { onBackClick() },
-        onClickFinishSurvey = { onClickHbtiSurveyResultScreen(it)})
+        onClickFinishSurvey = { onClickHbtiSurveyResultScreen() })
 }
 
 @Composable
 fun HbtiSurveyScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onClickFinishSurvey: (surveyResult:RecommendNotesResponseDto) -> Unit,
+    onClickFinishSurvey: () -> Unit,
     viewModel: HbtiSurveyViewmodel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
@@ -51,13 +50,11 @@ fun HbtiSurveyScreen(
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val surveyResultState by viewModel.surveyResultState.collectAsStateWithLifecycle()
+    val isCompletedSurvey by viewModel.isCompletedSurvey.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(surveyResultState){
-        if (surveyResultState != null){
-            onClickFinishSurvey(surveyResultState!!)
-        }
+    LaunchedEffect(isCompletedSurvey) {
+        onClickFinishSurvey()
     }
 
     ErrorUiSetView(
@@ -79,7 +76,7 @@ fun HbtiSurveyScreen(
                         answers = (uiState as HbtiSurveyUiState.HbtiData).answers?.optionIds
                     )
                 },
-                onClickFinishSurvey = {viewModel.postSurveyResponds()}
+                onClickFinishSurvey = { viewModel.postSurveyResponds() }
             )
         }
     }

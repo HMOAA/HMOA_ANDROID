@@ -1,9 +1,8 @@
 package com.hmoa.feature_hbti.navigation
 
-import androidx.navigation.*
-import androidx.navigation.NavType.ParcelableType
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.google.gson.Gson
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.feature_hbti.screen.HbtiRoute
 import com.hmoa.feature_hbti.screen.HbtiSurveyResultRoute
@@ -13,7 +12,7 @@ fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
 
 fun NavController.navigateToHbtiSurveyResult(surveyResult: RecommendNotesResponseDto) =
-    navigate("${HbtiRoute.HbtiSurveyResult}/${surveyResult}")
+    navigate("${HbtiRoute.HbtiSurveyResult}")
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -30,20 +29,15 @@ fun NavGraphBuilder.hbtiSurveyScreen(
         HbtiSurveyRoute(
             onBackClick = { onBackClick() },
             onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
-            onClickHbtiSurveyResultScreen = { surveyResult ->
-                val surveyResultJson = Gson().toJson(surveyResult)
-                onHbtiSurveyResultClick(surveyResultJson)
+            onClickHbtiSurveyResultScreen = {
             })
     }
 }
 
 fun NavGraphBuilder.hbtiSurveyResultScreen() {
     composable(
-        route = "${HbtiRoute.HbtiSurveyResult}/{surveyResult}",
-        arguments = listOf(navArgument("surveyResult") { type =  NavType.StringType})
+        route = "${HbtiRoute.HbtiSurveyResult}",
     ) {
-        val surveyResultJson = it.arguments?.getString("surveyResult")
-        val surveyResult = Gson().fromJson(surveyResultJson, RecommendNotesResponseDto::class.java)
-        HbtiSurveyResultRoute(surveyResult = surveyResult)
+        HbtiSurveyResultRoute()
     }
 }

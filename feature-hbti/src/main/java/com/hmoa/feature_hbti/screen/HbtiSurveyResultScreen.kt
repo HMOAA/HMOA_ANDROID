@@ -29,12 +29,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun HbtiSurveyResultRoute(surveyResult: RecommendNotesResponseDto) {
-    HbtiSurveyResultScreen(surveyResult)
+fun HbtiSurveyResultRoute() {
+    HbtiSurveyResultScreen()
 }
 
 @Composable
-fun HbtiSurveyResultScreen(surveyResult: RecommendNotesResponseDto) {
+fun HbtiSurveyResultScreen() {
     var showLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
@@ -45,7 +45,7 @@ fun HbtiSurveyResultScreen(surveyResult: RecommendNotesResponseDto) {
     if (showLoading) {
         HbtiSurveyResultLoading()
     } else {
-        HbtiSurveyResultContent(surveyResult = surveyResult)
+        HbtiSurveyResultContent(surveyResult = )
     }
 }
 

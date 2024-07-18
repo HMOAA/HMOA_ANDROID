@@ -14,12 +14,12 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.VerticalStepBar
 
 @Composable
-fun HbtiProcessRoute(onNotePickClick: () -> Unit) {
-    HbtiProcessScreen(onNotePickClick = { onNotePickClick() })
+fun HbtiProcessRoute(onBackClick: () -> Unit, onNotePickClick: () -> Unit) {
+    HbtiProcessScreen(onBackClick = { onBackClick() }, onNotePickClick = { onNotePickClick() })
 }
 
 @Composable
-private fun HbtiProcessScreen(onNotePickClick: () -> Unit) {
+private fun HbtiProcessScreen(onBackClick: () -> Unit, onNotePickClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White).padding(horizontal = 16.dp)
             .padding(bottom = 40.dp),
@@ -29,7 +29,8 @@ private fun HbtiProcessScreen(onNotePickClick: () -> Unit) {
             TopBar(
                 title = "향BTI",
                 titleColor = Color.Black,
-                navIcon = painterResource(R.drawable.ic_back)
+                navIcon = painterResource(R.drawable.ic_back),
+                onNavClick = { onBackClick() }
             )
             Column(modifier = Modifier.padding(top = 22.dp)) {
                 VerticalStepBar(
@@ -55,5 +56,5 @@ private fun HbtiProcessScreen(onNotePickClick: () -> Unit) {
 @Preview
 @Composable
 private fun HbtiProcessScreenPreview() {
-    HbtiProcessScreen(onNotePickClick = {})
+    HbtiProcessScreen(onBackClick = {}, onNotePickClick = {})
 }

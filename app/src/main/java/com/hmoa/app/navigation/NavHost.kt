@@ -184,6 +184,6 @@ fun SetUpNavGraph(
             onBackClick = navController::navigateToBack,
             onHbtiProcessClick = navController::navigateToHbtiProcess
         )
-        hbtiProcessScreen(onNotePickClick = {})
+        hbtiProcessScreen(onBackClick = navController::navigateToBack, onNotePickClick = {})
     }
 }

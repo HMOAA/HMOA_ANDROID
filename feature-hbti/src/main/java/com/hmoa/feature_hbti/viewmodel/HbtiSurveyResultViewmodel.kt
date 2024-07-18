@@ -10,6 +10,7 @@ import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,7 +55,7 @@ class HbtiSurveyResultViewmodel @Inject constructor(
         )
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             getUserName()
             getSurveyResult()
         }
@@ -64,7 +65,9 @@ class HbtiSurveyResultViewmodel @Inject constructor(
         flow { emit(memberRepository.getMember()) }.asResult().collectLatest { result ->
             when (result) {
                 is Result.Success -> {
-                    _userNameState.update { result.data.data?.nickname!! }
+                    if (result.data.data?.nickname != null) {
+                        _userNameState.update { result.data.data?.nickname!! }
+                    }
                 }
 
                 is Result.Error -> when (result.exception.message) {

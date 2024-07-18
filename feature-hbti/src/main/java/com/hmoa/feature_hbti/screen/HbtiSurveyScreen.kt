@@ -27,7 +27,7 @@ import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
 import kotlinx.coroutines.launch
 
 fun calculateProgressStepSize(questions: List<String>?): Float {
-    return ((100).div(questions?.size ?: 10)).div(100.0).toFloat()
+    return ((100).div(questions?.size?.minus(1) ?: 10)).div(100.0).toFloat()
 }
 
 @Composable

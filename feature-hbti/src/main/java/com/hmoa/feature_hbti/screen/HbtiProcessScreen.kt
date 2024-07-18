@@ -14,12 +14,14 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.VerticalStepBar
 
 @Composable
-fun HbtiProcessRoute(onBackClick: () -> Unit, onNotePickClick: () -> Unit) {
-    HbtiProcessScreen(onBackClick = { onBackClick() }, onNotePickClick = { onNotePickClick() })
+fun HbtiProcessRoute(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
+    HbtiProcessScreen(
+        onBackClick = { onBackClick() },
+        onNoteOrderQuantityPickClick = { onNoteOrderQuantityPickClick() })
 }
 
 @Composable
-private fun HbtiProcessScreen(onBackClick: () -> Unit, onNotePickClick: () -> Unit) {
+private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White).padding(horizontal = 16.dp)
             .padding(bottom = 40.dp),
@@ -42,9 +44,7 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNotePickClick: () -> Un
         Button(
             isEnabled = true,
             btnText = "다음",
-            onClick = {
-
-            },
+            onClick = { onNoteOrderQuantityPickClick() },
             buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
             textSize = 18,
             textColor = Color.White,
@@ -56,5 +56,5 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNotePickClick: () -> Un
 @Preview
 @Composable
 private fun HbtiProcessScreenPreview() {
-    HbtiProcessScreen(onBackClick = {}, onNotePickClick = {})
+    HbtiProcessScreen(onBackClick = {}, onNoteOrderQuantityPickClick = {})
 }

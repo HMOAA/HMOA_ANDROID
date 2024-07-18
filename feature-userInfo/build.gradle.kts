@@ -82,6 +82,12 @@ dependencies {
     //open licence
     implementation("com.google.android.gms:play-services-oss-licenses:17.0.0")
 
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-messaging:21.1.0")
+    implementation("com.google.firebase:firebase-analytics")
+
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")

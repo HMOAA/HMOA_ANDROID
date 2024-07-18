@@ -38,4 +38,8 @@ class SurveyRepositoryImpl @Inject constructor(
         surveyLocalDataStore.deleteSurveyResult(note)
     }
 
+    override suspend fun deleteAllNotes() {
+        surveyLocalDataStore.deleteAllNotes()
+    }
+
 }

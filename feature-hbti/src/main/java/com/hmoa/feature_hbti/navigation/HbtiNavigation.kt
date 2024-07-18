@@ -51,8 +51,8 @@ fun NavGraphBuilder.hbtiSurveyResultScreen(
     }
 }
 
-fun NavGraphBuilder.hbtiProcessScreen(onNotePickClick: () -> Unit) {
+fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNotePickClick: () -> Unit) {
     composable(route = "${HbtiRoute.HbtiProcess}") {
-        HbtiProcessRoute(onNotePickClick = { onNotePickClick() })
+        HbtiProcessRoute(onBackClick = { onBackClick() }, onNotePickClick = { onNotePickClick() })
     }
 }

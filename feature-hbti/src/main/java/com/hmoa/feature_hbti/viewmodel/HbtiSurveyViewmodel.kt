@@ -12,6 +12,7 @@ import com.hmoa.core_model.request.SurveyRespondRequestDto
 import com.hmoa.core_model.response.SurveyOptionResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -66,9 +67,14 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         )
 
     fun initializeAnswerState(surveyQuestions: SurveyQuestionsResponseDto?): MutableList<Int> {
-        val size = surveyQuestions?.questions?.size ?: 0
-        val answers: MutableList<Int> = MutableList(size) { 0 }
-        return answers
+        if (surveyQuestions!!.questions.isNotEmpty()) {
+            val initializedAnswers = surveyQuestions?.questions?.map {
+                it.answers[0].optionId
+            }
+            val answers = initializedAnswers!!.toMutableList()
+            return answers
+        }
+        return mutableListOf()
     }
 
     fun updateQuestionState(surveyQuestions: SurveyQuestionsResponseDto?): List<String>? {
@@ -130,12 +136,14 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
 
     fun postSurveyResponds() {
         if (_answersState.value != null) {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 flow { emit(surveyRepository.postSurveyResponds(_answersState.value!!)) }.asResult()
                     .collectLatest { result ->
                         when (result) {
                             is Result.Success -> {
                                 viewModelScope.launch {
+                                    val deleteAllSurveyResult = launch { surveyRepository.deleteAllNotes() }
+                                    deleteAllSurveyResult.join()
                                     val jobSavesurveyResult =
                                         launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }
                                     jobSavesurveyResult.join()

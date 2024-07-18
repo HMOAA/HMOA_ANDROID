@@ -22,4 +22,8 @@ class SurveyLocalDataStoreImpl @Inject constructor(private val noteDao: NoteDao)
     override suspend fun deleteSurveyResult(note: NoteResponseDto) {
         noteDao.delete(mapToRoomDBNote(note))
     }
+
+    override suspend fun deleteAllNotes() {
+        noteDao.deleteAllNotes()
+    }
 }

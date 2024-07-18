@@ -9,4 +9,6 @@ interface SurveyLocalDataStore {
 
     suspend fun updateSurveyResult(note: NoteResponseDto)
     suspend fun deleteSurveyResult(note: NoteResponseDto)
+
+    suspend fun deleteAllNotes()
 }

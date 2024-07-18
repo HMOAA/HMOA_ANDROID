@@ -15,4 +15,7 @@ interface NoteDao {
 
     @Query("SELECT * FROM RoomNote")
     fun getAllNotes(): List<RoomNote>
+
+    @Query("DELETE FROM RoomNote")
+    suspend fun deleteAllNotes()
 }

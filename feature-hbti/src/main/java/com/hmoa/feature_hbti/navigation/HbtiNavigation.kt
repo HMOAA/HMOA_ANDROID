@@ -3,6 +3,7 @@ package com.hmoa.feature_hbti.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.hmoa.feature_hbti.NoteOrderQuantity
 import com.hmoa.feature_hbti.screen.*
 
 fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
@@ -10,9 +11,10 @@ fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}")
 
-fun NavController.navigateToNotePick() = navigate("${HbtiRoute.NotePick}")
-
 fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}")
+fun NavController.navigateToNoteOrderQuantityPick() = navigate("${HbtiRoute.NoteOrderQuantityPick}")
+fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
+    navigate("${HbtiRoute.NotePick}/${noteOrderQuantity.number}")
 
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
@@ -58,8 +60,11 @@ fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuanti
     }
 }
 
-fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
-    composable(route = "${HbtiRoute.NotePick}") {
-        NoteOrderQuantityPickRoute(onBackClick = { onBackClick() }, onNextClick = { onNextClick() })
+fun NavGraphBuilder.noteOrderQuantityPickScreen(
+    onBackClick: () -> Unit,
+    onNextClick: (noteOrderQuantity: NoteOrderQuantity) -> Unit
+) {
+    composable(route = "${HbtiRoute.NoteOrderQuantityPick}") {
+        NoteOrderQuantityPickRoute(onBackClick = { onBackClick() }, onNextClick = { onNextClick(it) })
     }
 }

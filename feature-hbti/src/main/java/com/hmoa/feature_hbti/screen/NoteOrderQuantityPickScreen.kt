@@ -20,26 +20,28 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.SurveyOptionList
 import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.feature_hbti.NoteOrderQuantity
 import com.hmoa.feature_hbti.viewmodel.NoteOrderQuantityPickUiState
 import com.hmoa.feature_hbti.viewmodel.NoteOrderQuantityPickViewmodel
 
 @Composable
-fun NoteOrderQuantityPickRoute(onBackClick: () -> Unit, onNextClick: () -> Unit) {
-    NoteOrderQuantityPickContent(onBackClick = { onBackClick() }, onNextClick = { onNextClick() })
+fun NoteOrderQuantityPickRoute(onBackClick: () -> Unit, onNextClick: (noteOrderQuantity: NoteOrderQuantity) -> Unit) {
+    NoteOrderQuantityPickContent(onBackClick = { onBackClick() }, onNextClick = { onNextClick(it) })
 }
 
 @Composable
 fun NoteOrderQuantityPickContent(
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onNextClick: (noteOrderQuantity: NoteOrderQuantity) -> Unit,
     viewModel: NoteOrderQuantityPickViewmodel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPickCompleted by viewModel.isPickCompleted.collectAsStateWithLifecycle()
+    val noteOrderQuantityChoice by viewModel.noteOrderQuantityChoice.collectAsStateWithLifecycle()
 
     LaunchedEffect(isPickCompleted) {
         if (isPickCompleted) {
-            onNextClick()
+            onNextClick(noteOrderQuantityChoice)
         }
     }
 

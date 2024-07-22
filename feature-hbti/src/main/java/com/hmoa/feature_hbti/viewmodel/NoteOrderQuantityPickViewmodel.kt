@@ -18,20 +18,28 @@ class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepos
     private var _topRecommendedNote = MutableStateFlow<String>("")
     private var _noteOrderQuantityChoiceNameList =
         MutableStateFlow<List<String>>(listOf("2개", "5개", "8개 31,900원", "자유롭게 선택"))
-    private var _noteOrderQuantityChoice = MutableStateFlow<NoteOrderQuantity?>(noteOrderQuantityChoiceList[0])
+    private var _noteOrderQuantityChoice = MutableStateFlow<NoteOrderQuantity>(noteOrderQuantityChoiceList[0])
+    val noteOrderQuantityChoice: StateFlow<NoteOrderQuantity> = _noteOrderQuantityChoice
     private var _isPickCompleted = MutableStateFlow<Boolean>(false)
     val isPickCompleted: StateFlow<Boolean> = _isPickCompleted
 
     val uiState: StateFlow<NoteOrderQuantityPickUiState> =
-        combine(_topRecommendedNote, _noteOrderQuantityChoiceNameList) { topRecommendedNote, choiceList ->
+        combine(
+            _topRecommendedNote,
+            _noteOrderQuantityChoiceNameList,
+            _noteOrderQuantityChoice
+        ) { topRecommendedNote, choiceList, noteOrderQuantityChoice ->
             NoteOrderQuantityPickUiState.NoteOrderQuantityPickData(
                 topRecommendedNote = topRecommendedNote,
-                choiceList = choiceList
+                choiceList = choiceList,
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = NoteOrderQuantityPickUiState.NoteOrderQuantityPickData("", listOf("", "", "", ""))
+            initialValue = NoteOrderQuantityPickUiState.NoteOrderQuantityPickData(
+                "",
+                listOf("", "", "", "")
+            )
         )
 
     init {

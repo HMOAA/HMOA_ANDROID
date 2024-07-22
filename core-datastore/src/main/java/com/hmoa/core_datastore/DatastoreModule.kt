@@ -14,6 +14,8 @@ import com.hmoa.core_datastore.Fcm.FcmLocalDataStore
 import com.hmoa.core_datastore.Fcm.FcmLocalDataStoreImpl
 import com.hmoa.core_datastore.Fcm.FcmRemoteDataStore
 import com.hmoa.core_datastore.Fcm.FcmRemoteDataStoreImpl
+import com.hmoa.core_datastore.Hshop.HshopRemoteDataStore
+import com.hmoa.core_datastore.Hshop.HshopRemoteDataStoreImpl
 import com.hmoa.core_datastore.Login.LoginLocalDataStore
 import com.hmoa.core_datastore.Login.LoginLocalDataStoreImpl
 import com.hmoa.core_datastore.Login.LoginRemoteDataStore
@@ -140,4 +142,8 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun provideSurveyLocalDataStore(surveyLocalDataStore: SurveyLocalDataStoreImpl): SurveyLocalDataStore
+
+    @Singleton
+    @Binds
+    fun provideHshopRemoteDataStore(hshopRemoteDataStoreImpl: HshopRemoteDataStoreImpl): HshopRemoteDataStore
 }

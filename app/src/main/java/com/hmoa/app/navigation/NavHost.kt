@@ -188,6 +188,10 @@ fun SetUpNavGraph(
             onBackClick = navController::navigateToBack,
             onNoteOrderQuantityPickClick = navController::navigateToNoteOrderQuantityPick
         )
-        noteOrderQuantityPickScreen(onBackClick = navController::navigateToBack, onNextClick = {})
+        noteOrderQuantityPickScreen(
+            onBackClick = navController::navigateToBack,
+            onNextClick = { noteOrderQuantity -> navController.navigateToNotePick(noteOrderQuantity) }
+        )
+        notePickScreen(onBackClick = navController::navigateToBack, onNextClick = {})
     }
 }

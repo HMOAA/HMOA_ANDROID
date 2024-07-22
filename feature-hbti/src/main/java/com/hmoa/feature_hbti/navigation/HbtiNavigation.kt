@@ -2,7 +2,9 @@ package com.hmoa.feature_hbti.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.hmoa.feature_hbti.NoteOrderQuantity
 import com.hmoa.feature_hbti.screen.*
 
@@ -66,5 +68,19 @@ fun NavGraphBuilder.noteOrderQuantityPickScreen(
 ) {
     composable(route = "${HbtiRoute.NoteOrderQuantityPick}") {
         NoteOrderQuantityPickRoute(onBackClick = { onBackClick() }, onNextClick = { onNextClick(it) })
+    }
+}
+
+fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
+    composable(
+        route = "${HbtiRoute.NotePick.name}/{noteOrderQuantity}",
+        arguments = listOf(navArgument("noteOrderQuantity") { type = NavType.IntType })
+    ) {
+        val noteOrderQuantity = it.arguments?.getInt("noteOrderQuantity")
+        NotePickRoute(
+            onBackClick = { onBackClick() },
+            onNextClick = { onNextClick() },
+            noteOrderQuantity = noteOrderQuantity
+        )
     }
 }

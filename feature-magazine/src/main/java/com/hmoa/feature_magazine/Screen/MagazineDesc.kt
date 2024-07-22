@@ -48,7 +48,7 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
-import com.hmoa.core_designsystem.component.MagazineTag
+import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.MagazineContentItem
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
@@ -341,7 +341,7 @@ private fun Tags(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ){
         tagList.forEach{ tag ->
-            MagazineTag(tag = tag)
+            TagBadge(tag = tag)
         }
     }
 }

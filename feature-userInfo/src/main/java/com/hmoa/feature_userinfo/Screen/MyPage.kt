@@ -1,7 +1,11 @@
 package com.example.userinfo
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,8 +37,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature_userinfo.viewModel.MyPageViewModel
@@ -53,8 +59,6 @@ import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
 
-const val APP_VERSION = "1.1.0"
-
 @Composable
 internal fun MyPageRoute(
     onNavEditProfile: () -> Unit,
@@ -65,25 +69,32 @@ internal fun MyPageRoute(
     onNavBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val appVersion = "1.0.1"
     val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
+    val isEnabledAlarm = viewModel.isEnabledAlarm.collectAsStateWithLifecycle()
+    val onChangeAlarm: (Boolean) -> Unit = {
+        if (hasNotifyPermission(context)) {viewModel.changeAlarmSetting(it)}
+        else {Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()}
+    }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val navKakao = {
         TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
-            if (err != null) {
-                Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
-            }
+            if (err != null) {Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()}
         }
     }
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-    }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {}
+
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
             uiState = uiState.value,
             errorUiState = errorUiState,
+            appVersion = appVersion,
+            isEnabledAlarm = isEnabledAlarm.value,
+            onChangeAlarm = onChangeAlarm,
             logoutEvent = {
                 viewModel.logout()
                 onNavLogin()
@@ -118,6 +129,9 @@ internal fun MyPageRoute(
 fun MyPage(
     uiState: UserInfoUiState,
     errorUiState: ErrorUiState,
+    appVersion: String,
+    isEnabledAlarm: Boolean?,
+    onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
@@ -137,6 +151,9 @@ fun MyPage(
                 profile = uiState.profile,
                 nickname = uiState.nickname,
                 provider = uiState.provider,
+                appVersion = appVersion,
+                isEnabledAlarm = isEnabledAlarm,
+                onChangeAlarm = onChangeAlarm,
                 logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
                 openPrivacyPolicyLink = openPrivacyPolicyLink,
@@ -164,6 +181,9 @@ private fun MyPageContent(
     profile: String,
     nickname: String,
     provider: String,
+    appVersion: String,
+    isEnabledAlarm: Boolean?,
+    onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
@@ -181,7 +201,7 @@ private fun MyPageContent(
         ColumnData("오픈소스라이센스") { doOpenLicense() },
         ColumnData("이용 약관") { },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
-        ColumnData("버전 정보 ${APP_VERSION}") {},
+        ColumnData("버전 정보 ${appVersion}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
         ColumnData("로그아웃") { logoutEvent() },
         ColumnData("계정삭제") { onDelAccount() }
@@ -200,7 +220,7 @@ private fun MyPageContent(
                 provider = provider,
                 onNavEditProfile = onNavEditProfile
             )
-            ServiceAlarm()
+            ServiceAlarm(isEnabledAlarm = isEnabledAlarm, onChangeAlarm = onChangeAlarm)
             HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         }
 
@@ -218,7 +238,6 @@ private fun MyPageContent(
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 )
-
                 IconButton(
                     modifier = Modifier.size(20.dp),
                     onClick = it.onNavClick
@@ -231,9 +250,7 @@ private fun MyPageContent(
                     )
                 }
             }
-            if (idx % 3 == 2) {
-                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-            }
+            if (idx % 3 == 2) {HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)}
         }
     }
 }
@@ -287,7 +304,8 @@ private fun UserProfileInfo(
 
 @Composable
 private fun ServiceAlarm(
-
+    isEnabledAlarm: Boolean?,
+    onChangeAlarm: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -304,6 +322,40 @@ private fun ServiceAlarm(
         )
 
         /** service alarm 토글 버튼 */
-        OnAndOffBtn()
+        OnAndOffBtn(
+            isChecked = isEnabledAlarm ?: false,
+            onChangeChecked = onChangeAlarm
+        )
+    }
+}
+//권한 확인 함수
+private fun hasNotifyPermission(context: Context): Boolean  = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+    ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.POST_NOTIFICATIONS
+    ) == PackageManager.PERMISSION_GRANTED
+} else {
+    true
+}
+@Preview
+@Composable
+private fun TestUiMyPage(){
+    MyPage(
+        uiState = UserInfoUiState.User("", "안드 호준", "Kakao"),
+        errorUiState = ErrorUiState.Loading,
+        appVersion = "1.1.0",
+        isEnabledAlarm = false,
+        onChangeAlarm = {},
+        logoutEvent = { /*TODO*/ },
+        doOpenLicense = { /*TODO*/ },
+        onDelAccount = { /*TODO*/ },
+        openPrivacyPolicyLink = { /*TODO*/ },
+        onNavKakaoChat = { /*TODO*/ },
+        onNavMyPerfume = { /*TODO*/ },
+        onNavEditProfile = { /*TODO*/ },
+        onNavMyActivity = { /*TODO*/ },
+        onNavManageMyInfo = { /*TODO*/ },
+        onErrorHandleLoginAgain = { /*TODO*/ }) {
+
     }
 }

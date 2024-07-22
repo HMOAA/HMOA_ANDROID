@@ -1,7 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,13 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleOwner
 import com.hmoa.core_designsystem.theme.CustomColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+/** Iterate the progress value */
+suspend fun loadProgress(updateProgress: (Float) -> Unit) {
+    for (i in 1..100) {
+        updateProgress(1f / 100)
+        delay(5)
+    }
+}
 
 @Composable
 fun ProgressBar(percentage: Float) {
@@ -32,20 +36,13 @@ fun ProgressBar(percentage: Float) {
     )
 }
 
-/** Iterate the progress value */
-suspend fun loadProgress(updateProgress: (Float) -> Unit) {
-    for (i in 1..100) {
-        updateProgress(i.toFloat() / 100)
-        delay(5)
-    }
-}
-
 @Preview
 @Composable
 fun ProgressBarPreview() {
     var currentProgress by remember { mutableStateOf(0f) }
-    var loading by remember { mutableStateOf(false) }
+    var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
+    val additionalProgress = 0.1f
 
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -53,20 +50,31 @@ fun ProgressBarPreview() {
         modifier = Modifier.fillMaxWidth().background(color = Color.White)
     ) {
         androidx.compose.material3.Button(onClick = {
-            loading = true
+            targetProgress += additionalProgress
             scope.launch {
                 loadProgress { progress ->
-                    if (currentProgress <= 0.4f) {
-                        currentProgress = progress
-                    } else {
-                        loading = false
+                    if (currentProgress <= targetProgress) {
+                        currentProgress += progress
                     }
                 }
-                loading = false // Reset loading when the coroutine finishes
             }
-        }, enabled = !loading) {
-            Text("Start loading")
+        }) {
+            Text("add")
         }
+
         ProgressBar(percentage = currentProgress)
+
+        androidx.compose.material3.Button(onClick = {
+            targetProgress -= additionalProgress
+            scope.launch {
+                loadProgress { progress ->
+                    if (currentProgress >= targetProgress) {
+                        currentProgress -= progress
+                    }
+                }
+            }
+        }) {
+            Text("substract")
+        }
     }
 }

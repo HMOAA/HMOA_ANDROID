@@ -160,4 +160,10 @@ object ServiceModule {
     fun providerMagazineService(retrofit: Retrofit): MagazineService {
         return retrofit.create(MagazineService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun providerSurveyService(retrofit: Retrofit): SurveyService {
+        return retrofit.create(SurveyService::class.java)
+    }
 }

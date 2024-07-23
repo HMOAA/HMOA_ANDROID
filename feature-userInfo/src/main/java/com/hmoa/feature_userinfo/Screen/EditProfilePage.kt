@@ -1,7 +1,6 @@
 package com.example.feature_userinfo
 
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -28,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -35,12 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.checkPermission
+import com.hmoa.core_common.galleryPermission
 import com.hmoa.core_designsystem.component.AppDefaultDialog
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.NicknameInput
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.feature_userinfo.R
 import com.hmoa.feature_userinfo.viewModel.EditProfileUiState
 import com.hmoa.feature_userinfo.viewModel.EditProfileViewModel
 
@@ -49,6 +50,7 @@ fun EditProfileRoute(
     onNavBack: () -> Unit,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState()
     val nickname = viewModel.nickname.collectAsStateWithLifecycle()
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
@@ -62,13 +64,19 @@ fun EditProfileRoute(
     }
 
     EditProfilePage(
-        launcher = launcher,
         nickname = nickname.value ?: "",
         uiState = uiState.value,
         isEnabled = isEnabled.value,
         isDuplicated = isDuplicated.value,
         profileImg = profileImg.value,
         onChangeInfo = {viewModel.saveInfo()},
+        onEditProfile = {
+            if (checkPermission(context, galleryPermission)){
+                launcher.launch("image/*")
+            } else {
+                Toast.makeText(context, "갤러리 권한이 필요합니다", Toast.LENGTH_SHORT).show()
+            }
+        },
         checkDuplication = {viewModel.checkNicknameDup(it)},
         onUpdateNickname = {viewModel.updateNickname(it)},
         onNavBack = onNavBack
@@ -77,13 +85,13 @@ fun EditProfileRoute(
 
 @Composable
 fun EditProfilePage(
-    launcher: ManagedActivityResultLauncher<String, Uri?>,
     nickname : String,
     uiState: EditProfileUiState,
     isEnabled: Boolean,
     isDuplicated : Boolean,
     profileImg : String?,
     onChangeInfo : () -> Unit,
+    onEditProfile: () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
     onNavBack: () -> Unit,
@@ -92,11 +100,11 @@ fun EditProfilePage(
         EditProfileUiState.Loading -> AppLoadingScreen()
         EditProfileUiState.Success -> {
             EditProfileContent(
-                launcher = launcher,
                 nickname = nickname,
                 isEnabled = isEnabled,
                 isDuplicated = isDuplicated,
                 profileImg = profileImg,
+                onEditProfile = onEditProfile,
                 onChangeInfo = onChangeInfo,
                 checkDuplication = checkDuplication,
                 onUpdateNickname = onUpdateNickname,
@@ -121,11 +129,11 @@ fun EditProfilePage(
 
 @Composable
 private fun EditProfileContent(
-    launcher: ManagedActivityResultLauncher<String, Uri?>,
     nickname : String,
     isEnabled : Boolean,
     isDuplicated : Boolean,
     profileImg : String?,
+    onEditProfile: () -> Unit,
     onChangeInfo : () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
@@ -153,7 +161,7 @@ private fun EditProfileContent(
                 contentAlignment = Alignment.BottomEnd
             ) {
                 CircleImageView(imgUrl = profileImg ?: "",width = 72,height = 72)
-                EditProfileButton(launcher = launcher)
+                EditProfileButton(onEditProfile = onEditProfile)
             }
         }
         Spacer(Modifier.height(72.dp))
@@ -197,7 +205,7 @@ private fun EditProfileContent(
 
 @Composable
 private fun EditProfileButton(
-    launcher: ManagedActivityResultLauncher<String, Uri?>
+    onEditProfile: () -> Unit
 ){
     Box(
         modifier = Modifier
@@ -207,13 +215,11 @@ private fun EditProfileButton(
     ) {
         IconButton(
             modifier = Modifier.size(16.dp),
-            onClick = {
-                launcher.launch("image/*")
-            }
+            onClick = onEditProfile
         ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),
-                painter = painterResource(R.drawable.profile_edit_btn),
+                painter = painterResource(com.hmoa.core_designsystem.R.drawable.profile_edit_btn),
                 contentDescription = "Profile Edit Button",
                 tint = CustomColor.gray2
             )

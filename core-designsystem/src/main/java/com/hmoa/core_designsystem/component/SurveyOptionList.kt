@@ -1,8 +1,6 @@
 package com.hmoa.core_designsystem.component
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -25,15 +23,19 @@ import com.hmoa.core_designsystem.theme.pretendard
 fun SurveyOptionList(
     initValue: String? = null,
     surveyOptions: List<String>,
-    onButtonClick: (optionIndex:Int) -> Unit
+    onButtonClick: (optionIndex: Int) -> Unit
 ) {
     val surveyOptions = surveyOptions
     val (selectedOption, onOptionSelected) = remember {
         val idx = if (initValue == null) 0 else surveyOptions.indexOf(initValue)
         mutableStateOf(surveyOptions[idx])
     }
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+    val scrollState = rememberScrollState()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier.fillMaxHeight(0.7f).verticalScroll(scrollState).background(color =Color.White)
+    ) {
         surveyOptions.forEachIndexed { index, it ->
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
                 SurveyOptionItem(
@@ -84,5 +86,16 @@ fun SurveyOptionItem(text: String, onClick: () -> Unit, isSelected: Boolean) {
 @Composable
 fun SurveyOptionItemPreview() {
     val seasons = listOf("싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'")
-    SurveyOptionList(null, seasons, {})
+    Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight(1f).background(color = Color.Yellow)) {
+        SurveyOptionList(null, seasons, {})
+        Button(
+            isEnabled = true,
+            btnText = "다음",
+            onClick = {},
+            buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
+            textSize = 18,
+            textColor = Color.White,
+            radious = 5
+        )
+    }
 }

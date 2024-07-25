@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
@@ -39,7 +40,7 @@ fun NoteImageView(
         contentAlignment = Alignment.Center,
         modifier = Modifier.clickable { onClicked() }.background(color = Color.Transparent, shape = CircleShape)
             .border(shape = CircleShape, border = BorderStroke(width = 2.dp, color = itemBorderColor))
-            .height(height.dp).width(width.dp)
+            .height(height.dp).width(width.dp).clip(CircleShape)
     ) {
         GlideImage(
             imageModel = imageUrl ?: "",
@@ -74,11 +75,13 @@ fun NoteImageView(
 @Composable
 fun NoteImageViewPreview() {
     Column {
-        //only 사진만 보이도록(preview에선 아무것도 안 보이는 게 정상)
-        NoteImageView("", 74f, 74f, Color.Transparent, ContentScale.FillWidth, 1f, {}, false, null, false)
-        //추천된 노트
-        NoteImageView("", 74f, 74f, Color.Transparent, ContentScale.FillWidth, 1f, {}, true, 0, true)
-        //사용자가 선택한 노트
-        NoteImageView("", 74f, 74f, Color.Transparent, ContentScale.FillWidth, 1f, {}, false, 1, true)
+        //선택 안함
+        NoteImageView("", 74f, 74f, Color.Blue, ContentScale.FillWidth, 1f, {}, false, 0, false)
+        //선택 안함, 추천된 노드
+        NoteImageView("", 74f, 74f, Color.Blue, ContentScale.FillWidth, 1f, {}, true, 1, false)
+        //선택함, 추천된 노트
+        NoteImageView("", 74f, 74f, Color.Transparent, ContentScale.FillWidth, 1f, {}, true, 2, true)
+        //선택함
+        NoteImageView("", 74f, 74f, Color.Transparent, ContentScale.FillWidth, 1f, {}, false, 3, true)
     }
 }

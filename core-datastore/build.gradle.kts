@@ -35,6 +35,11 @@ android {
 dependencies {
     val hilt_version = "2.48.1"
     val kotlinx_version = "1.5.0"
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
     implementation(project(":core-model"))
     implementation(project(":core-network"))
     implementation(project(":core-database"))

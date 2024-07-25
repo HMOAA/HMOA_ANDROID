@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
+import com.hmoa.core_model.data.ErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -120,10 +121,9 @@ class CommunityPostViewModel @Inject constructor(
                 content = content.value
             )
 
-            if (result.errorMessage != null) {
+            if (result.errorMessage is ErrorMessage) {
                 generalErrorState.update { Pair(true, result.errorMessage!!.message) }
-            } else {
-                result.data
+                return@launch
             }
         }
     }

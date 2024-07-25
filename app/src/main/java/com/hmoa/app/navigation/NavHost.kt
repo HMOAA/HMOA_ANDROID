@@ -160,7 +160,8 @@ fun SetUpNavGraph(
             onErrorHandleLoginAgain = navController::navigateToLogin,
             onNavLogin = navController::navigateToLogin,
             onNavHome = navController::navigateToHome,
-            onNavHPedia = navController::navigateToHPedia
+            onNavHPedia = navController::navigateToHPedia,
+            onNavPopStack = { navController.popBackStack() }
         )
 
         /** perfume 모듈 */

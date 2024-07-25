@@ -39,7 +39,7 @@ fun NavController.navigateToCommunityEditRoute(id: Int) =
 //게시글 상세 화면
 fun NavController.navigateToCommunityDescriptionRoute(id: Int) =
     navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}") {
-        popUpTo("${CommunityRoute.CommunityDescriptionRoute.name}/{id}") 
+        popUpTo("${CommunityRoute.CommunityDescriptionRoute.name}/{id}"){inclusive = true}
     }
 
 //게시글 검색 화면
@@ -61,6 +61,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
     onNavLogin : () -> Unit,
     onNavHome : () -> Unit,
     onNavHPedia : () -> Unit,
+    onNavPopStack: () -> Unit,
 ) {
     navigation(
         startDestination = CommunityRoute.CommunityPreviewRoute.name,
@@ -114,7 +115,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavCommentEdit = onNavCommunityCommentEdit,
                 onNavLogin = onNavLogin,
                 onNavBack = onNavBack,
-                onNavHPedia = onNavHPedia
+                onNavHPedia = onNavHPedia,
+                onNavPopStack = onNavPopStack
             )
         }
         composable(route = CommunityRoute.CommunitySearchRoute.name) {

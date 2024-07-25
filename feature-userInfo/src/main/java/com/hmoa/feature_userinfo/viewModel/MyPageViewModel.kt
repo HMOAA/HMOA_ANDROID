@@ -40,8 +40,30 @@ class MyPageViewModel @Inject constructor(
 
     //fcm token
     private val fcmToken = MutableStateFlow<String?>(null)
-    private val _isEnabledAlarm = MutableStateFlow<Boolean?>(null)
-    val isEnabledAlarm get() = _isEnabledAlarm.asStateFlow()
+    private val _isEnabled = MutableStateFlow<Boolean>(false)
+    val isEnabled get() = _isEnabled.asStateFlow().apply{
+        viewModelScope.launch{
+            this@apply.collectLatest{
+                if(it){
+                    FirebaseMessaging.getInstance().token.addOnSuccessListener{token ->
+                        viewModelScope.launch{
+                            val requestDto = FCMTokenSaveRequestDto(fcmtoken = token)
+                            val result = fcmRepository.postRemoteFcmToken(requestDto)
+                            fcmRepository.saveLocalFcmToken(token)
+                            if (result.errorMessage is ErrorMessage) generalErrorState.update{Pair(true, result.errorMessage!!.message)}
+                        }
+                    }
+                } else {
+                    val remoteResult = fcmRepository.deleteRemoteFcmToken()
+                    fcmRepository.deleteLocalFcmToken()
+                    if (remoteResult.errorMessage is ErrorMessage) generalErrorState.update{Pair(true, remoteResult.errorMessage!!.message)}
+                    else {}
+                }
+                fcmRepository.saveNotificationEnabled(it)
+            }
+        }
+    }
+
 
     //Login 여부
     val isLogin = authTokenState.map { it != null }
@@ -70,16 +92,13 @@ class MyPageViewModel @Inject constructor(
     init {
         getAuthToken()
         getFcmToken()
+        getFcmEnabled()
     }
 
     val uiState: StateFlow<UserInfoUiState> = flow {
-        if (authTokenState.value == null) {
-            throw Exception(ErrorMessageType.UNKNOWN_ERROR.message)
-        }
+        if (authTokenState.value == null) {throw Exception(ErrorMessageType.UNKNOWN_ERROR.message)}
         val result = getUserInfoUseCase()
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage!!.message)
-        }
+        if (result.errorMessage != null) {throw Exception(result.errorMessage!!.message)}
         emit(result.data!!)
     }.asResult().map { result ->
         when (result) {
@@ -111,24 +130,11 @@ class MyPageViewModel @Inject constructor(
         }
     }
     private fun getFcmToken(){viewModelScope.launch{fcmToken.update{fcmRepository.getLocalFcmToken().onEmpty{ }.first()}}}
+    private fun getFcmEnabled(){viewModelScope.launch{_isEnabled.update { fcmRepository.getNotificationEnabled().stateIn(viewModelScope).value }} }
     //알림 설정 변경
     fun changeAlarmSetting(isChecked: Boolean){
-        _isEnabledAlarm.update{ isChecked }
-        if(isEnabledAlarm.value!!){
-            FirebaseMessaging.getInstance().token.addOnSuccessListener{token ->
-                viewModelScope.launch{
-                    val requestDto = FCMTokenSaveRequestDto(fcmtoken = token)
-                    val result = fcmRepository.postRemoteFcmToken(requestDto)
-                    fcmRepository.saveLocalFcmToken(token)
-                    if (result.errorMessage is ErrorMessage) generalErrorState.update{Pair(true, result.errorMessage!!.message)}
-                }
-            }
-        } else {
-            viewModelScope.launch{
-                val remoteResult = fcmRepository.deleteRemoteFcmToken()
-                fcmRepository.deleteLocalFcmToken()
-                if (remoteResult.errorMessage is ErrorMessage) generalErrorState.update{Pair(true, remoteResult.errorMessage!!.message)}
-            }
+        viewModelScope.launch{
+            _isEnabled.update{isChecked}
         }
     }
     //로그아웃

@@ -8,7 +8,13 @@ import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_model.request.SexRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,13 +35,9 @@ class MyGenderViewModel @Inject constructor(
     }
 
     val uiState: StateFlow<MyGenderUiState> = errState.map {
-        if (it != null) {
-            throw NullPointerException("Gender Info is NULL")
-        }
+        if (it != null) {throw NullPointerException("Gender Info is NULL")}
         val result = getMyUserInfoUseCase()
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage!!.message)
-        }
+        if (result.errorMessage != null) {throw Exception(result.errorMessage!!.message)}
         result.data
     }.asResult().map { result ->
         when (result) {
@@ -45,7 +47,6 @@ class MyGenderViewModel @Inject constructor(
                 defaultGender = result.data!!.gender
                 MyGenderUiState.Success
             }
-
             is Result.Error -> MyGenderUiState.Error
         }
     }.stateIn(

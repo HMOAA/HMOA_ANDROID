@@ -29,7 +29,7 @@ class FcmAppService : FirebaseMessagingService() {
             putExtra("deeplink",fcmData["deeplink"])
             putExtra("id",fcmData["id"])
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notification = Notification.Builder(this, CHANNEL_DEFAULT_IMPORTANCE)
             .setContentTitle(fcmData["title"])

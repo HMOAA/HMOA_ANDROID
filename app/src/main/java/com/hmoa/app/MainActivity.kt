@@ -37,6 +37,8 @@ import com.example.feature_userinfo.UserInfoGraph
 import com.example.feature_userinfo.navigateToUserInfoGraph
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
+import com.hmoa.core_common.PERMISSION_REQUEST_CODE
+import com.hmoa.core_common.permissions
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
@@ -69,7 +71,6 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
     private var initialRoute = AuthenticationRoute.Login.name
-    private val PERMISSION_REQUEST_CODE = 1001
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
@@ -120,6 +121,11 @@ class MainActivity : AppCompatActivity() {
                         initialRoute = HomeRoute.Home.name
                         currentJob.cancel()
                     }
+                }
+            }
+            launch{
+                viewModel.getNotificationEnabled().collectLatest{
+                    Log.d("POST PERMISSION", "is granted : ${it}")
                 }
             }
         }
@@ -247,23 +253,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                PERMISSION_REQUEST_CODE
-            )
-            CoroutineScope(Dispatchers.IO).launch{
-                viewModel.saveNotificationEnabled(false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val deniedPermissions = permissions.filter{ !com.hmoa.core_common.checkPermission(this, it) }
+            Log.d("PERMISSION TEST", "permissions : ${permissions}")
+            Log.d("PERMISSION TEST", "denied : ${deniedPermissions}")
+            if (deniedPermissions.isNotEmpty()){
+                ActivityCompat.requestPermissions(this, deniedPermissions.toTypedArray(), PERMISSION_REQUEST_CODE)
             }
         } else {
-            CoroutineScope(Dispatchers.IO).launch{
-                viewModel.saveNotificationEnabled(true)
+            //13 버전 미만 카메라 권한 (READ_EXTERNAL_STORAGE) 요청
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                ActivityCompat.requestPermissions(
+                    this,
+                    permissions,
+                    PERMISSION_REQUEST_CODE
+                )
             }
         }
     }
@@ -276,20 +280,14 @@ class MainActivity : AppCompatActivity() {
         // android 13 미만인 버전에서는 notification 권한이 필요 없음
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && requestCode == PERMISSION_REQUEST_CODE){
             if (ContextCompat.checkSelfPermission(this,Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                // 권한 부여되면 그 때 fcm token을 서버에 보내도록 해야 할 듯?
-                CoroutineScope(Dispatchers.IO).launch{
-                    viewModel.saveNotificationEnabled(true)
-                }
+                /** 알림 권한 유 */
+                lifecycleScope.launch{viewModel.saveNotificationEnabled(true)}
             } else {
-                // 알림 권한 설정을 안할 시 알림을 받지 않도록 함
-                lifecycleScope.launch{
-                    viewModel.saveNotificationEnabled(false)
-                }
+                /** 알림 권한 무 */
+                lifecycleScope.launch{viewModel.saveNotificationEnabled(false)}
             }
         } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
-            CoroutineScope(Dispatchers.IO).launch{
-                viewModel.saveNotificationEnabled(true)
-            }
+            lifecycleScope.launch{viewModel.saveNotificationEnabled(true)}
         }
     }
 }

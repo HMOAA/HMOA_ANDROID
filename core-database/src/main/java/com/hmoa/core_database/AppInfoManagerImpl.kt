@@ -13,6 +13,7 @@ class AppInfoManagerImpl @Inject constructor(
 ) : AppInfoManager {
     companion object{
         private val IS_NOTIFICATION_ENABLED = booleanPreferencesKey("is_notification_enabled")
+        private val IS_GALLERY_ENABLED = booleanPreferencesKey("is_gallery_enabled")
     }
     private val dataStore = context.datastore
 
@@ -21,10 +22,20 @@ class AppInfoManagerImpl @Inject constructor(
             it[IS_NOTIFICATION_ENABLED] = isEnabled
         }
     }
-
     override suspend fun getNotificationEnabled(): Flow<Boolean> {
         return dataStore.data.map{
             it[IS_NOTIFICATION_ENABLED] ?: false
+        }
+    }
+    override suspend fun updateGalleryEnabled(isEnabled: Boolean) {
+        dataStore.edit{
+            it[IS_GALLERY_ENABLED] = isEnabled
+        }
+    }
+
+    override suspend fun isGalleryEnabled(): Flow<Boolean> {
+        return dataStore.data.map{
+            it[IS_GALLERY_ENABLED] ?: false
         }
     }
 }

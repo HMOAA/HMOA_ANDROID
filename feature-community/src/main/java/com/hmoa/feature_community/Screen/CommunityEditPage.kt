@@ -1,6 +1,10 @@
 package com.hmoa.feature_community.Screen
 
 import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -41,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_common.checkPermission
+import com.hmoa.core_common.galleryPermission
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.BottomCameraBtn
@@ -60,33 +67,38 @@ fun CommunityEditRoute(
     //id가 null이 아니면 view model에 setting
     viewModel.setId(id)
 
+    val context = LocalContext.current
+
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val title = viewModel.title.collectAsStateWithLifecycle()
     val content = viewModel.content.collectAsStateWithLifecycle()
     val pictures = viewModel.newPictures.collectAsStateWithLifecycle()
     val category = viewModel.category.collectAsStateWithLifecycle()
 
+    //갤러리에서 사진 가져오기
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = {uris ->
+            viewModel.updatePictures(uris)
+        }
+    )
+
     CommunityEditPage(
         uiState = uiState.value,
         category = category.value?.name,
         title = title.value,
-        onTitleChanged = {
-            viewModel.updateTitle(it)
-        },
+        onTitleChanged = {viewModel.updateTitle(it)},
         content = content.value,
-        onContentChanged = {
-            viewModel.updateContent(it)
-        },
+        onContentChanged = {viewModel.updateContent(it)},
         pictures = pictures.value,
-        onUpdatePictures = {
-            viewModel.updatePictures(it)
-        },
-        onDeletePictures = {
-            viewModel.deletePicture(it)
-        },
-        onPostCommunity = {
-            //view model의 update community 사용
-            viewModel.updateCommunity()
+        onDeletePictures = {viewModel.deletePicture(it)},
+        onPostCommunity = {viewModel.updateCommunity()},
+        onClickCameraBtn = {
+            if(checkPermission(context, galleryPermission)){
+                multiplePhotoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            } else {
+                Toast.makeText(context, "갤러리 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            }
         },
         onNavBack = onNavBack,
         onNavCommunityDesc = { onNavCommunityDesc(id!!) }
@@ -102,9 +114,9 @@ fun CommunityEditPage(
     content: String,
     onContentChanged: (String) -> Unit,
     pictures: List<Uri>,
-    onUpdatePictures: (List<Uri>) -> Unit,
     onDeletePictures: (Uri) -> Unit,
     onPostCommunity: () -> Unit,
+    onClickCameraBtn: () -> Unit,
     onNavBack: () -> Unit,
     onNavCommunityDesc: () -> Unit
 ) {
@@ -112,7 +124,6 @@ fun CommunityEditPage(
         CommunityEditUiState.Loading -> AppLoadingScreen()
         CommunityEditUiState.Success -> {
             val scrollableState = rememberScrollState()
-
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -155,7 +166,9 @@ fun CommunityEditPage(
                         onDeletePictures = onDeletePictures
                     )
                 }
-                BottomCameraBtn(onUpdatePictures)
+                BottomCameraBtn(
+                    onClick = onClickCameraBtn
+                )
             }
         }
 

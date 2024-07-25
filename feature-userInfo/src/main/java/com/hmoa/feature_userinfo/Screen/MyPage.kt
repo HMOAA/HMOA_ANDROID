@@ -1,11 +1,8 @@
 package com.example.userinfo
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -40,7 +37,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature_userinfo.viewModel.MyPageViewModel
@@ -48,6 +44,7 @@ import com.example.feature_userinfo.viewModel.UserInfoUiState
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.checkPermission
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
@@ -72,9 +69,9 @@ internal fun MyPageRoute(
     val context = LocalContext.current
     val appVersion = "1.0.1"
     val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
-    val isEnabledAlarm = viewModel.isEnabledAlarm.collectAsStateWithLifecycle()
+    val isEnabledAlarm = viewModel.isEnabled.collectAsStateWithLifecycle()
     val onChangeAlarm: (Boolean) -> Unit = {
-        if (hasNotifyPermission(context)) {viewModel.changeAlarmSetting(it)}
+        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {viewModel.changeAlarmSetting(it)}
         else {Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()}
     }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -130,7 +127,7 @@ fun MyPage(
     uiState: UserInfoUiState,
     errorUiState: ErrorUiState,
     appVersion: String,
-    isEnabledAlarm: Boolean?,
+    isEnabledAlarm: Boolean,
     onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
@@ -182,7 +179,7 @@ private fun MyPageContent(
     nickname: String,
     provider: String,
     appVersion: String,
-    isEnabledAlarm: Boolean?,
+    isEnabledAlarm: Boolean,
     onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
@@ -304,7 +301,7 @@ private fun UserProfileInfo(
 
 @Composable
 private fun ServiceAlarm(
-    isEnabledAlarm: Boolean?,
+    isEnabledAlarm: Boolean,
     onChangeAlarm: (Boolean) -> Unit,
 ) {
     Row(
@@ -323,19 +320,10 @@ private fun ServiceAlarm(
 
         /** service alarm 토글 버튼 */
         OnAndOffBtn(
-            isChecked = isEnabledAlarm ?: false,
+            isChecked = isEnabledAlarm,
             onChangeChecked = onChangeAlarm
         )
     }
-}
-//권한 확인 함수
-private fun hasNotifyPermission(context: Context): Boolean  = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-    ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.POST_NOTIFICATIONS
-    ) == PackageManager.PERMISSION_GRANTED
-} else {
-    true
 }
 @Preview
 @Composable

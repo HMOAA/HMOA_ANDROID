@@ -25,7 +25,7 @@ class FcmAppService : FirebaseMessagingService() {
         val ONGOING_NOTIFICATION = 1
 
         val notificationIntent = Intent(this, MainActivity::class.java).apply{
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra("deeplink",fcmData["deeplink"])
             putExtra("id",fcmData["id"])
         }

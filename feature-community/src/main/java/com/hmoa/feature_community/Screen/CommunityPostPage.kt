@@ -50,6 +50,7 @@ import com.hmoa.core_common.checkPermission
 import com.hmoa.core_common.galleryPermission
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.BottomCameraBtn
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -109,50 +110,58 @@ fun PostCommunityPage(
     val context = LocalContext.current
 
     //오류가 없다면
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        //unique top bar
-        CommunityPostTopBar(
-            context = context,
-            title = category.name,
-            isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
-            onPostCommunity = onPostCommunity,
-            onNavBack = onNavBack
+    if (errState is ErrorUiState.ErrorData && errState.generalError.first){
+        ErrorUiSetView(
+            onConfirmClick = onNavBack,
+            errorUiState = errState,
+            onCloseClick = onNavBack
         )
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ){
+            //unique top bar
+            CommunityPostTopBar(
+                context = context,
+                title = category.name,
+                isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
+                onPostCommunity = onPostCommunity,
+                onNavBack = onNavBack
+            )
 
-        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+            HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-        TextFieldTitle(
-            title = title,
-            onTitleChanged = onTitleChanged
-        )
+            TextFieldTitle(
+                title = title,
+                onTitleChanged = onTitleChanged
+            )
 
-        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+            HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-        TextFieldContent(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 33.dp, vertical = 27.dp)
-                .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
-            content = content,
-            onContentChanged = onContentChanged,
-            pictures = pictures,
-            onDeletePictures = onDeletePictures
-        )
+            TextFieldContent(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 33.dp, vertical = 27.dp)
+                    .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
+                content = content,
+                onContentChanged = onContentChanged,
+                pictures = pictures,
+                onDeletePictures = onDeletePictures
+            )
 
-        BottomCameraBtn(
-            onClick = {
-                if(checkPermission(context, galleryPermission)){
-                    multiplePhotoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                } else {
-                    Toast.makeText(context, "갤러리 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            BottomCameraBtn(
+                onClick = {
+                    if(checkPermission(context, galleryPermission)){
+                        multiplePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    } else {
+                        Toast.makeText(context, "갤러리 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
 

@@ -96,7 +96,11 @@ class CommunityPostViewModel @Inject constructor(
     fun postCommunity() {
         val images = arrayListOf<File>()
         pictures.value.map { picture ->
-            val path = absolutePath(picture) ?: throw NullPointerException("file path is NULL")
+            val path = absolutePath(picture)
+            if(path == null) {
+                generalErrorState.update { Pair(true, "file path is NULL") }
+                return
+            }
             images.add(File(path))
         }
         viewModelScope.launch {

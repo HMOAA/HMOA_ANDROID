@@ -17,7 +17,7 @@ class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepos
         listOf(NoteOrderQuantity.TWO, NoteOrderQuantity.FIVE, NoteOrderQuantity.EIGHT, NoteOrderQuantity.NOLIMIT)
     private var _topRecommendedNote = MutableStateFlow<String>("")
     private var _noteOrderQuantityChoiceNameList =
-        MutableStateFlow<List<String>>(listOf("2개", "5개", "8개 31,900원", "자유롭게 선택"))
+        MutableStateFlow<List<String>>(listOf("2개", "5개", "8개", "자유롭게 선택"))
     private var _noteOrderQuantityChoice = MutableStateFlow<NoteOrderQuantity>(noteOrderQuantityChoiceList[0])
     val noteOrderQuantityChoice: StateFlow<NoteOrderQuantity> = _noteOrderQuantityChoice
     private var _isPickCompleted = MutableStateFlow<Boolean>(false)

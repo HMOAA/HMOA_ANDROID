@@ -26,7 +26,6 @@ class CommunityPostViewModel @Inject constructor(
     private val application: Application,
     private val repository: CommunityRepository
 ) : ViewModel() {
-
     val context = application.applicationContext
 
     //게시글 타입
@@ -75,34 +74,22 @@ class CommunityPostViewModel @Inject constructor(
             "자유" -> _category.update { Category.자유 }
         }
     }
-
     //title update
-    fun updateTitle(title: String) {
-        _title.update { title }
-    }
-
+    fun updateTitle(title: String) = _title.update { title }
     //content update
-    fun updateContent(content: String) {
-        _content.update { content }
-    }
-
+    fun updateContent(content: String) = _content.update { content }
     //사진 update
     fun updatePictures(newPictures: List<Uri>) {
         _pictures.update {
             val result = arrayListOf<Uri>()
-            newPictures.forEach {
-                result.add(it)
-            }
+            newPictures.forEach {result.add(it)}
             result
         }
     }
 
     //사진 삭제
     fun deletePicture(idx: Int) {
-        _pictures.update {
-            val data = it
-            data.minus(it[idx])
-        }
+        _pictures.update {picture ->picture.minus(picture[idx])}
     }
 
     //게시글 게시
@@ -113,14 +100,12 @@ class CommunityPostViewModel @Inject constructor(
             images.add(File(path))
         }
         viewModelScope.launch {
-
             val result = repository.postCommunitySave(
                 images = images.map { it.absoluteFile }.toTypedArray(),
                 category = category.value.name,
                 title = title.value,
                 content = content.value
             )
-
             if (result.errorMessage is ErrorMessage) {
                 generalErrorState.update { Pair(true, result.errorMessage!!.message) }
                 return@launch

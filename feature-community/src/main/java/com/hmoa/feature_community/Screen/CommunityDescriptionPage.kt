@@ -62,6 +62,7 @@ fun CommunityDescriptionRoute(
     onNavLogin : () -> Unit,
     onNavBack : () -> Unit,
     onNavHPedia : () -> Unit,
+    onNavPopStack: () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
     viewModel.setId(id)
@@ -116,7 +117,8 @@ fun CommunityDescriptionRoute(
         onErrorHandleLoginAgain = {
             if(viewModel.hasToken()){onNavHPedia()}
             else {onNavLogin()}
-        }
+        },
+        onNavPopStack = onNavPopStack
     )
 }
 
@@ -136,7 +138,8 @@ fun CommunityDescriptionPage(
     onNavBack : () -> Unit,
     onNavCommunityEdit : () -> Unit,
     onNavCommentEdit : (Int) -> Unit,
-    onErrorHandleLoginAgain : () -> Unit
+    onErrorHandleLoginAgain : () -> Unit,
+    onNavPopStack: () -> Unit,
 ){
     when (uiState) {
         CommunityDescUiState.Loading -> AppLoadingScreen()
@@ -156,6 +159,7 @@ fun CommunityDescriptionPage(
                 onNavBack = onNavBack,
                 onNavCommunityEdit = onNavCommunityEdit,
                 onNavCommentEdit = onNavCommentEdit,
+                onNavPopStack = onNavPopStack
             )
         }
         CommunityDescUiState.Error -> {
@@ -185,6 +189,7 @@ private fun CommunityDescContent(
     onNavBack : () -> Unit,
     onNavCommunityEdit : () -> Unit,
     onNavCommentEdit : (Int) -> Unit,
+    onNavPopStack: () -> Unit
 ){
     var type by remember{mutableStateOf("post")}
     val onChangeType : (String) -> Unit = { type = it }
@@ -194,7 +199,10 @@ private fun CommunityDescContent(
     var comment by remember{mutableStateOf<CommunityCommentWithLikedResponseDto?>(null)}
     val scope = rememberCoroutineScope()
     val dialogOpen = { scope.launch { modalSheetState.show() } }
-    val dialogClose = { scope.launch { modalSheetState.hide() } }
+    val dialogClose = {
+        scope.launch { modalSheetState.hide() }
+        onNavPopStack()
+    }
 
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),

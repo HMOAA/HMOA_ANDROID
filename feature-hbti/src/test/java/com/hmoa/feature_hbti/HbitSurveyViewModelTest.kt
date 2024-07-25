@@ -56,6 +56,11 @@ class HbitSurveyViewModelTest : TestCase() {
     }
 
     @Test
+    fun testInitializeAnswer() = coroutineRule.runTest {
+        Assert.assertEquals(mutableListOf(0, 0), viewModel.initializeAnswerState(fakeResponse.data))
+    }
+
+    @Test
     fun testUpdateQuestion() = coroutineRule.runTest {
         Assert.assertEquals(
             listOf("좋아하는 계절이 무엇입니까?", "좋아하는 여행지는 무엇입니까?"),
@@ -90,29 +95,9 @@ class HbitSurveyViewModelTest : TestCase() {
         )
     }
 
-
     @Test
-    fun testStateValueUpdateAfterGetSurveyQuestions() = coroutineRule.runTest {
-        viewModel.getSurveyQuestions()
-        val questionsResult = viewModel.questionsState.value
-        val optionsContentResult = viewModel.optionsContentState.value
-        val optionsResult = viewModel.optionsState.value
-        Assert.assertEquals(listOf("좋아하는 계절이 무엇입니까?", "좋아하는 여행지는 무엇입니까?"), questionsResult)
-        Assert.assertEquals(listOf(listOf("봄", "여름", "가을", "겨울"), listOf("도시", "숲", "바다", "호수")), optionsContentResult)
-        Assert.assertEquals(
-            listOf(
-                listOf(
-                    SurveyOptionResponseDto(option = "봄", optionId = 0),
-                    SurveyOptionResponseDto(option = "여름", optionId = 1),
-                    SurveyOptionResponseDto(option = "가을", optionId = 2),
-                    SurveyOptionResponseDto(option = "겨울", optionId = 3)
-                ), listOf(
-                    SurveyOptionResponseDto(option = "도시", optionId = 0),
-                    SurveyOptionResponseDto(option = "숲", optionId = 1),
-                    SurveyOptionResponseDto(option = "바다", optionId = 2),
-                    SurveyOptionResponseDto(option = "호수", optionId = 3)
-                )
-            ), optionsResult
-        )
+    fun testAnswerFrom0To1() = coroutineRule.runTest {
+        val answers = mutableListOf(0, 0)
+        Assert.assertEquals(mutableListOf(1, 0), viewModel.modifyAnswers(0, 1, answers))
     }
 }

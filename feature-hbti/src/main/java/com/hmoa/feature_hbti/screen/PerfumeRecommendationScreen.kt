@@ -131,7 +131,7 @@ private fun SelectPriceScreen(
         SurveyOptionList(
             surveyOptions = surveyOptions,
             initValue = value,
-            onButtonClick = onChangedValue
+            onButtonClick = { onChangedValue("") }
         )
     }
 }

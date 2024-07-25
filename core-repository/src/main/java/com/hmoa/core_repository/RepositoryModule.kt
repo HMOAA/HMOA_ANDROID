@@ -86,4 +86,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindSurveyRepositoryImpl(repositoryImpl: SurveyRepositoryImpl): SurveyRepository
+
+    @Binds
+    @Singleton
+    fun bindHshopRepositoryImpl(repositoryImpl: HshopRepositoryImpl):HshopRepository
 }

@@ -254,14 +254,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions.forEach{ permission ->
-                if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_DENIED){
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(permission),
-                        PERMISSION_REQUEST_CODE
-                    )
-                }
+            val deniedPermissions = permissions.filter{ !com.hmoa.core_common.checkPermission(this, it) }
+            Log.d("PERMISSION TEST", "permissions : ${permissions}")
+            Log.d("PERMISSION TEST", "denied : ${deniedPermissions}")
+            if (deniedPermissions.isNotEmpty()){
+                ActivityCompat.requestPermissions(this, deniedPermissions.toTypedArray(), PERMISSION_REQUEST_CODE)
             }
         } else {
             //13 버전 미만 카메라 권한 (READ_EXTERNAL_STORAGE) 요청

@@ -80,12 +80,10 @@ class CommunityEditViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<CommunityEditUiState> = id.map { communityId ->
-        if (communityId == null) throw NullPointerException("Id is NULL")
-        val result = repository.getCommunity(communityId)
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage!!.message)
-        }
+    val uiState: StateFlow<CommunityEditUiState> = combine(id, errorUiState) { communityId, errorState ->
+        val result = repository.getCommunity(communityId!!)
+        if (errorState is ErrorUiState.ErrorData && errorState.generalError.first) throw Exception(errorState.generalError.second)
+        if (result.errorMessage is ErrorMessage) throw Exception(result.errorMessage!!.message)
         result.data!!
     }.asResult()
         .map { result ->
@@ -109,6 +107,7 @@ class CommunityEditViewModel @Inject constructor(
                     CommunityEditUiState.Success
                 }
                 is Result.Error -> {
+                    if (!generalErrorState.value.first) generalErrorState.update{Pair(true, result.exception.message)}
                     CommunityEditUiState.Error
                 }
             }
@@ -119,7 +118,12 @@ class CommunityEditViewModel @Inject constructor(
         )
 
     //id setting
-    fun setId(id: Int?) = _id.update { id }
+    fun setId(id: Int?) {
+        _id.update {
+            if (id == null) generalErrorState.update{Pair(true, "Not Found ID")}
+            id
+        }
+    }
     //title update
     fun updateTitle(title: String) = _title.update { title }
     //content update
@@ -142,8 +146,9 @@ class CommunityEditViewModel @Inject constructor(
                 }
             }
             val images = addPictures.map {
-                val uri = absolutePath(it) ?: throw NullPointerException("파일 경로가 NULL 입니다.")
-                File(uri)
+                val uri = absolutePath(it)
+                if (uri == null) generalErrorState.update { Pair(true, "파일 경로가 NULL 입니다.") }
+                File(uri!!)
             }
             val delPictureId = getDeletePictureId(delPicture)
             if (id.value != null) {
@@ -154,9 +159,7 @@ class CommunityEditViewModel @Inject constructor(
                     communityId = id.value!!,
                     deleteCommunityPhotoIds = delPictureId.toTypedArray()
                 )
-                if (result.errorMessage is ErrorMessage) {
-                    generalErrorState.update { Pair(true, result.errorMessage!!.message) }
-                }
+                if (result.errorMessage is ErrorMessage) {generalErrorState.update { Pair(true, result.errorMessage!!.message) }}
             } else {
                 generalErrorState.update { Pair(true,"id is null") }
             }

@@ -29,7 +29,7 @@ import javax.inject.Inject
 const val PAGE_SIZE = 10
 
 @HiltViewModel
-class CommunityMainViewModel @Inject constructor(
+class CommunityPreviewViewModel @Inject constructor(
     private val communityRepository: CommunityRepository,
     private val loginRepository: LoginRepository
 ) : ViewModel() {

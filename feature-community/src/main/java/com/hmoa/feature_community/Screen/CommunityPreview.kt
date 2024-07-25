@@ -39,8 +39,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityMainUiState
-import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
-
+import com.hmoa.feature_community.ViewModel.CommunityPreviewViewModel
 
 @Composable
 fun CommunityPreviewRoute(
@@ -50,7 +49,7 @@ fun CommunityPreviewRoute(
     onNavPost: (String) -> Unit,
     onNavLogin: () -> Unit,
     onNavHPedia : () -> Unit,
-    viewModel: CommunityMainViewModel = hiltViewModel()
+    viewModel: CommunityPreviewViewModel = hiltViewModel()
 ) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()

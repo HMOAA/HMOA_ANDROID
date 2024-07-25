@@ -30,7 +30,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 @Composable
 fun MyPostRoute(
     onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit,
+    onNavCommunity: (Int) -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -38,7 +38,7 @@ fun MyPostRoute(
     MyPostPage(
         uiState = uiState.value,
         onNavBack = onNavBack,
-        onNavEditPost = onNavEditPost,
+        onNavCommunity = onNavCommunity,
     )
 }
 
@@ -46,7 +46,7 @@ fun MyPostRoute(
 fun MyPostPage(
     uiState : PostUiState,
     onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit
+    onNavCommunity: (Int) -> Unit
 ) {
     when(uiState) {
         PostUiState.Loading -> AppLoadingScreen()
@@ -55,7 +55,7 @@ fun MyPostPage(
             MyPostContent(
                 posts = posts,
                 onNavBack = onNavBack,
-                onNavEditPost = onNavEditPost
+                onNavCommunity = onNavCommunity
             )
         }
         PostUiState.Error -> {
@@ -69,7 +69,7 @@ fun MyPostPage(
 private fun MyPostContent(
     posts : ItemSnapshotList<CommunityByCategoryResponseDto>,
     onNavBack: () -> Unit,
-    onNavEditPost: (communityId : Int) -> Unit
+    onNavCommunity: (communityId : Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -103,7 +103,7 @@ private fun MyPostContent(
                                         color = CustomColor.gray2,
                                         shape = RoundedCornerShape(10.dp)
                                     ),
-                                onPostClick = { onNavEditPost(post.communityId) },
+                                onPostClick = { onNavCommunity(post.communityId) },
                                 postType = post.category,
                                 postTitle = post.title,
                                 heartCount = post.heartCount,

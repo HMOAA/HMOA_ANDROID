@@ -127,7 +127,6 @@ fun SetUpNavGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
             onNavCommunity = navController::navigateToCommunityDescriptionRoute,
-            onNavEditPost = navController::navigateToCommunityEditRoute,
             onNavEditProfile = navController::navigateToEditProfilePage,
             onNavManageMyInfo = navController::navigateToMyInfoPage,
             onNavMyActivity = navController::navigateToMyActivity,

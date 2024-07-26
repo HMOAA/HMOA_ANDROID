@@ -24,6 +24,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteImageView
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_model.data.NoteSelect
@@ -32,21 +33,42 @@ import com.hmoa.feature_hbti.viewmodel.NotePickUiState
 import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
 
 @Composable
-fun NotePickRoute(onBackClick: () -> Unit, onNextClick: () -> Unit, noteOrderQuantity: Int?) {
-    NotePickScreen(onBackClick = { onBackClick() }, onNextClick = { onNextClick() }, noteOrderQuantity)
+fun NotePickRoute(
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
+    noteOrderQuantity: Int?,
+    onErrorHandleLoginAgain: () -> Unit,
+) {
+    NotePickScreen(
+        onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
+        onBackClick = { onBackClick() },
+        onNextClick = { onNextClick() },
+        noteOrderQuantity
+    )
 }
 
 @Composable
 fun NotePickScreen(
+    onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     noteOrderQuantity: Int?,
     viewmodel: NotePickViewmodel = hiltViewModel()
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+    val isNextAvailable by viewmodel.isCompletedNoteSelected.collectAsStateWithLifecycle()
+    val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) {
+    ErrorUiSetView(
+        onConfirmClick = { onErrorHandleLoginAgain() },
+        errorUiState = errorUiState,
+        onCloseClick = { onBackClick() }
+    )
 
+    LaunchedEffect(isNextAvailable) {
+        if (isNextAvailable) {
+            onNextClick()
+        }
     }
 
     when (uiState) {
@@ -54,10 +76,14 @@ fun NotePickScreen(
         is NotePickUiState.NotePickData -> NoteContent(
             topRecommendedNote = (uiState as NotePickUiState.NotePickData).topRecommendedNote,
             noteList = (uiState as NotePickUiState.NotePickData).noteProductList,
+            noteOrderQuantity = noteOrderQuantity ?: 0,
+            selectedNotesOrderQuantity = (uiState as NotePickUiState.NotePickData).noteOrderIndex,
             isNoteSelectedList = (uiState as NotePickUiState.NotePickData).noteSelectData,
             onBackClick = { onBackClick() },
-            onClickItem = { index, value, data -> viewmodel.changeNoteSelectData(index, value, data) },
-            onNextClick = { onNextClick() }
+            onClickItem = { index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int ->
+                viewmodel.handleNoteSelectData(index, value, data, noteOrderQuantity, selectedNotesOrderQuantity)
+            },
+            onNextClick = { viewmodel.postNoteSelected() }
         )
     }
 }
@@ -66,8 +92,10 @@ fun NotePickScreen(
 fun NoteContent(
     topRecommendedNote: String,
     noteList: ProductListResponseDto?,
+    noteOrderQuantity: Int,
+    selectedNotesOrderQuantity: Int,
     isNoteSelectedList: List<NoteSelect>,
-    onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit,
+    onClickItem: (index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit
 ) {
@@ -94,8 +122,11 @@ fun NoteContent(
                 )
                 NotePickGridWindow(
                     notes = noteList,
+                    noteOrderQuantity = noteOrderQuantity,
+                    selectedNotesOrderQuantity = selectedNotesOrderQuantity,
                     isNoteSelectedList = isNoteSelectedList,
-                    onClickItem = { index, value, data -> onClickItem(index, value, data) })
+                    onClickItem = onClickItem
+                )
             }
             Button(
                 isEnabled = true,
@@ -113,8 +144,10 @@ fun NoteContent(
 @Composable
 fun NotePickGridWindow(
     notes: ProductListResponseDto?,
+    noteOrderQuantity: Int,
+    selectedNotesOrderQuantity: Int,
     isNoteSelectedList: List<NoteSelect>,
-    onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit
+    onClickItem: (index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int) -> Unit
 ) {
     if (notes?.data == null) {
         Text("데이터가 없습니다")
@@ -135,8 +168,11 @@ fun NotePickGridWindow(
                             onClickItem(
                                 index,
                                 !isNoteSelectedList[index].isSelected,
-                                isNoteSelectedList[index]
+                                isNoteSelectedList[index],
+                                noteOrderQuantity,
+                                selectedNotesOrderQuantity
                             )
+
                         },
                         isRecommanded = item.isRecommended,
                         index = isNoteSelectedList[index].selectedIndex,

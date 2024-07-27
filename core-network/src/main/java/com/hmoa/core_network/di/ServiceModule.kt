@@ -166,4 +166,10 @@ object ServiceModule {
     fun providerSurveyService(retrofit: Retrofit): SurveyService {
         return retrofit.create(SurveyService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun providerHshopService(retrofit: Retrofit): HshopService {
+        return retrofit.create(HshopService::class.java)
+    }
 }

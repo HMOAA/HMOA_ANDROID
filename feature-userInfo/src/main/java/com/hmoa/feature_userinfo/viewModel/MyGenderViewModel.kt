@@ -2,6 +2,7 @@ package com.hmoa.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MemberRepository
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -24,18 +26,33 @@ class MyGenderViewModel @Inject constructor(
     getMyUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
     private var defaultGender = ""
-
     private val _gender = MutableStateFlow<String?>(null)
+    val isEnabled = _gender.map {it != defaultGender}
+
     val gender get() = _gender.asStateFlow()
-
-    private val errState = MutableStateFlow<String?>(null)
-
-    val isEnabled = _gender.map {
-        it != defaultGender
-    }
-
-    val uiState: StateFlow<MyGenderUiState> = errState.map {
-        if (it != null) {throw NullPointerException("Gender Info is NULL")}
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
+    val uiState: StateFlow<MyGenderUiState> = errorUiState.map {errState ->
+        if (errState is ErrorUiState.ErrorData && errState.generalError.first) throw Exception(errState.generalError.second)
         val result = getMyUserInfoUseCase()
         if (result.errorMessage != null) {throw Exception(result.errorMessage!!.message)}
         result.data
@@ -47,7 +64,12 @@ class MyGenderViewModel @Inject constructor(
                 defaultGender = result.data!!.gender
                 MyGenderUiState.Success
             }
-            is Result.Error -> MyGenderUiState.Error
+            is Result.Error -> {
+                if (!(errorUiState as ErrorUiState.ErrorData).generalError.first) {
+                    generalErrorState.update{Pair(true, result.exception.message)}
+                }
+                MyGenderUiState.Error
+            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -56,14 +78,11 @@ class MyGenderViewModel @Inject constructor(
     )
 
     //gender 정보 수정
-    fun updateGender(newGender: String) {
-        _gender.update { newGender }
-    }
-
+    fun updateGender(newGender: String) = _gender.update { newGender }
     //gender 정보 저장
     fun saveGender() {
         if (gender.value == null) {
-            errState.update { "Gender Info is NULL" }
+            generalErrorState.update { Pair(true, "Gender Info is NULL") }
             return
         }
         val requestDto = SexRequestDto(gender.value == "남성")
@@ -71,7 +90,7 @@ class MyGenderViewModel @Inject constructor(
             try {
                 memberRepository.updateSex(requestDto)
             } catch (e: Exception) {
-                errState.update { e.message }
+                generalErrorState.update { Pair(true, e.message) }
             }
         }
     }

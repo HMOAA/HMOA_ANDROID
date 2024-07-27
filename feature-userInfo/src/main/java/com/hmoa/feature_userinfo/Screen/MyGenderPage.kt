@@ -17,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.RadioButtonList
 import com.hmoa.feature_userinfo.viewModel.MyGenderUiState
 import com.hmoa.feature_userinfo.viewModel.MyGenderViewModel
@@ -28,13 +30,14 @@ fun MyGenderRoute(
     onNavBack: () -> Unit,
     viewModel: MyGenderViewModel = hiltViewModel()
 ) {
-
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val gender = viewModel.gender.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
 
     MyGenderPage(
         uiState = uiState.value,
+        errorState = errorState.value,
         gender = gender.value,
         onUpdateGender = {viewModel.updateGender(it)},
         onSaveGender = {viewModel.saveGender()},
@@ -46,6 +49,7 @@ fun MyGenderRoute(
 @Composable
 fun MyGenderPage(
     uiState: MyGenderUiState,
+    errorState: ErrorUiState,
     gender : String?,
     onUpdateGender: (String) -> Unit,
     onSaveGender: () -> Unit,
@@ -64,7 +68,11 @@ fun MyGenderPage(
             )
         }
         MyGenderUiState.Error -> {
-
+            ErrorUiSetView(
+                onConfirmClick = onNavBack,
+                errorUiState = errorState,
+                onCloseClick = onNavBack
+            )
         }
     }
 }

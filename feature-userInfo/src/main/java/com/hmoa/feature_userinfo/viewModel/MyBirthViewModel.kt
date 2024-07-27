@@ -68,7 +68,9 @@ class MyBirthViewModel @Inject constructor(
                 MyBirthUiState.Success
             }
             is Result.Error -> {
-                generalErrorState.update{Pair(true, result.exception.message)}
+                if (!(errorUiState.value as ErrorUiState.ErrorData).generalError.first){
+                    generalErrorState.update{Pair(true, result.exception.message)}
+                }
                 MyBirthUiState.Error
             }
         }

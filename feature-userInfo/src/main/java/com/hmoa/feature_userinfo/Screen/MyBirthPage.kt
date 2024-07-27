@@ -27,9 +27,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.Spinner
 import com.hmoa.component.TopBar
 import com.hmoa.component.YearPickerDialog
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.viewModel.MyBirthUiState
 import com.hmoa.feature_userinfo.viewModel.MyBirthViewModel
@@ -44,12 +46,14 @@ fun MyBirthRoute(
     val availableYearRange = (1950..LocalDateTime.now().year).toList()
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val birth = viewModel.birth.collectAsStateWithLifecycle()
 
     MyBirthPage(
         availableYearRange = availableYearRange,
         uiState = uiState.value,
+        errorState = errorState.value,
         birth = birth.value,
         isEnabled = isEnabled.value,
         onUpdateBirth = {viewModel.updateBirth(it)},
@@ -62,6 +66,7 @@ fun MyBirthRoute(
 fun MyBirthPage(
     availableYearRange : List<Int>,
     uiState: MyBirthUiState,
+    errorState: ErrorUiState,
     birth : Int?,
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
@@ -81,7 +86,11 @@ fun MyBirthPage(
             )
         }
         MyBirthUiState.Error -> {
-            Text("Error : 뭐징")
+            ErrorUiSetView(
+                onConfirmClick = onNavBack,
+                errorUiState = errorState,
+                onCloseClick = onNavBack
+            )
         }
     }
 }

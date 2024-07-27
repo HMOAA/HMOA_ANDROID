@@ -28,11 +28,11 @@ import com.hmoa.core_model.response.Note
 @Composable
 fun NoteSelectedDescription(
     imgUrl: String,
+    imgSize: Int,
     productName: String,
     price: Int,
     categoryNumber: Int,
     notes: List<Note>,
-    noteSize: Int,
 ){
     Row(
         modifier = Modifier
@@ -43,8 +43,8 @@ fun NoteSelectedDescription(
     ){
         CircleImageView(
             imgUrl = imgUrl,
-            width = noteSize,
-            height = noteSize
+            width = imgSize,
+            height = imgSize
         )
         Spacer(Modifier.width(19.dp))
         Column(
@@ -120,11 +120,11 @@ private fun TestUI(){
     ){
         NoteSelectedDescription(
             imgUrl = "",
+            imgSize = 66,
             productName = "프루트",
             price = 4800,
             categoryNumber = 3,
-            notes = sample,
-            noteSize = 66
+            notes = sample
         )
     }
 }

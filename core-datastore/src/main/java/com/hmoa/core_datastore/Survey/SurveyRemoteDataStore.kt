@@ -9,7 +9,7 @@ import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
 
-interface SurveyDataStore {
+interface SurveyRemoteDataStore {
     suspend fun getSurveyQuestions(): ResultResponse<SurveyQuestionsResponseDto>
     suspend fun postSurveyResponds(dto: SurveyRespondRequestDto): ResultResponse<RecommendNotesResponseDto>
     suspend fun saveSurvey(dto : SurveySaveRequestDto): ResultResponse<DataResponseDto<Any>>

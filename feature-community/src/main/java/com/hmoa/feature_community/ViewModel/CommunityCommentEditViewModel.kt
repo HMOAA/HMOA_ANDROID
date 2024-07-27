@@ -68,7 +68,7 @@ class CommunityCommentEditViewModel @Inject constructor(
                     CommunityCommentEditUiState.Comment
                 }
                 is Result.Error -> {
-                    generalErrorState.update{Pair(true, result.exception.message)}
+                    if (!generalErrorState.value.first) {generalErrorState.update{Pair(true, result.exception.message)}}
                     CommunityCommentEditUiState.Error
                 }
             }

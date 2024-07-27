@@ -27,9 +27,9 @@ class MyGenderViewModel @Inject constructor(
 ) : ViewModel() {
     private var defaultGender = ""
     private val _gender = MutableStateFlow<String?>(null)
-    val isEnabled = _gender.map {it != defaultGender}
-
     val gender get() = _gender.asStateFlow()
+
+    val isEnabled = _gender.map {it != defaultGender}
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)

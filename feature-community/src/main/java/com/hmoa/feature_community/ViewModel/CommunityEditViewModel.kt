@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
@@ -107,7 +108,14 @@ class CommunityEditViewModel @Inject constructor(
                     CommunityEditUiState.Success
                 }
                 is Result.Error -> {
-                    if (!generalErrorState.value.first) generalErrorState.update{Pair(true, result.exception.message)}
+                    if (!generalErrorState.value.first) {
+                        when (result.exception.message) {
+                            ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
+                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
+                            ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
+                            else -> generalErrorState.update { Pair(true, result.exception.message) }
+                        }
+                    }
                     CommunityEditUiState.Error
                 }
             }

@@ -194,7 +194,7 @@ private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onHbtiP
                     }
                 }
             }
-            Column(modifier = Modifier.padding(end = 16.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Button(
                     isEnabled = true,
                     btnText = "다음",

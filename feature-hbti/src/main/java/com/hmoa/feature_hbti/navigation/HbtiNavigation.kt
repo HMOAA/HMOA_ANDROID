@@ -71,7 +71,7 @@ fun NavGraphBuilder.noteOrderQuantityPickScreen(
     }
 }
 
-fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
+fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: () -> Unit, onErrorHandleLoginAgain:()->Unit,) {
     composable(
         route = "${HbtiRoute.NotePick.name}/{noteOrderQuantity}",
         arguments = listOf(navArgument("noteOrderQuantity") { type = NavType.IntType })
@@ -80,7 +80,8 @@ fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: () -> U
         NotePickRoute(
             onBackClick = { onBackClick() },
             onNextClick = { onNextClick() },
-            noteOrderQuantity = noteOrderQuantity
+            noteOrderQuantity = noteOrderQuantity,
+            onErrorHandleLoginAgain = {onErrorHandleLoginAgain()}
         )
     }
 }

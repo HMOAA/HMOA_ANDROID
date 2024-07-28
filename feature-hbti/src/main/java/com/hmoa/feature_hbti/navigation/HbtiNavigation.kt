@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.hmoa.feature_hbti.NoteOrderQuantity
+import com.hmoa.feature_hbti.screen.AddAddressRoute
 import com.hmoa.feature_hbti.screen.HbtiProcessRoute
 import com.hmoa.feature_hbti.screen.HbtiRoute
 import com.hmoa.feature_hbti.screen.HbtiSurveyResultRoute
@@ -33,6 +34,7 @@ fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.P
 fun NavController.navigateToSelectSpice() = navigate(HbtiRoute.SelectSpiceRoute.name)
 fun NavController.navigateToNotePickResult(notes: String) = navigate("${HbtiRoute.NotePickResultRoute.name}/${notes}")
 fun NavController.navigateToOrder() = navigate(HbtiRoute.OrderRoute.name)
+fun NavController.navigateToAddAddress() = navigate(HbtiRoute.AddAddressRoute.name)
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -142,6 +144,14 @@ fun NavGraphBuilder.notePickResult(){
 fun NavGraphBuilder.order(){
     composable(route = HbtiRoute.OrderRoute.name){
         OrderRoute(
+            onNavBack = {}
+        )
+    }
+}
+
+fun NavGraphBuilder.addAddress(){
+    composable(route = HbtiRoute.AddAddressRoute.name){
+        AddAddressRoute(
             onNavBack = {}
         )
     }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,9 +85,12 @@ fun AddAddressScreen(
             InputRequest()
             Spacer(Modifier.height(24.dp))
             com.hmoa.core_designsystem.component.Button(
+                buttonModifier = Modifier.fillMaxWidth().height(52.dp),
                 isEnabled = true, /** 정보가 모두 작성되었을 때 true가 되도록 수정 */
                 btnText = "작성 완료",
-                onClick = { /** 작성 정보 저장 및 이전 화면으로 navigation */ })
+                onClick = { /** 작성 정보 저장 및 이전 화면으로 navigation */ },
+                radious = 5
+            )
         }
     }
 }
@@ -335,18 +339,17 @@ private fun InputAddress(){
             modifier = Modifier
                 .fillMaxWidth()
                 .height(44.dp)
-                .padding(horizontal = 12.dp)
                 .border(
                     width = 1.dp,
                     color = CustomColor.gray1,
                     shape = RoundedCornerShape(size = 5.dp)
-                ),
+                )
+                .padding(horizontal = 12.dp),
             value = postalCode.toString(),
             onValueChange = {
                 postalCode = it.toInt()
             },
             textStyle = TextStyle(
-                color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium
             ),
@@ -355,33 +358,35 @@ private fun InputAddress(){
             decorationBox = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = if(postalCode == null) Arrangement.SpaceBetween else Arrangement.End,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     if (postalCode == null){
                         Text(
                             text = "우편번호",
                             fontSize = 12.sp,
-                            fontFamily = CustomFont.medium
+                            fontFamily = CustomFont.medium,
+                            color = CustomColor.gray2
                         )
+                    } else {
+                        it()
                     }
                     Button(
                         modifier = Modifier
                             .width(46.dp)
-                            .height(20.dp)
-                            .background(
-                                color = CustomColor.gray1,
-                                shape = RoundedCornerShape(size = 5.dp)
-                            ),
+                            .height(20.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = CustomColor.gray1),
+                        shape = RoundedCornerShape(size = 5.dp),
                         onClick = {/** 주소 찾기 버튼 */},
+                        contentPadding = PaddingValues(0.dp)
                     ){
                         Text(
                             text = "주소 찾기",
                             fontSize = 10.sp,
-                            fontFamily = CustomFont.medium
+                            fontFamily = CustomFont.medium,
+                            color = Color.Black
                         )
                     }
-                    it()
                 }
             },
         )

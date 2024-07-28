@@ -32,12 +32,12 @@ import kotlinx.serialization.json.Json
 
 @Composable
 fun NotePickResultRoute(
-    notes: String,
+    notes: String?,
     onNavBack: () -> Unit,
     onNavNext: () -> Unit
 ){
     //json을 통해 받아온 note의 id들
-    val noteIds : List<Int> = Json.decodeFromString(notes)
+    val noteIds : List<Int> = Json.decodeFromString(notes ?: "")
     //임의 데이터
     val testData = PostNoteSelectedResponseDto(
         noteProducts = listOf(

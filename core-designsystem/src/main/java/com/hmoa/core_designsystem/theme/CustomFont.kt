@@ -13,4 +13,5 @@ object CustomFont {
     val extraLight = FontFamily(Font(R.font.pretendard_extra_light))
     val extraBold = FontFamily(Font(R.font.pretendard_extra_bold))
     val semiBold = FontFamily(Font(R.font.pretendard_semi_bold))
+    val medium = FontFamily(Font(R.font.pretendard_medium))
 }

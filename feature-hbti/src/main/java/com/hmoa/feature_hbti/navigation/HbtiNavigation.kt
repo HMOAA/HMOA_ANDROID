@@ -13,6 +13,7 @@ import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
 import com.hmoa.feature_hbti.screen.NoteOrderQuantityPickRoute
 import com.hmoa.feature_hbti.screen.NotePickResultRoute
 import com.hmoa.feature_hbti.screen.NotePickRoute
+import com.hmoa.feature_hbti.screen.OrderRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
 import com.hmoa.feature_hbti.screen.SelectSpiceRoute
@@ -31,6 +32,7 @@ fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.Perfume
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
 fun NavController.navigateToSelectSpice() = navigate(HbtiRoute.SelectSpiceRoute.name)
 fun NavController.navigateToNotePickResult(notes: String) = navigate("${HbtiRoute.NotePickResultRoute.name}/${notes}")
+fun NavController.navigateToOrder() = navigate(HbtiRoute.OrderRoute.name)
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -134,6 +136,13 @@ fun NavGraphBuilder.notePickResult(){
             notes = notes,
             onNavBack = { /*TODO*/ },
             onNavNext = { }
+        )
+    }
+}
+fun NavGraphBuilder.order(){
+    composable(route = HbtiRoute.OrderRoute.name){
+        OrderRoute(
+            onNavBack = {}
         )
     }
 }

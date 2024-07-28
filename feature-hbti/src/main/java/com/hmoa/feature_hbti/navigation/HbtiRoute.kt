@@ -11,4 +11,5 @@ enum class HbtiRoute {
     NoteOrderQuantityPick,
     NotePick,
     NotePickResultRoute,
+    OrderRoute
 }

@@ -210,13 +210,13 @@ private fun InputName(){
                 .fillMaxWidth(),
             value = name,
             onValueChanged = {newName -> name = newName},
-            color = CustomColor.gray1,
+            color = CustomColor.gray2,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             borderWidth = 1.dp,
             borderColor = CustomColor.gray1,
             borderShape = RoundedCornerShape(size = 5.dp),
-            padding = PaddingValues(start = 12.dp),
+            padding = PaddingValues(horizontal = 12.dp),
             placeHolder = "이름",
         )
     }
@@ -248,13 +248,13 @@ private fun InputPhone(){
                     .height(44.dp),
                 value = phone1,
                 onValueChanged = {newPhone1 -> phone1 = newPhone1},
-                color = CustomColor.gray1,
+                color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
-                padding = PaddingValues(start = 12.dp),
+                padding = PaddingValues(horizontal = 12.dp),
                 placeHolder = "010"
             )
             Row(
@@ -270,13 +270,13 @@ private fun InputPhone(){
                     .height(44.dp),
                 value = phone2,
                 onValueChanged = {newPhone2 -> phone2 = newPhone2},
-                color = CustomColor.gray1,
+                color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
-                padding = PaddingValues(start = 12.dp),
+                padding = PaddingValues(horizontal = 12.dp),
                 placeHolder = "1234"
             )
             Row(
@@ -292,13 +292,13 @@ private fun InputPhone(){
                     .height(44.dp),
                 value = phone3,
                 onValueChanged = {newPhone3 -> phone3 = newPhone3},
-                color = CustomColor.gray1,
+                color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
-                padding = PaddingValues(start = 12.dp),
+                padding = PaddingValues(horizontal = 12.dp),
                 placeHolder = "5678"
             )
         }

@@ -131,7 +131,7 @@ fun NavGraphBuilder.notePickResult(){
     composable(route = HbtiRoute.NotePickResultRoute.name){
         val notes = it.arguments?.getString("notes")
         NotePickResultRoute(
-            selectedNotes = notes,
+            notes = notes,
             onNavBack = { /*TODO*/ },
             onNavNext = { }
         )

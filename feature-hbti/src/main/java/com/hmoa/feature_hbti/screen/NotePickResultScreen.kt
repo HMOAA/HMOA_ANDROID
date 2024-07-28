@@ -56,6 +56,7 @@ fun NotePickResultRoute(
                         noteContent = "후추"
                     )
                 ),
+                notesCount = 3,
                 price = 4800,
                 productId = 0,
                 productName = "프루트",
@@ -76,6 +77,7 @@ fun NotePickResultRoute(
                         noteContent = "후추"
                     )
                 ),
+                notesCount = 6,
                 price = 4800,
                 productId = 0,
                 productName = "플로럴",
@@ -96,6 +98,7 @@ fun NotePickResultRoute(
                         noteContent = "후추"
                     )
                 ),
+                notesCount = 6,
                 price = 6000,
                 productId = 0,
                 productName = "시트러스",
@@ -150,7 +153,7 @@ fun NotePickResultScreen(
                         imgSize = 66,
                         productName = note.productName,
                         price = note.price,
-                        categoryNumber = 3, //임시 (내일 생김 >> 대체)
+                        categoryNumber = note.notesCount,
                         notes = note.notes
                     )
                 }
@@ -197,6 +200,7 @@ private fun UITest(){
                         noteContent = "후추"
                     )
                 ),
+                notesCount = 3,
                 price = 4800,
                 productId = 0,
                 productName = "프루트",
@@ -217,6 +221,7 @@ private fun UITest(){
                         noteContent = "후추"
                     )
                 ),
+                notesCount = 6,
                 price = 4800,
                 productId = 0,
                 productName = "플로럴",
@@ -237,6 +242,7 @@ private fun UITest(){
                         noteContent = "후추"
                     )
                 ),
+                notesCount = 6,
                 price = 6000,
                 productId = 0,
                 productName = "시트러스",

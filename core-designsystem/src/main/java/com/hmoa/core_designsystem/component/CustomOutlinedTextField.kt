@@ -56,6 +56,7 @@ fun CustomOutlinedTextField(
                         fontFamily = CustomFont.medium
                     )
                 }
+                it()
             }
         }
     )

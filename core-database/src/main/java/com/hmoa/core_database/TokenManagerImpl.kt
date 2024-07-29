@@ -1,6 +1,7 @@
 package com.hmoa.core_database
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
@@ -13,8 +14,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -38,15 +40,19 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         private val FCM_TOKEN_KEY = stringPreferencesKey("FCM_TOKEN")
     }
 
-    override fun getAuthTokenForHeader(): String {
-        val token = runBlocking {
-            getAuthToken().firstOrNull()
+    override fun getAuthTokenForHeader(): String? {
+        var token = runBlocking {
+            getAuthToken().first()
         }
-        return token ?: ""
+        //한 번 더 하는 이유는 첫 값이 null일 때가 있기 때문, 아직 원인은 모르는 문제이지만 임시방편으로 해결은 하는 것 뿐
+        token = runBlocking {
+            getAuthToken().first()
+        }
+        return token
     }
 
     override suspend fun getAuthToken(): Flow<String?> {
-        return dataStore.data.map { preferences ->
+        return dataStore.data.mapLatest { preferences ->
             preferences[AUTH_TOKEN_KEY]
         }
     }
@@ -65,6 +71,8 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     override suspend fun getGoogleAccessToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
+            val p = preferences[GOOGLE_ACCESS_TOKEN_KEY]
+            Log.d("TokenManagerImpl", "${p}")
             preferences[GOOGLE_ACCESS_TOKEN_KEY]
         }
     }

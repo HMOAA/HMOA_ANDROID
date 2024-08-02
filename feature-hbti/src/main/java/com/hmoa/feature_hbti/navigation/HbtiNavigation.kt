@@ -105,15 +105,18 @@ fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: (String
     }
 }
 
-fun NavGraphBuilder.notePickResult(){
+fun NavGraphBuilder.notePickResult(
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
+){
     composable(route = "${HbtiRoute.NotePickResultRoute.name}/{productIdsToJson}"){
         val productIdsToJson = it.arguments?.getString("productIdsToJson")
         val gson = GsonBuilder().create()
         val productIds = gson.fromJson(productIdsToJson, NoteProductIds::class.java)
         NotePickResultRoute(
             productIds = productIds.productIds,
-            onNavBack = { /*TODO*/ },
-            onNavNext = { }
+            onBackClick = onBackClick,
+            onNextClick = onNextClick
         )
     }
 }

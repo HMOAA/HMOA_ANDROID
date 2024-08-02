@@ -28,16 +28,13 @@ import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
-import kotlinx.serialization.json.Json
 
 @Composable
 fun NotePickResultRoute(
-    notes: String?,
+    productIds: List<Int>,
     onNavBack: () -> Unit,
     onNavNext: () -> Unit
 ){
-    //json을 통해 받아온 note의 id들
-    val noteIds : List<Int> = Json.decodeFromString(notes ?: "")
     //임의 데이터
     val testData = PostNoteSelectedResponseDto(
         noteProducts = listOf(

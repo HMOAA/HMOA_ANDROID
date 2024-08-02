@@ -47,6 +47,7 @@ import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 
 @Composable
 fun OrderRoute(
+    productIds: List<Int>,
     onNavBack: () -> Unit,
 ){
     val testData = PostNoteSelectedResponseDto(

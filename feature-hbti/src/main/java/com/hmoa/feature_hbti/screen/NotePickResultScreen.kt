@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.gson.GsonBuilder
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
@@ -31,6 +32,7 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteSelectedDescription
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
@@ -41,7 +43,7 @@ import com.hmoa.feature_hbti.viewmodel.NotePickResultViewModel
 fun NotePickResultRoute(
     productIds: List<Int>,
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onNextClick: (String) -> Unit,
     viewModel: NotePickResultViewModel = hiltViewModel()
 ){
     viewModel.setNoteIds(productIds)
@@ -51,7 +53,12 @@ fun NotePickResultRoute(
         uiState = uiState.value,
         errState = errState.value,
         onBackClick = onBackClick,
-        onNextClick = onNextClick
+        onNextClick = {
+            val gson = GsonBuilder().create()
+            val dto = NoteProductIds(productIds)
+            val productIdsToJson = gson.toJson(dto)
+            onNextClick(productIdsToJson)
+        }
     )
 }
 
@@ -133,7 +140,10 @@ private fun NotePickResultMainContent(
                     fontSize = 15.sp,
                     fontFamily = CustomFont.regular
                 )
-                Spacer(Modifier.weight(1f).defaultMinSize(minHeight = 18.dp))
+                Spacer(
+                    Modifier
+                        .weight(1f)
+                        .defaultMinSize(minHeight = 18.dp))
                 Button(
                     buttonModifier = Modifier
                         .fillMaxWidth()

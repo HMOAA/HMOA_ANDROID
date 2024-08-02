@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -99,50 +100,51 @@ private fun NotePickResultMainContent(
             onNavClick = onBackClick
         )
         Spacer(Modifier.height(20.dp))
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ){
-            Text(
-                text = "선택한 향료",
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
-            )
-            Spacer(Modifier.height(19.dp))
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ){
-                items(notes){note ->
-                    NoteSelectedDescription(
-                        imgUrl = note.productPhotoUrl,
-                        imgSize = 66,
-                        productName = note.productName,
-                        price = note.price,
-                        categoryNumber = note.notesCount,
-                        notes = note.notes
-                    )
-                }
+            item{
+                Text(
+                    text = "선택한 향료",
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
+                )
+                Spacer(Modifier.height(19.dp))
             }
-            Spacer(Modifier.height(6.dp))
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "총 금액 : ${totalPrice}",
-                textAlign = TextAlign.End,
-                fontSize = 15.sp,
-                fontFamily = CustomFont.regular
-            )
-            Spacer(Modifier.weight(1f))
-            Button(
-                buttonModifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                isEnabled = true,
-                btnText = "다음",
-                onClick = onNextClick,
-                radious = 5
-            )
-            Spacer(Modifier.height(40.dp))
+            items(notes){note ->
+                NoteSelectedDescription(
+                    imgUrl = note.productPhotoUrl,
+                    imgSize = 66,
+                    productName = note.productName,
+                    price = note.price,
+                    categoryNumber = note.notesCount,
+                    notes = note.notes
+                )
+            }
+            item{
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "총 금액 : ${totalPrice}",
+                    textAlign = TextAlign.End,
+                    fontSize = 15.sp,
+                    fontFamily = CustomFont.regular
+                )
+                Spacer(Modifier.weight(1f).defaultMinSize(minHeight = 18.dp))
+                Button(
+                    buttonModifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    isEnabled = true,
+                    btnText = "다음",
+                    onClick = onNextClick,
+                    radious = 5
+                )
+                Spacer(Modifier.height(40.dp))
+            }
         }
     }
 }

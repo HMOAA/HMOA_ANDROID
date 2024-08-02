@@ -49,6 +49,7 @@ import com.hmoa.feature_hbti.navigation.navigateToOrder
 import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
 import com.hmoa.feature_hbti.navigation.notePickResult
 import com.hmoa.feature_hbti.navigation.notePickScreen
+import com.hmoa.feature_hbti.navigation.order
 import com.hmoa.feature_home.navigation.allPerfumeScreen
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToAllPerfume
@@ -243,5 +244,6 @@ fun SetUpNavGraph(
         )
         notePickScreen(onBackClick = navController::navigateToBack, onNextClick = navController::navigateToNotePickResult, onErrorHandleLoginAgain = navController::navigateToLogin)
         notePickResult(onBackClick = navController::navigateToBack, onNextClick = navController::navigateToOrder)
+        order()
     }
 }

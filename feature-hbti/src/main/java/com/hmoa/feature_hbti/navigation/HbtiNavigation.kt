@@ -35,7 +35,7 @@ fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.Perfume
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
 fun NavController.navigateToSelectSpice() = navigate(HbtiRoute.SelectSpiceRoute.name)
 fun NavController.navigateToNotePickResult(productIdsToJson: String) = navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}")
-fun NavController.navigateToOrder() = navigate(HbtiRoute.OrderRoute.name)
+fun NavController.navigateToOrder(productIdsToJson: String) = navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
 fun NavController.navigateToAddAddress() = navigate(HbtiRoute.AddAddressRoute.name)
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
@@ -107,7 +107,7 @@ fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: (String
 
 fun NavGraphBuilder.notePickResult(
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onNextClick: (String) -> Unit,
 ){
     composable(route = "${HbtiRoute.NotePickResultRoute.name}/{productIdsToJson}"){
         val productIdsToJson = it.arguments?.getString("productIdsToJson")
@@ -148,8 +148,12 @@ fun NavGraphBuilder.spiceSelectScreen(){
     }
 }
 fun NavGraphBuilder.order(){
-    composable(route = HbtiRoute.OrderRoute.name){
+    composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}"){
+        val gson = GsonBuilder().create()
+        val productIdsToJson = it.arguments?.getString("productIdsToJson")
+        val productIds = gson.fromJson(productIdsToJson, NoteProductIds::class.java)
         OrderRoute(
+            productIds = productIds.productIds,
             onNavBack = {}
         )
     }

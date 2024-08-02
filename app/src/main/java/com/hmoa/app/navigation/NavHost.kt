@@ -45,6 +45,7 @@ import com.hmoa.feature_hbti.navigation.navigateToHbtiSurveyResult
 import com.hmoa.feature_hbti.navigation.navigateToNoteOrderQuantityPick
 import com.hmoa.feature_hbti.navigation.navigateToNotePick
 import com.hmoa.feature_hbti.navigation.navigateToNotePickResult
+import com.hmoa.feature_hbti.navigation.navigateToOrder
 import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
 import com.hmoa.feature_hbti.navigation.notePickResult
 import com.hmoa.feature_hbti.navigation.notePickScreen
@@ -241,6 +242,6 @@ fun SetUpNavGraph(
             onNextClick = { noteOrderQuantity -> navController.navigateToNotePick(noteOrderQuantity) }
         )
         notePickScreen(onBackClick = navController::navigateToBack, onNextClick = navController::navigateToNotePickResult, onErrorHandleLoginAgain = navController::navigateToLogin)
-        notePickResult()
+        notePickResult(onBackClick = navController::navigateToBack, onNextClick = navController::navigateToOrder)
     }
 }

@@ -5,6 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.google.gson.GsonBuilder
+import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.NoteOrderQuantity
 import com.hmoa.feature_hbti.screen.AddAddressRoute
 import com.hmoa.feature_hbti.screen.HbtiProcessRoute
@@ -32,7 +34,7 @@ fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
 fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
 fun NavController.navigateToSelectSpice() = navigate(HbtiRoute.SelectSpiceRoute.name)
-fun NavController.navigateToNotePickResult(notes: String) = navigate("${HbtiRoute.NotePickResultRoute.name}/${notes}")
+fun NavController.navigateToNotePickResult(productIdsToJson: String) = navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}")
 fun NavController.navigateToOrder() = navigate(HbtiRoute.OrderRoute.name)
 fun NavController.navigateToAddAddress() = navigate(HbtiRoute.AddAddressRoute.name)
 
@@ -88,21 +90,33 @@ fun NavGraphBuilder.noteOrderQuantityPickScreen(
     }
 }
 
-fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: () -> Unit, onErrorHandleLoginAgain:()->Unit,) {
+fun NavGraphBuilder.notePickScreen(onBackClick: () -> Unit, onNextClick: (String) -> Unit, onErrorHandleLoginAgain:()->Unit,) {
     composable(
-        route = "${HbtiRoute.NotePick.name}/{noteOrderQuantity}",
+        route = "${HbtiRoute.NotePick}/{noteOrderQuantity}",
         arguments = listOf(navArgument("noteOrderQuantity") { type = NavType.IntType })
     ) {
         val noteOrderQuantity = it.arguments?.getInt("noteOrderQuantity")
         NotePickRoute(
             onBackClick = { onBackClick() },
-            onNextClick = { onNextClick() },
+            onNextClick = onNextClick,
             noteOrderQuantity = noteOrderQuantity,
             onErrorHandleLoginAgain = {onErrorHandleLoginAgain()}
         )
     }
 }
 
+fun NavGraphBuilder.notePickResult(){
+    composable(route = "${HbtiRoute.NotePickResultRoute.name}/{productIdsToJson}"){
+        val productIdsToJson = it.arguments?.getString("productIdsToJson")
+        val gson = GsonBuilder().create()
+        val productIds = gson.fromJson(productIdsToJson, NoteProductIds::class.java)
+        NotePickResultRoute(
+            productIds = productIds.productIds,
+            onNavBack = { /*TODO*/ },
+            onNavNext = { }
+        )
+    }
+}
 fun NavGraphBuilder.perfumeRecommendationRoute(){
     composable(route = HbtiRoute.PerfumeRecommendationRoute.name) {
         PerfumeRecommendationRoute(
@@ -127,17 +141,6 @@ fun NavGraphBuilder.spiceSelectScreen(){
             /** navigation event 추후 추가 **/
             onNavNext = { /*TODO*/ },
             onNavBack = { /*TODO*/ }
-        )
-    }
-}
-
-fun NavGraphBuilder.notePickResult(){
-    composable(route = HbtiRoute.NotePickResultRoute.name){
-        val notes = it.arguments?.getString("notes")
-        NotePickResultRoute(
-            notes = notes,
-            onNavBack = { /*TODO*/ },
-            onNavNext = { }
         )
     }
 }

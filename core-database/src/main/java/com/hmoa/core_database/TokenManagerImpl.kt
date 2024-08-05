@@ -43,7 +43,6 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     override fun getAuthTokenForHeader(): String? {
         val token = runBlocking {
             getAuthToken().first()
-            getAuthToken().first()
         }
         return token
     }

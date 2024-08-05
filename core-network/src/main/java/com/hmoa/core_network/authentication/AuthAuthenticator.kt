@@ -6,6 +6,7 @@ import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Request
 import okhttp3.Response
@@ -40,6 +41,10 @@ class AuthAuthenticator @Inject constructor(
                     if (responseBody != null) {
                         val refreshedAuthToken = responseBody.authToken
                         val refreshedRememberToken = responseBody.rememberedToken
+                        launch {
+                            tokenManager.deleteAuthToken()
+                            tokenManager.deleteRememberedToken()
+                        }.join()
                         refreshTokenManager.saveRefreshTokens(refreshedAuthToken, refreshedRememberToken)
                         newRequest = response.request.addRefreshAuthToken(refreshedAuthToken)
                         Log.d("AuthAuthenticator", "토큰 리프레싱 성공")

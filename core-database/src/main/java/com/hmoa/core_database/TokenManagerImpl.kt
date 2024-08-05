@@ -41,11 +41,8 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
     }
 
     override fun getAuthTokenForHeader(): String? {
-        var token = runBlocking {
+        val token = runBlocking {
             getAuthToken().first()
-        }
-        //한 번 더 하는 이유는 첫 값이 null일 때가 있기 때문, 아직 원인은 모르는 문제이지만 임시방편으로 해결은 하는 것 뿐
-        token = runBlocking {
             getAuthToken().first()
         }
         return token

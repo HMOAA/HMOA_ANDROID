@@ -10,7 +10,7 @@ import com.hmoa.core_common.ErrorUiState
 
 
 @Composable
-fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onCloseClick: () -> Unit) {
+fun ErrorUiSetView(onLoginClick: () -> Unit, errorUiState: ErrorUiState, onCloseClick: () -> Unit) {
     var isOpen by remember { mutableStateOf(true) }
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
@@ -26,7 +26,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                     buttonTitle = "로그인 하러가기",
                     onOkClick = {
                         isOpen = false
-                        onConfirmClick()
+                        onLoginClick()
                     },
                     onCloseClick = {
                         isOpen = false
@@ -43,7 +43,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                     buttonTitle = "로그인 하러가기",
                     onOkClick = {
                         isOpen = false
-                        onConfirmClick()
+                        onLoginClick()
                     },
                     onCloseClick = {
                         isOpen = false
@@ -60,7 +60,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                     buttonTitle = "로그인 하러가기",
                     onOkClick = {
                         isOpen = false
-                        onConfirmClick()
+                        onLoginClick()
                     },
                     onCloseClick = {
                         isOpen = false
@@ -74,7 +74,6 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                     content = (errorUiState as ErrorUiState.ErrorData).generalError.second ?: "",
                     onDismiss = {
                         isOpen = false
-                        onCloseClick()
                     },
                     modifier = Modifier.wrapContentHeight()
                         .width(screenWidth - 88.dp)

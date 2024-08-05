@@ -3,21 +3,7 @@ package com.hmoa.feature_magazine.Screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -53,12 +39,12 @@ import com.hmoa.feature_magazine.ViewModel.MagazineDescViewModel
 
 @Composable
 fun MagazineDescRoute(
-    id : Int?,
+    id: Int?,
     onNavBack: () -> Unit,
     onNavLogin: () -> Unit,
-    onNavDesc : (Int) -> Unit,
-    viewModel : MagazineDescViewModel = hiltViewModel()
-){
+    onNavDesc: (Int) -> Unit,
+    viewModel: MagazineDescViewModel = hiltViewModel()
+) {
     viewModel.setId(id)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
@@ -78,19 +64,20 @@ fun MagazineDescRoute(
 
 @Composable
 fun MagazineDescScreen(
-    uiState : MagazineDescUiState,
-    recentMagazines : LazyPagingItems<MagazineSummaryResponseDto>,
-    isLiked : Boolean?,
-    updateMagazineLike : () -> Unit,
-    errState : ErrorUiState,
+    uiState: MagazineDescUiState,
+    recentMagazines: LazyPagingItems<MagazineSummaryResponseDto>,
+    isLiked: Boolean?,
+    updateMagazineLike: () -> Unit,
+    errState: ErrorUiState,
     onNavBack: () -> Unit,
     onNavLogin: () -> Unit,
-    onNavDesc : (Int) -> Unit,
-){
-    when(uiState){
+    onNavDesc: (Int) -> Unit,
+) {
+    when (uiState) {
         MagazineDescUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is MagazineDescUiState.Success -> {
             MagazineDescContent(
                 title = uiState.title,
@@ -108,9 +95,10 @@ fun MagazineDescScreen(
                 onNavDesc = onNavDesc
             )
         }
+
         is MagazineDescUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavLogin,
+                onLoginClick = onNavLogin,
                 errorUiState = errState,
                 onCloseClick = onNavBack
             )
@@ -120,26 +108,26 @@ fun MagazineDescScreen(
 
 @Composable
 private fun MagazineDescContent(
-    title : String,
-    releaseDate : String,
-    viewCount : Int,
-    previewImgUrl : String,
-    preview : String,
+    title: String,
+    releaseDate: String,
+    viewCount: Int,
+    previewImgUrl: String,
+    preview: String,
     isLiked: Boolean?,
-    updateMagazineLike : () -> Unit,
-    likeCount : Int,
-    contentList : List<MagazineContentItem>,
-    tagList : List<String>,
-    magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
-    onNavBack : () -> Unit,
+    updateMagazineLike: () -> Unit,
+    likeCount: Int,
+    contentList: List<MagazineContentItem>,
+    tagList: List<String>,
+    magazineList: ItemSnapshotList<MagazineSummaryResponseDto>,
+    onNavBack: () -> Unit,
     onNavDesc: (Int) -> Unit,
-){
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-    ){
-        item{
+    ) {
+        item {
             TopBar(
                 title = "",
                 navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -161,11 +149,12 @@ private fun MagazineDescContent(
             HorizontalDivider(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),thickness=1.dp,color= CustomColor.gray2)
+                    .padding(horizontal = 16.dp), thickness = 1.dp, color = CustomColor.gray2
+            )
             Spacer(Modifier.height(48.dp))
         }
-        items(contentList){content ->
-            if (content.header != null && content.content != null){
+        items(contentList) { content ->
+            if (content.header != null && content.content != null) {
                 MagazineDescData(
                     header = content.header!!,
                     content = content.content!!,
@@ -173,22 +162,23 @@ private fun MagazineDescContent(
                 )
             }
         }
-        item{
+        item {
             Spacer(Modifier.height(48.dp))
             Tags(tagList = tagList)
             Spacer(Modifier.height(48.dp))
             HorizontalDivider(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),thickness=1.dp,color= CustomColor.gray2)
+                    .padding(horizontal = 16.dp), thickness = 1.dp, color = CustomColor.gray2
+            )
             MagazineFooter(
                 isLiked = isLiked ?: false,
                 likeCount = likeCount,
                 updateMagazineLike = updateMagazineLike
             )
             RecentMagazines(
-                magazineList=magazineList,
-                onNavDesc=onNavDesc
+                magazineList = magazineList,
+                onNavDesc = onNavDesc
             )
         }
     }
@@ -196,15 +186,15 @@ private fun MagazineDescContent(
 
 @Composable
 private fun ContentHeader(
-    title : String,
-    releaseDate : String
-){
+    title: String,
+    releaseDate: String
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 36.dp, bottom = 52.dp, start = 17.dp)
-    ){
+    ) {
         Text(
             text = title,
             fontSize = 24.sp,
@@ -221,23 +211,23 @@ private fun ContentHeader(
 
 @Composable
 private fun MagazineContent(
-    viewCount : Int,
-    previewImageUrl : String,
-    preview : String,
-){
+    viewCount: Int,
+    previewImageUrl: String,
+    preview: String,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(bottom = 48.dp)
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(start = 17.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Image(
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_view_number),
                 contentDescription = "View Number"
@@ -254,7 +244,7 @@ private fun MagazineContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(0.8f)
-        ){
+        ) {
             ImageView(
                 imageUrl = previewImageUrl,
                 width = 1f,
@@ -278,21 +268,21 @@ private fun MagazineContent(
 
 @Composable
 private fun MagazineDescData(
-    header : String,
-    content : String,
-    image : String?
-){
+    header: String,
+    content: String,
+    image: String?
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 16.dp)
-    ){
-        if(image != null){
+    ) {
+        if (image != null) {
             Box(
                 modifier = Modifier.fillMaxWidth()
                     .aspectRatio(0.8f)
-            ){
+            ) {
                 ImageView(
                     imageUrl = image,
                     width = 1f,
@@ -321,8 +311,8 @@ private fun MagazineDescData(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Tags(
-    tagList : List<String>
-){
+    tagList: List<String>
+) {
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -330,8 +320,8 @@ private fun Tags(
             .padding(horizontal = 17.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ){
-        tagList.forEach{ tag ->
+    ) {
+        tagList.forEach { tag ->
             MagazineTag(tag = tag)
         }
     }
@@ -340,16 +330,16 @@ private fun Tags(
 @Composable
 private fun MagazineFooter(
     isLiked: Boolean,
-    likeCount : Int,
-    updateMagazineLike : () -> Unit,
-){
+    likeCount: Int,
+    updateMagazineLike: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(170.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
-    ){
+    ) {
         Text(
             text = "매거진이 유용한 정보였다면",
             fontSize = 16.sp,
@@ -359,14 +349,14 @@ private fun MagazineFooter(
         Column(
             modifier = Modifier.wrapContentSize(),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             IconButton(
                 onClick = updateMagazineLike
-            ){
+            ) {
                 Icon(
                     painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_thumb_up),
                     contentDescription = "Like",
-                    tint = if(isLiked) CustomColor.gray4 else CustomColor.gray2
+                    tint = if (isLiked) CustomColor.gray4 else CustomColor.gray2
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -381,16 +371,16 @@ private fun MagazineFooter(
 
 @Composable
 private fun RecentMagazines(
-    magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
+    magazineList: ItemSnapshotList<MagazineSummaryResponseDto>,
     onNavDesc: (Int) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(358.dp)
             .background(color = Color.Black)
             .padding(top = 32.dp)
-    ){
+    ) {
         Text(
             modifier = Modifier.padding(start = 16.dp),
             text = "최신 매거진",
@@ -399,22 +389,22 @@ private fun RecentMagazines(
         )
         Spacer(Modifier.height(16.dp))
         HorizontalDivider(
-            modifier= Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            thickness=0.5.dp,
-            color=CustomColor.gray2
+            thickness = 0.5.dp,
+            color = CustomColor.gray2
         )
         Spacer(Modifier.height(16.dp))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            items(magazineList){magazine ->
-                if (magazine!=null){
+        ) {
+            items(magazineList) { magazine ->
+                if (magazine != null) {
                     RecentMagazineItem(
                         previewImageUrl = magazine.previewImgUrl,
                         title = magazine.title,
-                        onNavDesc = {onNavDesc(magazine.magazineId)}
+                        onNavDesc = { onNavDesc(magazine.magazineId) }
                     )
                 }
             }
@@ -424,23 +414,23 @@ private fun RecentMagazines(
 
 @Composable
 private fun RecentMagazineItem(
-    previewImageUrl : String,
-    title : String,
+    previewImageUrl: String,
+    title: String,
     onNavDesc: () -> Unit,
-){
+) {
     Column(
         modifier = Modifier
             .width(132.dp)
             .wrapContentHeight()
-            .clickable{
+            .clickable {
                 onNavDesc()
             }
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .height(184.dp)
                 .width(132.dp)
-        ){
+        ) {
             ImageView(
                 imageUrl = previewImageUrl,
                 width = 1f,

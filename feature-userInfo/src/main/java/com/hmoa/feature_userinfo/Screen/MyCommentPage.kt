@@ -1,15 +1,7 @@
 package com.example.userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -39,7 +31,7 @@ import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 fun MyCommentRoute(
     onNavBack: () -> Unit,
     onNavCommunity: (Int) -> Unit,
-    onNavPerfume : (Int) -> Unit,
+    onNavPerfume: (Int) -> Unit,
     viewModel: CommentViewModel = hiltViewModel()
 ) {
     //comment list
@@ -53,7 +45,7 @@ fun MyCommentRoute(
         type = type.value,
         onNavBack = onNavBack,
         onNavParent = {
-            if (type.value == MyPageCategory.향수.name){
+            if (type.value == MyPageCategory.향수.name) {
                 onNavPerfume(it)
             } else {
                 onNavCommunity(it)
@@ -68,16 +60,18 @@ fun MyCommentRoute(
 @Composable
 fun MyCommentPage(
     uiState: CommentUiState,
-    errState : ErrorUiState,
+    errState: ErrorUiState,
     type: String,
     onNavBack: () -> Unit,
-    onNavParent : (Int) -> Unit,
+    onNavParent: (Int) -> Unit,
     onTypeChanged: (String) -> Unit
 ) {
     when (uiState) {
-        CommentUiState.Loading -> {9
+        CommentUiState.Loading -> {
+            9
             AppLoadingScreen()
         }
+
         is CommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems().itemSnapshotList
             MyCommentContent(
@@ -88,9 +82,10 @@ fun MyCommentPage(
                 onNavParent = onNavParent
             )
         }
+
         CommentUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onLoginClick = onNavBack,
                 errorUiState = errState,
                 onCloseClick = onNavBack
             )

@@ -85,7 +85,7 @@ fun CommunityHome(
             }
             is CommunityHomeUiState.Error -> {
                 ErrorUiSetView(
-                    onConfirmClick = onErrorHandleLoginAgain,
+                    onLoginClick = onErrorHandleLoginAgain,
                     errorUiState = errorUiState,
                     onCloseClick = onErrorHandleLoginAgain
                 )

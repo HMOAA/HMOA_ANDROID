@@ -6,15 +6,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -131,6 +123,7 @@ fun MyPage(
         UserInfoUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is UserInfoUiState.User -> {
             MyPageContent(
                 profile = uiState.profile,
@@ -147,13 +140,15 @@ fun MyPage(
                 onNavManageMyInfo = onNavManageMyInfo,
             )
         }
+
         UserInfoUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = { onErrorHandleLoginAgain() },
+                onLoginClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = { onBackClick() }
             )
         }
+
         else -> {}
     }
 }
@@ -167,14 +162,14 @@ private fun MyPageContent(
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
     onDelAccount: () -> Unit,
-    onNavMyPerfume : () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
 ) {
     val columnInfo = listOf(
-        ColumnData("나의 향수") {onNavMyPerfume() },
+        ColumnData("나의 향수") { onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
@@ -191,7 +186,7 @@ private fun MyPageContent(
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        item{
+        item {
             TopBar(title = "마이페이지")
             UserProfileInfo(
                 profile = profile,

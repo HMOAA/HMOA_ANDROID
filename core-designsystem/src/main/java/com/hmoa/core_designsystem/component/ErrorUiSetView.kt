@@ -70,7 +70,7 @@ fun ErrorUiSetView(onLoginClick: () -> Unit, errorUiState: ErrorUiState, onClose
             } else if (errorUiState.generalError.first) {
                 AppDefaultDialog(
                     isOpen = isOpen,
-                    title = "이런 오류가 발생했어요 :(",
+                    title = "오류가 발생했어요 :(",
                     content = (errorUiState as ErrorUiState.ErrorData).generalError.second ?: "",
                     onDismiss = {
                         isOpen = false

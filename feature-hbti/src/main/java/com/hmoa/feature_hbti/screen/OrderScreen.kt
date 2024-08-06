@@ -35,101 +35,79 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.concatWithComma
+import com.hmoa.core_common.formatWon
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.CustomOutlinedTextField
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
+import com.hmoa.feature_hbti.viewmodel.OrderUiState
+import com.hmoa.feature_hbti.viewmodel.OrderViewModel
 
 @Composable
 fun OrderRoute(
     productIds: List<Int>,
     onNavBack: () -> Unit,
+    viewModel: OrderViewModel = hiltViewModel()
 ){
-    val testData = PostNoteSelectedResponseDto(
-        noteProducts = listOf(
-            NoteProduct(
-                notes = listOf(
-                    Note(
-                        noteName = "통카빈",
-                        noteContent = "열대 나무 씨앗을 말린 향신료"
-                    ),
-                    Note(
-                        noteName = "넛맥",
-                        noteContent = "넛맥이란 식물을 말린 향신료"
-                    ),
-                    Note(
-                        noteName = "페퍼",
-                        noteContent = "후추"
-                    )
-                ),
-                notesCount = 3,
-                price = 4800,
-                productId = 0,
-                productName = "프루트",
-                productPhotoUrl = ""
-            ),
-            NoteProduct(
-                notes = listOf(
-                    Note(
-                        noteName = "통카빈",
-                        noteContent = "열대 나무 씨앗을 말린 향신료"
-                    ),
-                    Note(
-                        noteName = "넛맥",
-                        noteContent = "넛맥이란 식물을 말린 향신료"
-                    ),
-                    Note(
-                        noteName = "페퍼",
-                        noteContent = "후추"
-                    )
-                ),
-                notesCount = 6,
-                price = 4800,
-                productId = 0,
-                productName = "플로럴",
-                productPhotoUrl = ""
-            ),
-            NoteProduct(
-                notes = listOf(
-                    Note(
-                        noteName = "통카빈",
-                        noteContent = "열대 나무 씨앗을 말린 향신료"
-                    ),
-                    Note(
-                        noteName = "넛맥",
-                        noteContent = "넛맥이란 식물을 말린 향신료"
-                    ),
-                    Note(
-                        noteName = "페퍼",
-                        noteContent = "후추"
-                    )
-                ),
-                notesCount = 6,
-                price = 6000,
-                productId = 0,
-                productName = "시트러스",
-                productPhotoUrl = ""
-            )
-        ),
-        totalPrice = 15600
-    )
+    viewModel.setIds(productIds)
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     OrderScreen (
-        productInfo = testData,
+        uiState = uiState.value,
+        errState = errState.value,
         onNavBack = onNavBack
     )
 }
 
 @Composable
 fun OrderScreen(
-    productInfo: PostNoteSelectedResponseDto,
+    uiState: OrderUiState,
+    errState: ErrorUiState,
     onNavBack: () -> Unit,
 ){
+    when(uiState){
+        OrderUiState.Loading -> AppLoadingScreen()
+        is OrderUiState.Success -> {
+            OrderScreenMainContent(
+                totalPrice = uiState.noteResult.totalPrice,
+                noteProducts = uiState.noteResult.noteProducts,
+                onNavBack = onNavBack
+            )
+        }
+        OrderUiState.Error -> {
+            ErrorUiSetView(
+                onConfirmClick = onNavBack,
+                errorUiState = errState,
+                onCloseClick = onNavBack
+            )
+        }
+    }
+}
+@Composable
+private fun OrderScreenMainContent(
+    totalPrice: Int,
+    noteProducts: List<NoteProduct>,
+    onNavBack: () -> Unit
+){
     val scrollState = rememberScrollState()
+    var name by remember{mutableStateOf("")}
+    var phone1 by remember{mutableStateOf("")}
+    var phone2 by remember{mutableStateOf("")}
+    var phone3 by remember{mutableStateOf("")}
+    val options = listOf("토스페이", "카카오페이", "페이코", "일반 결제")
+    var selectedOption by remember{mutableStateOf(options[0])}
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -167,16 +145,27 @@ fun OrderScreen(
                     textDecoration = TextDecoration.Underline
                 )
             }
-            InputName()
-            InputPhone()
+            InputName(name = name, onNameChanged = {name = it})
+            InputPhone(
+                phone1 = phone1,
+                onPhone1Changed = {phone1 = it},
+                phone2 = phone2,
+                onPhone2Changed = {phone2 = it},
+                phone3 = phone3,
+                onPhone3Changed = {phone3 = it}
+            )
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
             InputAddress()
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            ProductInfo(productInfo.noteProducts)
+            ProductInfo(noteProducts)
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            Receipt(productInfo.totalPrice)
+            Receipt(totalPrice)
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            SelectPaymentType()
+            SelectPaymentType(
+                options = options,
+                selectedOption = selectedOption,
+                onValueChanged = {selectedOption = it}
+            )
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
             CheckPrivacyConsent()
             Button(
@@ -190,10 +179,11 @@ fun OrderScreen(
         }
     }
 }
-
 @Composable
-private fun InputName(){
-    var name by remember{mutableStateOf("")}
+private fun InputName(
+    name: String,
+    onNameChanged: (newName: String) -> Unit,
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -210,7 +200,7 @@ private fun InputName(){
                 .height(44.dp)
                 .fillMaxWidth(),
             value = name,
-            onValueChanged = {newName -> name = newName},
+            onValueChanged = onNameChanged,
             color = CustomColor.gray2,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
@@ -224,10 +214,14 @@ private fun InputName(){
 }
 
 @Composable
-private fun InputPhone(){
-    var phone1 by remember{mutableStateOf("")}
-    var phone2 by remember{mutableStateOf("")}
-    var phone3 by remember{mutableStateOf("")}
+private fun InputPhone(
+    phone1: String,
+    onPhone1Changed: (newPhone1: String) -> Unit,
+    phone2: String,
+    onPhone2Changed: (newPhone2: String) -> Unit,
+    phone3: String,
+    onPhone3Changed: (newPhone3: String) -> Unit,
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -248,7 +242,7 @@ private fun InputPhone(){
                     .weight(1f)
                     .height(44.dp),
                 value = phone1,
-                onValueChanged = {newPhone1 -> phone1 = newPhone1},
+                onValueChanged = onPhone1Changed,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -270,7 +264,7 @@ private fun InputPhone(){
                     .weight(1f)
                     .height(44.dp),
                 value = phone2,
-                onValueChanged = {newPhone2 -> phone2 = newPhone2},
+                onValueChanged = onPhone2Changed,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -292,7 +286,7 @@ private fun InputPhone(){
                     .weight(1f)
                     .height(44.dp),
                 value = phone3,
-                onValueChanged = {newPhone3 -> phone3 = newPhone3},
+                onValueChanged = onPhone3Changed,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -356,14 +350,6 @@ private fun ProductInfo(notes: List<NoteProduct>){
 
 @Composable
 private fun NoteItem(note: NoteProduct){
-    var noteNames = ""
-    note.notes.forEach{
-        noteNames += it.noteName
-        if (note.notes.lastIndex != note.notes.indexOf(it)){
-            noteNames += ","
-        }
-    }
-    val totalPrice = note.notesCount * 1200
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -385,13 +371,13 @@ private fun NoteItem(note: NoteProduct){
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = noteNames,
+                text = concatWithComma(note.notes.map{it.noteName}),
                 fontSize = 10.sp,
                 fontFamily = CustomFont.regular
             )
             Spacer(Modifier.height(18.dp))
             Text(
-                text = "수량 ${note.notes.size}개",
+                text = "수량 ${note.notesCount}개",
                 fontSize = 10.sp,
                 fontFamily = CustomFont.regular,
                 color = CustomColor.gray3
@@ -414,14 +400,14 @@ private fun NoteItem(note: NoteProduct){
             }
             Spacer(Modifier.height(22.dp))
             Text(
-                text = "1200원/개",
+                text = "1,200원/개",
                 fontSize = 10.sp,
                 fontFamily = CustomFont.regular,
                 color = CustomColor.gray3
             )
             Spacer(Modifier.height(2.dp))
             Text(
-                text = "${totalPrice}원",
+                text = "${formatWon(note.notesCount * 1200)}원",
                 fontSize = 14.sp,
                 fontFamily = CustomFont.semiBold
             )
@@ -447,7 +433,7 @@ private fun Receipt(totalPrice: Int){
                 fontFamily = CustomFont.bold
             )
             Text(
-                text = "${totalPrice + 3000}원",
+                text = "${formatWon(totalPrice + 3000)}원",
                 fontSize = 20.sp,
                 fontFamily = CustomFont.bold,
                 color = CustomColor.red
@@ -468,7 +454,7 @@ private fun Receipt(totalPrice: Int){
                 color = CustomColor.gray3
             )
             Text(
-                text = "${totalPrice}원",
+                text = "${formatWon(totalPrice)}원",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 color = CustomColor.gray3
@@ -508,7 +494,7 @@ private fun Receipt(totalPrice: Int){
                 fontFamily = CustomFont.semiBold
             )
             Text(
-                text = "${totalPrice + 3000}원",
+                text = "${formatWon(totalPrice + 3000)}원",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.semiBold
             )
@@ -517,9 +503,11 @@ private fun Receipt(totalPrice: Int){
 }
 
 @Composable
-private fun SelectPaymentType(){
-    val options = listOf("토스페이", "카카오페이", "페이코", "일반 결제")
-    var selectedOption by remember{mutableStateOf(options[0])}
+private fun SelectPaymentType(
+    options: List<String>,
+    selectedOption: String,
+    onValueChanged: (value: String) -> Unit
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -534,7 +522,7 @@ private fun SelectPaymentType(){
         VerticalOptions(
             options = options,
             selectedOption = selectedOption,
-            onValueChanged = {newOption -> selectedOption = newOption}
+            onValueChanged = onValueChanged
         )
     }
 }
@@ -742,10 +730,11 @@ private fun UITest(){
                 productPhotoUrl = ""
             )
         ),
-        totalPrice = 15600
+        totalPrice = 18000
     )
     OrderScreen(
-        productInfo = testData,
+        uiState = OrderUiState.Success(testData),
+        errState = ErrorUiState.Loading,
         onNavBack = {}
     )
 }

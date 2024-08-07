@@ -158,7 +158,7 @@ fun CommunityDescriptionPage(
         }
         CommunityDescUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onErrorHandleLoginAgain,
+                onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
                 onCloseClick = onNavBack,
             )

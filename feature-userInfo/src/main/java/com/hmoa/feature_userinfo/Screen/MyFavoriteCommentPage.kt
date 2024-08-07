@@ -1,15 +1,7 @@
 package com.hmoa.feature_userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -37,7 +29,7 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 fun MyFavoriteCommentRoute(
     onNavBack: () -> Unit,
     onNavCommunity: (Int) -> Unit,
-    onNavPerfume : (Int) -> Unit,
+    onNavPerfume: (Int) -> Unit,
     viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
     //comment list
@@ -52,7 +44,7 @@ fun MyFavoriteCommentRoute(
         onTypeChanged = { viewModel.changeType(it) },
         onNavBack = onNavBack,
         onNavParent = {
-            if (type.value == MyPageCategory.향수.name){
+            if (type.value == MyPageCategory.향수.name) {
                 onNavPerfume(it)
             } else {
                 onNavCommunity(it)
@@ -66,7 +58,7 @@ fun MyFavoriteCommentPage(
     onNavBack: () -> Unit,
     onNavParent: (Int) -> Unit,
     uiState: FavoriteCommentUiState,
-    errState : ErrorUiState,
+    errState: ErrorUiState,
     commentType: String,
     onTypeChanged: (String) -> Unit,
 ) {
@@ -74,6 +66,7 @@ fun MyFavoriteCommentPage(
         FavoriteCommentUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is FavoriteCommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems()
             FavoriteCommentContent(
@@ -84,13 +77,15 @@ fun MyFavoriteCommentPage(
                 onNavParent = onNavParent
             )
         }
+
         FavoriteCommentUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onLoginClick = onNavBack,
                 errorUiState = errState,
                 onCloseClick = onNavBack
             )
         }
+
         else -> {}
     }
 }

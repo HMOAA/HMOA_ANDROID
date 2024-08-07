@@ -6,15 +6,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -26,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +42,8 @@ import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 const val APP_VERSION = "1.1.0"
 
@@ -76,14 +71,17 @@ internal fun MyPageRoute(
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
     }
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
+    val scope = rememberCoroutineScope()
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
             uiState = uiState.value,
             errorUiState = errorUiState,
             logoutEvent = {
-                viewModel.logout()
-                onNavLogin()
+                scope.launch {
+                    launch { viewModel.logout() }.join()
+                    onNavLogin()
+                }
             },
             doOpenLicense = {
                 launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
@@ -91,8 +89,10 @@ internal fun MyPageRoute(
             },
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
             onDelAccount = {
-                viewModel.delAccount()
-                onNavLogin()
+                scope.launch {
+                    launch { viewModel.delAccount() }.join()
+                    onNavLogin()
+                }
             },
             onNavKakaoChat = navKakao,
             onNavMyPerfume = onNavMyPerfume,
@@ -131,6 +131,7 @@ fun MyPage(
         UserInfoUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is UserInfoUiState.User -> {
             MyPageContent(
                 profile = uiState.profile,
@@ -147,13 +148,15 @@ fun MyPage(
                 onNavManageMyInfo = onNavManageMyInfo,
             )
         }
+
         UserInfoUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = { onErrorHandleLoginAgain() },
+                onLoginClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = { onBackClick() }
             )
         }
+
         else -> {}
     }
 }
@@ -167,14 +170,14 @@ private fun MyPageContent(
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
     onDelAccount: () -> Unit,
-    onNavMyPerfume : () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
 ) {
     val columnInfo = listOf(
-        ColumnData("나의 향수") {onNavMyPerfume() },
+        ColumnData("나의 향수") { onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
@@ -191,7 +194,7 @@ private fun MyPageContent(
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        item{
+        item {
             TopBar(title = "마이페이지")
             UserProfileInfo(
                 profile = profile,

@@ -82,7 +82,7 @@ fun AllPerfumeScreen(
 
         AllPerfumeViewModel.AllPerfumeUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = { onErrorHandleLoginAgain() },
+                onLoginClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = { onNavBack() }
             )

@@ -90,7 +90,7 @@ fun PerfumeScreen(
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
 
     ErrorUiSetView(
-        onConfirmClick = { onErrorHandleLoginAgain() },
+        onLoginClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
         onCloseClick = { onBackClick() }
     )

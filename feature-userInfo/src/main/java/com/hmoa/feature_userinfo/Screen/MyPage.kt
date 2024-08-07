@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +42,8 @@ import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 const val APP_VERSION = "1.1.0"
 
@@ -68,14 +71,17 @@ internal fun MyPageRoute(
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
     }
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
+    val scope = rememberCoroutineScope()
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
             uiState = uiState.value,
             errorUiState = errorUiState,
             logoutEvent = {
-                viewModel.logout()
-                onNavLogin()
+                scope.launch {
+                    launch { viewModel.logout() }.join()
+                    onNavLogin()
+                }
             },
             doOpenLicense = {
                 launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
@@ -83,8 +89,10 @@ internal fun MyPageRoute(
             },
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
             onDelAccount = {
-                viewModel.delAccount()
-                onNavLogin()
+                scope.launch {
+                    launch { viewModel.delAccount() }.join()
+                    onNavLogin()
+                }
             },
             onNavKakaoChat = navKakao,
             onNavMyPerfume = onNavMyPerfume,

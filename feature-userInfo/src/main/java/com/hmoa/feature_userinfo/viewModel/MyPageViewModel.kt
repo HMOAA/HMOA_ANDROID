@@ -11,6 +11,7 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -90,7 +91,7 @@ class MyPageViewModel @Inject constructor(
     )
 
     private fun getAuthToken() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
                 authTokenState.value = it
             }
@@ -98,8 +99,8 @@ class MyPageViewModel @Inject constructor(
     }
 
     //로그아웃
-    fun logout() {
-        viewModelScope.launch {
+    suspend fun logout() {
+        viewModelScope.launch(Dispatchers.IO) {
             fcmRepository.deleteRemoteFcmToken()
             fcmRepository.deleteLocalFcmToken()
             loginRepository.deleteAuthToken()
@@ -109,7 +110,7 @@ class MyPageViewModel @Inject constructor(
 
     //계정 삭제
     fun delAccount() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             fcmRepository.deleteRemoteFcmToken()
             fcmRepository.deleteLocalFcmToken()
             try {

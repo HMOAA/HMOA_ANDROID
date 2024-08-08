@@ -181,7 +181,7 @@ private fun MyPageContent(
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
-        ColumnData("이용 약관") { },
+        //ColumnData("이용 약관") { },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
         ColumnData("버전 정보 ${APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },

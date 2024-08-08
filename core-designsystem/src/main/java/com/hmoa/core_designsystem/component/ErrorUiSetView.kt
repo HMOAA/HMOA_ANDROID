@@ -1,6 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-import android.util.Log
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.*
@@ -15,12 +14,6 @@ fun ErrorUiSetView(onLoginClick: () -> Unit, errorUiState: ErrorUiState, onClose
     var isOpen by remember { mutableStateOf(true) }
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-    LaunchedEffect(errorUiState) {
-        Log.d(
-            "MyPageViewModel",
-            "errorUiState.memberNotFoundError:${(errorUiState as ErrorUiState.ErrorData).memberNotFoundError}"
-        )
-    }
     when (errorUiState) {
         is ErrorUiState.ErrorData -> {
             if (errorUiState.expiredTokenError) {

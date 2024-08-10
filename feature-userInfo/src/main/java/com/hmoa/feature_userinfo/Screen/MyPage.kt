@@ -42,7 +42,6 @@ import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 const val APP_VERSION = "1.1.0"
@@ -202,7 +201,7 @@ private fun MyPageContent(
                 provider = provider,
                 onNavEditProfile = onNavEditProfile
             )
-            ServiceAlarm()
+            //ServiceAlarm()
             HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         }
 

@@ -2,6 +2,8 @@ package com.hmoa.core_datastore.Member
 
 import ResultResponse
 import com.hmoa.core_datastore.Mapper.transformToMultipartBody
+import com.hmoa.core_model.data.DefaultAddressDto
+import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
@@ -28,6 +30,27 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.getMember().suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+    override suspend fun getAddress(): ResultResponse<DefaultAddressDto> {
+        val result = ResultResponse<DefaultAddressDto>()
+        memberService.getAddress().suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+
+    override suspend fun postAddress(request: DefaultAddressDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.postAddress(request).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
             result.errorMessage = errorMessage
         }
@@ -95,6 +118,27 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.updateNickname(request).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+    override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {
+        val result = ResultResponse<DefaultOrderInfoDto>()
+        memberService.getOrderInfo().suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+
+    override suspend fun postOrderInfo(request: DefaultOrderInfoDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.postOrderInfo(request).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
             result.errorMessage = errorMessage
         }

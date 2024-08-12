@@ -2,6 +2,8 @@ package com.hmoa.core_repository
 
 import ResultResponse
 import com.hmoa.core_datastore.Member.MemberDataStore
+import com.hmoa.core_model.data.DefaultAddressDto
+import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
@@ -19,6 +21,14 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun getMember(): ResultResponse<MemberResponseDto> {
         return memberDataStore.getMember()
+    }
+
+    override suspend fun getAddress(): ResultResponse<DefaultAddressDto> {
+        return memberDataStore.getAddress()
+    }
+
+    override suspend fun postAddress(request: DefaultAddressDto): ResultResponse<DataResponseDto<Any>> {
+        return memberDataStore.postAddress(request)
     }
 
     override suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {
@@ -55,6 +65,14 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun updateNickname(request: NickNameRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateNickname(request)
+    }
+
+    override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {
+        return memberDataStore.getOrderInfo()
+    }
+
+    override suspend fun postOrderInfo(request: DefaultOrderInfoDto): ResultResponse<DataResponseDto<Any>> {
+        return memberDataStore.postOrderInfo(request)
     }
 
     override suspend fun getPerfumeComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {

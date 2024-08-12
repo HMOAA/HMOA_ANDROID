@@ -2,7 +2,6 @@ package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +21,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,14 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.CustomOutlinedTextField
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.feature_hbti.viewmodel.AddAddressViewModel
 
 @Composable
 fun AddAddressRoute(
@@ -84,6 +89,26 @@ private fun AddAddressMainContent(
     onNavBack: () -> Unit
 ){
     val scrollState = rememberScrollState()
+    var name by remember{ mutableStateOf("") }
+    var addressName by remember{mutableStateOf("")}
+    var phone1 by remember{mutableStateOf("")}
+    var phone2 by remember{mutableStateOf("")}
+    var phone3 by remember{mutableStateOf("")}
+    var homePhone1 by remember{mutableStateOf("")}
+    var homePhone2 by remember{mutableStateOf("")}
+    var homePhone3 by remember{mutableStateOf("")}
+    var postalCode by remember{mutableStateOf<Int?>(null)}
+    var address by remember{mutableStateOf("")}
+    var detailAddress by remember{mutableStateOf("")}
+    var request by remember{mutableStateOf("")}
+    var isEnabled = remember{ derivedStateOf{
+        name.isNotEmpty() && addressName.isNotEmpty()
+                && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
+                && homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
+                && postalCode != null && address.isNotEmpty()
+                && detailAddress.isNotEmpty() && request.isNotEmpty()
+    }}
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -107,16 +132,47 @@ private fun AddAddressMainContent(
                 fontFamily = CustomFont.bold
             )
             Spacer(Modifier.height(20.dp))
-            InputName()
-            InputShippingAddress()
-            InputPhone()
-            InputHomePhone()
-            InputAddress()
-            InputRequest()
+            InputName(
+                name = name,
+                onChangeName = {name = it}
+            )
+            InputAddressName(
+                addressName = addressName,
+                onAddressChange = {addressName = it}
+            )
+            InputPhone(
+                phone1 = phone1,
+                onPhone1Change = {phone1 = it},
+                phone2 = phone2,
+                onPhone2Change = {phone2 = it},
+                phone3 = phone3,
+                onPhone3Change = {phone3 = it},
+            )
+            InputHomePhone(
+                homePhone1 = phone1,
+                onHomePhone1Change = {homePhone1 = it},
+                homePhone2 = phone2,
+                onHomePhone2Change = {homePhone2 = it},
+                homePhone3 = phone3,
+                onHomePhone3Change = {homePhone3 = it},
+            )
+            InputAddress(
+                onUpdateAddress = { newPostalCode, newAddress, newDetailAddress ->
+                    postalCode = newPostalCode
+                    address = newAddress
+                    detailAddress = newDetailAddress
+                }
+            )
+            InputRequest(
+                request = request,
+                onRequestChange = {request = it}
+            )
             Spacer(Modifier.height(24.dp))
             com.hmoa.core_designsystem.component.Button(
-                buttonModifier = Modifier.fillMaxWidth().height(52.dp),
-                isEnabled = true, /** 정보가 모두 작성되었을 때 true가 되도록 수정 */
+                buttonModifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                isEnabled = isEnabled.value,
                 btnText = "작성 완료",
                 onClick = {
                     onPostAddressClick(
@@ -137,8 +193,10 @@ private fun AddAddressMainContent(
 }
 
 @Composable
-private fun InputName(){
-    var name by remember{ mutableStateOf("") }
+private fun InputName(
+    name: String,
+    onChangeName: (newName: String) -> Unit,
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,7 +213,7 @@ private fun InputName(){
                 .height(44.dp)
                 .fillMaxWidth(),
             value = name,
-            onValueChanged = {newName -> name = newName},
+            onValueChanged = onChangeName,
             color = CustomColor.gray2,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
@@ -167,12 +225,15 @@ private fun InputName(){
         )
     }
 }
-
 @Composable
-private fun InputPhone(){
-    var phone1 by remember{mutableStateOf("")}
-    var phone2 by remember{mutableStateOf("")}
-    var phone3 by remember{mutableStateOf("")}
+private fun InputPhone(
+    phone1: String,
+    onPhone1Change: (newPhone1: String) -> Unit,
+    phone2: String,
+    onPhone2Change: (newPhone2: String) -> Unit,
+    phone3: String,
+    onPhone3Change: (newPhone3: String) -> Unit,
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -193,7 +254,7 @@ private fun InputPhone(){
                     .weight(1f)
                     .height(44.dp),
                 value = phone1,
-                onValueChanged = {newPhone1 -> phone1 = newPhone1},
+                onValueChanged = onPhone1Change,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -215,7 +276,7 @@ private fun InputPhone(){
                     .weight(1f)
                     .height(44.dp),
                 value = phone2,
-                onValueChanged = {newPhone2 -> phone2 = newPhone2},
+                onValueChanged = onPhone2Change,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -237,7 +298,7 @@ private fun InputPhone(){
                     .weight(1f)
                     .height(44.dp),
                 value = phone3,
-                onValueChanged = {newPhone3 -> phone3 = newPhone3},
+                onValueChanged = onPhone3Change,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -251,38 +312,48 @@ private fun InputPhone(){
         Spacer(Modifier.height(24.dp))
     }
 }
-
 @Composable
-private fun InputShippingAddress(){
-    Row(
+private fun InputAddressName(
+    addressName: String,
+    onAddressChange: (newAddressName: String) -> Unit,
+){
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
     ){
         Text(
             text = "배송지",
-            fontSize = 18.sp,
-            fontFamily = CustomFont.bold
+            fontSize = 12.sp,
+            fontFamily = CustomFont.medium
         )
-        Text(
-            modifier = Modifier.clickable{
-                /** 배송지 입력 이벤트 */
-            },
-            text = "배송지를 입력해주세요",
-            fontSize = 10.sp,
+        Spacer(Modifier.height(10.dp))
+        CustomOutlinedTextField(
+            modifier = Modifier
+                .height(44.dp)
+                .fillMaxWidth(),
+            value = addressName,
+            onValueChanged = onAddressChange,
+            color = CustomColor.gray2,
+            fontSize = 12.sp,
             fontFamily = CustomFont.medium,
-            textDecoration = TextDecoration.Underline
+            borderWidth = 1.dp,
+            borderColor = CustomColor.gray1,
+            borderShape = RoundedCornerShape(size = 5.dp),
+            padding = PaddingValues(start = 12.dp),
+            placeHolder = "배송지명(선택)",
         )
     }
 }
-
 @Composable
-private fun InputHomePhone(){
-    var phone1 by remember{mutableStateOf("")}
-    var phone2 by remember{mutableStateOf("")}
-    var phone3 by remember{mutableStateOf("")}
+private fun InputHomePhone(
+    homePhone1: String,
+    onHomePhone1Change: (newHomePhone1: String) -> Unit,
+    homePhone2: String,
+    onHomePhone2Change: (newHomePhone2: String) -> Unit,
+    homePhone3: String,
+    onHomePhone3Change: (newHomePhone3: String) -> Unit,
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -302,8 +373,8 @@ private fun InputHomePhone(){
                 modifier = Modifier
                     .weight(1f)
                     .height(44.dp),
-                value = phone1,
-                onValueChanged = {newPhone1 -> phone1 = newPhone1},
+                value = homePhone1,
+                onValueChanged = onHomePhone1Change,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -324,8 +395,8 @@ private fun InputHomePhone(){
                 modifier = Modifier
                     .weight(1f)
                     .height(44.dp),
-                value = phone2,
-                onValueChanged = {newPhone2 -> phone2 = newPhone2},
+                value = homePhone2,
+                onValueChanged = onHomePhone2Change,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -346,8 +417,8 @@ private fun InputHomePhone(){
                 modifier = Modifier
                     .weight(1f)
                     .height(44.dp),
-                value = phone3,
-                onValueChanged = {newPhone3 -> phone3 = newPhone3},
+                value = homePhone3,
+                onValueChanged = onHomePhone3Change,
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -419,7 +490,10 @@ private fun InputAddress(
                             .height(20.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CustomColor.gray1),
                         shape = RoundedCornerShape(size = 5.dp),
-                        onClick = {/** 주소 찾기 버튼 */},
+                        onClick = {
+                            /** 눌렀을 때 WebView를 통해 주소 찾기 api를 띄우고 거기서 Address를 받아와야 함 */
+                            onUpdateAddress(postalCode, address, detailAddress)
+                        },
                         contentPadding = PaddingValues(0.dp)
                     ){
                         Text(
@@ -466,10 +540,11 @@ private fun InputAddress(
         )
     }
 }
-
 @Composable
-private fun InputRequest(){
-    var request by remember{mutableStateOf("")}
+private fun InputRequest(
+    request: String,
+    onRequestChange: (newRequest: String) -> Unit,
+){
     Column(
         modifier = Modifier.fillMaxWidth()
     ){
@@ -484,7 +559,7 @@ private fun InputRequest(){
                 .fillMaxWidth()
                 .height(44.dp),
             value = request,
-            onValueChanged = {newRequest -> request = newRequest},
+            onValueChanged = onRequestChange,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             borderWidth = 1.dp,
@@ -500,6 +575,10 @@ private fun InputRequest(){
 @Composable
 private fun UiTest(){
     AddAddressScreen(
-        onNavBack = {}
+        errorState = ErrorUiState.Loading,
+        onNavBack = {},
+        onPostAddressClick = { a, b, c, d, e, f, g, h ->
+
+        }
     )
 }

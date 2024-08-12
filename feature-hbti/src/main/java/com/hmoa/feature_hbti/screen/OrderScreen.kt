@@ -54,6 +54,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.core_model.data.DefaultOrderInfoDto
+import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
@@ -71,13 +72,9 @@ fun OrderRoute(
     viewModel.setIds(productIds)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
-    val addressInfo = viewModel.addressInfo.collectAsStateWithLifecycle()
-    val buyerInfo = viewModel.buyerInfo.collectAsStateWithLifecycle()
     OrderScreen (
         uiState = uiState.value,
         errState = errState.value,
-        addressInfo = addressInfo.value,
-        buyerInfo = buyerInfo.value,
         deleteNote = {viewModel.deleteNote(it)},
         saveBuyerInfo = { name, phoneNumber ->
             viewModel.saveBuyerInfo(name, phoneNumber)
@@ -90,8 +87,6 @@ fun OrderRoute(
 fun OrderScreen(
     uiState: OrderUiState,
     errState: ErrorUiState,
-    addressInfo: DefaultAddressDto?,
-    buyerInfo: DefaultOrderInfoDto?,
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
@@ -100,10 +95,9 @@ fun OrderScreen(
         OrderUiState.Loading -> AppLoadingScreen()
         is OrderUiState.Success -> {
             OrderScreenMainContent(
-                totalPrice = uiState.noteResult.totalPrice,
-                noteProducts = uiState.noteResult.noteProducts,
-                addressInfo = addressInfo,
-                buyerInfo = buyerInfo,
+                orderInfo = uiState.orderInfo,
+                addressInfo = uiState.addressInfo,
+                buyerInfo = uiState.buyerInfo,
                 deleteNote = deleteNote,
                 saveBuyerInfo = saveBuyerInfo,
                 onNavBack = onNavBack
@@ -120,8 +114,7 @@ fun OrderScreen(
 }
 @Composable
 private fun OrderScreenMainContent(
-    totalPrice: Int,
-    noteProducts: List<NoteProduct>,
+    orderInfo: FinalOrderResponseDto,
     addressInfo: DefaultAddressDto?,
     buyerInfo: DefaultOrderInfoDto?,
     deleteNote: (id: Int) -> Unit,
@@ -206,11 +199,15 @@ private fun OrderScreenMainContent(
             }
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
             ProductInfo(
-                notes = noteProducts,
+                notes = orderInfo.productInfo.noteProducts,
                 deleteNote = {}
             )
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            Receipt(totalPrice)
+            Receipt(
+                shippingPayment = orderInfo.shippingAmount,
+                totalPayment = orderInfo.totalAmount,
+                finalPayment = orderInfo.paymentAmount
+            )
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
             SelectPaymentType(
                 options = options,
@@ -232,7 +229,10 @@ private fun OrderScreenMainContent(
                     .height(52.dp),
                 isEnabled = isEnabled.value,
                 btnText = "결제하기",
-                onClick = { /** 결제 && navigation */ }
+                onClick = {
+                    Toast.makeText(context, "${orderInfo} ${addressInfo} ${buyerInfo}", Toast.LENGTH_LONG).show()
+                    /** 결제 && navigation */
+                }
             )
         }
     }
@@ -533,7 +533,11 @@ private fun NoteItem(note: NoteProduct, deleteNote: (id: Int) -> Unit){
 }
 
 @Composable
-private fun Receipt(totalPrice: Int){
+private fun Receipt(
+    shippingPayment: Int,
+    totalPayment: Int,
+    finalPayment: Int
+){
     Column(
         modifier = Modifier.fillMaxWidth()
     ){
@@ -550,7 +554,7 @@ private fun Receipt(totalPrice: Int){
                 fontFamily = CustomFont.bold
             )
             Text(
-                text = "${formatWon(totalPrice + 3000)}원",
+                text = "${formatWon(finalPayment)}원",
                 fontSize = 20.sp,
                 fontFamily = CustomFont.bold,
                 color = CustomColor.red
@@ -571,7 +575,7 @@ private fun Receipt(totalPrice: Int){
                 color = CustomColor.gray3
             )
             Text(
-                text = "${formatWon(totalPrice)}원",
+                text = "${formatWon(totalPayment)}원",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 color = CustomColor.gray3
@@ -591,7 +595,7 @@ private fun Receipt(totalPrice: Int){
                 color = CustomColor.gray3
             )
             Text(
-                text = "3,000원",
+                text = "${formatWon(shippingPayment)}원",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 color = CustomColor.gray3
@@ -611,7 +615,7 @@ private fun Receipt(totalPrice: Int){
                 fontFamily = CustomFont.semiBold
             )
             Text(
-                text = "${formatWon(totalPrice + 3000)}원",
+                text = "${formatWon(finalPayment)}원",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.semiBold
             )
@@ -791,6 +795,8 @@ private fun CheckPrivacyConsent(
 @Composable
 @Preview
 private fun UITest(){
+    val name = "서호준"
+    val phoneNumber = "010-6472-37863"
     val testData = PostNoteSelectedResponseDto(
         noteProducts = listOf(
             NoteProduct(
@@ -860,14 +866,12 @@ private fun UITest(){
         totalPrice = 18000
     )
     OrderScreen(
-        uiState = OrderUiState.Success(testData),
+        uiState = OrderUiState.Success(buyerInfo = DefaultOrderInfoDto(name, phoneNumber), addressInfo = null, orderInfo = FinalOrderResponseDto(15000, testData, 3000, 15000)),
         errState = ErrorUiState.Loading,
         saveBuyerInfo = {a, b ->
 
         },
         onNavBack = {},
-        addressInfo = null,
-        buyerInfo = null,
         deleteNote = { }
     )
 }

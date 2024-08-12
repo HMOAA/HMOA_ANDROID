@@ -24,7 +24,6 @@ import com.hyangmoa.core_designsystem.component.PerfumeItemView
 import com.hyangmoa.core_designsystem.theme.CustomColor
 import com.hyangmoa.core_model.response.HomeMenuAllResponseDto
 import com.hyangmoa.feature_home.AllPerfumeScreenId
-import com.hyangmoa.feature_home.R
 import com.hyangmoa.feature_home.viewmodel.AllPerfumeViewModel
 
 fun String?.mapToAllPerfumeScreenId(): AllPerfumeScreenId {
@@ -109,7 +108,7 @@ fun AllPerfumeContent(
             TopBar(
                 title = "전체보기",
                 iconSize = 25.dp,
-                navIcon = painterResource(com.hyangmoa.core_designsystem.R.drawable.ic_back),
+                navIcon = painterResource(R.drawable.ic_back),
                 onNavClick = { onNavBack() },
             )
         }

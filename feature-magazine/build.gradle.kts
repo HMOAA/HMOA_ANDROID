@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hyangmoa.feature_magazine"
+    namespace = "com.hmoa.feature_magazine"
     compileSdk = 34
 
     defaultConfig {
@@ -32,10 +32,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    composeOptions {
+    composeOptions{
         kotlinCompilerExtensionVersion = "1.5.0"
     }
-    buildFeatures {
+    buildFeatures{
         compose = true
     }
 }

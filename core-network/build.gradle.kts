@@ -15,7 +15,7 @@ val localProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.hyangmoa.core_network"
+    namespace = "com.hmoa.core_network"
     compileSdk = 34
 
     defaultConfig {

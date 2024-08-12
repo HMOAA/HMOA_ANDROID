@@ -29,7 +29,6 @@ import com.hyangmoa.core_designsystem.component.ReportModal
 import com.hyangmoa.core_designsystem.component.TypeBadge
 import com.hyangmoa.core_designsystem.theme.CustomColor
 import com.hyangmoa.core_model.response.PerfumeCommentResponseDto
-import com.hyangmoa.feature_perfume.R
 import com.hyangmoa.feature_perfume.viewmodel.SpecificCommentViewmodel
 import kotlinx.coroutines.launch
 
@@ -117,9 +116,9 @@ fun SpecificCommentContent(
             TopBar(
                 title = "댓글",
                 iconSize = 25.dp,
-                navIcon = painterResource(com.hyangmoa.core_designsystem.R.drawable.ic_back),
+                navIcon = painterResource(R.drawable.ic_back),
                 onNavClick = { onBackClick() },
-                menuIcon = painterResource(com.hyangmoa.core_designsystem.R.drawable.three_dot_menu_horizontal),
+                menuIcon = painterResource(R.drawable.three_dot_menu_horizontal),
                 onMenuClick = { onReportClick(data!!.id) },
                 menuIconColor = CustomColor.gray2
             )
@@ -167,8 +166,8 @@ fun ProfileAndHeartView(
                 roundedCorner = 20.dp,
                 type = "${count}",
                 fontColor = Color.Black,
-                unSelectedIcon = painterResource(com.hyangmoa.core_designsystem.R.drawable.ic_heart),
-                selectedIcon = painterResource(com.hyangmoa.core_designsystem.R.drawable.ic_heart_filled),
+                unSelectedIcon = painterResource(R.drawable.ic_heart),
+                selectedIcon = painterResource(R.drawable.ic_heart_filled),
                 iconColor = Color.Black,
                 fontSize = TextUnit(value = 12f, type = TextUnitType.Sp),
                 selected = isCommentLiked,

@@ -7,7 +7,7 @@ sealed interface ErrorUiState {
         val unknownError: Boolean,
         val generalError: Pair<Boolean, String?>
     ) : ErrorUiState {
-        fun inValidate(): Boolean{
+        fun isValidate(): Boolean{
             return expiredTokenError || wrongTypeTokenError || unknownError || generalError.first
         }
     }

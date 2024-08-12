@@ -42,16 +42,46 @@ import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun AddAddressRoute(
-    onNavBack: () -> Unit
+    onNavBack: () -> Unit,
+    viewModel: AddAddressViewModel = hiltViewModel()
 ){
+    val errorState = viewModel.errorState.collectAsStateWithLifecycle()
+    val isPostAddressCompleted by viewModel.isPostAddressCompleted.collectAsStateWithLifecycle()
     AddAddressScreen(
-        onNavBack = onNavBack
+        errorState = errorState.value,
+        onPostAddressClick = { name, addressName, phone, homePhone, postalCode, address, detailAddress, request ->
+            viewModel.postAddress(name, addressName, phone, homePhone, postalCode, address, detailAddress, request)
+        },
+        onNavBack = onNavBack,
     )
+    LaunchedEffect(isPostAddressCompleted){
+        if (isPostAddressCompleted) onNavBack()
+    }
 }
 
 @Composable
 fun AddAddressScreen(
+    errorState: ErrorUiState,
+    onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: Int, address: String, detailAddress: String, request: String) -> Unit,
     onNavBack: () -> Unit,
+){
+    if (errorState is ErrorUiState.ErrorData && (errorState.expiredTokenError || errorState.wrongTypeTokenError || errorState.unknownError || errorState.generalError.first)){
+        ErrorUiSetView(
+            onConfirmClick = onNavBack,
+            errorUiState = errorState,
+            onCloseClick = onNavBack
+        )
+    } else {
+        AddAddressMainContent(
+            onPostAddressClick = onPostAddressClick,
+            onNavBack = onNavBack
+        )
+    }
+}
+@Composable
+private fun AddAddressMainContent(
+    onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: Int, address: String, detailAddress: String, request: String) -> Unit,
+    onNavBack: () -> Unit
 ){
     val scrollState = rememberScrollState()
     Column(
@@ -88,7 +118,18 @@ fun AddAddressScreen(
                 buttonModifier = Modifier.fillMaxWidth().height(52.dp),
                 isEnabled = true, /** 정보가 모두 작성되었을 때 true가 되도록 수정 */
                 btnText = "작성 완료",
-                onClick = { /** 작성 정보 저장 및 이전 화면으로 navigation */ },
+                onClick = {
+                    onPostAddressClick(
+                        name,
+                        addressName,
+                        "${phone1}-${phone2}-${phone3}",
+                        "${homePhone1}-${homePhone2}-${homePhone3}",
+                        postalCode!!,
+                        address,
+                        detailAddress,
+                        request
+                    )
+                },
                 radious = 5
             )
         }
@@ -320,9 +361,10 @@ private fun InputHomePhone(){
         Spacer(Modifier.height(24.dp))
     }
 }
-
 @Composable
-private fun InputAddress(){
+private fun InputAddress(
+    onUpdateAddress: (postalCode: Int?, address: String, detailAddress: String) -> Unit,
+){
     var postalCode by remember{mutableStateOf<Int?>(null)}
     var address by remember{mutableStateOf("")}
     var detailAddress by remember{mutableStateOf("")}

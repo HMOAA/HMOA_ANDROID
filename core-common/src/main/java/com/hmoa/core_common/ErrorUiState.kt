@@ -6,7 +6,11 @@ sealed interface ErrorUiState {
         val wrongTypeTokenError: Boolean,
         val unknownError: Boolean,
         val generalError: Pair<Boolean, String?>
-    ) : ErrorUiState
+    ) : ErrorUiState {
+        fun inValidate(): Boolean{
+            return expiredTokenError || wrongTypeTokenError || unknownError || generalError.first
+        }
+    }
 
     data object Loading : ErrorUiState
 }

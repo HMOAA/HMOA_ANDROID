@@ -15,11 +15,11 @@ val localProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.hmoa.app"
+    namespace = "com.hyangmoa.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.hmoa.app"
+        applicationId = "com.hyangmoa.app"
         minSdk = 26
         targetSdk = 33
         versionCode = 18
@@ -86,18 +86,6 @@ android {
             }
         }
     }
-
-//    applicationVariants.all { variant ->
-//        variant.mergeResourcesProvider.configure {
-//            doLast {
-//                // processResources에 의존하는 작업 수행
-//                copy{
-//                    from project(':AndroidSecretSecure').file('./gabojait-android-googleapi-services.json')
-//                    into "../app"
-//                }
-//            }
-//        }
-//    }
 }
 
 

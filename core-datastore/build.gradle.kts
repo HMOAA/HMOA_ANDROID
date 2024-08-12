@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hmoa.core_datastore"
+    namespace = "com.hyangmoa.core_datastore"
     compileSdk = 34
 
     defaultConfig {

@@ -34,6 +34,7 @@ import com.hyangmoa.core_designsystem.theme.CustomColor
 import com.hyangmoa.core_model.data.SortType
 import com.hyangmoa.core_model.response.BrandDefaultResponseDto
 import com.hyangmoa.core_model.response.BrandPerfumeBriefResponseDto
+import com.hyangmoa.feature_brand.R
 import com.hyangmoa.feature_brand.viewmodel.BrandViewmodel
 
 @Composable
@@ -109,9 +110,9 @@ fun BrandContent(
     TopBar(
         title = brandData?.brandName ?: "",
         iconSize = 25.dp,
-        navIcon = painterResource(R.drawable.ic_back),
+        navIcon = painterResource(com.hyangmoa.core_designsystem.R.drawable.ic_back),
         onNavClick = { onBackClick() },
-        menuIcon = painterResource(R.drawable.ic_home),
+        menuIcon = painterResource(com.hyangmoa.core_designsystem.R.drawable.ic_home),
         onMenuClick = { onHomeClick() }
     )
     Column(horizontalAlignment = Alignment.CenterHorizontally) {

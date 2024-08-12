@@ -13,7 +13,7 @@ val localProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.hmoa.feature_userinfo"
+    namespace = "com.hyangmoa.feature_userinfo"
     compileSdk = 34
 
     defaultConfig {

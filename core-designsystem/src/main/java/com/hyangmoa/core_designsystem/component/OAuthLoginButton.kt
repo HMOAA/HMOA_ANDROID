@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hyangmoa.core_designsystem.R
 import com.hyangmoa.core_designsystem.theme.CustomColor
 
 @Composable

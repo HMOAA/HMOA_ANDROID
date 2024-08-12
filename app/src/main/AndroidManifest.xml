@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.hyangmoa.app">
+          package="com.hmoa.app">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
@@ -15,7 +15,7 @@
             android:value="false"/>
 
     <application
-            android:name="com.hyangmoa.app.App"
+            android:name=".App"
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
             android:fullBackupContent="@xml/backup_rules"
@@ -28,7 +28,7 @@
             tools:replace="android:roundIcon"
             tools:targetApi="31">
         <activity
-                android:name="com.hyangmoa.app.MainActivity"
+                android:name=".MainActivity"
                 android:exported="true"
                 android:theme="@style/SplashTheme">
             <intent-filter>
@@ -55,7 +55,7 @@
             </intent-filter>
         </activity> <!-- 서비스를 추가하고 인텐트 필터를 설정한다. -->
         <service
-                android:name="com.hyangmoa.app.FcmAppService"
+                android:name=".FcmAppService"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

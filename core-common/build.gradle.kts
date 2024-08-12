@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hyangmoa.core_common"
+    namespace = "com.hmoa.core_common"
     compileSdk = 34
 
     defaultConfig {

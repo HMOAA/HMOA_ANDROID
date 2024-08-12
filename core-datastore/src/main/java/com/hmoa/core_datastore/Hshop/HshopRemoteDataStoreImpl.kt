@@ -3,7 +3,8 @@ package com.hmoa.core_datastore.Hshop
 import ResultResponse
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.ProductListRequestDto
-import com.hmoa.core_model.response.OrderResponseDto
+import com.hmoa.core_model.response.FinalOrderResponseDto
+import com.hmoa.core_model.response.PostNoteOrderResponseDto
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.core_network.service.HshopService
@@ -34,8 +35,8 @@ class HshopRemoteDataStoreImpl @Inject constructor(private val hshopService: Hsh
         return result
     }
 
-    override suspend fun postNoteOrder(dto: ProductListRequestDto): ResultResponse<OrderResponseDto> {
-        val result = ResultResponse<OrderResponseDto>()
+    override suspend fun postNoteOrder(dto: ProductListRequestDto): ResultResponse<PostNoteOrderResponseDto> {
+        val result = ResultResponse<PostNoteOrderResponseDto>()
         hshopService.postNoteOrder(dto).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
@@ -51,6 +52,15 @@ class HshopRemoteDataStoreImpl @Inject constructor(private val hshopService: Hsh
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
             result.errorMessage = errorMessage
+        }
+        return result
+    }
+    override suspend fun getFinalOrderResult(orderId: Int): ResultResponse<FinalOrderResponseDto> {
+        val result = ResultResponse<FinalOrderResponseDto>()
+        hshopService.getFinalOrderResult(orderId).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }
         return result
     }

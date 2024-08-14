@@ -82,7 +82,8 @@ fun HbtiSurveyScreen(
                         answers = (uiState as HbtiSurveyUiState.HbtiData).answers?.optionIds
                     )
                 },
-                onClickFinishSurvey = { viewModel.postSurveyResponds() }
+                onClickFinishSurvey = { viewModel.postSurveyResponds() },
+                onBackClick = {onBackClick()}
             )
         }
     }
@@ -95,7 +96,8 @@ fun HbtiSurveyContent(
     optionsContents: List<List<String>>?,
     options: List<List<SurveyOptionResponseDto>>?,
     onClickOption: (optionId: Int, page: Int) -> Unit,
-    onClickFinishSurvey: () -> Unit
+    onClickFinishSurvey: () -> Unit,
+    onBackClick: () -> Unit
 ) {
 
     var currentProgress by remember { mutableStateOf(0f) }
@@ -133,8 +135,13 @@ fun HbtiSurveyContent(
             titleColor = Color.Black,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             onNavClick = {
-                subtractProgress()
-                scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+                if(pagerState.currentPage == 0){
+                    onBackClick()
+                }
+                else{
+                    subtractProgress()
+                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+                }
             }
         )
         Column(
@@ -204,5 +211,5 @@ fun HbtiSurveyContent(
 fun HbtiSurveyScreenPreview() {
     HbtiSurveyContent(questions = listOf("사과는 무슨 색인가요?", "바나나는 무슨 색인가요?", "오렌지는 무슨 색인가요?"), optionsContents = listOf(
         listOf("주황", "노랑", "빨강", "파랑"), listOf("주황", "노랑", "빨강", "파랑"), listOf("주황", "노랑", "빨강", "파랑")
-    ), options = null, onClickOption = { optionId, page -> }, onClickFinishSurvey = {})
+    ), options = null, onClickOption = { optionId, page -> }, onClickFinishSurvey = {}, onBackClick = {})
 }

@@ -1,46 +1,47 @@
 package com.hmoa.core_database
 
-import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.test.core.app.ApplicationProvider
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.preferencesOf
 import junit.framework.TestCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mockito
+import org.mockito.Mockito.mock
 
 class DataStorePreferenceTest : TestCase() {
     @get:Rule(order = 0)
     val coroutineRule = TestCoroutineRule()
+    private val dataStore = mock(DataStore::class.java) as DataStore<Preferences>
+    private val tokenManagerImpl = TestTokenManagerImpl(dataStore)
+    private val authTokenKey = TestTokenManagerImpl.AUTH_TOKEN_KEY
 
-    lateinit var tokenManagerImpl: TokenManagerImpl
-    val Context.datastore: DataStore<Preferences> by preferencesDataStore(
-        corruptionHandler = ReplaceFileCorruptionHandler {
-            it.printStackTrace()
-            emptyPreferences()
-        },
-        scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-        name = BuildConfig.LIBRARY_PACKAGE_NAME
-    )
+    @Test
+    fun test_dataStorePreference_tokenInput() = coroutineRule.runTest {
+        val tokenValue = "token"
+        val inputPreference = mock(Preferences::class.java)
 
-    @Before
-    override fun setUp() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        tokenManagerImpl = TokenManagerImpl(context)
+        Mockito.`when`(dataStore.edit { any() }).thenAnswer { invocation ->
+            val editAction = invocation.getArgument<Preferences.() -> Unit>(0)
+            editAction(inputPreference)
+        }
+
+        launch { tokenManagerImpl.saveAuthToken(tokenValue) }.join()
+        Mockito.verify(inputPreference)[eq(TestTokenManagerImpl.AUTH_TOKEN_KEY)]
     }
 
     @Test
-    fun test_dataStorePreference_tokenInput_tokenOutput() = coroutineRule.runTest {
-        val expectedToken = "token"
-        launch { tokenManagerImpl.saveAuthToken(expectedToken) }.join()
-        val token = tokenManagerImpl.getAuthTokenForHeader()
-        assertEquals(expectedToken, token)
+    fun test_dataStorePreference_tokenOutput() = coroutineRule.runTest {
+        val tokenValue = "token"
+        val outputPreferences = preferencesOf(authTokenKey to tokenValue)
+        Mockito.`when`(dataStore.data).thenReturn(flowOf(outputPreferences))
+        val result = tokenManagerImpl.getAuthTokenForHeader()
+        assertEquals(tokenValue, result)
     }
 }
+

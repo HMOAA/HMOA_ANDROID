@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,12 +20,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.pretendard
-import com.hmoa.core_model.response.SurveyOptionResponseDto
+import com.hmoa.core_model.data.HbtiQuestionItem
+import com.hmoa.core_model.data.HbtiQuestionItems
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
 import kotlinx.coroutines.launch
 
-fun calculateProgressStepSize(questions: List<String>?): Float {
+fun calculateProgressStepSize(questions: MutableCollection<HbtiQuestionItem>?): Float {
     return ((100).div(questions?.size?.minus(1) ?: 10)).div(100.0).toFloat()
 }
 
@@ -54,14 +54,8 @@ fun HbtiSurveyScreen(
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isCompletedSurvey by viewModel.isCompletedSurvey.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(isCompletedSurvey) {
-        if (isCompletedSurvey) {
-            onClickFinishSurvey()
-        }
-    }
+    val scope = rememberCoroutineScope()
 
     ErrorUiSetView(
         onConfirmClick = { onErrorHandleLoginAgain() },
@@ -72,18 +66,22 @@ fun HbtiSurveyScreen(
         HbtiSurveyUiState.Loading -> AppLoadingScreen()
         is HbtiSurveyUiState.HbtiData -> {
             HbtiSurveyContent(
-                questions = (uiState as HbtiSurveyUiState.HbtiData).questions,
-                optionsContents = (uiState as HbtiSurveyUiState.HbtiData).optionsContent,
-                options = (uiState as HbtiSurveyUiState.HbtiData).options,
-                onClickOption = { optionId, page ->
-                    viewModel.modifyAnswers(
+                hbtiQuestionItems = (uiState as HbtiSurveyUiState.HbtiData).hbtiQuestionItems,
+                onClickOption = { optionId, page, item, isGoToSelectedState ->
+                    viewModel.modifyAnswersToOptionId(
                         optionId = optionId,
                         page = page,
-                        answers = (uiState as HbtiSurveyUiState.HbtiData).answers?.optionIds
+                        currentHbtiQuestionItem = item,
+                        isGoToSelectedState = isGoToSelectedState
                     )
                 },
-                onClickFinishSurvey = { viewModel.postSurveyResponds() },
-                onBackClick = {onBackClick()}
+                onClickFinishSurvey = {
+                    scope.launch {
+                        launch { viewModel.finishSurvey() }.join()
+                        onClickFinishSurvey()
+                    }
+                },
+                onBackClick = { onBackClick() }
             )
         }
     }
@@ -92,10 +90,8 @@ fun HbtiSurveyScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HbtiSurveyContent(
-    questions: List<String>?,
-    optionsContents: List<List<String>>?,
-    options: List<List<SurveyOptionResponseDto>>?,
-    onClickOption: (optionId: Int, page: Int) -> Unit,
+    hbtiQuestionItems: HbtiQuestionItems?,
+    onClickOption: (optionId: Int, page: Int, item: HbtiQuestionItem, isGoToSelectedState: Boolean) -> Unit,
     onClickFinishSurvey: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -103,8 +99,9 @@ fun HbtiSurveyContent(
     var currentProgress by remember { mutableStateOf(0f) }
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
-    val additionalProgress = calculateProgressStepSize(questions)
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { questions?.size ?: 0 })
+    val additionalProgress = calculateProgressStepSize(hbtiQuestionItems?.hbtiQuestions?.values)
+    val pagerState =
+        rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
 
 
     fun addProgress() {
@@ -135,10 +132,9 @@ fun HbtiSurveyContent(
             titleColor = Color.Black,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             onNavClick = {
-                if(pagerState.currentPage == 0){
+                if (pagerState.currentPage == 0) {
                     onBackClick()
-                }
-                else{
+                } else {
                     subtractProgress()
                     scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
                 }
@@ -162,7 +158,7 @@ fun HbtiSurveyContent(
                     Column(verticalArrangement = Arrangement.SpaceBetween) {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                "Q. ${questions?.get(page)}",
+                                "Q. ${hbtiQuestionItems?.hbtiQuestions?.get(page)?.questionContent}",
                                 modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
                                 style = TextStyle(
                                     fontSize = 20.sp,
@@ -171,11 +167,15 @@ fun HbtiSurveyContent(
                                 )
                             )
                             SurveyOptionList(
-                                initValue = null,
-                                surveyOptions = optionsContents?.get(page)!!,
-                                onButtonClick = { optionIndex ->
+                                answerIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.selectedOptionIds ?: listOf(),
+                                surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents ?: listOf(),
+                                surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds ?: listOf(),
+                                onButtonClick = { optionIndex, isGoToSelectedState ->
                                     onClickOption(
-                                        options?.get(page)?.get(optionIndex)?.optionId!!, page
+                                        hbtiQuestionItems?.hbtiQuestions?.get(page)!!.optionIds[optionIndex],
+                                        page,
+                                        hbtiQuestionItems?.hbtiQuestions?.get(page)!!,
+                                        isGoToSelectedState
                                     )
                                 }
                             )
@@ -204,12 +204,4 @@ fun HbtiSurveyContent(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun HbtiSurveyScreenPreview() {
-    HbtiSurveyContent(questions = listOf("사과는 무슨 색인가요?", "바나나는 무슨 색인가요?", "오렌지는 무슨 색인가요?"), optionsContents = listOf(
-        listOf("주황", "노랑", "빨강", "파랑"), listOf("주황", "노랑", "빨강", "파랑"), listOf("주황", "노랑", "빨강", "파랑")
-    ), options = null, onClickOption = { optionId, page -> }, onClickFinishSurvey = {}, onBackClick = {})
 }

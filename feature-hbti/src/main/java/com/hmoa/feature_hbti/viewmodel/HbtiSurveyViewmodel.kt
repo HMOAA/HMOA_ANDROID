@@ -7,9 +7,10 @@ import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.SurveyRepository
+import com.hmoa.core_model.data.HbtiQuestionItem
+import com.hmoa.core_model.data.HbtiQuestionItems
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.response.SurveyOptionResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,15 +18,14 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+typealias QuestionPageIndex = Int
+typealias QuestionOptionId = Int
+
 @HiltViewModel
 class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: SurveyRepository) : ViewModel() {
-    private var _questionsState = MutableStateFlow<List<String>?>(null)
-    private var _optionsContentState = MutableStateFlow<List<List<String>>?>(null)
-    private var _optionsState = MutableStateFlow<List<List<SurveyOptionResponseDto>>?>(null)
-    private var _answersState =
-        MutableStateFlow<SurveyRespondRequestDto?>(SurveyRespondRequestDto(optionIds = arrayListOf(10)))
-    private var _isCompletedSurvey = MutableStateFlow<Boolean>(false)
-    val isCompletedSurvey = _isCompletedSurvey
+    private var _hbtiQuestionItemsState = MutableStateFlow<HbtiQuestionItems?>(null)
+    val hbtiQuestionItemsState = _hbtiQuestionItemsState
+    private var _finalQuestionAnswersState = MutableStateFlow<MutableList<QuestionOptionId>?>(null)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -50,53 +50,49 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
 
     val uiState: StateFlow<HbtiSurveyUiState> =
         combine(
-            _questionsState,
-            _optionsContentState,
-            _optionsState,
-            _answersState
-        ) { questions, optionsContent, options, answers ->
+            hbtiQuestionItemsState,
+            _finalQuestionAnswersState
+        ) { hbtiQuestionItemsState, finalQuestionAnswersState ->
             HbtiSurveyUiState.HbtiData(
-                questions = questions,
-                optionsContent = optionsContent,
-                options = options,
-                answers = answers
+                hbtiQuestionItems = hbtiQuestionItemsState,
+                finalQuestionAnswers = finalQuestionAnswersState
             )
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000), initialValue = HbtiSurveyUiState.Loading
+            started = SharingStarted.Lazily, initialValue = HbtiSurveyUiState.Loading
         )
 
-    fun initializeAnswerState(surveyQuestions: SurveyQuestionsResponseDto?): MutableList<Int> {
+    fun initializeHbtiQuestionItemsState(surveyQuestions: SurveyQuestionsResponseDto?): MutableMap<Int, HbtiQuestionItem> {
+        val initializedQuestionItems = mutableMapOf<Int, HbtiQuestionItem>()
         if (surveyQuestions!!.questions.isNotEmpty()) {
-            val initializedAnswers = surveyQuestions?.questions?.map {
-                it.answers[0].optionId
+            val hbtiQuestionItems = surveyQuestions.questions.map {
+                HbtiQuestionItem(
+                    questionId = it.questionId,
+                    questionContent = it.content,
+                    optionIds = it.answers.map { it.optionId },
+                    optionContents = it.answers.map { it.option },
+                    isMultipleChoice = it.isMultipleChoice,
+                    selectedOptionIds = mutableListOf()
+                )
             }
-            val answers = initializedAnswers!!.toMutableList()
-            return answers
+            hbtiQuestionItems.mapIndexed { index, hbtiQuestionItem ->
+                initializedQuestionItems[index] = hbtiQuestionItem
+            }
         }
-        return mutableListOf()
-    }
-
-    fun updateQuestionState(surveyQuestions: SurveyQuestionsResponseDto?): List<String>? {
-        return surveyQuestions?.questions?.map { it.content }
-    }
-
-    fun updateOptionContentState(surveyQuestions: SurveyQuestionsResponseDto?): List<List<String>>? {
-        return surveyQuestions?.questions?.map { it.answers.map { it.option } }
-    }
-
-    fun updateOptionsState(surveyQuestions: SurveyQuestionsResponseDto?): List<List<SurveyOptionResponseDto>>? {
-        return surveyQuestions?.questions?.map { it.answers }
+        return initializedQuestionItems
     }
 
     suspend fun getSurveyQuestions() {
         flow { emit(surveyRepository.getSurveyQuestions()) }.asResult().collectLatest { result ->
             when (result) {
                 is Result.Success -> {
-                    _questionsState.update { updateQuestionState(result.data.data) }
-                    _optionsContentState.update { updateOptionContentState(result.data.data) }
-                    _optionsState.update { updateOptionsState(result.data.data) }
-                    _answersState.update { SurveyRespondRequestDto(optionIds = initializeAnswerState(result.data.data)) }
+                    hbtiQuestionItemsState.update {
+                        HbtiQuestionItems(
+                            hbtiQuestions = initializeHbtiQuestionItemsState(
+                                result.data.data
+                            )
+                        )
+                    }
                 }
 
                 is Result.Error -> {
@@ -130,24 +126,23 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         }
     }
 
-    fun updateIsCompletedSurvey(value: Boolean) {
-        _isCompletedSurvey.update { value }
+    fun finishSurvey() {
+        hbtiQuestionItemsState.value?.hbtiQuestions?.values?.map {
+            _finalQuestionAnswersState.value?.addAll(it.selectedOptionIds)
+        }
+        postSurveyResponds()
     }
 
     fun postSurveyResponds() {
-        if (_answersState.value != null) {
+        if (_finalQuestionAnswersState.value != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                flow { emit(surveyRepository.postSurveyResponds(_answersState.value!!)) }.asResult()
+                flow { emit(surveyRepository.postSurveyResponds(SurveyRespondRequestDto(optionIds = _finalQuestionAnswersState.value!!))) }.asResult()
                     .collectLatest { result ->
                         when (result) {
                             is Result.Success -> {
                                 viewModelScope.launch {
-                                    val deleteAllSurveyResult = launch { surveyRepository.deleteAllNotes() }
-                                    deleteAllSurveyResult.join()
-                                    val jobSavesurveyResult =
-                                        launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }
-                                    jobSavesurveyResult.join()
-                                    updateIsCompletedSurvey(true)
+                                    launch { surveyRepository.deleteAllNotes() }.join()
+                                    launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }.join()
                                 }
                             }
 
@@ -180,21 +175,91 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         }
     }
 
-    fun modifyAnswers(page: Int, optionId: Int, answers: MutableList<Int>?): MutableList<Int>? {
-        answers?.set(page, optionId)
-        if (answers != null) {
-            _answersState.update { SurveyRespondRequestDto(optionIds = answers) }
+    fun increaseHbtiQuestionItem_SelectedOption(
+        newOptionId: Int,
+        isMutipleChoice: Boolean,
+        selectedOptionIds: MutableList<Int>
+    ): MutableList<Int> {
+        when (isMutipleChoice) {
+            true -> {
+                selectedOptionIds.add(newOptionId)
+            }
+
+            false -> {
+                if (selectedOptionIds.isEmpty()) {
+                    selectedOptionIds.add(newOptionId)
+                } else {
+                    selectedOptionIds[0] = newOptionId
+                }
+            }
         }
-        return answers
+        return selectedOptionIds
+    }
+
+    fun decreaseHbtiQuestionItem_SelectedOption(
+        targetOptionId: Int,
+        selectedOptionIds: MutableList<Int>
+    ): MutableList<Int> {
+        selectedOptionIds.remove(targetOptionId)
+        return selectedOptionIds
+    }
+
+    fun getUpdatedHbtiQuestionItems(page: Int, newHbtiQuestionItem: HbtiQuestionItem): HbtiQuestionItems {
+        val newHbtiQuestionItems: MutableMap<QuestionPageIndex, HbtiQuestionItem> = mutableMapOf()
+        _hbtiQuestionItemsState.value?.hbtiQuestions?.set(page, newHbtiQuestionItem)
+        _hbtiQuestionItemsState.value?.hbtiQuestions?.map {
+            newHbtiQuestionItems[it.key] = it.value
+        }
+        return HbtiQuestionItems(hbtiQuestions = newHbtiQuestionItems)
+    }
+
+    fun modifyAnswersToOptionId(
+        page: Int,
+        optionId: Int,
+        currentHbtiQuestionItem: HbtiQuestionItem,
+        isGoToSelectedState: Boolean
+    ) {
+        var updatedSelectedOptionIds = mutableListOf<Int>()
+        when (isGoToSelectedState) {
+            true -> {
+                updatedSelectedOptionIds = increaseHbtiQuestionItem_SelectedOption(
+                    newOptionId = optionId,
+                    isMutipleChoice = currentHbtiQuestionItem.isMultipleChoice,
+                    selectedOptionIds = currentHbtiQuestionItem.selectedOptionIds
+                )
+            }
+
+            false -> {
+                updatedSelectedOptionIds = decreaseHbtiQuestionItem_SelectedOption(
+                    targetOptionId = optionId,
+                    selectedOptionIds = currentHbtiQuestionItem.selectedOptionIds
+                )
+            }
+        }
+
+        val newHbtiQuestionItem = HbtiQuestionItem(
+            questionId = currentHbtiQuestionItem.questionId,
+            questionContent = currentHbtiQuestionItem.questionContent,
+            optionIds = currentHbtiQuestionItem.optionIds,
+            optionContents = currentHbtiQuestionItem.optionContents,
+            isMultipleChoice = currentHbtiQuestionItem.isMultipleChoice,
+            selectedOptionIds = updatedSelectedOptionIds
+        )
+
+        _hbtiQuestionItemsState.update {
+            getUpdatedHbtiQuestionItems(
+                page = page,
+                newHbtiQuestionItem = newHbtiQuestionItem
+            )
+        }
     }
 }
+
 
 sealed interface HbtiSurveyUiState {
     data object Loading : HbtiSurveyUiState
     data class HbtiData(
-        val questions: List<String>?,
-        val optionsContent: List<List<String>>?,
-        val options: List<List<SurveyOptionResponseDto>>?,
-        val answers: SurveyRespondRequestDto?
+        val hbtiQuestionItems: HbtiQuestionItems?,
+        val finalQuestionAnswers: MutableList<QuestionOptionId>?
     ) : HbtiSurveyUiState
 }

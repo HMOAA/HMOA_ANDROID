@@ -24,7 +24,8 @@ typealias QuestionOptionId = Int
 @HiltViewModel
 class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: SurveyRepository) : ViewModel() {
     private var _hbtiQuestionItemsState = MutableStateFlow<HbtiQuestionItems?>(null)
-    val hbtiQuestionItemsState = _hbtiQuestionItemsState
+    val hbtiQuestionItemsState: StateFlow<HbtiQuestionItems?> = _hbtiQuestionItemsState
+    private var _hbtiAnsewrIdsState = MutableStateFlow<List<List<Int>>?>(null)
     private var _finalQuestionAnswersState = MutableStateFlow<MutableList<QuestionOptionId>?>(null)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
@@ -50,11 +51,13 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
 
     val uiState: StateFlow<HbtiSurveyUiState> =
         combine(
-            hbtiQuestionItemsState,
+            _hbtiQuestionItemsState,
+            _hbtiAnsewrIdsState,
             _finalQuestionAnswersState
-        ) { hbtiQuestionItemsState, finalQuestionAnswersState ->
+        ) { hbtiQuestionItemsState, hbtiAnsewrIdsState, finalQuestionAnswersState ->
             HbtiSurveyUiState.HbtiData(
                 hbtiQuestionItems = hbtiQuestionItemsState,
+                hbtiAnswerIds = hbtiAnsewrIdsState,
                 finalQuestionAnswers = finalQuestionAnswersState
             )
         }.stateIn(
@@ -82,17 +85,23 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         return initializedQuestionItems
     }
 
+    fun initializeHbtiAnswerIdsState(surveyQuestions: SurveyQuestionsResponseDto?): List<List<Int>> {
+        val initializedHbtiAnswerIds: List<List<Int>> = List(surveyQuestions.questions.size) { emptyList() }
+        return initializedHbtiAnswerIds
+    }
+
     suspend fun getSurveyQuestions() {
         flow { emit(surveyRepository.getSurveyQuestions()) }.asResult().collectLatest { result ->
             when (result) {
                 is Result.Success -> {
-                    hbtiQuestionItemsState.update {
+                    _hbtiQuestionItemsState.update {
                         HbtiQuestionItems(
                             hbtiQuestions = initializeHbtiQuestionItemsState(
                                 result.data.data
                             )
                         )
                     }
+                    _hbtiAnsewrIdsState.update { initializeHbtiAnswerIdsState(result.data.data) }
                 }
 
                 is Result.Error -> {
@@ -205,7 +214,7 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     }
 
     fun getUpdatedHbtiQuestionItems(page: Int, newHbtiQuestionItem: HbtiQuestionItem): HbtiQuestionItems {
-        val newHbtiQuestionItems: MutableMap<QuestionPageIndex, HbtiQuestionItem> = mutableMapOf()
+        val newHbtiQuestionItems = mutableMapOf<QuestionPageIndex, HbtiQuestionItem>()
         _hbtiQuestionItemsState.value?.hbtiQuestions?.set(page, newHbtiQuestionItem)
         _hbtiQuestionItemsState.value?.hbtiQuestions?.map {
             newHbtiQuestionItems[it.key] = it.value
@@ -252,6 +261,13 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
                 newHbtiQuestionItem = newHbtiQuestionItem
             )
         }
+
+    }
+
+    fun updateHbtiAnswerIds(hbtiQuestionItems: HbtiQuestionItems?) {
+        hbtiQuestionItems.hbtiQuestions.map {
+
+        }
     }
 }
 
@@ -260,6 +276,7 @@ sealed interface HbtiSurveyUiState {
     data object Loading : HbtiSurveyUiState
     data class HbtiData(
         val hbtiQuestionItems: HbtiQuestionItems?,
+        val hbtiAnswerIds: List<List<Int>>?,
         val finalQuestionAnswers: MutableList<QuestionOptionId>?
     ) : HbtiSurveyUiState
 }

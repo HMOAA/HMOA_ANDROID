@@ -279,10 +279,7 @@ class HbitSurveyViewModelTest : TestCase() {
                 true
             )
         }.join()
-
-        val result = viewModel.updateHbtiAnswerIdState(
-            HbtiQuestionItems(viewModel.hbtiQuestionItemsState.value!!.hbtiQuestions)
-        )
-        assertEquals(expectedValue, result)
+        
+        assertEquals(expectedValue, viewModel.hbtiAnswerIdsState.value)
     }
 }

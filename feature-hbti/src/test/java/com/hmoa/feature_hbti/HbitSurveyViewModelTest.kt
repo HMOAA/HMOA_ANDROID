@@ -77,7 +77,6 @@ class HbitSurveyViewModelTest : TestCase() {
         runBlocking {
             Mockito.`when`(surveyRepository.getSurveyQuestions()).thenReturn(fakeResponse)
             viewModel = spy(HbtiSurveyViewmodel(surveyRepository)) //내부 메서드 호출 감지 가능
-            println("setUp")
         }
     }
 
@@ -258,6 +257,32 @@ class HbitSurveyViewModelTest : TestCase() {
             isGoToSelectedState = true
         )
         assertEquals(expectedValue, viewModel.hbtiQuestionItemsState.value)
+    }
 
+    @Test
+    fun `test_hbtiAnswerIds 배열 초기화`() = coroutineRule.runTest {
+        val expectedValue: List<List<Int>> = List(2) { emptyList() }
+        val result = viewModel.initializeHbtiAnswerIdsState(fakeResponse.data)
+        assertEquals(expectedValue, result)
+    }
+
+    @Test
+    fun `test_hbtiQuestionsItems 맵의 키값 selectedOptionIds로부터 hbtiAnswerIds 배열이 갱신된 값 확인`() = coroutineRule.runTest {
+        val expectedValue: List<List<Int>> =
+            listOf(listOf(hbtiQuestionItem_singleChoice.optionIds[0]), listOf())
+        viewModel.getSurveyQuestions()
+        launch {
+            viewModel.modifyAnswersToOptionId(
+                0,
+                hbtiQuestionItem_singleChoice.optionIds[0],
+                hbtiQuestionItem_singleChoice,
+                true
+            )
+        }.join()
+
+        val result = viewModel.updateHbtiAnswerIdState(
+            HbtiQuestionItems(viewModel.hbtiQuestionItemsState.value!!.hbtiQuestions)
+        )
+        assertEquals(expectedValue, result)
     }
 }

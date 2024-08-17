@@ -27,7 +27,6 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     val hbtiQuestionItemsState: StateFlow<HbtiQuestionItems?> = _hbtiQuestionItemsState
     private var _hbtiAnwserIdsState = MutableStateFlow<List<List<Int>>?>(null)
     val hbtiAnswerIdsState: StateFlow<List<List<Int>>?> = _hbtiAnwserIdsState
-    private var _finalQuestionAnswersState = MutableStateFlow<MutableList<QuestionOptionId>?>(null)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -53,13 +52,11 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     val uiState: StateFlow<HbtiSurveyUiState> =
         combine(
             _hbtiQuestionItemsState,
-            _hbtiAnwserIdsState,
-            _finalQuestionAnswersState
-        ) { hbtiQuestionItemsState, hbtiAnsewrIdsState, finalQuestionAnswersState ->
+            _hbtiAnwserIdsState
+        ) { hbtiQuestionItemsState, hbtiAnsewrIdsState ->
             HbtiSurveyUiState.HbtiData(
                 hbtiQuestionItems = hbtiQuestionItemsState,
                 hbtiAnswerIds = hbtiAnsewrIdsState,
-                finalQuestionAnswers = finalQuestionAnswersState
             )
         }.stateIn(
             scope = viewModelScope,
@@ -101,7 +98,6 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
             val idx = it.key
             updatedHbtiAnswersId[idx] = it.value.selectedOptionIds
         }
-        print(updatedHbtiAnswersId)
         return updatedHbtiAnswersId
     }
 
@@ -150,52 +146,56 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         }
     }
 
-    fun finishSurvey() {
+    fun arrangeAllAnswersIdToFinalQuestionAnswerState(): MutableList<Int> {
+        val arragedAnswers = mutableListOf<Int>()
         hbtiQuestionItemsState.value?.hbtiQuestions?.values?.map {
-            _finalQuestionAnswersState.value?.addAll(it.selectedOptionIds)
+            arragedAnswers.addAll(it.selectedOptionIds)
         }
-        postSurveyResponds()
+        return arragedAnswers
     }
 
-    fun postSurveyResponds() {
-        if (_finalQuestionAnswersState.value != null) {
-            viewModelScope.launch(Dispatchers.IO) {
-                flow { emit(surveyRepository.postSurveyResponds(SurveyRespondRequestDto(optionIds = _finalQuestionAnswersState.value!!))) }.asResult()
-                    .collectLatest { result ->
-                        when (result) {
-                            is Result.Success -> {
-                                viewModelScope.launch {
-                                    launch { surveyRepository.deleteAllNotes() }.join()
-                                    launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }.join()
-                                }
-                            }
+    fun finishSurvey() {
+        val arragedIds = arrangeAllAnswersIdToFinalQuestionAnswerState()
+        postSurveyResponds(SurveyRespondRequestDto(arragedIds))
+    }
 
-                            is Result.Error -> {
-                                when (result.exception.message) {
-                                    ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                        expiredTokenErrorState.update { true }
-                                    }
-
-                                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                        wrongTypeTokenErrorState.update { true }
-                                    }
-
-                                    ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                        unLoginedErrorState.update { true }
-                                    }
-
-                                    else -> {
-                                        generalErrorState.update { Pair(true, result.exception.message) }
-                                    }
-                                }
-                            }
-
-                            is Result.Loading -> {
-                                HbtiSurveyUiState.Loading
+    fun postSurveyResponds(request: SurveyRespondRequestDto) {
+        viewModelScope.launch(Dispatchers.IO) {
+            flow { emit(surveyRepository.postSurveyResponds(request)) }.asResult()
+                .collectLatest { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            viewModelScope.launch {
+                                launch { surveyRepository.deleteAllNotes() }.join()
+                                launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }.join()
                             }
                         }
+
+                        is Result.Error -> {
+                            when (result.exception.message) {
+                                ErrorMessageType.EXPIRED_TOKEN.message -> {
+                                    expiredTokenErrorState.update { true }
+                                }
+
+                                ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                                    wrongTypeTokenErrorState.update { true }
+                                }
+
+                                ErrorMessageType.UNKNOWN_ERROR.message -> {
+                                    unLoginedErrorState.update { true }
+                                }
+
+                                else -> {
+                                    generalErrorState.update { Pair(true, result.exception.message) }
+                                }
+                            }
+                        }
+
+                        is Result.Loading -> {
+                            HbtiSurveyUiState.Loading
+                        }
                     }
-            }
+                }
         }
     }
 
@@ -284,6 +284,5 @@ sealed interface HbtiSurveyUiState {
     data class HbtiData(
         val hbtiQuestionItems: HbtiQuestionItems?,
         val hbtiAnswerIds: List<List<Int>>?,
-        val finalQuestionAnswers: MutableList<QuestionOptionId>?
     ) : HbtiSurveyUiState
 }

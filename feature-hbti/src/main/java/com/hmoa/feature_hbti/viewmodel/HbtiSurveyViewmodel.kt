@@ -25,7 +25,8 @@ typealias QuestionOptionId = Int
 class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: SurveyRepository) : ViewModel() {
     private var _hbtiQuestionItemsState = MutableStateFlow<HbtiQuestionItems?>(null)
     val hbtiQuestionItemsState: StateFlow<HbtiQuestionItems?> = _hbtiQuestionItemsState
-    private var _hbtiAnsewrIdsState = MutableStateFlow<List<List<Int>>?>(null)
+    private var _hbtiAnwserIdsState = MutableStateFlow<List<List<Int>>?>(null)
+    val hbtiAnswerIdsState: StateFlow<List<List<Int>>?> = _hbtiAnwserIdsState
     private var _finalQuestionAnswersState = MutableStateFlow<MutableList<QuestionOptionId>?>(null)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
@@ -52,7 +53,7 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     val uiState: StateFlow<HbtiSurveyUiState> =
         combine(
             _hbtiQuestionItemsState,
-            _hbtiAnsewrIdsState,
+            _hbtiAnwserIdsState,
             _finalQuestionAnswersState
         ) { hbtiQuestionItemsState, hbtiAnsewrIdsState, finalQuestionAnswersState ->
             HbtiSurveyUiState.HbtiData(
@@ -115,7 +116,7 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
                             )
                         )
                     }
-                    _hbtiAnsewrIdsState.update { initializeHbtiAnswerIdsState(result.data.data) }
+                    _hbtiAnwserIdsState.update { initializeHbtiAnswerIdsState(result.data.data) }
                 }
 
                 is Result.Error -> {
@@ -273,7 +274,7 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
             newHbtiQuestionItem = newHbtiQuestionItem
         )
         _hbtiQuestionItemsState.update { newHbtiQuestionItems }
-        _hbtiAnsewrIdsState.update { updateHbtiAnswerIdState(newHbtiQuestionItems) }
+        _hbtiAnwserIdsState.update { updateHbtiAnswerIdState(newHbtiQuestionItems) }
     }
 }
 

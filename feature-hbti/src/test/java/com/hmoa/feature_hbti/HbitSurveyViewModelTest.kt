@@ -279,7 +279,27 @@ class HbitSurveyViewModelTest : TestCase() {
                 true
             )
         }.join()
-        
+
         assertEquals(expectedValue, viewModel.hbtiAnswerIdsState.value)
+    }
+
+    @Test
+    fun `test_설문 종료 후 선택한 정답들의 Id값이 리스트에 담기는지 확인`() = coroutineRule.runTest {
+        val expectedValue = listOf(0, 0)
+        viewModel.getSurveyQuestions()
+        viewModel.modifyAnswersToOptionId(
+            0,
+            hbtiQuestionItem_singleChoice.optionIds[0],
+            hbtiQuestionItem_singleChoice,
+            true
+        )
+        viewModel.modifyAnswersToOptionId(
+            1,
+            hbtiQuestionItem_multiChoice.optionIds[0],
+            hbtiQuestionItem_multiChoice,
+            true
+        )
+        val result = viewModel.arrangeAllAnswersIdToFinalQuestionAnswerState()
+        assertEquals(expectedValue, result)
     }
 }

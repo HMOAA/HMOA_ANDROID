@@ -54,6 +54,7 @@ fun HbtiSurveyScreen(
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val hbtiQuestionItems by viewModel.hbtiQuestionItemsState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
@@ -67,6 +68,7 @@ fun HbtiSurveyScreen(
         is HbtiSurveyUiState.HbtiData -> {
             HbtiSurveyContent(
                 hbtiQuestionItems = (uiState as HbtiSurveyUiState.HbtiData).hbtiQuestionItems,
+                hbtiAnswerIds = (uiState as HbtiSurveyUiState.HbtiData).hbtiAnswerIds,
                 onClickOption = { optionId, page, item, isGoToSelectedState ->
                     viewModel.modifyAnswersToOptionId(
                         optionId = optionId,
@@ -91,6 +93,7 @@ fun HbtiSurveyScreen(
 @Composable
 fun HbtiSurveyContent(
     hbtiQuestionItems: HbtiQuestionItems?,
+    hbtiAnswerIds: List<List<Int>>?,
     onClickOption: (optionId: Int, page: Int, item: HbtiQuestionItem, isGoToSelectedState: Boolean) -> Unit,
     onClickFinishSurvey: () -> Unit,
     onBackClick: () -> Unit
@@ -167,7 +170,7 @@ fun HbtiSurveyContent(
                                 )
                             )
                             SurveyOptionList(
-                                answerIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.selectedOptionIds ?: listOf(),
+                                answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
                                 surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents ?: listOf(),
                                 surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds ?: listOf(),
                                 onButtonClick = { optionIndex, isGoToSelectedState ->

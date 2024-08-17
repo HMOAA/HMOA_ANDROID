@@ -1,10 +1,12 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,12 +28,38 @@ fun SurveyOptionList(
     surveyOptionIds: List<Int>,
     onButtonClick: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit
 ) {
-    val selectedOptions = remember {
-        answerIds.map { answerId ->
-            val idx = surveyOptionIds.indexOf(answerId)
-            mutableStateOf(surveyOptions[idx])
+    val selectedOptionIds = remember {
+        surveyOptionIds.mapIndexed { index, it ->
+            if (it in answerIds) {
+                mutableStateOf(it)
+            } else {
+                mutableStateOf(null)
+            }
         }
     }
+
+    val selectedStates = remember {
+        surveyOptionIds.mapIndexed { index, it ->
+            if (it in answerIds) {
+                mutableStateOf(true)
+            } else {
+                mutableStateOf(false)
+            }
+        }
+    }.toMutableList()
+
+    fun immediateSelectedStateChange(index: Int){
+        selectedStates[index].value = !selectedStates[index].value
+    }
+
+    LaunchedEffect(answerIds) {
+        Log.d("answerIds", "${answerIds}")
+    }
+
+    LaunchedEffect(selectedOptionIds) {
+        Log.d("SurveyOptionList", "${selectedOptionIds}")
+    }
+
     val scrollState = rememberScrollState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,11 +69,13 @@ fun SurveyOptionList(
         surveyOptions.forEachIndexed { index, it ->
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
                 SurveyOptionItem(
-                    text = it,
+                    text = surveyOptions[index],
                     onClick = {
-                        onButtonClick(index, !(it == selectedOptions[index].value))
+                        val state = selectedStates[index].value
+                        immediateSelectedStateChange(index)
+                        onButtonClick(index, !state)
                     },
-                    isSelected = if (answerIds.isNotEmpty()) (it == selectedOptions[index].value) else false
+                    isSelected = selectedStates[index].value
                 )
             }
         }

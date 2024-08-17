@@ -86,8 +86,22 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     }
 
     fun initializeHbtiAnswerIdsState(surveyQuestions: SurveyQuestionsResponseDto?): List<List<Int>> {
-        val initializedHbtiAnswerIds: List<List<Int>> = List(surveyQuestions.questions.size) { emptyList() }
-        return initializedHbtiAnswerIds
+        if (surveyQuestions?.questions?.isNotEmpty() ?: false) {
+            val initializedHbtiAnswerIds: List<List<Int>> = List(surveyQuestions?.questions!!.size) { emptyList() }
+            return initializedHbtiAnswerIds
+        }
+        return emptyList()
+    }
+
+    fun updateHbtiAnswerIdState(hbtiQuestionItems: HbtiQuestionItems): List<List<Int>> {
+        val updatedHbtiAnswersId: MutableList<MutableList<Int>> =
+            MutableList(hbtiQuestionItems.hbtiQuestions.size) { mutableListOf() }
+        hbtiQuestionItems.hbtiQuestions.map {
+            val idx = it.key
+            updatedHbtiAnswersId[idx] = it.value.selectedOptionIds
+        }
+        print(updatedHbtiAnswersId)
+        return updatedHbtiAnswersId
     }
 
     suspend fun getSurveyQuestions() {
@@ -254,20 +268,12 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
             isMultipleChoice = currentHbtiQuestionItem.isMultipleChoice,
             selectedOptionIds = updatedSelectedOptionIds
         )
-
-        _hbtiQuestionItemsState.update {
-            getUpdatedHbtiQuestionItems(
-                page = page,
-                newHbtiQuestionItem = newHbtiQuestionItem
-            )
-        }
-
-    }
-
-    fun updateHbtiAnswerIds(hbtiQuestionItems: HbtiQuestionItems?) {
-        hbtiQuestionItems.hbtiQuestions.map {
-
-        }
+        val newHbtiQuestionItems = getUpdatedHbtiQuestionItems(
+            page = page,
+            newHbtiQuestionItem = newHbtiQuestionItem
+        )
+        _hbtiQuestionItemsState.update { newHbtiQuestionItems }
+        _hbtiAnsewrIdsState.update { updateHbtiAnswerIdState(newHbtiQuestionItems) }
     }
 }
 

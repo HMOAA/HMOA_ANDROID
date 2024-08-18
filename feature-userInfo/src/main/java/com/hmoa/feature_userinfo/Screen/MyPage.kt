@@ -200,7 +200,7 @@ private fun MyPageContent(
                 provider = provider,
                 onNavEditProfile = onNavEditProfile
             )
-            ServiceAlarm()
+            //ServiceAlarm()
             HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         }
 

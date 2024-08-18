@@ -72,7 +72,9 @@ private fun HbtiSurveyResultScreen(
             } else {
                 HbtiSurveyResultContent(
                     surveyResult = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).surveyResult,
-                    onHbtiProcessClick = { onHbtiProcessClick() })
+                    onHbtiProcessClick = { onHbtiProcessClick() },
+                    userName = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).userName
+                )
             }
         }
 
@@ -109,7 +111,11 @@ private fun HbtiSurveyResultLoading(userName: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onHbtiProcessClick: () -> Unit) {
+private fun HbtiSurveyResultContent(
+    surveyResult: List<NoteResponseDto>,
+    onHbtiProcessClick: () -> Unit,
+    userName: String
+) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { surveyResult.size })
     if (surveyResult.isNotEmpty()) {
         Column(
@@ -124,7 +130,7 @@ private fun HbtiSurveyResultContent(surveyResult: List<NoteResponseDto>, onHbtiP
                 )
                 Column(modifier = Modifier.padding(start = 16.dp)) {
                     Text(
-                        "땡땡님에게 딱 맞는 향료는\n'${surveyResult[0].noteName}'입니다",
+                        "${userName}님에게 딱 맞는 향료는\n'${surveyResult[0].noteName}'입니다",
                         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = pretendard),
                         modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
                     )
@@ -235,5 +241,5 @@ private fun HbtiSurveyResultPreview() {
         )
     )
 
-    HbtiSurveyResultContent(result, {})
+    HbtiSurveyResultContent(result, {}, "테스터")
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,14 +35,8 @@ fun NoteOrderQuantityPickContent(
     viewModel: NoteOrderQuantityPickViewmodel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isPickCompleted by viewModel.isPickCompleted.collectAsStateWithLifecycle()
     val noteOrderQuantityChoice by viewModel.noteOrderQuantityChoice.collectAsStateWithLifecycle()
 
-    LaunchedEffect(isPickCompleted) {
-        if (isPickCompleted) {
-            onNextClick(noteOrderQuantityChoice)
-        }
-    }
 
     when (uiState) {
         is NoteOrderQuantityPickUiState.NoteOrderQuantityPickData -> {
@@ -65,10 +58,11 @@ fun NoteOrderQuantityPickContent(
                         )
                     )
                     SurveyOptionList(
-                        initValue = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).choiceList[0],
-                        surveyOptions = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).choiceList,
-                        onButtonClick = { optionIndex ->
-                            viewModel.saveNoteOrderQuantityChoice(optionIndex)
+                        answerIds = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).noteQuantityChoiceAnswersId,
+                        surveyOptions = viewModel.noteOrderQuantityChoiceContents,
+                        surveyOptionIds = viewModel.noteOrderQuantityChoiceIds,
+                        onButtonClick = { optionIndex, isGoToSelectedState ->
+                            viewModel.modifyAnswerOption(optionIndex, isGoToSelectedState)
                         }
                     )
                 }
@@ -76,7 +70,7 @@ fun NoteOrderQuantityPickContent(
                     Button(
                         isEnabled = true,
                         btnText = "다음",
-                        onClick = { viewModel.changePickState(true) },
+                        onClick = { onNextClick(noteOrderQuantityChoice) },
                         buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
                         textSize = 18,
                         textColor = Color.White,

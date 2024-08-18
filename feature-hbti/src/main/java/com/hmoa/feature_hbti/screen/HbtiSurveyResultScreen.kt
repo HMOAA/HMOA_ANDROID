@@ -241,5 +241,5 @@ private fun HbtiSurveyResultPreview() {
         )
     )
 
-    HbtiSurveyResultContent(result, {})
+    HbtiSurveyResultContent(result, {}, "테스터")
 }

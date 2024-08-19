@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("com.android.library")
@@ -103,12 +103,4 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
 
-    //hilt test
-    testImplementation("com.google.dagger:hilt-android-testing:2.44")
-    kaptTest("com.google.dagger:hilt-android:compiler:2.44")
-    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
-
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
-    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
 }

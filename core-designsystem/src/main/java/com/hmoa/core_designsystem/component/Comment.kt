@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -92,7 +93,7 @@ fun Comment(
                         onClick = onChangeSelect
                     ) {
                         Icon(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(1f),
                             painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
                             tint = if (isSelected) CustomColor.red else CustomColor.gray2,
                             contentDescription = "Comment Like Button"

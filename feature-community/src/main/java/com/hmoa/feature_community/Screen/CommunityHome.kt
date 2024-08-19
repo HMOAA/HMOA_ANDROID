@@ -21,12 +21,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -76,7 +79,7 @@ fun CommunityHome(
         CommunityTitleBar(onNavCommunityByCategory = onNavCommunityGraph)
 
         when (uiState) {
-            is CommunityHomeUiState.Loading -> {AppLoadingScreen()}
+            is CommunityHomeUiState.Loading -> AppLoadingScreen()
             is CommunityHomeUiState.Community -> {
                 CommunityHomeContent(
                     communities = uiState.communities,
@@ -108,15 +111,15 @@ fun CommunityTitleBar(
         Text(
             text = "Community",
             fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
 
         Text(
-            modifier = Modifier.clickable {
-                onNavCommunityByCategory()
-            },
+            modifier = Modifier.clickable {onNavCommunityByCategory()},
             text = "전체보기",
             fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
     }

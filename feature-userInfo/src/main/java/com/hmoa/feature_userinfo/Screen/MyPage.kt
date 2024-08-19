@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +42,7 @@ import com.example.feature_userinfo.viewModel.UserInfoUiState
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
@@ -128,9 +131,7 @@ fun MyPage(
     onBackClick: () -> Unit
 ) {
     when (uiState) {
-        UserInfoUiState.Loading -> {
-            AppLoadingScreen()
-        }
+        UserInfoUiState.Loading -> AppLoadingScreen()
         is UserInfoUiState.User -> {
             MyPageContent(
                 profile = uiState.profile,
@@ -199,7 +200,7 @@ private fun MyPageContent(
                 provider = provider,
                 onNavEditProfile = onNavEditProfile
             )
-            ServiceAlarm()
+            //ServiceAlarm()
             HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         }
 
@@ -212,7 +213,11 @@ private fun MyPageContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = it.title, fontSize = 16.sp)
+                Text(
+                    text = it.title,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                )
 
                 IconButton(
                     modifier = Modifier.size(20.dp),
@@ -253,7 +258,8 @@ private fun UserProfileInfo(
             Text(
                 modifier = Modifier.padding(start = 12.dp),
                 text = nickname,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             )
             Spacer(Modifier.weight(1f))
             // 로그인 방식
@@ -261,6 +267,7 @@ private fun UserProfileInfo(
                 modifier = Modifier.padding(start = 12.dp),
                 text = provider,
                 fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             )
         }
         Spacer(Modifier.weight(1f))
@@ -292,7 +299,8 @@ private fun ServiceAlarm(
     ) {
         Text(
             text = "서비스 알림",
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         )
 
         /** service alarm 토글 버튼 */

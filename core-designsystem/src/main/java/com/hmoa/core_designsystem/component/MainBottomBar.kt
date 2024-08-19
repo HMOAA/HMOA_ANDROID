@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.BottomNavItem
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun MainBottomBar(
@@ -83,7 +84,7 @@ fun MainBottomBar(
                             Spacer(Modifier.height(5.dp))
 
                             if (initValue == item.name.name) {
-                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White)
+                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, fontFamily = pretendard, color = Color.White)
                             }
                         }
                     }

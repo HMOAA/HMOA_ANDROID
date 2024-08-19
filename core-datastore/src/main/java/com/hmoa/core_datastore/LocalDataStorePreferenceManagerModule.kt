@@ -1,5 +1,7 @@
 package com.hmoa.core_datastore
 
+import com.hmoa.core_database.AppInfoManager
+import com.hmoa.core_database.AppInfoManagerImpl
 import com.hmoa.core_database.SignupInfoManager
 import com.hmoa.core_database.SignupInfoManagerImpl
 import com.hmoa.core_database.TokenManager
@@ -21,4 +23,8 @@ interface LocalDataStorePreferenceManagerModule {
     @Binds
     @Singleton
     fun bindSignupInfoManager(signupInfoManagerImpl: SignupInfoManagerImpl): SignupInfoManager
+
+    @Binds
+    @Singleton
+    fun bindAppSettingManager(appInfoManagerImpl: AppInfoManagerImpl) : AppInfoManager
 }

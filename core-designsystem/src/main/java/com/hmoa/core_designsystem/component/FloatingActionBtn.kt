@@ -30,11 +30,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun FloatingActionBtn(
@@ -48,7 +50,9 @@ fun FloatingActionBtn(
 
     val textStyle = TextStyle(
         color = Color.White,
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Normal
     )
 
     Column(

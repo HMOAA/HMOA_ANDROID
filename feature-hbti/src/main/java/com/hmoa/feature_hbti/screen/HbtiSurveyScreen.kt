@@ -54,9 +54,9 @@ fun HbtiSurveyScreen(
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val hbtiQuestionItems by viewModel.hbtiQuestionItemsState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+
 
     ErrorUiSetView(
         onConfirmClick = { onErrorHandleLoginAgain() },

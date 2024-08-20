@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 typealias QuestionPageIndex = Int
-typealias QuestionOptionId = Int
 
 @HiltViewModel
 class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: SurveyRepository) : ViewModel() {
@@ -45,11 +44,11 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(5000L),
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<HbtiSurveyUiState> =
+    var uiState: StateFlow<HbtiSurveyUiState> =
         combine(
             _hbtiQuestionItemsState,
             _hbtiAnwserIdsState
@@ -60,7 +59,7 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
             )
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Lazily, initialValue = HbtiSurveyUiState.Loading
+            started = SharingStarted.WhileSubscribed(5_000), initialValue = HbtiSurveyUiState.Loading
         )
 
     fun initializeHbtiQuestionItemsState(surveyQuestions: SurveyQuestionsResponseDto?): MutableMap<Int, HbtiQuestionItem> {

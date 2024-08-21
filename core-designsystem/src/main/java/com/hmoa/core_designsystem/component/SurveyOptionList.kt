@@ -1,10 +1,12 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,30 +23,59 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun SurveyOptionList(
-    initValue: String? = null,
+    answerIds: List<Int>,
     surveyOptions: List<String>,
-    onButtonClick: (optionIndex: Int) -> Unit
+    surveyOptionIds: List<Int>,
+    onButtonClick: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit
 ) {
-    val surveyOptions = surveyOptions
-    val (selectedOption, onOptionSelected) = remember {
-        val idx = if (initValue == null) 0 else surveyOptions.indexOf(initValue)
-        mutableStateOf(surveyOptions[idx])
+    val selectedOptionIds = remember {
+        surveyOptionIds.mapIndexed { index, it ->
+            if (it in answerIds) {
+                mutableStateOf(it)
+            } else {
+                mutableStateOf(null)
+            }
+        }
     }
+
+    val selectedStates = remember {
+        surveyOptionIds.mapIndexed { index, it ->
+            if (it in answerIds) {
+                mutableStateOf(true)
+            } else {
+                mutableStateOf(false)
+            }
+        }
+    }.toMutableList()
+
+    fun immediateSelectedStateChange(index: Int){
+        selectedStates[index].value = !selectedStates[index].value
+    }
+
+    LaunchedEffect(answerIds) {
+        Log.d("answerIds", "${answerIds}")
+    }
+
+    LaunchedEffect(selectedOptionIds) {
+        Log.d("SurveyOptionList", "${selectedOptionIds}")
+    }
+
     val scrollState = rememberScrollState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        modifier = Modifier.fillMaxHeight(0.7f).verticalScroll(scrollState).background(color =Color.White)
+        modifier = Modifier.fillMaxHeight(0.7f).verticalScroll(scrollState).background(color = Color.White)
     ) {
         surveyOptions.forEachIndexed { index, it ->
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
                 SurveyOptionItem(
-                    text = it,
+                    text = surveyOptions[index],
                     onClick = {
-                        onOptionSelected(it)
-                        onButtonClick(index)
+                        val state = selectedStates[index].value
+                        immediateSelectedStateChange(index)
+                        onButtonClick(index, !state)
                     },
-                    isSelected = (it == selectedOption)
+                    isSelected = selectedStates[index].value
                 )
             }
         }
@@ -86,8 +117,11 @@ fun SurveyOptionItem(text: String, onClick: () -> Unit, isSelected: Boolean) {
 @Composable
 fun SurveyOptionItemPreview() {
     val seasons = listOf("싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'")
-    Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight(1f).background(color = Color.Yellow)) {
-        SurveyOptionList(null, seasons, {})
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxHeight(1f)
+    ) {
+        SurveyOptionList(listOf(5, 1), seasons, listOf(5, 1, 2, 3), { idx, isGoTo -> })
         Button(
             isEnabled = true,
             btnText = "다음",

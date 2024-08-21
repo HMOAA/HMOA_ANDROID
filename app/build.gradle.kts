@@ -87,17 +87,6 @@ android {
         }
     }
 
-//    applicationVariants.all { variant ->
-//        variant.mergeResourcesProvider.configure {
-//            doLast {
-//                // processResources에 의존하는 작업 수행
-//                copy{
-//                    from project(':AndroidSecretSecure').file('./gabojait-android-googleapi-services.json')
-//                    into "../app"
-//                }
-//            }
-//        }
-//    }
 }
 
 

@@ -70,6 +70,7 @@ internal fun MyPageRoute(
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
     }
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
+    val termsOfServiceIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_OF_SERVICE)) }
     val scope = rememberCoroutineScope()
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
@@ -87,6 +88,7 @@ internal fun MyPageRoute(
                 OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
             },
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
+            openTermsOfServiceLink = { context.startActivity(termsOfServiceIntent) },
             onDelAccount = {
                 scope.launch {
                     launch { viewModel.delAccount() }.join()
@@ -118,6 +120,7 @@ fun MyPage(
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavMyPerfume: () -> Unit,
     onNavEditProfile: () -> Unit,
@@ -139,6 +142,7 @@ fun MyPage(
                 logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
                 openPrivacyPolicyLink = openPrivacyPolicyLink,
+                openTermsOfServiceLink = openTermsOfServiceLink,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
                 onNavMyPerfume = onNavMyPerfume,
@@ -168,6 +172,7 @@ private fun MyPageContent(
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onDelAccount: () -> Unit,
     onNavMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
@@ -180,7 +185,7 @@ private fun MyPageContent(
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
-        //ColumnData("이용 약관") { },
+        ColumnData("이용 약관") { openTermsOfServiceLink() },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
         ColumnData("버전 정보 ${APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },

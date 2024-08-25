@@ -30,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.SurveyOptionList
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationViewModel
 
 @Composable
@@ -128,11 +127,14 @@ private fun SelectPriceScreen(
             fontFamily = FontFamily(Font(R.font.pretendard_semi_bold))
         )
         Spacer(Modifier.height(32.dp))
-        SurveyOptionList(
-            surveyOptions = surveyOptions,
-            initValue = value,
-            onButtonClick = onChangedValue
-        )
+//        SurveyOptionList(
+//            surveyOptions = surveyOptions,
+//            onButtonClick = { optionIndex, isGoToSelectedState ->
+//                            /*onChangedValue()*/
+//                            },
+//            answerIds = ,
+//            surveyOptionIds = ,
+//        )
     }
 }
 

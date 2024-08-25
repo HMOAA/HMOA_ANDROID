@@ -1,5 +1,9 @@
 package com.hmoa.feature_hbti.screen
 
+import android.view.ViewGroup
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,11 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
@@ -101,6 +107,7 @@ private fun AddAddressMainContent(
     var address by remember{mutableStateOf("")}
     var detailAddress by remember{mutableStateOf("")}
     var request by remember{mutableStateOf("")}
+    var showWebView by remember{mutableStateOf(false)}
     var isEnabled = remember{ derivedStateOf{
         name.isNotEmpty() && addressName.isNotEmpty()
                 && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
@@ -108,6 +115,13 @@ private fun AddAddressMainContent(
                 && postalCode != null && address.isNotEmpty()
                 && detailAddress.isNotEmpty() && request.isNotEmpty()
     }}
+
+    if (showWebView){
+        AddressWebView(
+            onUpdateAddress = {address = it},
+            closeWebView = { showWebView = false }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -569,6 +583,39 @@ private fun InputRequest(
             placeHolder = "배송 시 요청사항을 적어주세요"
         )
     }
+}
+
+@Composable
+private fun AddressWebView(
+    onUpdateAddress: (address: String) -> Unit,
+    closeWebView: () -> Unit,
+){
+    class AddressJavaScriptInterface{
+        @JavascriptInterface
+        @Suppress("unused")
+        fun processData(data: String){
+            onUpdateAddress
+        }
+    }
+    val context = LocalContext.current
+    AndroidView(factory = {
+        WebView(context).apply{
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
+            settings.javaScriptEnabled = true
+            addJavascriptInterface(AddressJavaScriptInterface(), "Android")
+            webViewClient = object: WebViewClient(){
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    loadUrl("javascript:sample2_execDaumPostcode();")
+                }
+            }
+            settings.domStorageEnabled = true
+
+            loadUrl("https://hmoa.inuappcenter.kr/addressSearch.html")
+        }
+    })
 }
 
 @Preview

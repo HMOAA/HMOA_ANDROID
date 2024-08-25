@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FCMTokenSaveRequestDto(
-    val fcmToken: String
+    val fcmtoken: String
 )

@@ -1,7 +1,12 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -20,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.gson.GsonBuilder
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
@@ -27,6 +33,7 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteImageView
 import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.data.NoteSelect
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.feature_hbti.viewmodel.NotePickUiState
@@ -35,14 +42,14 @@ import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
 @Composable
 fun NotePickRoute(
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onNextClick: (productIdsToJson: String) -> Unit,
     noteOrderQuantity: Int?,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
     NotePickScreen(
         onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
         onBackClick = { onBackClick() },
-        onNextClick = { onNextClick() },
+        onNextClick = onNextClick,
         noteOrderQuantity
     )
 }
@@ -51,13 +58,14 @@ fun NotePickRoute(
 fun NotePickScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onNextClick: (productIdsToJson: String) -> Unit,
     noteOrderQuantity: Int?,
     viewmodel: NotePickViewmodel = hiltViewModel()
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val isNextAvailable by viewmodel.isCompletedNoteSelected.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
+    val selectedProductIds by viewmodel.selectedIds.collectAsStateWithLifecycle(emptyList())
 
     ErrorUiSetView(
         onConfirmClick = { onErrorHandleLoginAgain() },
@@ -67,7 +75,10 @@ fun NotePickScreen(
 
     LaunchedEffect(isNextAvailable) {
         if (isNextAvailable) {
-            onNextClick()
+            val navigationDto = NoteProductIds(productIds = selectedProductIds)
+            val gson = GsonBuilder().create()
+            val productIdsToJson = gson.toJson(navigationDto)
+            onNextClick(productIdsToJson)
         }
     }
 
@@ -107,10 +118,16 @@ fun NoteContent(
             onNavClick = { onBackClick() }
         )
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp).padding(bottom = 40.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 40.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .weight(1f)
+            ) {
                 Text(
                     "추천받은 카테고리는 '${topRecommendedNote}'입니다.\n원하는 카테고리 배송 수량을\n선택해주세요",
                     modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
@@ -132,7 +149,10 @@ fun NoteContent(
                 isEnabled = true,
                 btnText = "다음",
                 onClick = { onNextClick() },
-                buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
+                buttonModifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(52.dp)
+                    .background(color = Color.Black),
                 textSize = 18,
                 textColor = Color.White,
                 radious = 5

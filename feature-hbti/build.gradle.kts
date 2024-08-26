@@ -37,6 +37,12 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes.add("META-INF/gradle/incremental.annotation.processors")
+        }
+    }
+
 }
 
 dependencies {
@@ -95,10 +101,7 @@ dependencies {
     androidTestImplementation("org.mockito:mockito-android:5.3.1")
     androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
     //Hilt androidTest
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
     // ...with Kotlin.
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
-    // ...with Java.
-    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
-
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hilt_version")
 }

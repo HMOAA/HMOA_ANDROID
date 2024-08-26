@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlinx-serialization")
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
@@ -39,16 +40,19 @@ android {
 }
 
 dependencies {
-    implementation("androidx.test.ext:junit-ktx:1.2.1")
     val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
+    val kotlinx_version = "1.5.0"
 
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
     implementation(project(":core-repository"))
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
+    implementation("com.google.code.gson:gson:2.9.0")
 
     implementation("androidx.compose.ui:ui:1.1.0")
     implementation("androidx.compose.material3:material3:1.1.0")
@@ -67,8 +71,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
 
     testImplementation("junit:junit:4.13.2")
-
-
+    implementation("androidx.test.ext:junit-ktx:1.2.1")
     //unit test
     val mockito_version = "4.8.0"
     testImplementation("junit:junit:4.13.2")

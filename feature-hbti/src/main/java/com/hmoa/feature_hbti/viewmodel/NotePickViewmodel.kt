@@ -14,7 +14,14 @@ import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +33,7 @@ class NotePickViewmodel @Inject constructor(
     private var _topRecommendedNoteState = MutableStateFlow<String>("")
     private var _notesState = MutableStateFlow<ProductListResponseDto?>(null)
     private var _noteSelectDataState = MutableStateFlow<List<NoteSelect>>(listOf())
+    val selectedIds = MutableStateFlow<List<Int>>(emptyList())
     private var _noteOrderIndex = MutableStateFlow<Int>(1)
     private var _isCompletedNoteSelected = MutableStateFlow<Boolean>(false)
     val isCompletedNoteSelected: StateFlow<Boolean> = _isCompletedNoteSelected
@@ -157,6 +165,7 @@ class NotePickViewmodel @Inject constructor(
 
     fun postNoteSelected() {
         val requestDto = _noteSelectDataState.value.filter { it.isSelected }.map { it.productId }
+        selectedIds.update{requestDto}
         viewModelScope.launch(Dispatchers.IO) {
             flow { emit(hshopRepository.postNotesSelected(ProductListRequestDto(productIds = requestDto))) }.asResult()
                 .collectLatest { result ->

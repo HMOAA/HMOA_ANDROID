@@ -1,5 +1,7 @@
 package com.hmoa.core_network.service
 
+import com.hmoa.core_model.data.DefaultAddressDto
+import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
@@ -10,13 +12,22 @@ import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface MemberService {
     @GET("/member")
     suspend fun getMember(): ApiResponse<MemberResponseDto>
-
+    @GET("/member/address")
+    suspend fun getAddress(): ApiResponse<DefaultAddressDto>
+    @POST("/member/address")
+    suspend fun postAddress(@Body request: DefaultAddressDto): ApiResponse<DataResponseDto<Any>>
     @PATCH("/member/age")
     suspend fun updateAge(@Body request: AgeRequestDto): DataResponseDto<Any>
 
@@ -40,6 +51,10 @@ interface MemberService {
 
     @PATCH("/member/nickname")
     suspend fun updateNickname(@Body request: NickNameRequestDto): ApiResponse<DataResponseDto<Any>>
+    @GET("/member/orderInfo")
+    suspend fun getOrderInfo(): ApiResponse<DefaultOrderInfoDto>
+    @POST("/member/orderInfo")
+    suspend fun postOrderInfo(@Body request: DefaultOrderInfoDto): ApiResponse<DataResponseDto<Any>>
 
     @GET("/member/perfumeComments")
     suspend fun getPerfumeComments(@Query("page") page: Int): ApiResponse<List<CommunityCommentDefaultResponseDto>>

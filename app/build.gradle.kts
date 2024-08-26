@@ -31,9 +31,6 @@ android {
     }
 
     signingConfigs {
-        getByName("debug") {
-            storeFile = file("./debug.keystore")
-        }
         create("release") {
             keyAlias = localProperties.getProperty("KEY_ALIAS")
             keyPassword = localProperties.getProperty("KEY_PASSWORD")
@@ -52,10 +49,6 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
-        }
-        debug {
-            signingConfig = signingConfigs.getByName("debug")
-            isDebuggable = true
         }
     }
     compileOptions {
@@ -76,28 +69,6 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
-
-    applicationVariants.all {
-        this.mergeResourcesProvider.configure {
-            doLast {
-                copy {
-                    from(":HMOA_ANDROID_SECRET")
-                }
-            }
-        }
-    }
-
-//    applicationVariants.all { variant ->
-//        variant.mergeResourcesProvider.configure {
-//            doLast {
-//                // processResources에 의존하는 작업 수행
-//                copy{
-//                    from project(':AndroidSecretSecure').file('./gabojait-android-googleapi-services.json')
-//                    into "../app"
-//                }
-//            }
-//        }
-//    }
 }
 
 

@@ -82,8 +82,6 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
             }
         }
 
-        ErrorUiState.Loading -> {
-            AppLoadingScreen()
-        }
+        ErrorUiState.Loading -> {}
     }
 }

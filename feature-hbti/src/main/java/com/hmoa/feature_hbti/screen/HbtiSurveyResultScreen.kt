@@ -44,7 +44,7 @@ fun HbtiSurveyResultRoute(
 }
 
 @Composable
-private fun HbtiSurveyResultScreen(
+fun HbtiSurveyResultScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
     onHbtiProcessClick: () -> Unit,
@@ -69,13 +69,13 @@ private fun HbtiSurveyResultScreen(
         is HbtiSurveyResultUiState.HbtiSurveyResultData -> {
             if (showLoading) {
                 HbtiSurveyResultLoading((uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).userName)
-            } else {
-                HbtiSurveyResultContent(
-                    surveyResult = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).surveyResult,
-                    onHbtiProcessClick = { onHbtiProcessClick() },
-                    userName = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).userName
-                )
             }
+            HbtiSurveyResultContent(
+                surveyResult = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).surveyResult,
+                onHbtiProcessClick = { onHbtiProcessClick() },
+                userName = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).userName,
+                onBackClick = { onBackClick() }
+            )
         }
 
         HbtiSurveyResultUiState.Loading -> HbtiSurveyResultLoading("   ")
@@ -114,7 +114,8 @@ private fun HbtiSurveyResultLoading(userName: String) {
 private fun HbtiSurveyResultContent(
     surveyResult: List<NoteResponseDto>,
     onHbtiProcessClick: () -> Unit,
-    userName: String
+    userName: String,
+    onBackClick: () -> Unit
 ) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { surveyResult.size })
     if (surveyResult.isNotEmpty()) {
@@ -126,7 +127,8 @@ private fun HbtiSurveyResultContent(
                 TopBar(
                     title = "향BTI",
                     titleColor = Color.Black,
-                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back)
+                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                    onNavClick = { onBackClick() }
                 )
                 Column(modifier = Modifier.padding(start = 16.dp)) {
                     Text(
@@ -241,5 +243,5 @@ private fun HbtiSurveyResultPreview() {
         )
     )
 
-    HbtiSurveyResultContent(result, {}, "테스터")
+    HbtiSurveyResultContent(result, {}, "테스터", {})
 }

@@ -74,7 +74,6 @@ dependencies {
     implementation("androidx.test.ext:junit-ktx:1.2.1")
     //unit test
     val mockito_version = "4.8.0"
-    testImplementation("junit:junit:4.13.2")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
     testImplementation("org.mockito:mockito-core:$mockito_version")
     testImplementation("org.mockito:mockito-inline:$mockito_version")
@@ -84,9 +83,9 @@ dependencies {
     kaptTest("com.google.dagger:hilt-android-compiler:$hilt_version") // ...with Kotlin.
     testImplementation("com.google.dagger:hilt-android-testing:$hilt_version") // For Robolectric tests.
     testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44") // ...with Java.
+
     //androidTest
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.8")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.8")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
     // AndroidX Test 라이브러리 - Android 기기에서 실행되는 테스트를 위한 라이브러리
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -95,5 +94,11 @@ dependencies {
     androidTestImplementation("org.mockito:mockito-core:5.3.1")
     androidTestImplementation("org.mockito:mockito-android:5.3.1")
     androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    //Hilt androidTest
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
+    // ...with Kotlin.
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
+    // ...with Java.
+    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
 
 }

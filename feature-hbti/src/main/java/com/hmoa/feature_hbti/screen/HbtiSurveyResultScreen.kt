@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,8 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
@@ -35,12 +37,28 @@ import kotlinx.coroutines.delay
 fun HbtiSurveyResultRoute(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onHbtiProcessClick: () -> Unit
+    onHbtiProcessClick: () -> Unit,
+    viewmodel: HbtiSurveyResultViewmodel = hiltViewModel()
 ) {
+    val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+    val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
+    val showLoading = remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        viewmodel.getUserName()
+        viewmodel.getSurveyResult()
+        delay(2000) // 2초 지연
+        showLoading.value = false
+    }
+
     HbtiSurveyResultScreen(
         onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
         onBackClick = { onBackClick() },
-        onHbtiProcessClick = { onHbtiProcessClick() })
+        onHbtiProcessClick = { onHbtiProcessClick() },
+        uiState = uiState,
+        errorUiState = errorUiState,
+        showLoading = showLoading.value
+    )
 }
 
 @Composable
@@ -48,43 +66,37 @@ fun HbtiSurveyResultScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
     onHbtiProcessClick: () -> Unit,
-    viewmodel: HbtiSurveyResultViewmodel = hiltViewModel()
+    uiState: HbtiSurveyResultUiState,
+    errorUiState: ErrorUiState,
+    showLoading: Boolean
 ) {
-    var showLoading by remember { mutableStateOf(true) }
-    val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-    val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
 
-    ErrorUiSetView(
-        onConfirmClick = { onErrorHandleLoginAgain() },
-        errorUiState = errorUiState,
-        onCloseClick = { onBackClick() }
-    )
-
-    LaunchedEffect(Unit) {
-        delay(2000) // 2초 지연
-        showLoading = false
-    }
+//    ErrorUiSetView(
+//        onConfirmClick = { onErrorHandleLoginAgain() },
+//        errorUiState = errorUiState,
+//        onCloseClick = { onBackClick() }
+//    )
 
     when (uiState) {
         is HbtiSurveyResultUiState.HbtiSurveyResultData -> {
             if (showLoading) {
-                HbtiSurveyResultLoading((uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).userName)
+                HbtiSurveyResultLoading(uiState.userName)
             }
             HbtiSurveyResultContent(
-                surveyResult = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).surveyResult,
+                surveyResult = uiState.surveyResult,
                 onHbtiProcessClick = { onHbtiProcessClick() },
-                userName = (uiState as HbtiSurveyResultUiState.HbtiSurveyResultData).userName,
+                userName = uiState.userName,
                 onBackClick = { onBackClick() }
             )
         }
 
-        HbtiSurveyResultUiState.Loading -> HbtiSurveyResultLoading("   ")
+        HbtiSurveyResultUiState.Loading -> HbtiSurveyResultLoading("")
     }
 }
 
 @Composable
-private fun HbtiSurveyResultLoading(userName: String) {
-    Column(modifier = Modifier.fillMaxSize()) {
+fun HbtiSurveyResultLoading(userName: String) {
+    Column(modifier = Modifier.fillMaxSize().semantics { this.testTag = "HbtiSurveyResultLoading" }) {
         TopBar(title = "향BTI", titleColor = Color.Black)
         Column(
             modifier = Modifier.fillMaxHeight(1f).fillMaxWidth(),

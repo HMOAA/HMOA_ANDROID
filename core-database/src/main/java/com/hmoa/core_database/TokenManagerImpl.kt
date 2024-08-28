@@ -14,9 +14,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -40,18 +40,21 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         private val FCM_TOKEN_KEY = stringPreferencesKey("FCM_TOKEN")
     }
 
-    override fun getAuthTokenForHeader(): String? {
+    override fun getAuthTokenForHeader(): String {
         val token = runBlocking {
-            getAuthToken().first()
+            getAuthToken().filterNotNull().first() ?: "" //비로그인상태 -> null밖에 없어서 flow가 방출한 원소로 아무것도 없으면 null이 나올 것이기 때문
         }
+        Log.d("TokenManagerImpl", "getAuthTokenForHeader: AuthToken(accessToken):${token}")
         return token
     }
 
     override suspend fun getAuthToken(): Flow<String?> {
-        return dataStore.data.mapLatest { preferences ->
+        return dataStore.data.map { preferences ->
+            Log.d("TokenManagerImpl", "getAuthToken: AuthToken(accessToken):${preferences[AUTH_TOKEN_KEY]}")
             preferences[AUTH_TOKEN_KEY]
         }
     }
+
 
     override suspend fun getRememberedToken(): Flow<String?> {
         return dataStore.data.map { preferences ->

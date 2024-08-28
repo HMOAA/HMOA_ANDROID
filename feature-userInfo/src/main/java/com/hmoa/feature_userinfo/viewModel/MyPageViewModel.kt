@@ -94,28 +94,25 @@ class MyPageViewModel @Inject constructor(
     }
 
     //로그아웃
-    fun logout() {
-        viewModelScope.launch {
-            fcmRepository.deleteRemoteFcmToken()
-            fcmRepository.deleteLocalFcmToken()
-            loginRepository.deleteAuthToken()
-            loginRepository.deleteRememberedToken()
-        }
+    suspend fun logout() {
+        fcmRepository.deleteRemoteFcmToken()
+        fcmRepository.deleteLocalFcmToken()
+        loginRepository.deleteAuthToken()
+        loginRepository.deleteRememberedToken()
+
     }
 
     //계정 삭제
-    fun delAccount() {
-        viewModelScope.launch {
-            fcmRepository.deleteRemoteFcmToken()
-            fcmRepository.deleteLocalFcmToken()
-            try {
-                memberRepository.deleteMember()
-            } catch (e: Exception) {
-                generalErrorState.update { Pair(true, "계정 삭제에 실패했습니다 :(") }
-            }
-            loginRepository.deleteAuthToken()
-            loginRepository.deleteRememberedToken()
+    suspend fun delAccount() {
+        fcmRepository.deleteRemoteFcmToken()
+        fcmRepository.deleteLocalFcmToken()
+        try {
+            memberRepository.deleteMember()
+        } catch (e: Exception) {
+            generalErrorState.update { Pair(true, "계정 삭제에 실패했습니다 :(") }
         }
+        loginRepository.deleteAuthToken()
+        loginRepository.deleteRememberedToken()
     }
 }
 

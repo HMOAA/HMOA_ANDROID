@@ -45,7 +45,6 @@ import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val APP_VERSION = "1.1.0"
@@ -81,7 +80,7 @@ internal fun MyPageRoute(
             uiState = uiState.value,
             errorUiState = errorUiState,
             logoutEvent = {
-                scope.launch(Dispatchers.IO) {
+                scope.launch {
                     launch { viewModel.logout() }.join()
                     onNavLogin()
                 }
@@ -92,8 +91,8 @@ internal fun MyPageRoute(
             },
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
             onDelAccount = {
-                scope.launch(Dispatchers.IO) {
-                    launch { viewModel.delAccount() }
+                scope.launch {
+                    launch { viewModel.delAccount() }.join()
                     onNavLogin()
                 }
             },

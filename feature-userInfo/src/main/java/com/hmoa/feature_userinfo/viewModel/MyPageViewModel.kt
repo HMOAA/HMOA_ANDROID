@@ -99,7 +99,6 @@ class MyPageViewModel @Inject constructor(
         fcmRepository.deleteLocalFcmToken()
         loginRepository.deleteAuthToken()
         loginRepository.deleteRememberedToken()
-
     }
 
     //계정 삭제

@@ -10,7 +10,9 @@ import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,6 +53,13 @@ class HbtiSurveyResultViewmodel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000), initialValue = HbtiSurveyResultUiState.Loading
         )
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            getUserName()
+            getSurveyResult()
+        }
+    }
 
     suspend fun getUserName() {
         flow { emit(memberRepository.getMember()) }.asResult().collectLatest { result ->

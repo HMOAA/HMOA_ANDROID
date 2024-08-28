@@ -5,7 +5,7 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="test_unKnowenError_ErrorUiSetViewExist()">
+      <SelectionState runConfigName="feature-magazine">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

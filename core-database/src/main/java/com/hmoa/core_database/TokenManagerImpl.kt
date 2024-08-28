@@ -56,6 +56,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     override suspend fun getAuthToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
+            Log.d("TokenManagerImpl", "getAuthToken: AuthToken(accessToken):${preferences[AUTH_TOKEN_KEY]}")
             preferences[AUTH_TOKEN_KEY]
         }
     }

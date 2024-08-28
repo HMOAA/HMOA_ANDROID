@@ -2,9 +2,9 @@ name: Android develop CI
 
 on:
   push:
-    branches: [ "feature/hbti" ]
+    branches: [ "feature/github_action" ]
   pull_request:
-    branches: [ "feature/hbti" ]
+    branches: [ "feature/github_action" ]
 
 jobs:
   build:

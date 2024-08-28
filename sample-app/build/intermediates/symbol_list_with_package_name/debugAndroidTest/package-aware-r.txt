@@ -1,0 +1,3 @@
+com.hmoa.sample_app.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme

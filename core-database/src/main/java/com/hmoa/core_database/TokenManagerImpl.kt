@@ -1,7 +1,6 @@
 package com.hmoa.core_database
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
@@ -14,8 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -42,15 +40,13 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     override fun getAuthTokenForHeader(): String {
         val token = runBlocking {
-            getAuthToken().filterNotNull().first() ?: "" //비로그인상태 -> null밖에 없어서 flow가 방출한 원소로 아무것도 없으면 null이 나올 것이기 때문
+            getAuthToken().firstOrNull()
         }
-        Log.d("TokenManagerImpl", "getAuthTokenForHeader: AuthToken(accessToken):${token}")
-        return token
+        return token ?: ""
     }
 
     override suspend fun getAuthToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
-            Log.d("TokenManagerImpl", "getAuthToken: AuthToken(accessToken):${preferences[AUTH_TOKEN_KEY]}")
             preferences[AUTH_TOKEN_KEY]
         }
     }

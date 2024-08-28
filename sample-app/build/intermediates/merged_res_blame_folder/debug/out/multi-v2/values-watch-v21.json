@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.hmoa.sample_app.sample-app-mergeDebugResources-60:/values-watch-v21/values-watch-v21.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\seoho\\.gradle\\caches\\transforms-3\\d582d5d5cd4ef8453c7dcec0ea716a93\\transformed\\appcompat-1.6.1\\res\\values-watch-v21\\values-watch-v21.xml",
+                    "from": {
+                        "startLines": "2,6,10",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,271,499",
+                        "endLines": "5,9,13",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "266,494,724"
+                    }
+                }
+            ]
+        }
+    ]
+}

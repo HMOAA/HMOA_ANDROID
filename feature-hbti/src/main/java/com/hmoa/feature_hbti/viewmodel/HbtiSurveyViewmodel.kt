@@ -16,10 +16,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 typealias QuestionPageIndex = Int
-typealias QuestionOptionId = Int
 
 @HiltViewModel
 class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: SurveyRepository) : ViewModel() {
@@ -45,11 +45,11 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(5000L),
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<HbtiSurveyUiState> =
+    var uiState: StateFlow<HbtiSurveyUiState> =
         combine(
             _hbtiQuestionItemsState,
             _hbtiAnwserIdsState
@@ -60,7 +60,7 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
             )
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Lazily, initialValue = HbtiSurveyUiState.Loading
+            started = SharingStarted.WhileSubscribed(5_000), initialValue = HbtiSurveyUiState.Loading
         )
 
     fun initializeHbtiQuestionItemsState(surveyQuestions: SurveyQuestionsResponseDto?): MutableMap<Int, HbtiQuestionItem> {
@@ -102,7 +102,15 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     }
 
     suspend fun getSurveyQuestions() {
-        flow { emit(surveyRepository.getSurveyQuestions()) }.asResult().collectLatest { result ->
+        flow {
+            val result = surveyRepository.getSurveyQuestions()
+
+            if (result.data != null) {
+                emit(result)
+            } else if (result.errorMessage != null) {
+                throw Exception(result.errorMessage!!.message)
+            }
+        }.asResult().collectLatest { result ->
             when (result) {
                 is Result.Success -> {
                     _hbtiQuestionItemsState.update {
@@ -154,49 +162,49 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
         return arragedAnswers
     }
 
-    fun finishSurvey() {
+    suspend fun finishSurvey() {
         val arragedIds = arrangeAllAnswersIdToFinalQuestionAnswerState()
-        postSurveyResponds(SurveyRespondRequestDto(arragedIds))
+        withContext(Dispatchers.IO) {
+            postSurveyResponds(SurveyRespondRequestDto(arragedIds))
+        }
     }
 
-    fun postSurveyResponds(request: SurveyRespondRequestDto) {
-        viewModelScope.launch(Dispatchers.IO) {
-            flow { emit(surveyRepository.postSurveyResponds(request)) }.asResult()
-                .collectLatest { result ->
-                    when (result) {
-                        is Result.Success -> {
-                            viewModelScope.launch {
-                                launch { surveyRepository.deleteAllNotes() }.join()
-                                launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }.join()
-                            }
-                        }
-
-                        is Result.Error -> {
-                            when (result.exception.message) {
-                                ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                    expiredTokenErrorState.update { true }
-                                }
-
-                                ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                    wrongTypeTokenErrorState.update { true }
-                                }
-
-                                ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                    unLoginedErrorState.update { true }
-                                }
-
-                                else -> {
-                                    generalErrorState.update { Pair(true, result.exception.message) }
-                                }
-                            }
-                        }
-
-                        is Result.Loading -> {
-                            HbtiSurveyUiState.Loading
+    suspend fun postSurveyResponds(request: SurveyRespondRequestDto) {
+        flow { emit(surveyRepository.postSurveyResponds(request)) }.asResult()
+            .collectLatest { result ->
+                when (result) {
+                    is Result.Success -> {
+                        viewModelScope.launch {
+                            launch { surveyRepository.deleteAllNotes() }.join()
+                            launch { saveSurveyResultToLocalDB(result.data.data?.recommendNotes) }.join()
                         }
                     }
+
+                    is Result.Error -> {
+                        when (result.exception.message) {
+                            ErrorMessageType.EXPIRED_TOKEN.message -> {
+                                expiredTokenErrorState.update { true }
+                            }
+
+                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
+                                wrongTypeTokenErrorState.update { true }
+                            }
+
+                            ErrorMessageType.UNKNOWN_ERROR.message -> {
+                                unLoginedErrorState.update { true }
+                            }
+
+                            else -> {
+                                generalErrorState.update { Pair(true, result.exception.message) }
+                            }
+                        }
+                    }
+
+                    is Result.Loading -> {
+                        HbtiSurveyUiState.Loading
+                    }
                 }
-        }
+            }
     }
 
     fun increaseHbtiQuestionItem_SelectedOption(

@@ -21,7 +21,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
 
-    @Singleton
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
@@ -32,7 +31,6 @@ object ServiceModule {
             .build()
     }
 
-    @Singleton
     @Provides
     fun provideOkHttpClient(headerInterceptor: Interceptor, authenticator: AuthAuthenticator): OkHttpClient {
 
@@ -44,10 +42,9 @@ object ServiceModule {
         return okHttpClientBuilder.build()
     }
 
-    @Singleton
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
-        val token = tokenManager.getAuthTokenForHeader() ?: ""
+        val token = tokenManager.getAuthTokenForHeader()
         return Interceptor { chain ->
             with(chain) {
                 val newRequest = request().newBuilder()

@@ -3,7 +3,7 @@ package com.hmoa.core_database
 import kotlinx.coroutines.flow.Flow
 
 interface TokenManager {
-    fun getAuthTokenForHeader(): String?
+    fun getAuthTokenForHeader(): String
     suspend fun getAuthToken(): Flow<String?>
     suspend fun getRememberedToken(): Flow<String?>
     suspend fun getKakaoAccessToken(): Flow<String?>

@@ -10,14 +10,11 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 val Context.datastore: DataStore<Preferences> by preferencesDataStore(
@@ -42,10 +39,19 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     override fun getAuthTokenForHeader(): String {
         val token = runBlocking {
-            getAuthToken().filterNotNull().first() ?: "" //비로그인상태 -> null밖에 없어서 flow가 방출한 원소로 아무것도 없으면 null이 나올 것이기 때문
+            try {
+                withTimeout(2000L) {
+                    getAuthToken().filterNotNull().first()
+                }
+            } catch (e: TimeoutCancellationException) {
+                Log.d("TokenManagerImpl", "getAuthTokenForHeader: Timeout occurred, returning null.")
+                null
+            }
         }
-        Log.d("TokenManagerImpl", "getAuthTokenForHeader: AuthToken(accessToken):${token}")
-        return token
+        if (token != null) {
+            Log.d("TokenManagerImpl", "getAuthTokenForHeader: AuthToken(accessToken):${token}")
+        }
+        return token ?: ""
     }
 
     override suspend fun getAuthToken(): Flow<String?> {

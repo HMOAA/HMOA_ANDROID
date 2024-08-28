@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import com.hmoa.core_common.ErrorUiState
 
@@ -13,14 +15,13 @@ import com.hmoa.core_common.ErrorUiState
 fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onCloseClick: () -> Unit) {
     var isOpen by remember { mutableStateOf(true) }
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
     when (errorUiState) {
         is ErrorUiState.ErrorData -> {
             if (errorUiState.expiredTokenError) {
                 AppDesignDialog(
                     isOpen = isOpen,
                     modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp),
+                        .width(screenWidth - 88.dp).semantics { testTag = "expiredTokenError" },
                     title = "리프레시 토큰이 만료되었습니다",
                     content = "다시 로그인해주세요",
                     buttonTitle = "로그인 하러가기",
@@ -37,7 +38,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                 AppDesignDialog(
                     isOpen = isOpen,
                     modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp),
+                        .width(screenWidth - 88.dp).semantics { testTag = "wrongTypeTokenError" },
                     title = "유효하지 않은 토큰입니다",
                     content = "유효하지 않은 토큰입니다",
                     buttonTitle = "로그인 하러가기",
@@ -54,7 +55,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                 AppDesignDialog(
                     isOpen = isOpen,
                     modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp),
+                        .width(screenWidth - 88.dp).semantics { testTag = "unknownError" },
                     title = "로그인 후 이용가능한 서비스입니다",
                     content = "입력하신 내용을 다시 확인해주세요",
                     buttonTitle = "로그인 하러가기",
@@ -77,7 +78,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                         onCloseClick()
                     },
                     modifier = Modifier.wrapContentHeight()
-                        .width(screenWidth - 88.dp)
+                        .width(screenWidth - 88.dp).semantics { testTag = "generalError" }
                 )
             }
         }

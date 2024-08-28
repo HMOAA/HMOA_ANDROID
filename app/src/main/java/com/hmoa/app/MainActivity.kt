@@ -17,11 +17,7 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -54,16 +50,11 @@ import com.hmoa.feature_magazine.Navigation.MagazineRoute
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import com.hmoa.feature_perfume.navigation.PerfumeRoute
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.zip
-import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -112,11 +103,12 @@ class MainActivity : AppCompatActivity() {
             }
             launch {
                 newFlow.collectLatest { token ->
-                    Log.d("LOGIN TOKEN","access : ${token.first} refresh : ${token.second}")
+                    Log.d("LOGIN TOKEN", "access : ${token.first} refresh : ${token.second}")
                     if (token.first == null && token.second == null) {
                         initialRoute = AuthenticationRoute.Login.name
                         currentJob.cancel()
                     } else {
+                        Log.d("LOGIN TOKEN", "access : ${token.first} refresh : ${token.second}")
                         initialRoute = HomeRoute.Home.name
                         currentJob.cancel()
                     }
@@ -125,16 +117,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         //fcm token post
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             val authToken = viewModel.authToken()
             val rememberToken = viewModel.rememberedToken()
             val fcmToken = viewModel.getFcmToken()
-            combine(authToken, rememberToken, fcmToken){authToken, rememberToken, fcmToken->}.collectLatest{
+            combine(authToken, rememberToken, fcmToken) { authToken, rememberToken, fcmToken -> }.collectLatest {
                 val auth = authToken.stateIn(this).value
                 val remember = rememberToken.stateIn(this).value
                 val fcm = fcmToken.stateIn(this).value
-                if (auth != null && remember != null && fcm != null){
-                    withContext(Dispatchers.IO){checkFcmToken(fcm)}
+                if (auth != null && remember != null && fcm != null) {
+                    withContext(Dispatchers.IO) { checkFcmToken(fcm) }
                     lifecycle.coroutineScope.cancel()
                 }
             }
@@ -148,12 +140,14 @@ class MainActivity : AppCompatActivity() {
 
             val navBackStackEntry = navHostController.currentBackStackEntryAsState()
             navBackStackEntry.value?.destination?.route?.let { route ->
-                if (route in bottomNav) {currentScreen = route}
+                if (route in bottomNav) {
+                    currentScreen = route
+                }
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-            val deeplink = remember{ handleDeeplink(intent) }
+            val deeplink = remember { handleDeeplink(intent) }
 
             Scaffold(
                 modifier = Modifier.systemBarsPadding(),
@@ -186,8 +180,8 @@ class MainActivity : AppCompatActivity() {
                 Box(
                     modifier = Modifier.padding(bottom = it.calculateBottomPadding())
                 ) {
-                    SetUpNavGraph(navHostController,initialRoute)
-                    LaunchedEffect(Unit){
+                    SetUpNavGraph(navHostController, initialRoute)
+                    LaunchedEffect(Unit) {
                         if (deeplink.first != null) {
                             navHostController.navigate(deeplink.first!!)
                             viewModel.checkAlarm(deeplink.second!!)
@@ -197,31 +191,32 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     //firebase 초기 토큰 처리
-    private fun initFirebaseSetting(){
+    private fun initFirebaseSetting() {
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            CoroutineScope(Dispatchers.IO).launch{
+            CoroutineScope(Dispatchers.IO).launch {
                 val fcmToken = viewModel.getFcmToken().stateIn(this).value
                 Log.d("FCM TEST", "fcm token : ${fcmToken}")
-                if (it != fcmToken){
+                if (it != fcmToken) {
                     Log.d("FCM TEST", "firebase messaging fcm token : ${it}")
                     viewModel.saveFcmToken(it)
                 }
             }
-        }.addOnFailureListener{
+        }.addOnFailureListener {
             Log.e("FCM TEST", "${it.message} \n ${it.stackTrace}")
         }
     }
 
     //deeplink 처리 함수
-    private fun handleDeeplink(intent : Intent?) : Pair<String?, Int?> {
+    private fun handleDeeplink(intent: Intent?): Pair<String?, Int?> {
         var deeplink: String? = intent?.getStringExtra("deeplink") ?: return Pair(null, null)
         val alarm_id = intent.extras?.getString("id")?.toInt() ?: return Pair(null, null)
 
         val uri = Uri.parse(deeplink)
         val host = uri.host
         val targetId = uri.lastPathSegment?.toInt()
-        deeplink = when (host){
+        deeplink = when (host) {
             "community" -> "${CommunityRoute.CommunityDescriptionRoute.name}/${targetId}"
             "perfume_comment" -> "${PerfumeRoute.PerfumeComment.name}/${targetId}"
             else -> null
@@ -231,12 +226,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun checkFcmToken(
-        fcmToken : String
+        fcmToken: String
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             val isEnabled = viewModel.getNotificationEnabled().stateIn(this)
             // isEnabled 가 true 면
-            if (isEnabled.value){
+            if (isEnabled.value) {
                 Log.d("FCM TEST", "post fcm token")
                 viewModel.postFcmToken(fcmToken)
             } else {
@@ -258,15 +253,16 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 PERMISSION_REQUEST_CODE
             )
-            CoroutineScope(Dispatchers.IO).launch{
+            CoroutineScope(Dispatchers.IO).launch {
                 viewModel.saveNotificationEnabled(false)
             }
         } else {
-            CoroutineScope(Dispatchers.IO).launch{
+            CoroutineScope(Dispatchers.IO).launch {
                 viewModel.saveNotificationEnabled(true)
             }
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -274,20 +270,24 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         // android 13 미만인 버전에서는 notification 권한이 필요 없음
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && requestCode == PERMISSION_REQUEST_CODE){
-            if (ContextCompat.checkSelfPermission(this,Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && requestCode == PERMISSION_REQUEST_CODE) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 // 권한 부여되면 그 때 fcm token을 서버에 보내도록 해야 할 듯?
-                CoroutineScope(Dispatchers.IO).launch{
+                CoroutineScope(Dispatchers.IO).launch {
                     viewModel.saveNotificationEnabled(true)
                 }
             } else {
                 // 알림 권한 설정을 안할 시 알림을 받지 않도록 함
-                lifecycleScope.launch{
+                lifecycleScope.launch {
                     viewModel.saveNotificationEnabled(false)
                 }
             }
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
-            CoroutineScope(Dispatchers.IO).launch{
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            CoroutineScope(Dispatchers.IO).launch {
                 viewModel.saveNotificationEnabled(true)
             }
         }

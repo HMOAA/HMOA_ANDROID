@@ -56,6 +56,7 @@ class HbtiSurveyScreenTest : TestCase() {
 
     @Before
     public override fun setUp() {
+        super.setUp()
         runBlocking {
             viewModel = HbtiSurveyViewmodel(surveyRepository)
         }

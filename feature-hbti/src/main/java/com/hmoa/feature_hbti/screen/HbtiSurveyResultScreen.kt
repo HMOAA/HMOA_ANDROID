@@ -53,11 +53,13 @@ private fun HbtiSurveyResultScreen(
     var showLoading by remember { mutableStateOf(true) }
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
+    var isOpen by remember { mutableStateOf(true) }
 
     ErrorUiSetView(
+        isOpen = isOpen,
         onConfirmClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
-        onCloseClick = { onBackClick() }
+        onCloseClick = onBackClick
     )
 
     LaunchedEffect(Unit) {

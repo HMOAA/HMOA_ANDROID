@@ -25,8 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -91,6 +90,8 @@ fun MagazineDescScreen(
     onNavLogin: () -> Unit,
     onNavDesc : (Int) -> Unit,
 ){
+    var isOpen by remember { mutableStateOf(true) }
+
     when(uiState){
         MagazineDescUiState.Loading -> AppLoadingScreen()
         is MagazineDescUiState.Success -> {
@@ -113,6 +114,7 @@ fun MagazineDescScreen(
         }
         is MagazineDescUiState.Error -> {
             ErrorUiSetView(
+                isOpen = isOpen,
                 onConfirmClick = onNavLogin,
                 errorUiState = errState,
                 onCloseClick = onNavBack

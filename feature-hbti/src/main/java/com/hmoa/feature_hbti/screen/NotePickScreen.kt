@@ -1,19 +1,12 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,13 +37,15 @@ fun NotePickRoute(
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
     noteOrderQuantity: Int?,
+    onBackToHbtiScreen: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
     NotePickScreen(
         onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
         onBackClick = { onBackClick() },
         onNextClick = onNextClick,
-        noteOrderQuantity
+        noteOrderQuantity,
+        onBackToHbtiScreen = onBackToHbtiScreen
     )
 }
 
@@ -60,17 +55,20 @@ fun NotePickScreen(
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
     noteOrderQuantity: Int?,
+    onBackToHbtiScreen: () -> Unit,
     viewmodel: NotePickViewmodel = hiltViewModel()
 ) {
+    var isOpen by remember { mutableStateOf(true) }
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val isNextAvailable by viewmodel.isCompletedNoteSelected.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
     val selectedProductIds by viewmodel.selectedIds.collectAsStateWithLifecycle(emptyList())
 
     ErrorUiSetView(
+        isOpen = isOpen,
         onConfirmClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
-        onCloseClick = { onBackClick() }
+        onCloseClick = { onBackToHbtiScreen() },
     )
 
     LaunchedEffect(isNextAvailable) {

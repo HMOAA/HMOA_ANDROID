@@ -83,13 +83,14 @@ fun PerfumeScreen(
     LaunchedEffect(true) {
         viewModel.initializePerfume(perfumeId)
     }
-
+    var isOpen by remember { mutableStateOf(true) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
     val perfumeComentCount by viewModel.perfumeCommentsCountState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
 
     ErrorUiSetView(
+        isOpen = isOpen,
         onConfirmClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
         onCloseClick = { onBackClick() }

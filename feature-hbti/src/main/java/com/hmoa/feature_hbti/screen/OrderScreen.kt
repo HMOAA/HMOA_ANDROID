@@ -1,34 +1,14 @@
 package com.hmoa.feature_hbti.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,12 +24,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.concatWithComma
 import com.hmoa.core_common.formatWon
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.CircleImageView
-import com.hmoa.core_designsystem.component.CustomOutlinedTextField
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.TagBadge
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
@@ -68,14 +43,14 @@ fun OrderRoute(
     productIds: List<Int>,
     onNavBack: () -> Unit,
     viewModel: OrderViewModel = hiltViewModel()
-){
+) {
     viewModel.setIds(productIds)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
-    OrderScreen (
+    OrderScreen(
         uiState = uiState.value,
         errState = errState.value,
-        deleteNote = {viewModel.deleteNote(it)},
+        deleteNote = { viewModel.deleteNote(it) },
         saveBuyerInfo = { name, phoneNumber ->
             viewModel.saveBuyerInfo(name, phoneNumber)
         },
@@ -90,8 +65,10 @@ fun OrderScreen(
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
-){
-    when(uiState){
+) {
+    var isOpen by remember { mutableStateOf(true) }
+
+    when (uiState) {
         OrderUiState.Loading -> AppLoadingScreen()
         is OrderUiState.Success -> {
             OrderScreenMainContent(
@@ -103,15 +80,20 @@ fun OrderScreen(
                 onNavBack = onNavBack
             )
         }
+
         OrderUiState.Error -> {
             ErrorUiSetView(
+                isOpen = isOpen,
                 onConfirmClick = onNavBack,
                 errorUiState = errState,
-                onCloseClick = onNavBack
+                onCloseClick = {
+                    onNavBack()
+                }
             )
         }
     }
 }
+
 @Composable
 private fun OrderScreenMainContent(
     orderInfo: FinalOrderResponseDto,
@@ -120,20 +102,20 @@ private fun OrderScreenMainContent(
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit
-){
+) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
-    var name by remember{mutableStateOf("")}
-    var phone1 by remember{mutableStateOf("")}
-    var phone2 by remember{mutableStateOf("")}
-    var phone3 by remember{mutableStateOf("")}
+    var name by remember { mutableStateOf("") }
+    var phone1 by remember { mutableStateOf("") }
+    var phone2 by remember { mutableStateOf("") }
+    var phone3 by remember { mutableStateOf("") }
     val options = listOf("토스페이", "카카오페이", "페이코", "일반 결제")
-    var selectedOption by remember{mutableStateOf(options[0])}
-    var isAllChecked by remember{mutableStateOf(false)}
-    var isRefundChecked by remember{mutableStateOf(false)}
-    var isPrivacyConsentGranted by remember{mutableStateOf(false)}
-    val isEnabled = remember{
-        derivedStateOf{addressInfo != null && buyerInfo != null}
+    var selectedOption by remember { mutableStateOf(options[0]) }
+    var isAllChecked by remember { mutableStateOf(false) }
+    var isRefundChecked by remember { mutableStateOf(false) }
+    var isPrivacyConsentGranted by remember { mutableStateOf(false) }
+    val isEnabled = remember {
+        derivedStateOf { addressInfo != null && buyerInfo != null }
     }
 
     Column(
@@ -141,7 +123,7 @@ private fun OrderScreenMainContent(
             .fillMaxSize()
             .background(color = Color.White)
             .padding(bottom = 52.dp)
-    ){
+    ) {
         TopBar(
             title = "주문서 작성",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -152,27 +134,27 @@ private fun OrderScreenMainContent(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .verticalScroll(state = scrollState)
-        ){
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
                 Text(
                     text = "주문자 정보",
                     fontSize = 16.sp,
                     fontFamily = CustomFont.bold
                 )
                 Text(
-                    modifier = if(buyerInfo == null)  Modifier.clickable{
-                        if (name.isNotEmpty() && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()){
+                    modifier = if (buyerInfo == null) Modifier.clickable {
+                        if (name.isNotEmpty() && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()) {
                             val phone = "${phone1}-${phone2}-${phone3}"
                             saveBuyerInfo(name, phone)
                         } else {
                             Toast.makeText(context, "정보를 모두 작성한 후 저장해주세요", Toast.LENGTH_SHORT).show()
                         }
                     } else Modifier,
-                    text = if(buyerInfo == null) "작성한 정보 저장하기" else "",
+                    text = if (buyerInfo == null) "작성한 정보 저장하기" else "",
                     fontSize = 10.sp,
                     fontFamily = CustomFont.medium,
                     textDecoration = TextDecoration.Underline
@@ -191,7 +173,7 @@ private fun OrderScreenMainContent(
             } else {
                 DefaultBuyerInfo(buyerInfo)
             }
-            if (addressInfo == null){
+            if (addressInfo == null) {
                 HorizontalDivider(thickness = 1.dp, color = Color.Black)
                 InputAddress()
             } else {
@@ -212,16 +194,16 @@ private fun OrderScreenMainContent(
             SelectPaymentType(
                 options = options,
                 selectedOption = selectedOption,
-                onValueChanged = {selectedOption = it}
+                onValueChanged = { selectedOption = it }
             )
             HorizontalDivider(thickness = 1.dp, color = Color.Black)
             CheckPrivacyConsent(
                 isAllChecked = isAllChecked,
-                onUpdateAllChecked = {isAllChecked = it},
+                onUpdateAllChecked = { isAllChecked = it },
                 isRefundChecked = isRefundChecked,
-                onUpdateRefundChecked = {isRefundChecked = it},
+                onUpdateRefundChecked = { isRefundChecked = it },
                 isPrivacyConsentGranted = isPrivacyConsentGranted,
-                onUpdatePrivacyConsentGranted = {isPrivacyConsentGranted = it}
+                onUpdatePrivacyConsentGranted = { isPrivacyConsentGranted = it }
             )
             Button(
                 buttonModifier = Modifier
@@ -237,16 +219,17 @@ private fun OrderScreenMainContent(
         }
     }
 }
+
 @Composable
 private fun InputName(
     name: String,
     onNameChanged: (newName: String) -> Unit,
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 20.dp)
-    ){
+    ) {
         Text(
             text = "이름",
             fontSize = 12.sp,
@@ -270,6 +253,7 @@ private fun InputName(
         )
     }
 }
+
 @Composable
 private fun InputPhone(
     phone1: String,
@@ -278,12 +262,12 @@ private fun InputPhone(
     onPhone2Changed: (newPhone2: String) -> Unit,
     phone3: String,
     onPhone3Changed: (newPhone3: String) -> Unit,
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp)
-    ){
+    ) {
         Text(
             text = "휴대전화",
             fontSize = 12.sp,
@@ -293,7 +277,7 @@ private fun InputPhone(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             CustomOutlinedTextField(
                 modifier = Modifier
                     .weight(1f)
@@ -313,7 +297,7 @@ private fun InputPhone(
                 modifier = Modifier
                     .width(20.dp)
                     .padding(horizontal = 5.dp)
-            ){
+            ) {
                 HorizontalDivider(thickness = 1.dp, color = CustomColor.gray1)
             }
             CustomOutlinedTextField(
@@ -335,7 +319,7 @@ private fun InputPhone(
                 modifier = Modifier
                     .width(20.dp)
                     .padding(horizontal = 5.dp)
-            ){
+            ) {
                 HorizontalDivider(thickness = 1.dp, color = CustomColor.gray1)
             }
             CustomOutlinedTextField(
@@ -357,13 +341,14 @@ private fun InputPhone(
         Spacer(Modifier.height(24.dp))
     }
 }
+
 @Composable
-private fun DefaultBuyerInfo(buyerInfo: DefaultOrderInfoDto){
+private fun DefaultBuyerInfo(buyerInfo: DefaultOrderInfoDto) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(20.dp),
-    ){
+    ) {
         Text(
             text = buyerInfo.name,
             fontSize = 14.sp,
@@ -378,22 +363,23 @@ private fun DefaultBuyerInfo(buyerInfo: DefaultOrderInfoDto){
         )
     }
 }
+
 @Composable
-private fun InputAddress(){
+private fun InputAddress() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Text(
             text = "배송지",
             fontSize = 18.sp,
             fontFamily = CustomFont.bold
         )
         Text(
-            modifier = Modifier.clickable{
+            modifier = Modifier.clickable {
                 /** 배송지 입력 이벤트 */
             },
             text = "배송지를 입력해주세요",
@@ -403,12 +389,13 @@ private fun InputAddress(){
         )
     }
 }
+
 @Composable
-private fun DefaultAddressInfo(addressInfo: DefaultAddressDto){
+private fun DefaultAddressInfo(addressInfo: DefaultAddressDto) {
     Column(
         modifier = Modifier.fillMaxWidth()
-    ){
-        Row(modifier = Modifier.fillMaxWidth()){
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = addressInfo.name,
                 fontSize = 14.sp,
@@ -423,7 +410,7 @@ private fun DefaultAddressInfo(addressInfo: DefaultAddressDto){
             )
             Spacer(Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable{
+                modifier = Modifier.clickable {
                     val addressInfoToJson = Json.encodeToString(addressInfo)
                     /** 주소 추가 화면으로 이동하기 */
                 },
@@ -441,24 +428,25 @@ private fun DefaultAddressInfo(addressInfo: DefaultAddressDto){
         )
     }
 }
+
 @Composable
 private fun ProductInfo(
     notes: List<NoteProduct>,
     deleteNote: (id: Int) -> Unit,
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 24.dp)
-    ){
+    ) {
         Text(
             text = "상품 정보",
             fontSize = 18.sp,
             fontFamily = CustomFont.bold
         )
-        notes.forEach{ note ->
+        notes.forEach { note ->
             NoteItem(note = note, deleteNote = deleteNote)
-            if (notes.lastIndex != notes.indexOf(note)){
+            if (notes.lastIndex != notes.indexOf(note)) {
                 HorizontalDivider(thickness = 1.dp, color = CustomColor.gray1)
             }
         }
@@ -466,12 +454,12 @@ private fun ProductInfo(
 }
 
 @Composable
-private fun NoteItem(note: NoteProduct, deleteNote: (id: Int) -> Unit){
+private fun NoteItem(note: NoteProduct, deleteNote: (id: Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 20.dp)
-    ){
+    ) {
         CircleImageView(
             imgUrl = note.productPhotoUrl,
             width = 60,
@@ -480,7 +468,7 @@ private fun NoteItem(note: NoteProduct, deleteNote: (id: Int) -> Unit){
         Spacer(Modifier.width(20.dp))
         Column(
             modifier = Modifier.weight(1f)
-        ){
+        ) {
             Text(
                 text = note.productName,
                 fontSize = 14.sp,
@@ -488,7 +476,7 @@ private fun NoteItem(note: NoteProduct, deleteNote: (id: Int) -> Unit){
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = concatWithComma(note.notes.map{it.noteName}),
+                text = concatWithComma(note.notes.map { it.noteName }),
                 fontSize = 10.sp,
                 fontFamily = CustomFont.regular
             )
@@ -503,7 +491,7 @@ private fun NoteItem(note: NoteProduct, deleteNote: (id: Int) -> Unit){
         Column(
             modifier = Modifier.wrapContentWidth(),
             horizontalAlignment = Alignment.End
-        ){
+        ) {
             IconButton(
                 modifier = Modifier.size(10.dp),
                 onClick = { deleteNote(note.productId) }
@@ -537,17 +525,17 @@ private fun Receipt(
     shippingPayment: Int,
     totalPayment: Int,
     finalPayment: Int
-){
+) {
     Column(
         modifier = Modifier.fillMaxWidth()
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Text(
                 text = "결제금액",
                 fontSize = 18.sp,
@@ -567,7 +555,7 @@ private fun Receipt(
                 .padding(top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Text(
                 text = "총 상품금액",
                 fontSize = 12.sp,
@@ -587,7 +575,7 @@ private fun Receipt(
                 .padding(top = 12.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Text(
                 text = "배송비",
                 fontSize = 12.sp,
@@ -608,7 +596,7 @@ private fun Receipt(
                 .padding(vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Text(
                 text = "총 결제금액",
                 fontSize = 12.sp,
@@ -628,12 +616,12 @@ private fun SelectPaymentType(
     options: List<String>,
     selectedOption: String,
     onValueChanged: (value: String) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 24.dp, bottom = 20.dp)
-    ){
+    ) {
         Text(
             text = "결제수단",
             fontSize = 18.sp,
@@ -653,25 +641,25 @@ private fun VerticalOptions(
     options: List<String>,
     selectedOption: String,
     onValueChanged: (value: String) -> Unit,
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 20.dp)
-    ){
-        options.forEach{
+    ) {
+        options.forEach {
             val isSelected = it == selectedOption
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 IconButton(
                     modifier = Modifier.size(24.dp),
                     onClick = { onValueChanged(it) }
                 ) {
                     Image(
                         modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(if(isSelected) com.hmoa.core_designsystem.R.drawable.ic_check else com.hmoa.core_designsystem.R.drawable.ic_check_empty),
+                        painter = painterResource(if (isSelected) com.hmoa.core_designsystem.R.drawable.ic_check else com.hmoa.core_designsystem.R.drawable.ic_check_empty),
                         contentDescription = "Check Button"
                     )
                 }
@@ -682,7 +670,9 @@ private fun VerticalOptions(
                     fontFamily = CustomFont.semiBold
                 )
             }
-            if (options.indexOf(it) != options.lastIndex){Spacer(Modifier.height(16.dp))}
+            if (options.indexOf(it) != options.lastIndex) {
+                Spacer(Modifier.height(16.dp))
+            }
         }
     }
 }
@@ -695,24 +685,24 @@ private fun CheckPrivacyConsent(
     onUpdateRefundChecked: (Boolean) -> Unit,
     isPrivacyConsentGranted: Boolean,
     onUpdatePrivacyConsentGranted: (Boolean) -> Unit
-){
+) {
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 24.dp)
-    ){
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             IconButton(
                 modifier = Modifier.size(24.dp),
                 onClick = { onUpdateAllChecked(!isAllChecked) }
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(if(isAllChecked) com.hmoa.core_designsystem.R.drawable.ic_check else com.hmoa.core_designsystem.R.drawable.ic_check_empty),
+                    painter = painterResource(if (isAllChecked) com.hmoa.core_designsystem.R.drawable.ic_check else com.hmoa.core_designsystem.R.drawable.ic_check_empty),
                     contentDescription = "Privacy Consent"
                 )
             }
@@ -727,13 +717,13 @@ private fun CheckPrivacyConsent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 20.dp)
-        ){
+        ) {
             IconButton(
                 onClick = { onUpdateRefundChecked(!isRefundChecked) }
             ) {
                 Icon(
                     painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_check_not_have_background),
-                    tint = if(isRefundChecked) Color.Black else CustomColor.gray3,
+                    tint = if (isRefundChecked) Color.Black else CustomColor.gray3,
                     contentDescription = "Check"
                 )
             }
@@ -746,7 +736,7 @@ private fun CheckPrivacyConsent(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable{
+                modifier = Modifier.clickable {
                     /** 환불 방법 관련 pop up 띄우기 */
                 },
                 text = "보기",
@@ -760,13 +750,13 @@ private fun CheckPrivacyConsent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 27.dp)
-        ){
+        ) {
             IconButton(
                 onClick = { onUpdatePrivacyConsentGranted(!isPrivacyConsentGranted) }
             ) {
                 Icon(
                     painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_check_not_have_background),
-                    tint = if(isPrivacyConsentGranted) Color.Black else CustomColor.gray3,
+                    tint = if (isPrivacyConsentGranted) Color.Black else CustomColor.gray3,
                     contentDescription = "Check"
                 )
             }
@@ -779,7 +769,7 @@ private fun CheckPrivacyConsent(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable{
+                modifier = Modifier.clickable {
                     /** 개인정보 제공 동의 관련 pop up */
                 },
                 text = "보기",
@@ -794,7 +784,7 @@ private fun CheckPrivacyConsent(
 
 @Composable
 @Preview
-private fun UITest(){
+private fun UITest() {
     val name = "서호준"
     val phoneNumber = "010-6472-37863"
     val testData = PostNoteSelectedResponseDto(
@@ -866,9 +856,13 @@ private fun UITest(){
         totalPrice = 18000
     )
     OrderScreen(
-        uiState = OrderUiState.Success(buyerInfo = DefaultOrderInfoDto(name, phoneNumber), addressInfo = null, orderInfo = FinalOrderResponseDto(15000, testData, 3000, 15000)),
+        uiState = OrderUiState.Success(
+            buyerInfo = DefaultOrderInfoDto(name, phoneNumber),
+            addressInfo = null,
+            orderInfo = FinalOrderResponseDto(15000, testData, 3000, 15000)
+        ),
         errState = ErrorUiState.Loading,
-        saveBuyerInfo = {a, b ->
+        saveBuyerInfo = { a, b ->
 
         },
         onNavBack = {},

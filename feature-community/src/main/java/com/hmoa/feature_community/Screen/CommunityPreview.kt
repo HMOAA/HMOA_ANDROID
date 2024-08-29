@@ -2,21 +2,11 @@ package com.hmoa.feature_community.Screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +39,7 @@ fun CommunityPreviewRoute(
     onNavCommunityDescription: (Int) -> Unit,
     onNavPost: (String) -> Unit,
     onNavLogin: () -> Unit,
-    onNavHPedia : () -> Unit,
+    onNavHPedia: () -> Unit,
     viewModel: CommunityMainViewModel = hiltViewModel()
 ) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
@@ -62,17 +52,23 @@ fun CommunityPreviewRoute(
         errState = errState.value,
         communities = viewModel.communityPagingSource().collectAsLazyPagingItems(),
         type = type,
-        onTypeChanged = {viewModel.updateCategory(it)},
+        onTypeChanged = { viewModel.updateCategory(it) },
         onNavBack = onNavBack,
         onNavSearch = onNavSearch,
         onNavCommunityDescription = onNavCommunityDescription,
         onNavPost = {
-            if (viewModel.hasToken()){onNavPost(it)}
-            else {viewModel.updateLoginError()}
+            if (viewModel.hasToken()) {
+                onNavPost(it)
+            } else {
+                viewModel.updateLoginError()
+            }
         },
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){onNavHPedia()}
-            else {onNavLogin()}
+            if (viewModel.hasToken()) {
+                onNavHPedia()
+            } else {
+                onNavLogin()
+            }
         }
     )
 }
@@ -80,7 +76,7 @@ fun CommunityPreviewRoute(
 @Composable
 fun CommunityPage(
     uiState: CommunityMainUiState,
-    errState : ErrorUiState,
+    errState: ErrorUiState,
     communities: LazyPagingItems<CommunityByCategoryResponseDto>,
     type: Category,
     onTypeChanged: (Category) -> Unit,
@@ -88,8 +84,10 @@ fun CommunityPage(
     onNavSearch: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
     onNavPost: (String) -> Unit,
-    onErrorHandleLoginAgain : () -> Unit,
+    onErrorHandleLoginAgain: () -> Unit,
 ) {
+    var isOpen by remember { mutableStateOf(true) }
+
     when (uiState) {
         is CommunityMainUiState.Loading -> AppLoadingScreen()
         is CommunityMainUiState.Community -> {
@@ -133,8 +131,10 @@ fun CommunityPage(
                 }
             }
         }
+
         is CommunityMainUiState.Error -> {
             ErrorUiSetView(
+                isOpen = isOpen,
                 onConfirmClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
                 onCloseClick = onErrorHandleLoginAgain
@@ -156,7 +156,7 @@ fun CommunityMainTypes(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TypeBadge(
-            onClickItem = {onTypeChanged(Category.추천)},
+            onClickItem = { onTypeChanged(Category.추천) },
             roundedCorner = 20.dp,
             type = Category.추천.name,
             fontSize = 14.sp,
@@ -180,7 +180,7 @@ fun CommunityMainTypes(
         Spacer(Modifier.width(8.dp))
 
         TypeBadge(
-            onClickItem = {onTypeChanged(Category.자유)},
+            onClickItem = { onTypeChanged(Category.자유) },
             roundedCorner = 20.dp,
             type = Category.자유.name,
             fontSize = 14.sp,

@@ -1,18 +1,14 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -44,8 +40,9 @@ fun NotePickResultRoute(
     productIds: List<Int>,
     onBackClick: () -> Unit,
     onNextClick: (String) -> Unit,
+    onBackToHbtiScreen: () -> Unit,
     viewModel: NotePickResultViewModel = hiltViewModel()
-){
+) {
     viewModel.setNoteIds(productIds)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
@@ -58,7 +55,8 @@ fun NotePickResultRoute(
             val dto = NoteProductIds(productIds)
             val productIdsToJson = gson.toJson(dto)
             onNextClick(productIdsToJson)
-        }
+        },
+        onBackToHbtiScreen = { onBackToHbtiScreen() }
     )
 }
 
@@ -67,9 +65,12 @@ fun NotePickResultScreen(
     uiState: NotePickResultState,
     errState: ErrorUiState,
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit
-){
-    when(uiState){
+    onNextClick: () -> Unit,
+    onBackToHbtiScreen: () -> Unit,
+) {
+    val isOpen by remember { mutableStateOf(true) }
+
+    when (uiState) {
         NotePickResultState.Loading -> AppLoadingScreen()
         is NotePickResultState.Success -> {
             NotePickResultMainContent(
@@ -79,11 +80,13 @@ fun NotePickResultScreen(
                 onNextClick = onNextClick,
             )
         }
+
         is NotePickResultState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onBackClick, /**여기 Hbti Screen으로 navigation 하는 건 어떨까*/
+                isOpen = isOpen,
+                onConfirmClick = { onBackToHbtiScreen() },
                 errorUiState = errState,
-                onCloseClick = onBackClick /**여기 Hbti Screen으로 navigation 하는 건 어떨까*/
+                onCloseClick = { onBackToHbtiScreen() }
             )
         }
     }
@@ -95,12 +98,12 @@ private fun NotePickResultMainContent(
     totalPrice: Int,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-    ){
+    ) {
         TopBar(
             title = "향BTI",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -112,8 +115,8 @@ private fun NotePickResultMainContent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
-        ){
-            item{
+        ) {
+            item {
                 Text(
                     text = "선택한 향료",
                     fontSize = 20.sp,
@@ -121,7 +124,7 @@ private fun NotePickResultMainContent(
                 )
                 Spacer(Modifier.height(19.dp))
             }
-            items(notes){note ->
+            items(notes) { note ->
                 NoteSelectedDescription(
                     imgUrl = note.productPhotoUrl,
                     imgSize = 66,
@@ -131,7 +134,7 @@ private fun NotePickResultMainContent(
                     notes = note.notes
                 )
             }
-            item{
+            item {
                 Spacer(Modifier.height(6.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -143,7 +146,8 @@ private fun NotePickResultMainContent(
                 Spacer(
                     Modifier
                         .weight(1f)
-                        .defaultMinSize(minHeight = 18.dp))
+                        .defaultMinSize(minHeight = 18.dp)
+                )
                 Button(
                     buttonModifier = Modifier
                         .fillMaxWidth()
@@ -161,7 +165,7 @@ private fun NotePickResultMainContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun UITest(){
+private fun UITest() {
     val testData = PostNoteSelectedResponseDto(
         noteProducts = listOf(
             NoteProduct(
@@ -234,6 +238,7 @@ private fun UITest(){
         uiState = NotePickResultState.Success(result = testData),
         errState = ErrorUiState.Loading,
         onBackClick = {},
-        onNextClick = {}
+        onNextClick = {},
+        onBackToHbtiScreen = {}
     )
 }

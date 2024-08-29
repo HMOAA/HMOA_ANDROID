@@ -85,6 +85,7 @@ fun LikeScreen(
     onNavHome: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit
 ) {
+    var isOpen by remember { mutableStateOf(true) }
 
     when (uiState) {
         LikeUiState.Loading -> AppLoadingScreen()
@@ -102,6 +103,7 @@ fun LikeScreen(
         }
         is LikeUiState.Error -> {
             ErrorUiSetView(
+                isOpen = isOpen,
                 onConfirmClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = onNavHome

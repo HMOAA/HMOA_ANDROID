@@ -169,6 +169,7 @@ fun HbtiSurveyContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth().background(color = Color.White).padding(top = 12.dp)
+                    .semantics { testTag = "HbtiSurveyForm" }
             ) {
                 ProgressBar(percentage = currentProgress)
                 HorizontalPager(

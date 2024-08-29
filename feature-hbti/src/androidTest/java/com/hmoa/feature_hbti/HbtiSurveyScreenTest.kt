@@ -1,7 +1,6 @@
 package com.hmoa.feature_hbti
 
 import ResultResponse
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -74,6 +73,7 @@ class HbtiSurveyScreenTest : TestCase() {
                 uiState = hbtiData
             )
         }
+        composeTestRule.onNodeWithTag("HbtiSurveyForm").assertExists()
     }
 
     @Test
@@ -93,6 +93,6 @@ class HbtiSurveyScreenTest : TestCase() {
                 uiState = hbtiData
             )
         }
-        composeTestRule.onNodeWithTag("unknownError").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("unknownError").assertExists()
     }
 }

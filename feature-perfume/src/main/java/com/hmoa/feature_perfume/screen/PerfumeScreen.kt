@@ -93,7 +93,7 @@ fun PerfumeScreen(
         isOpen = isOpen,
         onConfirmClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
-        onCloseClick = { onBackClick() }
+        onCloseClick = { isOpen = false }
     )
 
     when (uiState) {

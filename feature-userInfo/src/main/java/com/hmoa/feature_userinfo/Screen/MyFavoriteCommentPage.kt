@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -70,6 +70,8 @@ fun MyFavoriteCommentPage(
     commentType: String,
     onTypeChanged: (String) -> Unit,
 ) {
+    var isOpen by remember { mutableStateOf(true) }
+
     when (uiState) {
         FavoriteCommentUiState.Loading -> {
             AppLoadingScreen()
@@ -86,6 +88,7 @@ fun MyFavoriteCommentPage(
         }
         FavoriteCommentUiState.Error -> {
             ErrorUiSetView(
+                isOpen = isOpen,
                 onConfirmClick = onNavBack,
                 errorUiState = errState,
                 onCloseClick = onNavBack

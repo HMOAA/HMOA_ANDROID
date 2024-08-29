@@ -15,10 +15,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -129,6 +126,8 @@ fun MyPage(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit
 ) {
+    var isOpen by remember { mutableStateOf(true) }
+
     when (uiState) {
         UserInfoUiState.Loading -> AppLoadingScreen()
         is UserInfoUiState.User -> {
@@ -150,6 +149,7 @@ fun MyPage(
 
         UserInfoUiState.Error -> {
             ErrorUiSetView(
+                isOpen = isOpen,
                 onConfirmClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = { onBackClick() }

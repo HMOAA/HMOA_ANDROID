@@ -4,57 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.feature_userinfo.navigateToBack
-import com.example.feature_userinfo.navigateToEditProfilePage
-import com.example.feature_userinfo.navigateToMyActivity
-import com.example.feature_userinfo.navigateToMyBirth
-import com.example.feature_userinfo.navigateToMyCommentPage
-import com.example.feature_userinfo.navigateToMyFavoriteCommentPage
-import com.example.feature_userinfo.navigateToMyGenderPage
-import com.example.feature_userinfo.navigateToMyInfoPage
-import com.example.feature_userinfo.navigateToMyPostPage
-import com.example.feature_userinfo.nestedUserInfoGraph
-import com.hmoa.feature_authentication.navigation.loginScreen
-import com.hmoa.feature_authentication.navigation.navigateToLogin
-import com.hmoa.feature_authentication.navigation.navigateToPickNickname
-import com.hmoa.feature_authentication.navigation.navigateToPickPersonalInfo
-import com.hmoa.feature_authentication.navigation.navigateToSignup
-import com.hmoa.feature_authentication.navigation.pickNicknameScreen
-import com.hmoa.feature_authentication.navigation.pickPersonalInfoScreen
-import com.hmoa.feature_authentication.navigation.signupScreen
+import com.example.feature_userinfo.*
+import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
 import com.hmoa.feature_brand.navigation.brandSearchScreen
 import com.hmoa.feature_brand.navigation.navigateToBrand
-import com.hmoa.feature_community.Navigation.navigateToCommunityCommentEditRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunityDescriptionRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunityEditRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunityPage
-import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
-import com.hmoa.feature_community.Navigation.navigateToCommunitySearchRoute
-import com.hmoa.feature_community.Navigation.nestedCommunityGraph
+import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_fcm.alarmRoute
-import com.hmoa.feature_hbti.navigation.hbtiProcessScreen
-import com.hmoa.feature_hbti.navigation.hbtiScreen
-import com.hmoa.feature_hbti.navigation.hbtiSurveyResultScreen
-import com.hmoa.feature_hbti.navigation.hbtiSurveyScreen
-import com.hmoa.feature_hbti.navigation.navigateToHbti
-import com.hmoa.feature_hbti.navigation.navigateToHbtiProcess
-import com.hmoa.feature_hbti.navigation.navigateToHbtiSurvey
-import com.hmoa.feature_hbti.navigation.navigateToHbtiSurveyResult
-import com.hmoa.feature_hbti.navigation.navigateToNoteOrderQuantityPick
-import com.hmoa.feature_hbti.navigation.navigateToNotePick
-import com.hmoa.feature_hbti.navigation.navigateToNotePickResult
-import com.hmoa.feature_hbti.navigation.navigateToOrder
-import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
-import com.hmoa.feature_hbti.navigation.notePickResult
-import com.hmoa.feature_hbti.navigation.notePickScreen
-import com.hmoa.feature_hbti.navigation.order
-import com.hmoa.feature_home.navigation.allPerfumeScreen
-import com.hmoa.feature_home.navigation.homeScreen
-import com.hmoa.feature_home.navigation.navigateToAllPerfume
-import com.hmoa.feature_home.navigation.navigateToHome
-import com.hmoa.feature_home.navigation.perfumeSearchScreen
+import com.hmoa.feature_hbti.navigation.*
+import com.hmoa.feature_home.navigation.*
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
@@ -65,15 +23,7 @@ import com.hmoa.feature_like.Screen.navigateToLike
 import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
-import com.hmoa.feature_perfume.navigation.createNewPerfumeComment
-import com.hmoa.feature_perfume.navigation.editMyPerfumeComment
-import com.hmoa.feature_perfume.navigation.navigateToCreateNewperfumeComment
-import com.hmoa.feature_perfume.navigation.navigateToPerfume
-import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
-import com.hmoa.feature_perfume.navigation.navigateToSpecificPerfumeComment
-import com.hmoa.feature_perfume.navigation.perfumeComment
-import com.hmoa.feature_perfume.navigation.perfumeScreen
-import com.hmoa.feature_perfume.navigation.specificComment
+import com.hmoa.feature_perfume.navigation.*
 
 @Composable
 fun SetUpNavGraph(
@@ -242,8 +192,17 @@ fun SetUpNavGraph(
             onBackClick = navController::navigateToBack,
             onNextClick = { noteOrderQuantity -> navController.navigateToNotePick(noteOrderQuantity) }
         )
-        notePickScreen(onBackClick = navController::navigateToBack, onNextClick = navController::navigateToNotePickResult, onErrorHandleLoginAgain = navController::navigateToLogin)
-        notePickResult(onBackClick = navController::navigateToBack, onNextClick = navController::navigateToOrder)
+        notePickScreen(
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToNotePickResult,
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onBackToHbtiScreen = navController::navigateToHbti
+        )
+        notePickResult(
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToOrder,
+            onBackToHbtiScreen = navController::navigateToHbti
+        )
         order()
     }
 }

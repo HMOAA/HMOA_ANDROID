@@ -3,21 +3,12 @@ package com.hmoa.feature_community.Screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,7 +33,7 @@ fun CommunityHomeRoute(
     onNavCommunityGraph: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    onNavHome : () -> Unit,
+    onNavHome: () -> Unit,
     viewModel: CommunityHomeViewModel = hiltViewModel(),
 ) {
 
@@ -56,7 +47,7 @@ fun CommunityHomeRoute(
         onNavCommunityGraph = onNavCommunityGraph,
         onNavCommunityDescription = onNavCommunityDescription,
         onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()){
+            if (viewModel.hasToken()) {
                 onNavHome()
             } else {
                 onErrorHandleLoginAgain()
@@ -73,9 +64,13 @@ fun CommunityHome(
     onNavCommunityDescription: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
-    Column(modifier = Modifier
-        .padding(horizontal = 16.dp)
-        .fillMaxSize()) {
+    var isOpen by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxSize()
+    ) {
         CommunityTitleBar(onNavCommunityByCategory = onNavCommunityGraph)
 
         when (uiState) {
@@ -86,11 +81,13 @@ fun CommunityHome(
                     onNavCommunityDescription = onNavCommunityDescription
                 )
             }
+
             is CommunityHomeUiState.Error -> {
                 ErrorUiSetView(
+                    isOpen = isOpen,
                     onConfirmClick = onErrorHandleLoginAgain,
                     errorUiState = errorUiState,
-                    onCloseClick = onErrorHandleLoginAgain
+                    onCloseClick = { isOpen = false }
                 )
             }
         }
@@ -116,7 +113,7 @@ fun CommunityTitleBar(
         )
 
         Text(
-            modifier = Modifier.clickable {onNavCommunityByCategory()},
+            modifier = Modifier.clickable { onNavCommunityByCategory() },
             text = "전체보기",
             fontSize = 12.sp,
             fontFamily = FontFamily(Font(R.font.pretendard_regular)),

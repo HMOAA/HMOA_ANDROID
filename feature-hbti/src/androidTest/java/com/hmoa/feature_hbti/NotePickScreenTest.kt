@@ -98,7 +98,7 @@ class NotePickScreenTest : TestCase() {
                     selectedIndex += 1
                     true
                 } else false, //0(추천향료),2(추천향료),4번째 원소가 선택된 상황
-                selectedIndex = selectedIndex,
+                nodeFaceIndex = selectedIndex,
                 isRecommended = item.isRecommended
             )
         }

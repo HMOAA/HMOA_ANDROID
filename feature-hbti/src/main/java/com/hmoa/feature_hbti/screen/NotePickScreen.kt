@@ -193,7 +193,7 @@ fun NotePickGridWindow(
 
                         },
                         isRecommanded = item.isRecommended,
-                        index = isNoteSelectedList[index].selectedIndex,
+                        index = isNoteSelectedList[index].nodeFaceIndex,
                         isSelected = isNoteSelectedList[index].isSelected
                     )
                     Text(

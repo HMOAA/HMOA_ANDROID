@@ -31,6 +31,7 @@ class NoteOrderQuantityPickViewmodelTest : TestCase() {
 
     @Before
     override fun setUp() {
+        super.setUp()
         runBlocking {
             Mockito.`when`(surveyRepository.getAllSurveyResult()).thenReturn(fakeSurveyResult)
         }

@@ -13,7 +13,12 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepository: SurveyRepository) : ViewModel() {
     val noteOrderQuantityChoiceContents: List<String> = listOf("2개", "5개", "8개", "자유롭게 선택")
-    val noteOrderQuantityChoiceIds: List<Int> = listOf(0, 1, 2, 3)
+    val NOTE_ORDER_QUANTITY_CHOICE_IDS: List<Int> = listOf(
+        NoteOrderQuantity.TWO.id,
+        NoteOrderQuantity.FIVE.id,
+        NoteOrderQuantity.EIGHT.id,
+        NoteOrderQuantity.NOLIMIT.id
+    )
     private val noteOrderQuantityChoiceList =
         listOf(NoteOrderQuantity.TWO, NoteOrderQuantity.FIVE, NoteOrderQuantity.EIGHT, NoteOrderQuantity.NOLIMIT)
     private var _topRecommendedNote = MutableStateFlow<String>("")
@@ -67,6 +72,7 @@ class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepos
             true -> {
                 val updatedAnswerIds = updateAnswerOption(_noteQuantityChoiceAnswersId.value, optionIndex)
                 _noteQuantityChoiceAnswersId.update { updatedAnswerIds }
+                _noteOrderQuantityChoice.update { noteOrderQuantityChoiceList[optionIndex] }
             }
 
             false -> {

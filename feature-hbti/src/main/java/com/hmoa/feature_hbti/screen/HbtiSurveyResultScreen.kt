@@ -12,11 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,13 +22,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyResultUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyResultViewmodel
-import kotlinx.coroutines.delay
 
 @Composable
 fun HbtiSurveyResultRoute(
@@ -42,22 +39,13 @@ fun HbtiSurveyResultRoute(
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
-    val showLoading = remember { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) {
-        viewmodel.getUserName()
-        viewmodel.getSurveyResult()
-        delay(2000) // 2초 지연
-        showLoading.value = false
-    }
 
     HbtiSurveyResultScreen(
         onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
         onBackClick = { onBackClick() },
         onHbtiProcessClick = { onHbtiProcessClick() },
         uiState = uiState,
-        errorUiState = errorUiState,
-        showLoading = showLoading.value
+        errorUiState = errorUiState
     )
 }
 
@@ -68,20 +56,18 @@ fun HbtiSurveyResultScreen(
     onHbtiProcessClick: () -> Unit,
     uiState: HbtiSurveyResultUiState,
     errorUiState: ErrorUiState,
-    showLoading: Boolean
 ) {
+    var isOpen by remember { mutableStateOf(true) }
 
-//    ErrorUiSetView(
-//        onConfirmClick = { onErrorHandleLoginAgain() },
-//        errorUiState = errorUiState,
-//        onCloseClick = { onBackClick() }
-//    )
+    ErrorUiSetView(
+        isOpen = isOpen,
+        onConfirmClick = { onErrorHandleLoginAgain() },
+        errorUiState = errorUiState,
+        onCloseClick = { onBackClick() }
+    )
 
     when (uiState) {
         is HbtiSurveyResultUiState.HbtiSurveyResultData -> {
-            if (showLoading) {
-                HbtiSurveyResultLoading(uiState.userName)
-            }
             HbtiSurveyResultContent(
                 surveyResult = uiState.surveyResult,
                 onHbtiProcessClick = { onHbtiProcessClick() },
@@ -90,34 +76,7 @@ fun HbtiSurveyResultScreen(
             )
         }
 
-        HbtiSurveyResultUiState.Loading -> HbtiSurveyResultLoading("")
-    }
-}
-
-@Composable
-fun HbtiSurveyResultLoading(userName: String) {
-    Column(modifier = Modifier.fillMaxSize().semantics { this.testTag = "HbtiSurveyResultLoading" }) {
-        TopBar(title = "향BTI", titleColor = Color.Black)
-        Column(
-            modifier = Modifier.fillMaxHeight(1f).fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                "잠시만 기다려주세요...",
-                style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Medium, fontSize = 16.sp)
-            )
-            Text(
-                "${userName}님에게 딱 맞는 향료를\n추천하는 중입니다.",
-                modifier = Modifier.padding(top = 15.dp),
-                style = TextStyle(
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp,
-                    textAlign = TextAlign.Center
-                )
-            )
-        }
+        HbtiSurveyResultUiState.Loading -> {}
     }
 }
 

@@ -2,7 +2,6 @@ package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -229,7 +228,7 @@ fun HbtiSurveyContent(
                             onClickFinishSurvey()
                         },
                         buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black)
-                            .semantics { testTag = "NextButton" }.clickable { },
+                            .semantics { testTag = "NextButton" },
                         textSize = 18,
                         textColor = Color.White,
                         radious = 5

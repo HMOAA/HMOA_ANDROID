@@ -60,7 +60,7 @@ fun NoteOrderQuantityPickContent(
                     SurveyOptionList(
                         answerIds = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).noteQuantityChoiceAnswersId,
                         surveyOptions = viewModel.noteOrderQuantityChoiceContents,
-                        surveyOptionIds = viewModel.noteOrderQuantityChoiceIds,
+                        surveyOptionIds = viewModel.NOTE_ORDER_QUANTITY_CHOICE_IDS,
                         onButtonClick = { optionIndex, isGoToSelectedState ->
                             viewModel.modifyAnswerOption(optionIndex, isGoToSelectedState)
                         }

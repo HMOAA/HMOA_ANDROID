@@ -47,7 +47,7 @@ class AddAddressViewModel @Inject constructor(
         addressName: String,
         phone: String,
         homePhone: String,
-        postalCode: Int,
+        postalCode: String,
         address: String,
         detailAddress: String,
         request: String
@@ -61,7 +61,7 @@ class AddAddressViewModel @Inject constructor(
                 phoneNumber = phone,
                 request = request,
                 streetAddress = address,
-                zipCode = postalCode.toString()
+                zipCode = postalCode
             )
             val result = memberRepository.postAddress(requestDto)
             if (result.errorMessage != null){

@@ -1,12 +1,24 @@
 package com.hmoa.feature_hbti.screen
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -15,7 +27,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,7 +76,7 @@ fun AddAddressRoute(
 @Composable
 fun AddAddressScreen(
     errorState: ErrorUiState,
-    onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: Int, address: String, detailAddress: String, request: String) -> Unit,
+    onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
     onNavBack: () -> Unit,
 ) {
     var isOpen by remember { mutableStateOf(true) }
@@ -80,39 +98,30 @@ fun AddAddressScreen(
 
 @Composable
 private fun AddAddressMainContent(
-    onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: Int, address: String, detailAddress: String, request: String) -> Unit,
+    onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
     onNavBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    var name by remember { mutableStateOf("") }
-    var addressName by remember { mutableStateOf("") }
-    var phone1 by remember { mutableStateOf("") }
-    var phone2 by remember { mutableStateOf("") }
-    var phone3 by remember { mutableStateOf("") }
-    var homePhone1 by remember { mutableStateOf("") }
-    var homePhone2 by remember { mutableStateOf("") }
-    var homePhone3 by remember { mutableStateOf("") }
-    var postalCode by remember { mutableStateOf<Int?>(null) }
-    var address by remember { mutableStateOf("") }
-    var detailAddress by remember { mutableStateOf("") }
-    var request by remember { mutableStateOf("") }
-    var showWebView by remember { mutableStateOf(false) }
-    var isEnabled = remember {
-        derivedStateOf {
-            name.isNotEmpty() && addressName.isNotEmpty()
-                    && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
-                    && homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
-                    && postalCode != null && address.isNotEmpty()
-                    && detailAddress.isNotEmpty() && request.isNotEmpty()
-        }
-    }
-
-    if (showWebView) {
-        AddressWebView(
-            onUpdateAddress = { address = it },
-            closeWebView = { showWebView = false }
-        )
-    }
+    var name by remember{ mutableStateOf("") }
+    var addressName by remember{mutableStateOf("")}
+    var phone1 by remember{mutableStateOf("")}
+    var phone2 by remember{mutableStateOf("")}
+    var phone3 by remember{mutableStateOf("")}
+    var homePhone1 by remember{mutableStateOf("")}
+    var homePhone2 by remember{mutableStateOf("")}
+    var homePhone3 by remember{mutableStateOf("")}
+    var postalCode by remember{mutableStateOf("")}
+    var address by remember{mutableStateOf("")}
+    var detailAddress by remember{mutableStateOf("")}
+    var request by remember{mutableStateOf("")}
+    var showWebView by remember{mutableStateOf(false)}
+    var isEnabled = remember{ derivedStateOf{
+        name.isNotEmpty() && addressName.isNotEmpty()
+                && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
+                && homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
+                && postalCode.isNotEmpty() && address.isNotEmpty()
+                && detailAddress.isNotEmpty() && request.isNotEmpty()
+    }}
 
     Column(
         modifier = Modifier
@@ -185,7 +194,7 @@ private fun AddAddressMainContent(
                         addressName,
                         "${phone1}-${phone2}-${phone3}",
                         "${homePhone1}-${homePhone2}-${homePhone3}",
-                        postalCode!!,
+                        postalCode,
                         address,
                         detailAddress,
                         request
@@ -443,11 +452,18 @@ private fun InputHomePhone(
 
 @Composable
 private fun InputAddress(
-    onUpdateAddress: (postalCode: Int?, address: String, detailAddress: String) -> Unit,
-) {
-    var postalCode by remember { mutableStateOf<Int?>(null) }
-    var address by remember { mutableStateOf("") }
-    var detailAddress by remember { mutableStateOf("") }
+    onUpdateAddress: (postalCode: String, address: String, detailAddress: String) -> Unit,
+){
+    var postalCode by remember{mutableStateOf<String>("")}
+    var address by remember{mutableStateOf("")}
+    var detailAddress by remember{mutableStateOf("")}
+    var showWebView by remember{mutableStateOf(false)}
+
+    if(showWebView){
+        AddressWebView(onUpdateAddress = { newZoneCode, newAddress ->
+            postalCode = newZoneCode
+        })
+    }
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -467,10 +483,8 @@ private fun InputAddress(
                     shape = RoundedCornerShape(size = 5.dp)
                 )
                 .padding(horizontal = 12.dp),
-            value = postalCode.toString(),
-            onValueChange = {
-                postalCode = it.toInt()
-            },
+            value = postalCode,
+            onValueChange = {postalCode = it},
             textStyle = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium
@@ -483,7 +497,7 @@ private fun InputAddress(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (postalCode == null) {
+                    if (postalCode.isEmpty()) {
                         Text(
                             text = "우편번호",
                             fontSize = 12.sp,
@@ -499,10 +513,7 @@ private fun InputAddress(
                             .height(20.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CustomColor.gray1),
                         shape = RoundedCornerShape(size = 5.dp),
-                        onClick = {
-                            /** 눌렀을 때 WebView를 통해 주소 찾기 api를 띄우고 거기서 Address를 받아와야 함 */
-                            onUpdateAddress(postalCode, address, detailAddress)
-                        },
+                        onClick = {showWebView = true},
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
@@ -548,6 +559,47 @@ private fun InputAddress(
             placeHolder = "상세주소"
         )
     }
+
+    BackHandler(
+        enabled = true,
+        onBack = {if(showWebView) showWebView = false}
+    )
+}
+
+@SuppressLint("SetJavaScriptEnabled")
+@Composable
+private fun AddressWebView(
+    onUpdateAddress: (zoneCode: String, address: String) -> Unit
+){
+    val context = LocalContext.current
+    class MyJavaScriptInterface{
+        @JavascriptInterface
+        @Suppress("unused")
+        fun processData(zoneCode: String, address: String){
+            onUpdateAddress(zoneCode, address)
+            Log.d("WWWTESTWWW", "Data Set: ${zoneCode} ${address}")
+        }
+    }
+
+    AndroidView(factory = {
+        WebView(context).apply{
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            addJavascriptInterface(MyJavaScriptInterface(), "Android")
+            webViewClient = object: WebViewClient(){
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    loadUrl("javascript:sample2_execDaumPostcode();")
+                }
+            }
+
+//            loadUrl("https://hmoa.shop/addressSearch.html")
+            loadUrl("http://192.168.105.13:8080/index.html")
+        }
+    })
 }
 
 @Composable
@@ -579,40 +631,6 @@ private fun InputRequest(
             placeHolder = "배송 시 요청사항을 적어주세요"
         )
     }
-}
-
-@Composable
-private fun AddressWebView(
-    onUpdateAddress: (address: String) -> Unit,
-    closeWebView: () -> Unit,
-) {
-    class AddressJavaScriptInterface {
-        @JavascriptInterface
-        @Suppress("unused")
-        fun processData(data: String) {
-            onUpdateAddress
-        }
-    }
-
-    val context = LocalContext.current
-    AndroidView(factory = {
-        WebView(context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-            )
-            settings.javaScriptEnabled = true
-            addJavascriptInterface(AddressJavaScriptInterface(), "Android")
-            webViewClient = object : WebViewClient() {
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    loadUrl("javascript:sample2_execDaumPostcode();")
-                }
-            }
-            settings.domStorageEnabled = true
-
-            loadUrl("https://hmoa.inuappcenter.kr/addressSearch.html")
-        }
-    })
 }
 
 @Preview

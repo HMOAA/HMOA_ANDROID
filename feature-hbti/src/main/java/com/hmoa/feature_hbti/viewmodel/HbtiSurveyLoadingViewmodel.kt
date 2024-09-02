@@ -7,8 +7,6 @@ import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MemberRepository
-import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_model.request.NoteResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -16,12 +14,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HbtiSurveyResultViewmodel @Inject constructor(
+class HbtiSurveyLoadingViewmodel @Inject constructor(
     private val memberRepository: MemberRepository,
-    private val surveyRepository: SurveyRepository
 ) : ViewModel() {
-    private var _surveyResultState = MutableStateFlow<List<NoteResponseDto>>(listOf())
     private var _userNameState = MutableStateFlow<String>("")
+    val userNameState: StateFlow<String> = _userNameState
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -43,21 +40,10 @@ class HbtiSurveyResultViewmodel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ErrorUiState.Loading
     )
-    val uiState: StateFlow<HbtiSurveyResultUiState> =
-        combine(_userNameState, _surveyResultState) { userName, surveyResult ->
-            HbtiSurveyResultUiState.HbtiSurveyResultData(
-                userName = userName,
-                surveyResult = surveyResult
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000), initialValue = HbtiSurveyResultUiState.Loading
-        )
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getUserName()
-            getSurveyResult()
         }
     }
 
@@ -92,17 +78,4 @@ class HbtiSurveyResultViewmodel @Inject constructor(
             }
         }
     }
-
-    suspend fun getSurveyResult() {
-        val result = surveyRepository.getAllSurveyResult()
-        _surveyResultState.update { result }
-    }
-}
-
-sealed interface HbtiSurveyResultUiState {
-    data object Loading : HbtiSurveyResultUiState
-    data class HbtiSurveyResultData(
-        val userName: String,
-        val surveyResult: List<NoteResponseDto>
-    ) : HbtiSurveyResultUiState
 }

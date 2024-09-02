@@ -58,6 +58,7 @@ class HbtiSurveyViewModelTest : TestCase() {
 
     @Before
     override fun setUp() {
+        super.setUp()
         hbtiQuestionItem_singleChoice = HbtiQuestionItem(
             questionId = fakeQuestion1.questionId,
             questionContent = fakeQuestion1.content,

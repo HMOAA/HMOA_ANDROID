@@ -15,6 +15,9 @@ fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}")
 
+fun NavController.navigateToHbtiSurveyLoading() =
+    navigate("${HbtiRoute.HbtiSurveyLoading}")
+
 fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}")
 fun NavController.navigateToNoteOrderQuantityPick() = navigate("${HbtiRoute.NoteOrderQuantityPick}")
 fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
@@ -31,30 +34,38 @@ fun NavController.navigateToOrder(productIdsToJson: String) =
 
 fun NavController.navigateToAddAddress() = navigate(HbtiRoute.AddAddressRoute.name)
 
-fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit) {
+fun NavGraphBuilder.hbtiScreen(onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
-        HbtiRoute(onAfterOrderClick = {}, onHbtiSurveyClick = { onHbtiSurveyClick() })
+        HbtiRoute(onAfterOrderClick = {}, onHbtiSurveyClick = { onNextClick() })
     }
 }
 
 fun NavGraphBuilder.hbtiSurveyScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onHbtiSurveyResultClick: () -> Unit
+    onNextClick: () -> Unit
 ) {
     composable(route = "${HbtiRoute.HbtiSurvey}") {
         HbtiSurveyRoute(
             onBackClick = { onBackClick() },
             onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
-            onClickHbtiSurveyResultScreen = { onHbtiSurveyResultClick() }
+            onClickHbtiSurveyResultScreen = { onNextClick() }
         )
+    }
+}
+
+fun NavGraphBuilder.hbtiSurveyLoadingScreen(onNextScreen: () -> Unit) {
+    composable(
+        route = "${HbtiRoute.HbtiSurveyLoading}",
+    ) {
+        HbtiSurveyResultLoading(onNextScreen = { onNextScreen() })
     }
 }
 
 fun NavGraphBuilder.hbtiSurveyResultScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
-    onHbtiProcessClick: () -> Unit
+    onHbtiProcessClick: () -> Unit,
 ) {
     composable(
         route = "${HbtiRoute.HbtiSurveyResult}",
@@ -62,7 +73,8 @@ fun NavGraphBuilder.hbtiSurveyResultScreen(
         HbtiSurveyResultRoute(
             onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
             onBackClick = { onBackClick() },
-            onHbtiProcessClick = { onHbtiProcessClick() })
+            onHbtiProcessClick = { onHbtiProcessClick() }
+        )
     }
 }
 

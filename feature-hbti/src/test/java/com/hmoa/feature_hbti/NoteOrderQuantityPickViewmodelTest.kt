@@ -67,4 +67,15 @@ class NoteOrderQuantityPickViewmodelTest : TestCase() {
         viewmodel.modifyAnswerOption(0, false)
         assertEquals(expectedValue, viewmodel.noteQuantityChoiceAnswersId.value)
     }
+
+    @Test
+    fun `test_addAndcancelNoteOrderQuantitiy_reflectInNoteQuantityChoice`() = coroutineRule.runTest {
+        val expectedValue = NoteOrderQuantity.FIVE.number
+        //noteOrderQuantityChoiceList =
+        //        listOf(NoteOrderQuantity.TWO, NoteOrderQuantity.FIVE, NoteOrderQuantity.EIGHT, NoteOrderQuantity.NOLIMIT)
+        viewmodel.modifyAnswerOption(0, true)
+        viewmodel.modifyAnswerOption(0, false)
+        viewmodel.modifyAnswerOption(1, true)
+        assertEquals(expectedValue, viewmodel.noteOrderQuantityChoice.value.number)
+    }
 }

@@ -3,10 +3,12 @@ name: Android develop CI
 on:
   push:
     branches:
+      - "feature/hbti"
       - "release"
       - "master"
   pull_request:
     branches:
+      - "feature/hbti"
       - "release"
       - "master"
 
@@ -53,6 +55,7 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Upload APK
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: app

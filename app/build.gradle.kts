@@ -31,9 +31,6 @@ android {
     }
 
     signingConfigs {
-        getByName("debug") {
-            storeFile = file("./debug.keystore")
-        }
         create("release") {
             keyAlias = localProperties.getProperty("KEY_ALIAS")
             keyPassword = localProperties.getProperty("KEY_PASSWORD")

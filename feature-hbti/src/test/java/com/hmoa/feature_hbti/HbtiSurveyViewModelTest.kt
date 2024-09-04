@@ -1,7 +1,9 @@
 package com.hmoa.feature_hbti
 
 import ResultResponse
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_domain.repository.SurveyRepository
+import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.data.HbtiQuestionItem
 import com.hmoa.core_model.data.HbtiQuestionItems
 import com.hmoa.core_model.response.SurveyOptionResponseDto
@@ -91,6 +93,22 @@ class HbtiSurveyViewModelTest : TestCase() {
         )
         launch { viewModel.getSurveyQuestions() }.join()
         assertEquals(expectedValue, viewModel.hbtiQuestionItemsState.value)
+    }
+
+    @Test
+    fun `test_getSurveyQuestions Unkown error요청실패_unLoginedErrorState값 확인`() = coroutineRule.runTest {
+        val expectedUnLoginedErrorState = true
+        Mockito.`when`(surveyRepository.getSurveyQuestions()).thenReturn(
+            ResultResponse(
+                data = null,
+                errorMessage = ErrorMessage(
+                    code = ErrorMessageType.UNKNOWN_ERROR.code.toString(),
+                    message = ErrorMessageType.UNKNOWN_ERROR.message
+                )
+            )
+        )
+        launch { viewModel.getSurveyQuestions() }.join()
+        assertEquals(expectedUnLoginedErrorState, viewModel.unLoginedErrorState.value)
     }
 
     @Test

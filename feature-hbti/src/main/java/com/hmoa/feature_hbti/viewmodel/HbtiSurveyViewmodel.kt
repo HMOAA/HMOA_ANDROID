@@ -2,10 +2,7 @@ package com.hmoa.feature_hbti.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hmoa.core_common.ErrorMessageType
-import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.Result
-import com.hmoa.core_common.asResult
+import com.hmoa.core_common.*
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.data.HbtiQuestionItem
 import com.hmoa.core_model.data.HbtiQuestionItems
@@ -22,20 +19,23 @@ import javax.inject.Inject
 typealias QuestionPageIndex = Int
 
 @HiltViewModel
-class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: SurveyRepository) : ViewModel() {
+class HbtiSurveyViewmodel @Inject constructor(
+    private val surveyRepository: SurveyRepository,
+) : ViewModel() {
     private var _hbtiQuestionItemsState = MutableStateFlow<HbtiQuestionItems?>(null)
     val hbtiQuestionItemsState: StateFlow<HbtiQuestionItems?> = _hbtiQuestionItemsState
     private var _hbtiAnwserIdsState = MutableStateFlow<List<List<Int>>?>(null)
     val hbtiAnswerIdsState: StateFlow<List<List<Int>>?> = _hbtiAnwserIdsState
-    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
-    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
-    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
-    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    private var _expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var _wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var _unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    val unLoginedErrorState: StateFlow<Boolean> = _unLoginedErrorState
+    private var _generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
     val errorUiState: StateFlow<ErrorUiState> = combine(
-        expiredTokenErrorState,
-        wrongTypeTokenErrorState,
-        unLoginedErrorState,
-        generalErrorState
+        _expiredTokenErrorState,
+        _wrongTypeTokenErrorState,
+        _unLoginedErrorState,
+        _generalErrorState
     ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
         ErrorUiState.ErrorData(
             expiredTokenError = expiredTokenError,
@@ -104,48 +104,37 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
     suspend fun getSurveyQuestions() {
         flow {
             val result = surveyRepository.getSurveyQuestions()
+            result.emitOrThrow { emit(it) }
+        }
+            .asResult()
+            .collectLatest { result ->
+                when (result) {
+                    Result.Loading -> {
+                        HbtiSurveyUiState.Loading
+                    }
 
-            if (result.data != null) {
-                emit(result)
-            } else if (result.errorMessage != null) {
-                throw Exception(result.errorMessage!!.message)
-            }
-        }.asResult().collectLatest { result ->
-            when (result) {
-                is Result.Success -> {
-                    _hbtiQuestionItemsState.update {
-                        HbtiQuestionItems(
-                            hbtiQuestions = initializeHbtiQuestionItemsState(
-                                result.data.data
+                    is Result.Success -> {
+                        _hbtiQuestionItemsState.update {
+                            HbtiQuestionItems(
+                                hbtiQuestions = initializeHbtiQuestionItemsState(
+                                    result.data.data
+                                )
                             )
+                        }
+                        _hbtiAnwserIdsState.update { initializeHbtiAnswerIdsState(result.data.data) }
+                    }
+
+                    is Result.Error -> {
+                        handleErrorType(
+                            error = result.exception,
+                            onExpiredTokenError = { _expiredTokenErrorState.update { true } },
+                            onWrongTypeTokenError = { _wrongTypeTokenErrorState.update { true } },
+                            onUnknownError = { _unLoginedErrorState.update { true } },
+                            onGeneralError = { _generalErrorState.update { Pair(true, result.exception.message) } }
                         )
                     }
-                    _hbtiAnwserIdsState.update { initializeHbtiAnswerIdsState(result.data.data) }
                 }
-
-                is Result.Error -> {
-                    when (result.exception.message) {
-                        ErrorMessageType.EXPIRED_TOKEN.message -> {
-                            expiredTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                            wrongTypeTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.UNKNOWN_ERROR.message -> {
-                            unLoginedErrorState.update { true }
-                        }
-
-                        else -> {
-                            generalErrorState.update { Pair(true, result.exception.message) }
-                        }
-                    }
-                }
-
-                Result.Loading -> HbtiSurveyUiState.Loading
             }
-        }
     }
 
     suspend fun saveSurveyResultToLocalDB(result: List<NoteResponseDto>?) {
@@ -183,19 +172,19 @@ class HbtiSurveyViewmodel @Inject constructor(private val surveyRepository: Surv
                     is Result.Error -> {
                         when (result.exception.message) {
                             ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                expiredTokenErrorState.update { true }
+                                _expiredTokenErrorState.update { true }
                             }
 
                             ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                wrongTypeTokenErrorState.update { true }
+                                _wrongTypeTokenErrorState.update { true }
                             }
 
                             ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                unLoginedErrorState.update { true }
+                                _unLoginedErrorState.update { true }
                             }
 
                             else -> {
-                                generalErrorState.update { Pair(true, result.exception.message) }
+                                _generalErrorState.update { Pair(true, result.exception.message) }
                             }
                         }
                     }

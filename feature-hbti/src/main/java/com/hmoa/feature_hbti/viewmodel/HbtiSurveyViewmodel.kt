@@ -159,7 +159,10 @@ class HbtiSurveyViewmodel @Inject constructor(
     }
 
     suspend fun postSurveyResponds(request: SurveyRespondRequestDto) {
-        flow { emit(surveyRepository.postSurveyResponds(request)) }.asResult()
+        flow {
+            val result = surveyRepository.postSurveyResponds(request)
+            result.emitOrThrow { emit(it) }
+        }.asResult()
             .collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
@@ -170,23 +173,13 @@ class HbtiSurveyViewmodel @Inject constructor(
                     }
 
                     is Result.Error -> {
-                        when (result.exception.message) {
-                            ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                _expiredTokenErrorState.update { true }
-                            }
-
-                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                _wrongTypeTokenErrorState.update { true }
-                            }
-
-                            ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                _unLoginedErrorState.update { true }
-                            }
-
-                            else -> {
-                                _generalErrorState.update { Pair(true, result.exception.message) }
-                            }
-                        }
+                        handleErrorType(
+                            error = result.exception,
+                            onExpiredTokenError = { _expiredTokenErrorState.update { true } },
+                            onWrongTypeTokenError = { _wrongTypeTokenErrorState.update { true } },
+                            onUnknownError = { _unLoginedErrorState.update { true } },
+                            onGeneralError = { _generalErrorState.update { Pair(true, result.exception.message) } }
+                        )
                     }
 
                     is Result.Loading -> {

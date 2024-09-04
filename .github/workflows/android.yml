@@ -1,11 +1,6 @@
 name: Android develop CI
 
 on:
-  push:
-    branches:
-      - "feature/hbti"
-      - "release"
-      - "master"
   pull_request:
     branches:
       - "feature/hbti"

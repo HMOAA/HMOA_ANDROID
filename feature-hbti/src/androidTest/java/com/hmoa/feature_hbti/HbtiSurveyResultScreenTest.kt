@@ -73,7 +73,6 @@ class HbtiSurveyResultScreenTest : TestCase() {
                 onHbtiProcessClick = {},
                 uiState = HbtiSurveyResultUiState.Loading,
                 errorUiState = ErrorUiState.Loading,
-                showLoading = true
             )
         }
         // Assert

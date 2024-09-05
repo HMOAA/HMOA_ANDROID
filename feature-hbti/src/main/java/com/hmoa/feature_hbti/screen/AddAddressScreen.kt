@@ -1,7 +1,6 @@
 package com.hmoa.feature_hbti.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,6 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -123,11 +125,25 @@ private fun AddAddressMainContent(
                 && detailAddress.isNotEmpty() && request.isNotEmpty()
     }}
 
+    BackHandler(
+        enabled = true,
+        onBack = {if(showWebView) showWebView = false}
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
     ) {
+        if (showWebView){
+            AddressWebView(
+                onUpdateAddress = { newZoneCode, newAddress ->
+                    postalCode = newZoneCode
+                    address = newAddress
+                },
+                onDismiss = {showWebView = false}
+            )
+        }
         TopBar(
             title = "주소 추가",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -163,25 +179,24 @@ private fun AddAddressMainContent(
                 onPhone3Change = { phone3 = it },
             )
             InputHomePhone(
-                homePhone1 = phone1,
+                homePhone1 = homePhone1,
                 onHomePhone1Change = { homePhone1 = it },
-                homePhone2 = phone2,
+                homePhone2 = homePhone2,
                 onHomePhone2Change = { homePhone2 = it },
-                homePhone3 = phone3,
+                homePhone3 = homePhone3,
                 onHomePhone3Change = { homePhone3 = it },
             )
             InputAddress(
-                onUpdateAddress = { newPostalCode, newAddress, newDetailAddress ->
-                    postalCode = newPostalCode
-                    address = newAddress
-                    detailAddress = newDetailAddress
-                }
+                postalCode = postalCode,
+                address = address,
+                detailAddress = detailAddress,
+                onShowWebViewClick = {showWebView = true},
+                onUpdateDetailAddress = {detailAddress = it}
             )
             InputRequest(
                 request = request,
                 onRequestChange = { request = it }
             )
-            Spacer(Modifier.height(24.dp))
             com.hmoa.core_designsystem.component.Button(
                 buttonModifier = Modifier
                     .fillMaxWidth()
@@ -228,7 +243,7 @@ private fun InputName(
                 .fillMaxWidth(),
             value = name,
             onValueChanged = onChangeName,
-            color = CustomColor.gray2,
+            color = Color.Black,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             borderWidth = 1.dp,
@@ -269,15 +284,19 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone1,
-                onValueChanged = onPhone1Change,
-                color = CustomColor.gray2,
+                onValueChanged = { if(it.length <= 3) {onPhone1Change(it)} },
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(start = 12.dp),
-                placeHolder = "010"
+                placeHolder = "010",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                )
             )
             Row(
                 modifier = Modifier
@@ -291,15 +310,19 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone2,
-                onValueChanged = onPhone2Change,
-                color = CustomColor.gray2,
+                onValueChanged = { if(it.length <= 4) {onPhone2Change(it)} },
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(start = 12.dp),
-                placeHolder = "1234"
+                placeHolder = "1234",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                )
             )
             Row(
                 modifier = Modifier
@@ -313,15 +336,19 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone3,
-                onValueChanged = onPhone3Change,
-                color = CustomColor.gray2,
+                onValueChanged = { if(it.length <= 4) {onPhone3Change(it)} },
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(start = 12.dp),
-                placeHolder = "5678"
+                placeHolder = "5678",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Done
+                )
             )
         }
         Spacer(Modifier.height(24.dp))
@@ -350,7 +377,7 @@ private fun InputAddressName(
                 .fillMaxWidth(),
             value = addressName,
             onValueChanged = onAddressChange,
-            color = CustomColor.gray2,
+            color = Color.Black,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             borderWidth = 1.dp,
@@ -391,15 +418,19 @@ private fun InputHomePhone(
                     .weight(1f)
                     .height(44.dp),
                 value = homePhone1,
-                onValueChanged = onHomePhone1Change,
-                color = CustomColor.gray2,
+                onValueChanged = { if(it.length <= 3) {onHomePhone1Change(it)} },
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(start = 12.dp),
-                placeHolder = "010"
+                placeHolder = "010",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                )
             )
             Row(
                 modifier = Modifier
@@ -413,15 +444,19 @@ private fun InputHomePhone(
                     .weight(1f)
                     .height(44.dp),
                 value = homePhone2,
-                onValueChanged = onHomePhone2Change,
-                color = CustomColor.gray2,
+                onValueChanged = { if(it.length <= 4) {onHomePhone2Change(it)} },
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(start = 12.dp),
-                placeHolder = "1234"
+                placeHolder = "1234",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                )
             )
             Row(
                 modifier = Modifier
@@ -435,15 +470,19 @@ private fun InputHomePhone(
                     .weight(1f)
                     .height(44.dp),
                 value = homePhone3,
-                onValueChanged = onHomePhone3Change,
-                color = CustomColor.gray2,
+                onValueChanged = { if(it.length <= 4) {onHomePhone3Change(it)} },
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(start = 12.dp),
-                placeHolder = "5678"
+                placeHolder = "5678",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Done
+                )
             )
         }
         Spacer(Modifier.height(24.dp))
@@ -452,18 +491,12 @@ private fun InputHomePhone(
 
 @Composable
 private fun InputAddress(
-    onUpdateAddress: (postalCode: String, address: String, detailAddress: String) -> Unit,
+    postalCode: String,
+    address: String,
+    detailAddress: String,
+    onUpdateDetailAddress: (detailAddress: String) -> Unit,
+    onShowWebViewClick: () -> Unit,
 ){
-    var postalCode by remember{mutableStateOf<String>("")}
-    var address by remember{mutableStateOf("")}
-    var detailAddress by remember{mutableStateOf("")}
-    var showWebView by remember{mutableStateOf(false)}
-
-    if(showWebView){
-        AddressWebView(onUpdateAddress = { newZoneCode, newAddress ->
-            postalCode = newZoneCode
-        })
-    }
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -484,8 +517,10 @@ private fun InputAddress(
                 )
                 .padding(horizontal = 12.dp),
             value = postalCode,
-            onValueChange = {postalCode = it},
+            onValueChange = {},
+            enabled = false,
             textStyle = TextStyle(
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium
             ),
@@ -513,7 +548,7 @@ private fun InputAddress(
                             .height(20.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CustomColor.gray1),
                         shape = RoundedCornerShape(size = 5.dp),
-                        onClick = {showWebView = true},
+                        onClick = onShowWebViewClick,
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
@@ -532,8 +567,9 @@ private fun InputAddress(
                 .fillMaxWidth()
                 .height(44.dp),
             value = address,
-            onValueChanged = { newAddr -> address = newAddr },
-            color = CustomColor.gray2,
+            onValueChanged = { },
+            enabled = true,
+            color = Color.Black,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             borderWidth = 1.dp,
@@ -548,8 +584,8 @@ private fun InputAddress(
                 .fillMaxWidth()
                 .height(44.dp),
             value = detailAddress,
-            onValueChanged = { newDetailAddress -> detailAddress = newDetailAddress },
-            color = CustomColor.gray2,
+            onValueChanged = onUpdateDetailAddress,
+            color = Color.Black,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             borderWidth = 1.dp,
@@ -558,18 +594,15 @@ private fun InputAddress(
             padding = PaddingValues(start = 12.dp),
             placeHolder = "상세주소"
         )
+        Spacer(Modifier.height(16.dp))
     }
-
-    BackHandler(
-        enabled = true,
-        onBack = {if(showWebView) showWebView = false}
-    )
 }
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 private fun AddressWebView(
-    onUpdateAddress: (zoneCode: String, address: String) -> Unit
+    onUpdateAddress: (zoneCode: String, address: String) -> Unit,
+    onDismiss: () -> Unit,
 ){
     val context = LocalContext.current
     class MyJavaScriptInterface{
@@ -577,29 +610,30 @@ private fun AddressWebView(
         @Suppress("unused")
         fun processData(zoneCode: String, address: String){
             onUpdateAddress(zoneCode, address)
-            Log.d("WWWTESTWWW", "Data Set: ${zoneCode} ${address}")
+            onDismiss()
         }
     }
 
-    AndroidView(factory = {
-        WebView(context).apply{
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true
-            addJavascriptInterface(MyJavaScriptInterface(), "Android")
-            webViewClient = object: WebViewClient(){
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    loadUrl("javascript:sample2_execDaumPostcode();")
+    AndroidView(
+        factory = {
+            WebView(context).apply{
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
+                addJavascriptInterface(MyJavaScriptInterface(), "Android")
+                webViewClient = object: WebViewClient(){
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        loadUrl("javascript:sample2_execDaumPostcode();")
+                    }
                 }
-            }
 
-//            loadUrl("https://hmoa.shop/addressSearch.html")
-            loadUrl("http://192.168.105.13:8080/index.html")
+                loadUrl("https://hmoa.shop/addressSearch.html")
+            }
         }
-    })
+    )
 }
 
 @Composable
@@ -630,6 +664,7 @@ private fun InputRequest(
             padding = PaddingValues(horizontal = 12.dp),
             placeHolder = "배송 시 요청사항을 적어주세요"
         )
+        Spacer(Modifier.height(24.dp))
     }
 }
 

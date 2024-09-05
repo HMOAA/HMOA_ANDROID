@@ -1,14 +1,36 @@
 package com.hmoa.feature_hbti.screen
 
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +46,12 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.concatWithComma
 import com.hmoa.core_common.formatWon
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.CircleImageView
+import com.hmoa.core_designsystem.component.CustomOutlinedTextField
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
@@ -42,9 +69,10 @@ import kotlinx.serialization.json.Json
 fun OrderRoute(
     productIds: List<Int>,
     onNavBack: () -> Unit,
+    navAddAddress: () -> Unit,
     viewModel: OrderViewModel = hiltViewModel()
 ) {
-    viewModel.setIds(productIds)
+    LaunchedEffect(Unit){viewModel.setIds(productIds)}
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     OrderScreen(
@@ -54,7 +82,8 @@ fun OrderRoute(
         saveBuyerInfo = { name, phoneNumber ->
             viewModel.saveBuyerInfo(name, phoneNumber)
         },
-        onNavBack = onNavBack
+        onNavBack = onNavBack,
+        navAddAddress = navAddAddress
     )
 }
 
@@ -65,6 +94,7 @@ fun OrderScreen(
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
+    navAddAddress: () -> Unit
 ) {
     var isOpen by remember { mutableStateOf(true) }
 
@@ -77,7 +107,8 @@ fun OrderScreen(
                 buyerInfo = uiState.buyerInfo,
                 deleteNote = deleteNote,
                 saveBuyerInfo = saveBuyerInfo,
-                onNavBack = onNavBack
+                onNavBack = onNavBack,
+                navAddAddress = navAddAddress
             )
         }
 
@@ -87,6 +118,8 @@ fun OrderScreen(
                 onConfirmClick = onNavBack,
                 errorUiState = errState,
                 onCloseClick = {
+                    Log.d("TAG TEST", "on close click")
+                    isOpen = false
                     onNavBack()
                 }
             )
@@ -101,7 +134,8 @@ private fun OrderScreenMainContent(
     buyerInfo: DefaultOrderInfoDto?,
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
-    onNavBack: () -> Unit
+    onNavBack: () -> Unit,
+    navAddAddress: () -> Unit
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -175,7 +209,7 @@ private fun OrderScreenMainContent(
             }
             if (addressInfo == null) {
                 HorizontalDivider(thickness = 1.dp, color = Color.Black)
-                InputAddress()
+                InputAddress(navAddAddress)
             } else {
                 DefaultAddressInfo(addressInfo)
             }
@@ -283,7 +317,9 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone1,
-                onValueChanged = onPhone1Changed,
+                onValueChanged = {
+                    if(it.length <= 3){onPhone1Changed(it)}
+                },
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -305,7 +341,9 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone2,
-                onValueChanged = onPhone2Changed,
+                onValueChanged = {
+                    if(it.length <= 4) {onPhone2Changed(it)}
+                },
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -327,7 +365,7 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone3,
-                onValueChanged = onPhone3Changed,
+                onValueChanged = { if(it.length <= 4) {onPhone3Changed(it)} },
                 color = CustomColor.gray2,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -365,7 +403,9 @@ private fun DefaultBuyerInfo(buyerInfo: DefaultOrderInfoDto) {
 }
 
 @Composable
-private fun InputAddress() {
+private fun InputAddress(
+    navAddAddress: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -379,9 +419,7 @@ private fun InputAddress() {
             fontFamily = CustomFont.bold
         )
         Text(
-            modifier = Modifier.clickable {
-                /** 배송지 입력 이벤트 */
-            },
+            modifier = Modifier.clickable {navAddAddress()},
             text = "배송지를 입력해주세요",
             fontSize = 10.sp,
             fontFamily = CustomFont.medium,
@@ -542,7 +580,7 @@ private fun Receipt(
                 fontFamily = CustomFont.bold
             )
             Text(
-                text = "${formatWon(finalPayment)}원",
+                text = "${formatWon(totalPayment)}원",
                 fontSize = 20.sp,
                 fontFamily = CustomFont.bold,
                 color = CustomColor.red
@@ -563,7 +601,7 @@ private fun Receipt(
                 color = CustomColor.gray3
             )
             Text(
-                text = "${formatWon(totalPayment)}원",
+                text = "${formatWon(finalPayment)}원",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 color = CustomColor.gray3
@@ -603,7 +641,7 @@ private fun Receipt(
                 fontFamily = CustomFont.semiBold
             )
             Text(
-                text = "${formatWon(finalPayment)}원",
+                text = "${formatWon(totalPayment)}원",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.semiBold
             )
@@ -866,6 +904,7 @@ private fun UITest() {
 
         },
         onNavBack = {},
-        deleteNote = { }
+        deleteNote = { },
+        navAddAddress = {}
     )
 }

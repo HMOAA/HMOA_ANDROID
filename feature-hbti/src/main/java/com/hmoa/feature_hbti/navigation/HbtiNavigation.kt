@@ -8,7 +8,19 @@ import androidx.navigation.navArgument
 import com.google.gson.GsonBuilder
 import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.NoteOrderQuantity
-import com.hmoa.feature_hbti.screen.*
+import com.hmoa.feature_hbti.screen.AddAddressRoute
+import com.hmoa.feature_hbti.screen.HbtiProcessRoute
+import com.hmoa.feature_hbti.screen.HbtiRoute
+import com.hmoa.feature_hbti.screen.HbtiSurveyResultLoading
+import com.hmoa.feature_hbti.screen.HbtiSurveyResultRoute
+import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
+import com.hmoa.feature_hbti.screen.NoteOrderQuantityPickRoute
+import com.hmoa.feature_hbti.screen.NotePickResultRoute
+import com.hmoa.feature_hbti.screen.NotePickRoute
+import com.hmoa.feature_hbti.screen.OrderRoute
+import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
+import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
+import com.hmoa.feature_hbti.screen.SelectSpiceRoute
 
 fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
@@ -164,22 +176,28 @@ fun NavGraphBuilder.spiceSelectScreen() {
     }
 }
 
-fun NavGraphBuilder.order() {
+fun NavGraphBuilder.order(
+    navBack: () -> Unit,
+    navAddAddress: () -> Unit,
+) {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
         val gson = GsonBuilder().create()
         val productIdsToJson = it.arguments?.getString("productIdsToJson")
         val productIds = gson.fromJson(productIdsToJson, NoteProductIds::class.java)
         OrderRoute(
             productIds = productIds.productIds,
-            onNavBack = {}
+            onNavBack = navBack,
+            navAddAddress = navAddAddress,
         )
     }
 }
 
-fun NavGraphBuilder.addAddress() {
+fun NavGraphBuilder.addAddress(
+    navBack: () -> Unit,
+) {
     composable(route = HbtiRoute.AddAddressRoute.name) {
         AddAddressRoute(
-            onNavBack = {}
+            onNavBack = navBack
         )
     }
 }

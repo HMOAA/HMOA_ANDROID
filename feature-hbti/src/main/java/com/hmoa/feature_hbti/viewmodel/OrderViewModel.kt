@@ -1,7 +1,9 @@
 package com.hmoa.feature_hbti.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -59,8 +62,10 @@ class OrderViewModel @Inject constructor(
         if(it) {
             val result = memberRepository.getOrderInfo()
             if (result.errorMessage != null){
-                when(result.errorMessage!!.code){
-                    "401" -> unLoginedErrorState.update{true}
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
                     else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                 }
                 null
@@ -75,8 +80,10 @@ class OrderViewModel @Inject constructor(
         if(it){
             val result = memberRepository.getAddress()
             if (result.errorMessage != null){
-                when(result.errorMessage!!.code){
-                    "401" -> unLoginedErrorState.update{true}
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
                     else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                 }
                 null
@@ -87,36 +94,19 @@ class OrderViewModel @Inject constructor(
             null
         }
     }
-    private val productIds = MutableStateFlow<List<Int>>(emptyList()).apply{
-        this.map{
-            runBlocking{
-                if(it.isNotEmpty()){
-                    val requestDto = ProductListRequestDto(it)
-                    val result = hshopRepository.postNoteOrder(requestDto)
-                    if (result.errorMessage != null){
-                        when(result.errorMessage!!.code){
-                            "401" -> unLoginedErrorState.update{true}
-                            else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
-                        }
-                        return@runBlocking
-                    }
-                    _isExistBuyerInfo.update{result.data!!.existMemberInfo}
-                    _isExistAddressInfo.update{result.data!!.existMemberAddress}
-                    orderId.update{result.data!!.orderId}
-                }
-            }
-        }
-    }
-    private val orderInfoFlow = orderId.map{
-        val result = hshopRepository.getFinalOrderResult(orderId.value!!)
+    private val productIds = MutableStateFlow<List<Int>>(emptyList())
+    private val orderInfoFlow = orderId.filterNotNull().map{
+        val result = hshopRepository.getFinalOrderResult(it)
         if (result.errorMessage != null) {
-            when(result.errorMessage!!.code){
-                "401" -> unLoginedErrorState.update{true}
-                "404" -> expiredTokenErrorState.update{true}
+            when(result.errorMessage!!.message){
+                ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
                 else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
             }
             throw Exception("Error")
         }
+        Log.d("TAG TEST", "order info flow : ${result}")
         result.data
     }
     val uiState = combine(errorUiState, buyerInfoFlow, addressInfoFlow, orderInfoFlow){ errState, buyerInfo, addressInfo, orderInfo ->
@@ -137,14 +127,36 @@ class OrderViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = OrderUiState.Loading
     )
-    fun setIds(initIds: List<Int>) = productIds.update{initIds}
+    fun setIds(initIds: List<Int>) {
+        productIds.update{initIds}
+        runBlocking{
+            if(initIds.isNotEmpty()){
+                val requestDto = ProductListRequestDto(initIds)
+                val result = hshopRepository.postNoteOrder(requestDto)
+                if (result.errorMessage != null){
+                    when(result.errorMessage!!.message){
+                        ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                        ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                        ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
+                        else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
+                    }
+                    return@runBlocking
+                }
+                _isExistBuyerInfo.update{result.data!!.existMemberInfo}
+                _isExistAddressInfo.update{result.data!!.existMemberAddress}
+                orderId.update{result.data!!.orderId}
+            }
+        }
+    }
     fun saveBuyerInfo(name: String, phoneNumber: String){
         viewModelScope.launch{
             val requestDto = DefaultOrderInfoDto(name, phoneNumber)
             val result = memberRepository.postOrderInfo(requestDto)
             if (result.errorMessage != null){
-                when(result.errorMessage!!.code){
-                    "401" -> unLoginedErrorState.update{true}
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
                     else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                 }
                 return@launch

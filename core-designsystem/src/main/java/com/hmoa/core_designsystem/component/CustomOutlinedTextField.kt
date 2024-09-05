@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ fun CustomOutlinedTextField(
     value: String,
     onValueChanged: (value: String) -> Unit,
     fontSize: TextUnit,
+    enabled: Boolean = true,
     color: Color = Color.Black,
     fontFamily: FontFamily,
     placeHolder: String? = null,
@@ -36,6 +38,7 @@ fun CustomOutlinedTextField(
     borderColor: Color,
     borderShape: Shape,
     padding: PaddingValues,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ){
     var isFocused by remember{mutableStateOf(false)}
     BasicTextField(
@@ -49,6 +52,7 @@ fun CustomOutlinedTextField(
             fontSize = fontSize,
             fontFamily = fontFamily
         ),
+        enabled = enabled,
         singleLine = true,
         maxLines = 1,
         decorationBox = {
@@ -65,6 +69,7 @@ fun CustomOutlinedTextField(
                 }
                 it()
             }
-        }
+        },
+        keyboardOptions = keyboardOptions
     )
 }

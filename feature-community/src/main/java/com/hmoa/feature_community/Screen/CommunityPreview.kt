@@ -43,7 +43,7 @@ import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
 
 
 @Composable
-fun CommunityPageRoute(
+fun CommunityPreviewRoute(
     onNavBack: () -> Unit,
     onNavSearch: () -> Unit,
     onNavCommunityDescription: (Int) -> Unit,
@@ -135,7 +135,7 @@ fun CommunityPage(
         }
         is CommunityMainUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onErrorHandleLoginAgain,
+                onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
                 onCloseClick = onErrorHandleLoginAgain
             )

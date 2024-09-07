@@ -17,8 +17,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.feature_userinfo.viewModel.FavoriteCommentUiState
 import com.example.feature_userinfo.viewModel.FavoriteCommentViewModel
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
@@ -27,27 +29,36 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 fun MyFavoriteCommentRoute(
     onNavBack: () -> Unit,
     onNavCommunity: (Int) -> Unit,
+    onNavPerfume: (Int) -> Unit,
     viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
-
     //comment list
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val type = viewModel.type.collectAsStateWithLifecycle()
 
     MyFavoriteCommentPage(
         uiState = uiState.value,
+        errState = errState.value,
         commentType = type.value,
         onTypeChanged = { viewModel.changeType(it) },
         onNavBack = onNavBack,
-        onNavCommunity = onNavCommunity
+        onNavParent = {
+            if (type.value == MyPageCategory.향수.name) {
+                onNavPerfume(it)
+            } else {
+                onNavCommunity(it)
+            }
+        }
     )
 }
 
 @Composable
 fun MyFavoriteCommentPage(
     onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
+    onNavParent: (Int) -> Unit,
     uiState: FavoriteCommentUiState,
+    errState: ErrorUiState,
     commentType: String,
     onTypeChanged: (String) -> Unit,
 ) {
@@ -63,12 +74,16 @@ fun MyFavoriteCommentPage(
                 onTypeChanged = onTypeChanged,
                 comments = comments.itemSnapshotList,
                 onNavBack = onNavBack,
-                onNavCommunity = onNavCommunity
+                onNavParent = onNavParent
             )
         }
 
         FavoriteCommentUiState.Error -> {
-
+            ErrorUiSetView(
+                onLoginClick = onNavBack,
+                errorUiState = errState,
+                onCloseClick = onNavBack
+            )
         }
 
         else -> {}
@@ -81,7 +96,7 @@ fun FavoriteCommentContent(
     onTypeChanged: (String) -> Unit,
     comments: ItemSnapshotList<CommunityCommentDefaultResponseDto>,
     onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
+    onNavParent: (Int) -> Unit,
 ) {
     val commentCount = comments.size
 
@@ -96,7 +111,8 @@ fun FavoriteCommentContent(
             onNavClick = onNavBack //뒤로 가기
         )
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
         ) {
@@ -113,14 +129,16 @@ fun FavoriteCommentContent(
                                 comment = comment.content,
                                 isFirst = false,
                                 heartCount = comment.heartCount,
-                                onNavCommunity = { onNavCommunity(comment.parentId) },
+                                onNavCommunity = { onNavParent(comment.parentId) },
                                 onOpenBottomDialog = { /** 여기도 Bottom Dialog 사용하려면 사용합시다 */ },
                                 isSelected = comment.liked,
                                 onChangeSelect = {}
                             )
                             if (index < commentCount - 1) {
                                 Spacer(
-                                    modifier = Modifier.fillMaxWidth().height(1.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(1.dp)
                                         .background(color = CustomColor.gray2)
                                 )
                             }
@@ -140,7 +158,8 @@ private fun TypeRow(
     onTypeChanged: (type: String) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .wrapContentHeight(),
     ) {
         TypeBadge(

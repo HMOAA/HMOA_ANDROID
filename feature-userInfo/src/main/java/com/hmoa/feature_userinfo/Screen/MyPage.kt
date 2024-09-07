@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,8 +42,9 @@ import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
+import kotlinx.coroutines.launch
 
-const val APP_VERSION = "1.0.0"
+const val APP_VERSION = "1.1.0"
 
 @Composable
 internal fun MyPageRoute(
@@ -50,6 +52,7 @@ internal fun MyPageRoute(
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
     onNavLogin: () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
@@ -67,25 +70,33 @@ internal fun MyPageRoute(
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
     }
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
+    val termsOfServiceIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_OF_SERVICE)) }
+    val scope = rememberCoroutineScope()
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
             uiState = uiState.value,
             errorUiState = errorUiState,
             logoutEvent = {
-                viewModel.logout()
-                onNavLogin()
+                scope.launch {
+                    launch { viewModel.logout() }.join()
+                    onNavLogin()
+                }
             },
             doOpenLicense = {
                 launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
                 OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
             },
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
+            openTermsOfServiceLink = { context.startActivity(termsOfServiceIntent) },
             onDelAccount = {
-                viewModel.delAccount()
-                onNavLogin()
+                scope.launch {
+                    launch { viewModel.delAccount() }.join()
+                    onNavLogin()
+                }
             },
             onNavKakaoChat = navKakao,
+            onNavMyPerfume = onNavMyPerfume,
             onNavEditProfile = onNavEditProfile,
             onNavMyActivity = onNavMyActivity,
             onNavManageMyInfo = onNavManageMyInfo,
@@ -109,7 +120,9 @@ fun MyPage(
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onNavKakaoChat: () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
@@ -129,8 +142,10 @@ fun MyPage(
                 logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
                 openPrivacyPolicyLink = openPrivacyPolicyLink,
+                openTermsOfServiceLink = openTermsOfServiceLink,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
+                onNavMyPerfume = onNavMyPerfume,
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
@@ -139,7 +154,7 @@ fun MyPage(
 
         UserInfoUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = { onErrorHandleLoginAgain() },
+                onLoginClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = { onBackClick() }
             )
@@ -157,17 +172,20 @@ private fun MyPageContent(
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onDelAccount: () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
 ) {
     val columnInfo = listOf(
+        ColumnData("나의 향수") { onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
-        ColumnData("이용 약관") { },
+        ColumnData("이용 약관") { openTermsOfServiceLink() },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
         ColumnData("버전 정보 ${APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
@@ -175,47 +193,48 @@ private fun MyPageContent(
         ColumnData("계정삭제") { onDelAccount() }
     )
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        TopBar(title = "마이페이지")
-        UserProfileInfo(
-            profile = profile,
-            nickname = nickname,
-            provider = provider,
-            onNavEditProfile = onNavEditProfile
-        )
-        ServiceAlarm()
-        HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-        LazyColumn {
-            itemsIndexed(columnInfo) { idx, it ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(46.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = it.title, fontSize = 16.sp)
+        item {
+            TopBar(title = "마이페이지")
+            UserProfileInfo(
+                profile = profile,
+                nickname = nickname,
+                provider = provider,
+                onNavEditProfile = onNavEditProfile
+            )
+            //ServiceAlarm()
+            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+        }
 
-                    IconButton(
-                        modifier = Modifier.size(20.dp),
-                        onClick = it.onNavClick
-                    ) {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
-                            contentDescription = "Navigation Button",
-                            tint = CustomColor.gray2
-                        )
-                    }
+        itemsIndexed(columnInfo) { idx, it ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = it.title, fontSize = 16.sp)
+
+                IconButton(
+                    modifier = Modifier.size(20.dp),
+                    onClick = it.onNavClick
+                ) {
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
+                        contentDescription = "Navigation Button",
+                        tint = CustomColor.gray2
+                    )
                 }
-                if (idx % 3 == 2) {
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                }
+            }
+            if (idx % 3 == 2) {
+                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
             }
         }
     }

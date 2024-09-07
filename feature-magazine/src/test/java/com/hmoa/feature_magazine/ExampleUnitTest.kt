@@ -1,7 +1,6 @@
-package com.hmoa.core_database
+package com.hmoa.feature_magazine
 
 import org.junit.Test
-
 import org.junit.Assert.*
 
 /**

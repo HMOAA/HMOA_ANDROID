@@ -1,6 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,11 +11,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,10 +45,10 @@ fun MainBottomBar(
             else painterResource(R.drawable.ic_hpedia)
         ),
         BottomNavItem(
-            name = BottomScreen.Like,
+            name = BottomScreen.Magazine,
             route = onClickLike,
-            icon = if (initValue == "Like") painterResource(R.drawable.ic_nav_like_selected)
-            else painterResource(R.drawable.ic_heart)
+            icon = if (initValue == "Magazine") painterResource(R.drawable.ic_magazine_selected)
+            else painterResource(R.drawable.ic_magazine_not_selected)
         ),
         BottomNavItem(
             name = BottomScreen.MyPage,
@@ -64,7 +58,7 @@ fun MainBottomBar(
         ),
     )
 
-    NavigationBar(containerColor = Color.White) {
+    NavigationBar(containerColor = Color.Black) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -83,13 +77,13 @@ fun MainBottomBar(
                                 modifier = Modifier.size(25.dp),
                                 painter = item.icon,
                                 contentDescription = "${item.name}아이템",
-                                tint = Color.Black
+                                tint = Color.White
                             )
 
                             Spacer(Modifier.height(5.dp))
 
                             if (initValue == item.name.name) {
-                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Black)
+                                Text(text = item.name.name, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.White)
                             }
                         }
                     }

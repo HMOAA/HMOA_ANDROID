@@ -1,22 +1,9 @@
 package com.hmoa.feature_home.screen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -193,59 +179,61 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
             .fillMaxWidth()
             .height(totalHeight.dp)
     ) {
-        Column(modifier = Modifier.padding(end = 8.dp)) {
-            ImageWithTitleView(
-                title = firstMenu.perfumeList[0].brandName,
-                onItemClick = { onPerfumeClick(firstMenu.perfumeList[0].perfumeId) },
-                imageUrl = firstMenu.perfumeList[0].imgUrl,
-                containerWidth = 0.4f,
-                containerHeight = 0.6f,
-                width = 1f,
-                height = 1f
-            )
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-            ImageWithTitleView(
-                title = firstMenu.perfumeList[1].brandName,
-                onItemClick = { onPerfumeClick(firstMenu.perfumeList[1].perfumeId) },
-                imageUrl = firstMenu.perfumeList[1].imgUrl,
-                containerWidth = 0.4f,
-                containerHeight = 1f,
-                width = 1f,
-                height = 1f
-            )
-        }
-        Column {
-            Row {
+        if (!firstMenu.perfumeList.isEmpty()) {
+            Column(modifier = Modifier.padding(end = 8.dp)) {
                 ImageWithTitleView(
-                    title = firstMenu.perfumeList[2].brandName,
-                    onItemClick = { onPerfumeClick(firstMenu.perfumeList[2].perfumeId) },
-                    imageUrl = firstMenu.perfumeList[2].imgUrl,
-                    containerWidth = 0.45f,
-                    containerHeight = 0.4f,
+                    title = firstMenu.perfumeList[0].brandName,
+                    onItemClick = { onPerfumeClick(firstMenu.perfumeList[0].perfumeId) },
+                    imageUrl = firstMenu.perfumeList[0].imgUrl,
+                    containerWidth = 0.4f,
+                    containerHeight = 0.6f,
                     width = 1f,
                     height = 1f
                 )
-                Spacer(modifier = Modifier.padding(end = 8.dp))
+                Spacer(modifier = Modifier.padding(top = 8.dp))
                 ImageWithTitleView(
-                    title = firstMenu.perfumeList[3].brandName,
-                    onItemClick = { onPerfumeClick(firstMenu.perfumeList[3].perfumeId) },
-                    imageUrl = firstMenu.perfumeList[3].imgUrl,
-                    containerWidth = 1f,
-                    containerHeight = 0.4f,
+                    title = firstMenu.perfumeList[1].brandName,
+                    onItemClick = { onPerfumeClick(firstMenu.perfumeList[1].perfumeId) },
+                    imageUrl = firstMenu.perfumeList[1].imgUrl,
+                    containerWidth = 0.4f,
+                    containerHeight = 1f,
                     width = 1f,
                     height = 1f
                 )
             }
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-            ImageWithTitleView(
-                title = firstMenu.perfumeList[4].brandName,
-                onItemClick = { onPerfumeClick(firstMenu.perfumeList[4].perfumeId) },
-                imageUrl = firstMenu.perfumeList[4].imgUrl,
-                containerWidth = 1f,
-                containerHeight = 1f,
-                width = 1f,
-                height = 1f
-            )
+            Column {
+                Row {
+                    ImageWithTitleView(
+                        title = firstMenu.perfumeList[2].brandName,
+                        onItemClick = { onPerfumeClick(firstMenu.perfumeList[2].perfumeId) },
+                        imageUrl = firstMenu.perfumeList[2].imgUrl,
+                        containerWidth = 0.45f,
+                        containerHeight = 0.4f,
+                        width = 1f,
+                        height = 1f
+                    )
+                    Spacer(modifier = Modifier.padding(end = 8.dp))
+                    ImageWithTitleView(
+                        title = firstMenu.perfumeList[3].brandName,
+                        onItemClick = { onPerfumeClick(firstMenu.perfumeList[3].perfumeId) },
+                        imageUrl = firstMenu.perfumeList[3].imgUrl,
+                        containerWidth = 1f,
+                        containerHeight = 0.4f,
+                        width = 1f,
+                        height = 1f
+                    )
+                }
+                Spacer(modifier = Modifier.padding(top = 8.dp))
+                ImageWithTitleView(
+                    title = firstMenu.perfumeList[4].brandName,
+                    onItemClick = { onPerfumeClick(firstMenu.perfumeList[4].perfumeId) },
+                    imageUrl = firstMenu.perfumeList[4].imgUrl,
+                    containerWidth = 1f,
+                    containerHeight = 1f,
+                    width = 1f,
+                    height = 1f
+                )
+            }
         }
     }
 }

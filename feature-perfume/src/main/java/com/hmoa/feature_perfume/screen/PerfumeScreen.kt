@@ -32,7 +32,10 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.PerfumeGender
 import com.hmoa.core_model.Weather
 import com.hmoa.core_model.data.Perfume
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.PerfumeAgeResponseDto
+import com.hmoa.core_model.response.PerfumeCommentResponseDto
+import com.hmoa.core_model.response.PerfumeGenderResponseDto
+import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 import com.hmoa.feature_perfume.viewmodel.PerfumeViewmodel
 import kotlinx.coroutines.launch
 
@@ -80,13 +83,14 @@ fun PerfumeScreen(
     LaunchedEffect(true) {
         viewModel.initializePerfume(perfumeId)
     }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val perfumeCommentIdToReport by viewModel.perfumeCommentIdStateToReport.collectAsStateWithLifecycle()
+    val perfumeComentCount by viewModel.perfumeCommentsCountState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    val errorDialogAbleToPopUp = remember { mutableStateOf(true) }
 
     ErrorUiSetView(
-        onConfirmClick = { onErrorHandleLoginAgain() },
+        onLoginClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
         onCloseClick = { onBackClick() }
     )
@@ -115,6 +119,7 @@ fun PerfumeScreen(
                 gender = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).gender,
                 age = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).age,
                 perfumeComments = (uiState as PerfumeViewmodel.PerfumeUiState.PerfumeData).perfumeComments,
+                perfumeCommentsCount = perfumeComentCount,
                 onSpecificCommentClick = { commentId, isEditable ->
                     onSpecificCommentClick(
                         commentId,
@@ -160,7 +165,8 @@ fun PerfumeContent(
     weather: PerfumeWeatherResponseDto?,
     gender: PerfumeGenderResponseDto?,
     age: PerfumeAgeResponseDto?,
-    perfumeComments: PerfumeCommentGetResponseDto?,
+    perfumeComments: List<PerfumeCommentResponseDto>?,
+    perfumeCommentsCount: Int,
     updatePerfumeCommentIdToReport: (commentId: Int) -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
@@ -245,30 +251,28 @@ fun PerfumeContent(
                     onInitializeAgeClick = { onInitializeAgeClick() },
                     age
                 )
-                if (data.commentInfo != null) {
-                    CommentView(
-                        commentCount = perfumeComments?.commentCount ?: 0,
-                        perfumeComments = perfumeComments?.comments ?: emptyList(),
-                        onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
-                        onSpecificCommentClick = { commentId, isEditable ->
-                            onSpecificCommentClick(
-                                commentId,
-                                isEditable
-                            )
-                        },
-                        onSpecificCommentLikeClick = { commentId, isLike, index ->
-                            onSpecificCommentLikeClick(
-                                commentId,
-                                isLike,
-                                index
-                            )
-                        },
-                        onPerfumeCommentReportClick = {
-                            updatePerfumeCommentIdToReport(it)
-                            scope.launch { modalSheetState.show() }
-                        },
-                    )
-                }
+                CommentView(
+                    commentCount = perfumeCommentsCount,
+                    perfumeComments = perfumeComments ?: emptyList(),
+                    onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
+                    onSpecificCommentClick = { commentId, isEditable ->
+                        onSpecificCommentClick(
+                            commentId,
+                            isEditable
+                        )
+                    },
+                    onSpecificCommentLikeClick = { commentId, isLike, index ->
+                        onSpecificCommentLikeClick(
+                            commentId,
+                            isLike,
+                            index
+                        )
+                    },
+                    onPerfumeCommentReportClick = {
+                        updatePerfumeCommentIdToReport(it)
+                        scope.launch { modalSheetState.show() }
+                    },
+                )
                 Text(
                     "같은 브랜드의 제품",
                     style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
@@ -591,16 +595,16 @@ fun CommentView(
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light)
         )
     }
-    when (commentCount) {
-        0 -> Text(
+    if (commentCount == 0) {
+        Text(
             "해당 제품에 대한 의견을 남겨주세요",
             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = CustomColor.gray3),
             modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
             textAlign = TextAlign.Center
         )
-
-        else -> {
-            perfumeComments.forEachIndexed { index, it ->
+    } else {
+        perfumeComments.forEachIndexed { index, it ->
+            key(it.id) {
                 CommentItem(
                     count = it.heartCount,
                     isCommentLiked = it.liked,
@@ -618,17 +622,17 @@ fun CommentView(
                     )
                 }
             }
-            Column(modifier = Modifier.padding(top = 8.dp)) {
-                Button(
-                    isEnabled = true,
-                    btnText = "모두 보기",
-                    onClick = { onViewCommentAllClick() },
-                    buttonModifier = Modifier.fillMaxWidth().height(32.dp).background(color = CustomColor.gray4),
-                    textColor = Color.White,
-                    textSize = 14
-                )
+        }
+        Column(modifier = Modifier.padding(top = 8.dp)) {
+            Button(
+                isEnabled = true,
+                btnText = "모두 보기",
+                onClick = { onViewCommentAllClick() },
+                buttonModifier = Modifier.fillMaxWidth().height(32.dp).background(color = CustomColor.gray4),
+                textColor = Color.White,
+                textSize = 14
+            )
 
-            }
         }
     }
 }

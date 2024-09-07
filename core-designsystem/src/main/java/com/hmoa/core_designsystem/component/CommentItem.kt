@@ -8,8 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +35,7 @@ fun CommentItem(
     onCommentItemClick: () -> Unit,
     onCommentLikedClick: () -> Unit
 ) {
-    var isLiked = remember { mutableStateOf(isCommentLiked) }
+    //var isLiked = remember { mutableStateOf(isCommentLiked) }
     Column {
         Column(modifier = Modifier.fillMaxWidth().height(102.dp).padding(10.dp).clickable { onCommentItemClick() }) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -65,13 +63,12 @@ fun CommentItem(
                 Row {
                     LikeCountButton(
                         onClickItem = {
-                            isLiked.value = !isLiked.value
                             onCommentLikedClick()
                         },
                         count = count,
                         fontSize = TextUnit(value = 14f, type = TextUnitType.Sp),
                         fontColor = Color.Black,
-                        selected = isLiked.value,
+                        selected = isCommentLiked,
                         iconSize = 18
                     )
                     Icon(

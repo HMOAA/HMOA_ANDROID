@@ -15,7 +15,10 @@ import com.hmoa.core_model.PerfumeGender
 import com.hmoa.core_model.Weather
 import com.hmoa.core_model.data.Perfume
 import com.hmoa.core_model.request.TargetRequestDto
-import com.hmoa.core_model.response.*
+import com.hmoa.core_model.response.PerfumeAgeResponseDto
+import com.hmoa.core_model.response.PerfumeCommentResponseDto
+import com.hmoa.core_model.response.PerfumeGenderResponseDto
+import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -33,13 +36,15 @@ class PerfumeViewmodel @Inject constructor(
     private val reportRepository: ReportRepository,
     private val loginRepository: LoginRepository
 ) : ViewModel() {
-    private val authToken = MutableStateFlow<String?>(null)
-    private var hasToken = authToken.value != null
+    private var authToken = MutableStateFlow<String?>(null)
+    private var hasToken: Boolean = false
     private var perfumeState = MutableStateFlow<Perfume?>(null)
     private var weatherState = MutableStateFlow<PerfumeWeatherResponseDto?>(null)
     private var genderState = MutableStateFlow<PerfumeGenderResponseDto?>(null)
     private var ageState = MutableStateFlow<PerfumeAgeResponseDto?>(null)
-    private var perfumeCommentsState = MutableStateFlow<PerfumeCommentGetResponseDto?>(null)
+    private var perfumeCommentsState = MutableStateFlow<List<PerfumeCommentResponseDto>?>(null)
+    private var _perfumeCommentsCountState = MutableStateFlow<Int>(0)
+    val perfumeCommentsCountState: StateFlow<Int> = _perfumeCommentsCountState
     private var _perfumeCommentIdStateToReport = MutableStateFlow<Int?>(null)
     val perfumeCommentIdStateToReport = _perfumeCommentIdStateToReport
 
@@ -49,7 +54,7 @@ class PerfumeViewmodel @Inject constructor(
             genderState,
             ageState,
             perfumeState,
-            perfumeCommentsState
+            perfumeCommentsState,
         ) { weather, gender, age, perfume, perfumeComments ->
             PerfumeUiState.PerfumeData(
                 data = perfume,
@@ -98,7 +103,11 @@ class PerfumeViewmodel @Inject constructor(
     private fun getAuthToken() {
         viewModelScope.launch {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
+                Log.d("PerfumeViewmodel", "${it}")
                 authToken.value = it
+                if (it != null) {
+                    hasToken = true
+                }
             }
         }
     }
@@ -113,7 +122,6 @@ class PerfumeViewmodel @Inject constructor(
                 onUpdatePerfumeAge(age, perfumeId)
             } else {
                 unLoginedErrorState.update { true }
-                Log.d("PerfumeViewmodel", "${unLoginedErrorState.value}")
             }
         }
     }
@@ -202,7 +210,8 @@ class PerfumeViewmodel @Inject constructor(
                 when (result) {
                     is Result.Success -> {
                         perfumeState.update { result.data.data }
-                        perfumeCommentsState.update { result.data.data?.commentInfo }
+                        perfumeCommentsState.update { result.data.data?.commentInfo?.comments }
+                        _perfumeCommentsCountState.update { result.data.data?.commentInfo?.commentCount ?: 0 }
                     }
 
                     is Result.Loading -> {
@@ -254,7 +263,8 @@ class PerfumeViewmodel @Inject constructor(
             when (result) {
                 is Result.Success -> {
                     perfumeState.value?.liked = like
-                    perfumeState.value?.likedCount = perfumeState.value?.likedCount!!.plus(1)
+                    val newValue = perfumeState.value?.likedCount!! + 1
+                    perfumeState.value?.likedCount = newValue
                 }
 
                 is Result.Loading -> {}
@@ -282,27 +292,13 @@ class PerfumeViewmodel @Inject constructor(
 
     fun updatePerfumeCommentLike(like: Boolean, commentId: Int, index: Int) {
         if (hasToken) {
+            val oldPerfumeComments = perfumeState.value?.commentInfo?.comments
+            val newPerfumeComment = updatePerfumeCommentState(index, like, oldPerfumeComments)
+            perfumeCommentsState.value = perfumeCommentsState.value?.map { comment ->
+                if (comment.id == newPerfumeComment.id) newPerfumeComment else comment
+            }
             viewModelScope.launch(Dispatchers.IO) {
-                updateLikePerfumeComment(like, commentId).asResult().collectLatest {
-                    when (it) {
-                        is Result.Loading -> {}
-                        is Result.Success -> {
-                            val oldPerfumeComments = perfumeState.value?.commentInfo?.comments
-                            val newPerfumeComments = updatePerfumeCommentState(index, like, oldPerfumeComments)
-                            perfumeCommentsState.update {
-                                PerfumeCommentGetResponseDto(
-                                    commentCount = newPerfumeComments?.size ?: 0,
-                                    comments = newPerfumeComments ?: emptyList(),
-                                    lastPage = false
-                                )
-                            }
-                            Log.d("PerfumeViewmodel", "새 리스트: ${newPerfumeComments}")
-                            Log.d("PerfumeViewmodel", "perfumeCommentsState: ${perfumeCommentsState.value}")
-                        }
-
-                        is Result.Error -> {}
-                    }
-                }
+                updateLikePerfumeComment(like, commentId)
             }
         } else {
             unLoginedErrorState.update { true }
@@ -312,19 +308,24 @@ class PerfumeViewmodel @Inject constructor(
     fun updatePerfumeCommentState(
         index: Int,
         like: Boolean,
-        oldPerfumeComments: List<PerfumeCommentResponseDto>?
-    ): List<PerfumeCommentResponseDto>? {
+        oldPerfumeComments: List<PerfumeCommentResponseDto>?,
+    ): PerfumeCommentResponseDto {
+        val perfumeComments = oldPerfumeComments?.toMutableList()
         var likeTargetPerfumeComment = oldPerfumeComments?.get(index)
-        var newPerfumeComments = oldPerfumeComments?.toMutableList()
+        var heartCount = likeTargetPerfumeComment?.heartCount ?: 0
 
         when (like) {
-            true -> likeTargetPerfumeComment?.heartCount?.plus(1)
-            false -> likeTargetPerfumeComment?.heartCount?.minus(-1)
+            true -> {
+                likeTargetPerfumeComment?.heartCount = heartCount + 1
+            }
+
+            false -> {
+                likeTargetPerfumeComment?.heartCount = heartCount - 1
+            }
         }
         likeTargetPerfumeComment?.liked = like
-        newPerfumeComments?.set(index, likeTargetPerfumeComment!!)
-
-        return newPerfumeComments?.toList()
+        perfumeComments?.set(index, likeTargetPerfumeComment!!)
+        return likeTargetPerfumeComment!!
     }
 
     fun updatePerfumeCommentIdToReport(id: Int) {
@@ -351,7 +352,7 @@ class PerfumeViewmodel @Inject constructor(
             val weather: PerfumeWeatherResponseDto?,
             val gender: PerfumeGenderResponseDto?,
             val age: PerfumeAgeResponseDto?,
-            val perfumeComments: PerfumeCommentGetResponseDto?
+            val perfumeComments: List<PerfumeCommentResponseDto>?,
         ) : PerfumeUiState
 
         data object Empty : PerfumeUiState

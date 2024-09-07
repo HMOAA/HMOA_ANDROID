@@ -1,6 +1,7 @@
 package com.hmoa.core_database
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
@@ -9,10 +10,10 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -36,11 +37,30 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         private val FCM_TOKEN_KEY = stringPreferencesKey("FCM_TOKEN")
     }
 
+    override fun getAuthTokenForHeader(): String {
+        val token = runBlocking {
+            try {
+                withTimeout(2000L) {
+                    getAuthToken().filterNotNull().first()
+                }
+            } catch (e: TimeoutCancellationException) {
+                Log.d("TokenManagerImpl", "getAuthTokenForHeader: Timeout occurred, returning null.")
+                null
+            }
+        }
+        if (token != null) {
+            Log.d("TokenManagerImpl", "getAuthTokenForHeader: AuthToken(accessToken):${token}")
+        }
+        return token ?: ""
+    }
+
     override suspend fun getAuthToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
+            Log.d("TokenManagerImpl", "getAuthToken: AuthToken(accessToken):${preferences[AUTH_TOKEN_KEY]}")
             preferences[AUTH_TOKEN_KEY]
         }
     }
+
 
     override suspend fun getRememberedToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
@@ -56,6 +76,8 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     override suspend fun getGoogleAccessToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
+            val p = preferences[GOOGLE_ACCESS_TOKEN_KEY]
+            Log.d("TokenManagerImpl", "${p}")
             preferences[GOOGLE_ACCESS_TOKEN_KEY]
         }
     }

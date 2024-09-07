@@ -22,18 +22,15 @@ android {
         applicationId = "com.hmoa.app"
         minSdk = 26
         targetSdk = 33
-        versionCode = 3
+        versionCode = 18
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders["NATIVE_APP_KEY"] = localProperties.getProperty("NATIVE_APP_KEY")
-        buildConfigField("String", "NATIVE_APP_KEY", localProperties.getProperty("NATIVE_APP_KEY"))
+        manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String
+        buildConfigField("String", "NATIVE_APP_KEY", localProperties["NATIVE_APP_KEY"] as String)
     }
 
     signingConfigs {
-        getByName("debug") {
-            storeFile = file("./debug.keystore")
-        }
         create("release") {
             keyAlias = localProperties.getProperty("KEY_ALIAS")
             keyPassword = localProperties.getProperty("KEY_PASSWORD")
@@ -76,7 +73,20 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
+
+    applicationVariants.all {
+        this.mergeResourcesProvider.configure {
+            doLast {
+                copy {
+                    from(":HMOA_ANDROID_SECRET")
+                }
+            }
+        }
+    }
+
 }
+
+
 
 dependencies {
     val hilt_version = "2.48.1"
@@ -91,6 +101,7 @@ dependencies {
     implementation(project(":feature-brand"))
     implementation(project(":feature-hpedia"))
     implementation(project(":feature-like"))
+    implementation(project(":feature-magazine"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
     implementation(project(":core-domain"))

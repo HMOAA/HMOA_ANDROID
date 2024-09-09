@@ -796,7 +796,8 @@ private fun CheckPrivacyConsent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 20.dp)
+                .padding(top = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = { onUpdateRefundChecked(!isRefundChecked) }
@@ -829,7 +830,8 @@ private fun CheckPrivacyConsent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 27.dp)
+                .padding(top = 16.dp, bottom = 27.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = { onUpdatePrivacyConsentGranted(!isPrivacyConsentGranted) }

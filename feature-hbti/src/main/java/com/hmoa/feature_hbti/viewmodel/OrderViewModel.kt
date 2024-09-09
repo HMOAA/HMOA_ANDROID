@@ -165,7 +165,6 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch{
             val requestDto = DefaultOrderInfoDto(name, phoneNumber)
             val result = memberRepository.postOrderInfo(requestDto)
-            Log.d("TAG TEST", "save buyer info : ${result}")
             if (result.errorMessage != null){
                 when(result.errorMessage!!.message){
                     ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}

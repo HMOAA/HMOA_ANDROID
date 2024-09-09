@@ -44,7 +44,7 @@ fun NavController.navigateToNotePickResult(productIdsToJson: String) =
 fun NavController.navigateToOrder(productIdsToJson: String) =
     navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
 
-fun NavController.navigateToAddAddress() = navigate(HbtiRoute.AddAddressRoute.name)
+fun NavController.navigateToAddAddress(addressJson: String) = navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}")
 
 fun NavGraphBuilder.hbtiScreen(onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -178,7 +178,7 @@ fun NavGraphBuilder.spiceSelectScreen() {
 
 fun NavGraphBuilder.order(
     navBack: () -> Unit,
-    navAddAddress: () -> Unit,
+    navAddAddress: (String) -> Unit,
 ) {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
         val gson = GsonBuilder().create()
@@ -193,10 +193,15 @@ fun NavGraphBuilder.order(
 }
 
 fun NavGraphBuilder.addAddress(
-    navBack: () -> Unit,
+    navBack: () -> Unit
 ) {
-    composable(route = HbtiRoute.AddAddressRoute.name) {
+    composable(
+        route = "${HbtiRoute.AddAddressRoute.name}/{addressJson}",
+        arguments = listOf(navArgument("addressJson"){type = NavType.StringType})
+    ) {
+        val addressJson = it.arguments?.getString("addressJson")
         AddAddressRoute(
+            addressJson = addressJson,
             onNavBack = navBack
         )
     }

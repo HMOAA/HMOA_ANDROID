@@ -853,9 +853,7 @@ private fun CheckPrivacyConsent(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable {
-                    /** 개인정보 제공 동의 관련 pop up */
-                },
+                modifier = Modifier.clickable {showPrivacyConsent()},
                 text = "보기",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,

@@ -153,111 +153,136 @@ private fun OrderScreenMainContent(
     var phone3 by remember { mutableStateOf("") }
     val options = listOf("토스페이", "카카오페이", "페이코", "일반 결제")
     var selectedOption by remember { mutableStateOf(options[0]) }
-    var isAllChecked by remember { mutableStateOf(false) }
     var isRefundChecked by remember { mutableStateOf(false) }
     var isPrivacyConsentGranted by remember { mutableStateOf(false) }
-    val isEnabled = remember {
-        derivedStateOf { addressInfo != null && buyerInfo != null }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
-            .padding(bottom = 52.dp)
-    ) {
-        TopBar(
-            title = "주문서 작성",
-            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack
-        )
-        Spacer(Modifier.height(20.dp))
+    var isAllChecked by remember {mutableStateOf(false)}
+    val isEnabled = remember {derivedStateOf { addressInfo != null && buyerInfo != null }}
+    var flag by remember{mutableStateOf(false)}
+    var showWebView by remember{mutableStateOf(false)}
+    BackHandler(
+        enabled = true,
+        onBack = {
+            if(showWebView) showWebView = false
+            else onNavBack()
+        }
+    )
+    if(showWebView){NotificationWebView()}
+    else {
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .verticalScroll(state = scrollState)
+                .fillMaxSize()
+                .background(color = Color.White)
+                .padding(bottom = 52.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            TopBar(
+                title = "주문서 작성",
+                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                onNavClick = onNavBack
+            )
+            Spacer(Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(state = scrollState)
             ) {
-                Text(
-                    text = "주문자 정보",
-                    fontSize = 16.sp,
-                    fontFamily = CustomFont.bold
-                )
-                Text(
-                    modifier = if (buyerInfo == null) Modifier.clickable {
-                        if (name.isNotEmpty() && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()) {
-                            val phone = "${phone1}-${phone2}-${phone3}"
-                            saveBuyerInfo(name, phone)
-                        } else {
-                            Toast.makeText(context, "정보를 모두 작성한 후 저장해주세요", Toast.LENGTH_SHORT).show()
-                        }
-                    } else Modifier,
-                    text = if (buyerInfo == null) "작성한 정보 저장하기" else "",
-                    fontSize = 10.sp,
-                    fontFamily = CustomFont.medium,
-                    textDecoration = TextDecoration.Underline
-                )
-            }
-            if (buyerInfo == null) {
-                InputName(name = name, onNameChanged = { name = it })
-                InputPhone(
-                    phone1 = phone1,
-                    onPhone1Changed = { phone1 = it },
-                    phone2 = phone2,
-                    onPhone2Changed = { phone2 = it },
-                    phone3 = phone3,
-                    onPhone3Changed = { phone3 = it }
-                )
-            } else {
-                DefaultBuyerInfo(buyerInfo)
-            }
-            if (addressInfo == null) {
-                HorizontalDivider(thickness = 1.dp, color = Color.Black)
-                InputAddress(navAddAddress)
-            } else {
-                DefaultAddressInfo(addressInfo)
-            }
-            HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            ProductInfo(
-                notes = orderInfo.productInfo.noteProducts,
-                deleteNote = {}
-            )
-            HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            Receipt(
-                shippingPayment = orderInfo.shippingAmount,
-                totalPayment = orderInfo.totalAmount,
-                finalPayment = orderInfo.paymentAmount
-            )
-            HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            SelectPaymentType(
-                options = options,
-                selectedOption = selectedOption,
-                onValueChanged = { selectedOption = it }
-            )
-            HorizontalDivider(thickness = 1.dp, color = Color.Black)
-            CheckPrivacyConsent(
-                isAllChecked = isAllChecked,
-                onUpdateAllChecked = { isAllChecked = it },
-                isRefundChecked = isRefundChecked,
-                onUpdateRefundChecked = { isRefundChecked = it },
-                isPrivacyConsentGranted = isPrivacyConsentGranted,
-                onUpdatePrivacyConsentGranted = { isPrivacyConsentGranted = it }
-            )
-            Button(
-                buttonModifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                isEnabled = isEnabled.value,
-                btnText = "결제하기",
-                onClick = {
-                    Toast.makeText(context, "${orderInfo} ${addressInfo} ${buyerInfo}", Toast.LENGTH_LONG).show()
-                    /** 결제 && navigation */
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "주문자 정보",
+                        fontSize = 16.sp,
+                        fontFamily = CustomFont.bold
+                    )
+                    Text(
+                        modifier = if (!isSaveBuyerInfo) Modifier.clickable {
+                            if (name.isNotEmpty() && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()) {
+                                val phone = "${phone1}-${phone2}-${phone3}"
+                                saveBuyerInfo(name, phone)
+                            } else {
+                                Toast.makeText(context, "정보를 모두 작성한 후 저장해주세요", Toast.LENGTH_SHORT).show()
+                            }
+                        } else Modifier,
+                        text = if (!isSaveBuyerInfo) "작성한 정보 저장하기" else "",
+                        fontSize = 10.sp,
+                        fontFamily = CustomFont.medium,
+                        textDecoration = TextDecoration.Underline
+                    )
                 }
-            )
+                if (isSaveBuyerInfo) {
+                    UserInfoDesc(
+                        name = name,
+                        phone = "${phone1}-${phone2}-${phone3}",
+                        addressInfo = addressInfo!!,
+                        navAddAddress = navAddAddress
+                    )
+                } else {
+                    InputUserInfo(
+                        name = name,
+                        onNameChanged = { name = it },
+                        phone1 = phone1,
+                        onPhone1Changed = { phone1 = it },
+                        phone2 = phone2,
+                        onPhone2Changed = { phone2 = it },
+                        phone3 = phone3,
+                        onPhone3Changed = { phone3 = it },
+                        navAddAddress = {
+                            if (isSaveBuyerInfo){navAddAddress(it)}
+                            else {Toast.makeText(context, "배송자 정보를 먼저 입력해주세요", Toast.LENGTH_SHORT).show()}
+                        }
+                    )
+                }
+                HorizontalDivider(thickness = 1.dp, color = Color.Black)
+                ProductInfo(
+                    notes = orderInfo.productInfo.noteProducts,
+                    deleteNote = {deleteNote(it)}
+                )
+                HorizontalDivider(thickness = 1.dp, color = Color.Black)
+                Receipt(
+                    shippingPayment = orderInfo.shippingAmount,
+                    totalPayment = orderInfo.totalAmount,
+                    finalPayment = orderInfo.paymentAmount
+                )
+                HorizontalDivider(thickness = 1.dp, color = Color.Black)
+                SelectPaymentType(
+                    options = options,
+                    selectedOption = selectedOption,
+                    onValueChanged = { selectedOption = it }
+                )
+                HorizontalDivider(thickness = 1.dp, color = Color.Black)
+                CheckPrivacyConsent(
+                    isAllChecked = isAllChecked,
+                    onUpdateAllChecked = {
+                        flag = true
+                        isAllChecked = it
+                    },
+                    isRefundChecked = isRefundChecked,
+                    onUpdateRefundChecked = {isRefundChecked = it},
+                    isPrivacyConsentGranted = isPrivacyConsentGranted,
+                    onUpdatePrivacyConsentGranted = { isPrivacyConsentGranted = it},
+                    showPrivacyConsent = {showWebView = true},
+                )
+                Button(
+                    buttonModifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    isEnabled = isEnabled.value,
+                    btnText = "결제하기",
+                    onClick = {
+                        Toast.makeText(context, "${orderInfo} ${addressInfo} ${buyerInfo}", Toast.LENGTH_LONG).show()
+                        /** 결제 && navigation */
+                    }
+                )
+            }
+        }
+    }
+    LaunchedEffect(buyerInfo){
+        if(buyerInfo != null){
+            name = buyerInfo.name
+            phone1 = buyerInfo.phoneNumber.substring(0,3)
+            phone2 = buyerInfo.phoneNumber.substring(4,8)
+            phone3 = buyerInfo.phoneNumber.substring(9,13)
         }
     }
 }

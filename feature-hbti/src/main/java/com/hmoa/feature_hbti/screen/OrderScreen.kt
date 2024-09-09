@@ -764,7 +764,8 @@ private fun CheckPrivacyConsent(
     isRefundChecked: Boolean,
     onUpdateRefundChecked: (Boolean) -> Unit,
     isPrivacyConsentGranted: Boolean,
-    onUpdatePrivacyConsentGranted: (Boolean) -> Unit
+    onUpdatePrivacyConsentGranted: (Boolean) -> Unit,
+    showPrivacyConsent: () -> Unit,
 ) {
 
     Column(

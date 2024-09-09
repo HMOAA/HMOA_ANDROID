@@ -354,7 +354,7 @@ private fun InputUserInfo(
                 onValueChanged = {
                     if(it.length <= 3){onPhone1Changed(it)}
                 },
-                color = CustomColor.gray2,
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
@@ -382,7 +382,7 @@ private fun InputUserInfo(
                 onValueChanged = {
                     if(it.length <= 4) {onPhone2Changed(it)}
                 },
-                color = CustomColor.gray2,
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,
@@ -408,7 +408,7 @@ private fun InputUserInfo(
                     .height(44.dp),
                 value = phone3,
                 onValueChanged = { if(it.length <= 4) {onPhone3Changed(it)} },
-                color = CustomColor.gray2,
+                color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 borderWidth = 1.dp,

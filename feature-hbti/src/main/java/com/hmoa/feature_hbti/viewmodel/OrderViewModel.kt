@@ -106,7 +106,6 @@ class OrderViewModel @Inject constructor(
             }
             throw Exception("Error")
         }
-        Log.d("TAG TEST", "order info flow : ${result}")
         result.data
     }
     val uiState = combine(errorUiState, buyerInfoFlow, addressInfoFlow, orderInfoFlow){ errState, buyerInfo, addressInfo, orderInfo ->

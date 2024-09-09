@@ -141,12 +141,10 @@ class OrderViewModel @Inject constructor(
     }
     fun setIds(initIds: List<Int>) {
         productIds.update{initIds}
-        Log.d("TAG TEST", "init ids : ${initIds}")
         runBlocking{
             if(initIds.isNotEmpty()){
                 val requestDto = ProductListRequestDto(initIds)
                 val result = hshopRepository.postNoteOrder(requestDto)
-                Log.d("TAG TEST", "result : ${result}")
                 if (result.errorMessage != null){
                     when(result.errorMessage!!.message){
                         ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}

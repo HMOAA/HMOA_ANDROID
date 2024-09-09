@@ -298,9 +298,16 @@ private fun OrderScreenMainContent(
 }
 
 @Composable
-private fun InputName(
+private fun InputUserInfo(
     name: String,
     onNameChanged: (newName: String) -> Unit,
+    phone1: String,
+    onPhone1Changed: (newPhone1: String) -> Unit,
+    phone2: String,
+    onPhone2Changed: (newPhone2: String) -> Unit,
+    phone3: String,
+    onPhone3Changed: (newPhone3: String) -> Unit,
+    navAddAddress: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier

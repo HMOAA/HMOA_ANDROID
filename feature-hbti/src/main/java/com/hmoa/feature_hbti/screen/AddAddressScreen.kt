@@ -54,16 +54,20 @@ import com.hmoa.core_designsystem.component.CustomOutlinedTextField
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.feature_hbti.viewmodel.AddAddressViewModel
+import kotlinx.serialization.json.Json
 
 @Composable
 fun AddAddressRoute(
+    addressJson: String?,
     onNavBack: () -> Unit,
     viewModel: AddAddressViewModel = hiltViewModel()
 ) {
     val errorState = viewModel.errorState.collectAsStateWithLifecycle()
     val isPostAddressCompleted by viewModel.isPostAddressCompleted.collectAsStateWithLifecycle()
     AddAddressScreen(
+        addressJson = addressJson,
         errorState = errorState.value,
         onPostAddressClick = { name, addressName, phone, homePhone, postalCode, address, detailAddress, request ->
             viewModel.postAddress(name, addressName, phone, homePhone, postalCode, address, detailAddress, request)
@@ -77,6 +81,7 @@ fun AddAddressRoute(
 
 @Composable
 fun AddAddressScreen(
+    addressJson: String?,
     errorState: ErrorUiState,
     onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
     onNavBack: () -> Unit,
@@ -92,6 +97,7 @@ fun AddAddressScreen(
         )
     } else {
         AddAddressMainContent(
+            addressJson = addressJson,
             onPostAddressClick = onPostAddressClick,
             onNavBack = onNavBack
         )
@@ -100,10 +106,10 @@ fun AddAddressScreen(
 
 @Composable
 private fun AddAddressMainContent(
+    addressJson: String?,
     onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
     onNavBack: () -> Unit
 ) {
-    val scrollState = rememberScrollState()
     var name by remember{ mutableStateOf("") }
     var addressName by remember{mutableStateOf("")}
     var phone1 by remember{mutableStateOf("")}
@@ -116,6 +122,22 @@ private fun AddAddressMainContent(
     var address by remember{mutableStateOf("")}
     var detailAddress by remember{mutableStateOf("")}
     var request by remember{mutableStateOf("")}
+    if (!addressJson.isNullOrEmpty()){
+        val initAddress = Json.decodeFromString<DefaultAddressDto>(addressJson)
+        name = initAddress.name
+        addressName = initAddress.addressName
+        phone1 = initAddress.phoneNumber.substring(0,3)
+        phone2 = initAddress.phoneNumber.substring(4,8)
+        phone3 = initAddress.phoneNumber.substring(9,12)
+        homePhone1 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(0,3) else initAddress.landlineNumber.substring(0,2)
+        homePhone2 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(4,8) else initAddress.landlineNumber.substring(3,7)
+        homePhone3 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(9,13) else initAddress.landlineNumber.substring(8,12)
+        postalCode = initAddress.zipCode
+        address = initAddress.streetAddress
+        detailAddress = initAddress.detailAddress
+        request = initAddress.request
+    }
+    val scrollState = rememberScrollState()
     var showWebView by remember{mutableStateOf(false)}
     var isEnabled = remember{ derivedStateOf{
         name.isNotEmpty() && addressName.isNotEmpty()
@@ -127,7 +149,10 @@ private fun AddAddressMainContent(
 
     BackHandler(
         enabled = true,
-        onBack = {if(showWebView) showWebView = false}
+        onBack = {
+            if(showWebView) showWebView = false
+            else onNavBack()
+        }
     )
 
     Column(
@@ -676,6 +701,7 @@ private fun UiTest() {
         onNavBack = {},
         onPostAddressClick = { a, b, c, d, e, f, g, h ->
 
-        }
+        },
+        addressJson = null
     )
 }

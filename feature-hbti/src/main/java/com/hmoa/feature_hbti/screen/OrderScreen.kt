@@ -285,6 +285,16 @@ private fun OrderScreenMainContent(
             phone3 = buyerInfo.phoneNumber.substring(9,13)
         }
     }
+    LaunchedEffect(isAllChecked){
+        if(flag) {
+            isRefundChecked = isAllChecked
+            isPrivacyConsentGranted = isAllChecked
+        }
+    }
+    LaunchedEffect(isRefundChecked, isPrivacyConsentGranted){
+        isAllChecked = isRefundChecked && isPrivacyConsentGranted
+        flag = false
+    }
 }
 
 @Composable

@@ -786,7 +786,7 @@ private fun CheckPrivacyConsent(
                     contentDescription = "Privacy Consent"
                 )
             }
-            Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = "주문 내용을 확인했으며, 아래의 정보 제공 및 결제에 모두 동의합니다.",
                 fontSize = 14.sp,
@@ -807,7 +807,7 @@ private fun CheckPrivacyConsent(
                     contentDescription = "Check"
                 )
             }
-            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = "환불 방법",
                 fontSize = 12.sp,
@@ -840,7 +840,7 @@ private fun CheckPrivacyConsent(
                     contentDescription = "Check"
                 )
             }
-            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = "개인정보 제공 동의",
                 fontSize = 12.sp,

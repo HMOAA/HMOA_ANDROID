@@ -223,9 +223,5 @@ sealed interface OrderUiState{
         var buyerInfo: DefaultOrderInfoDto?,
         val addressInfo: DefaultAddressDto?,
         val orderInfo: FinalOrderResponseDto
-    ): OrderUiState{
-        fun updateBuyerInfo(newBuyerInfo: DefaultOrderInfoDto){
-            this.buyerInfo = newBuyerInfo
-        }
-    }
+    ): OrderUiState
 }

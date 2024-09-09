@@ -60,29 +60,20 @@ class OrderViewModel @Inject constructor(
     private val isExistAddressInfo = MutableStateFlow<Boolean>(false)
     private val buyerInfoFlow = isExistBuyerInfo.flatMapLatest{
         flow{
-            Log.d("TAG TEST", "is exist buyer info map : ${it}")
             if (it) {
                 val result = memberRepository.getOrderInfo()
-                Log.d("TAG TEST", "buyer info flow : ${result}")
                 if (result.errorMessage != null) {
                     when (result.errorMessage!!.message) {
                         ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update { true }
                         ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update { true }
                         ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update { true }
                         else -> generalErrorState.update {
-                            Pair(
-                                true,
-                                result.errorMessage!!.message
-                            )
+                            Pair(true,result.errorMessage!!.message)
                         }
                     }
                     emit(null)
-                } else {
-                    emit(result.data)
-                }
-            } else {
-                emit(null)
-            }
+                } else {emit(result.data)}
+            } else {emit(null)}
         }
     }
     private val addressInfoFlow = isExistAddressInfo.flatMapLatest{

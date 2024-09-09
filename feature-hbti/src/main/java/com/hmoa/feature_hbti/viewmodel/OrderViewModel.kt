@@ -154,8 +154,13 @@ class OrderViewModel @Inject constructor(
                     }
                     return@runBlocking
                 }
-                isExistBuyerInfo.update{result.data!!.isExistMemberInfo}
-                isExistAddressInfo.update{result.data!!.isExistMemberAddress}
+                if(result.data!!.isExistMemberAddress){
+                    isExistBuyerInfo.update{true}
+                    isExistAddressInfo.update{true}
+                } else {
+                    isExistBuyerInfo.update{result.data!!.isExistMemberInfo}
+                    isExistAddressInfo.update{result.data!!.isExistMemberAddress}
+                }
                 if(result.data!!.isExistMemberInfo){isSavedBuyerInfo.update{true}}
                 orderId.update{result.data!!.orderId}
             }

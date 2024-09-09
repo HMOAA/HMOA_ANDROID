@@ -448,7 +448,12 @@ private fun InputUserInfo(
 }
 
 @Composable
-private fun DefaultAddressInfo(addressInfo: DefaultAddressDto) {
+private fun UserInfoDesc(
+    name: String,
+    phone: String,
+    addressInfo: DefaultAddressDto,
+    navAddAddress: (String) -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {

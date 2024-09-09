@@ -124,21 +124,7 @@ private fun AddAddressMainContent(
     var address by remember{mutableStateOf("")}
     var detailAddress by remember{mutableStateOf("")}
     var request by remember{mutableStateOf("")}
-    if (!addressJson.isNullOrEmpty()){
-        val initAddress = Json.decodeFromString<DefaultAddressDto>(addressJson)
-        name = initAddress.name
-        addressName = initAddress.addressName
-        phone1 = initAddress.phoneNumber.substring(0,3)
-        phone2 = initAddress.phoneNumber.substring(4,8)
-        phone3 = initAddress.phoneNumber.substring(9,12)
-        homePhone1 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(0,3) else initAddress.landlineNumber.substring(0,2)
-        homePhone2 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(4,8) else initAddress.landlineNumber.substring(3,7)
-        homePhone3 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(9,13) else initAddress.landlineNumber.substring(8,12)
-        postalCode = initAddress.zipCode
-        address = initAddress.streetAddress
-        detailAddress = initAddress.detailAddress
-        request = initAddress.request
-    }
+
     val scrollState = rememberScrollState()
     var showWebView by remember{mutableStateOf(false)}
     var isEnabled = remember{ derivedStateOf{
@@ -148,7 +134,23 @@ private fun AddAddressMainContent(
                 && postalCode.isNotEmpty() && address.isNotEmpty()
                 && detailAddress.isNotEmpty() && request.isNotEmpty()
     }}
-
+    LaunchedEffect(Unit){
+        if (!addressJson.isNullOrEmpty()){
+            val initAddress = Json.decodeFromString<DefaultAddressDto>(addressJson)
+            name = initAddress.name
+            addressName = initAddress.addressName
+            phone1 = initAddress.phoneNumber.substring(0,3)
+            phone2 = initAddress.phoneNumber.substring(4,8)
+            phone3 = initAddress.phoneNumber.substring(9,12)
+            homePhone1 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(0,3) else initAddress.landlineNumber.substring(0,2)
+            homePhone2 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(4,8) else initAddress.landlineNumber.substring(3,7)
+            homePhone3 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(9,13) else initAddress.landlineNumber.substring(8,12)
+            postalCode = initAddress.zipCode
+            address = initAddress.streetAddress
+            detailAddress = initAddress.detailAddress
+            request = initAddress.request
+        }
+    }
     BackHandler(
         enabled = true,
         onBack = {

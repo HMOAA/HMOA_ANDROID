@@ -455,20 +455,30 @@ private fun UserInfoDesc(
     navAddAddress: (String) -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp),
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
             Text(
-                text = addressInfo.name,
+                text = name,
                 fontSize = 14.sp,
-                fontFamily = CustomFont.semiBold
+                fontFamily = CustomFont.semiBold,
+                style = TextStyle(
+                    textAlign = TextAlign.Justify,
+                    platformStyle = PlatformTextStyle(includeFontPadding = true)
+                )
             )
             Spacer(Modifier.width(8.dp))
             TagBadge(
                 tag = addressInfo.addressName,
-                height = 20.dp,
                 backgroundColor = CustomColor.gray1,
-                textColor = Color.Black
+                borderColor = CustomColor.gray1,
+                textColor = Color.Black,
+                shape = RoundedCornerShape(5.dp)
             )
             Spacer(Modifier.weight(1f))
             Text(

@@ -85,24 +85,22 @@ class OrderViewModel @Inject constructor(
             }
         }
     }
-    private val addressInfoFlow = isExistAddressInfo.map{
-        Log.d("TAG TEST", "is exist address info map : ${it}")
-        if(it){
-            val result = memberRepository.getAddress()
-            Log.d("TAG TEST", "address info flow : ${result}")
-            if (result.errorMessage != null){
-                when(result.errorMessage!!.message){
-                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
-                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
-                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
-                    else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
-                }
-                null
-            } else {
-                result.data
-            }
-        } else {
-            null
+    private val addressInfoFlow = isExistAddressInfo.flatMapLatest{
+        flow{
+            if (it) {
+                val result = memberRepository.getAddress()
+                if (result.errorMessage != null) {
+                    when (result.errorMessage!!.message) {
+                        ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update { true }
+                        ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update { true }
+                        ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update { true }
+                        else -> generalErrorState.update {
+                            Pair(true,result.errorMessage!!.message)
+                        }
+                    }
+                    emit(null)
+                } else {emit(result.data)}
+            } else {emit(null)}
         }
     }
     private val productIds = MutableStateFlow<List<Int>>(emptyList())

@@ -55,6 +55,7 @@ import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
+import com.hmoa.feature_hbti.BuildConfig
 import com.hmoa.feature_hbti.viewmodel.AddAddressViewModel
 import kotlinx.serialization.json.Json
 
@@ -656,7 +657,7 @@ private fun AddressWebView(
                     }
                 }
 
-                loadUrl("https://hmoa.shop/addressSearch.html")
+                loadUrl(BuildConfig.ADDRESS_SEARCH_URL)
             }
         }
     )

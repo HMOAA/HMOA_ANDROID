@@ -21,6 +21,7 @@ import com.hmoa.feature_hbti.screen.OrderRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
 import com.hmoa.feature_hbti.screen.SelectSpiceRoute
+import kotlinx.serialization.json.Json
 
 fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
@@ -44,7 +45,10 @@ fun NavController.navigateToNotePickResult(productIdsToJson: String) =
 fun NavController.navigateToOrder(productIdsToJson: String) =
     navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
 
-fun NavController.navigateToAddAddress(addressJson: String) = navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}")
+fun NavController.navigateToAddAddress(addressJson: String, productIds: String) = navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}/${productIds}"){
+    popUpTo("${HbtiRoute.OrderRoute.name}/{productIdsToJson}"){inclusive = true}
+    launchSingleTop = true
+}
 
 fun NavGraphBuilder.hbtiScreen(onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -178,12 +182,11 @@ fun NavGraphBuilder.spiceSelectScreen() {
 
 fun NavGraphBuilder.order(
     navBack: () -> Unit,
-    navAddAddress: (String) -> Unit,
+    navAddAddress: (String, String) -> Unit,
 ) {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
-        val gson = GsonBuilder().create()
         val productIdsToJson = it.arguments?.getString("productIdsToJson")
-        val productIds = gson.fromJson(productIdsToJson, NoteProductIds::class.java)
+        val productIds = Json.decodeFromString<NoteProductIds>(productIdsToJson ?: "")
         OrderRoute(
             productIds = productIds.productIds,
             onNavBack = navBack,
@@ -193,16 +196,21 @@ fun NavGraphBuilder.order(
 }
 
 fun NavGraphBuilder.addAddress(
-    navBack: () -> Unit
+    navOrder: (String) -> Unit
 ) {
     composable(
-        route = "${HbtiRoute.AddAddressRoute.name}/{addressJson}",
-        arguments = listOf(navArgument("addressJson"){type = NavType.StringType})
+        route = "${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}",
+        arguments = listOf(
+            navArgument("addressJson"){type = NavType.StringType},
+            navArgument("productIds"){type = NavType.StringType}
+        )
     ) {
         val addressJson = it.arguments?.getString("addressJson")
+        val productIds = it.arguments?.getString("productIds")
         AddAddressRoute(
             addressJson = addressJson,
-            onNavBack = navBack
+            productIds = productIds,
+            navOrder = navOrder
         )
     }
 }

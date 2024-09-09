@@ -64,4 +64,17 @@ class HshopRemoteDataStoreImpl @Inject constructor(private val hshopService: Hsh
         }
         return result
     }
+
+    override suspend fun deleteNoteInOrder(
+        orderId: Int,
+        productId: Int
+    ): ResultResponse<FinalOrderResponseDto> {
+        val result = ResultResponse<FinalOrderResponseDto>()
+        hshopService.deleteNoteInOrder(orderId, productId).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }
+        return result
+    }
 }

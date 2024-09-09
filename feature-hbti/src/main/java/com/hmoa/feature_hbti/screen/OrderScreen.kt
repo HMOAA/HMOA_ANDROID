@@ -361,7 +361,11 @@ private fun InputUserInfo(
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(horizontal = 12.dp),
-                placeHolder = "010"
+                placeHolder = "010",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                )
             )
             Row(
                 modifier = Modifier
@@ -385,7 +389,11 @@ private fun InputUserInfo(
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(horizontal = 12.dp),
-                placeHolder = "1234"
+                placeHolder = "1234",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                )
             )
             Row(
                 modifier = Modifier
@@ -407,7 +415,11 @@ private fun InputUserInfo(
                 borderColor = CustomColor.gray1,
                 borderShape = RoundedCornerShape(size = 5.dp),
                 padding = PaddingValues(horizontal = 12.dp),
-                placeHolder = "5678"
+                placeHolder = "5678",
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                )
             )
         }
         Spacer(Modifier.height(24.dp))

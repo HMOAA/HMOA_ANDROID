@@ -326,7 +326,7 @@ private fun InputUserInfo(
                 .fillMaxWidth(),
             value = name,
             onValueChanged = onNameChanged,
-            color = CustomColor.gray2,
+            color = Color.Black,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             borderWidth = 1.dp,

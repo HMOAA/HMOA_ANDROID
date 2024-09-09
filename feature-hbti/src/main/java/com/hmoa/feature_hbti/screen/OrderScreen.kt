@@ -865,6 +865,28 @@ private fun CheckPrivacyConsent(
 }
 
 @Composable
+private fun NotificationWebView(){
+    val context = LocalContext.current
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = {
+            WebView(context).apply{
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                settings.domStorageEnabled = true
+                webViewClient = object: WebViewClient(){
+
+                }
+
+                loadUrl(BuildConfig.PRIVACY_CONSENT_URL)
+            }
+        }
+    )
+}
+
+@Composable
 @Preview
 private fun UITest() {
     val name = "서호준"

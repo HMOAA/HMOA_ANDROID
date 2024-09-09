@@ -75,9 +75,11 @@ fun OrderRoute(
     LaunchedEffect(Unit){viewModel.setIds(productIds)}
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val isSaveBuyerInfo = viewModel.isSavedBuyerInfo.collectAsStateWithLifecycle()
     OrderScreen(
         uiState = uiState.value,
         errState = errState.value,
+        isSaveBuyerInfo = isSaveBuyerInfo.value,
         deleteNote = { viewModel.deleteNote(it) },
         saveBuyerInfo = { name, phoneNumber ->
             viewModel.saveBuyerInfo(name, phoneNumber)
@@ -95,6 +97,7 @@ fun OrderRoute(
 fun OrderScreen(
     uiState: OrderUiState,
     errState: ErrorUiState,
+    isSaveBuyerInfo: Boolean,
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
@@ -106,6 +109,7 @@ fun OrderScreen(
         OrderUiState.Loading -> AppLoadingScreen()
         is OrderUiState.Success -> {
             OrderScreenMainContent(
+                isSaveBuyerInfo = isSaveBuyerInfo,
                 orderInfo = uiState.orderInfo,
                 addressInfo = uiState.addressInfo,
                 buyerInfo = uiState.buyerInfo,
@@ -122,7 +126,6 @@ fun OrderScreen(
                 onConfirmClick = onNavBack,
                 errorUiState = errState,
                 onCloseClick = {
-                    Log.d("TAG TEST", "on close click")
                     isOpen = false
                     onNavBack()
                 }
@@ -133,6 +136,7 @@ fun OrderScreen(
 
 @Composable
 private fun OrderScreenMainContent(
+    isSaveBuyerInfo: Boolean,
     orderInfo: FinalOrderResponseDto,
     addressInfo: DefaultAddressDto?,
     buyerInfo: DefaultOrderInfoDto?,

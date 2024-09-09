@@ -767,7 +767,6 @@ private fun CheckPrivacyConsent(
     onUpdatePrivacyConsentGranted: (Boolean) -> Unit,
     showPrivacyConsent: () -> Unit,
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

@@ -98,7 +98,7 @@ fun OrderScreen(
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
-    navAddAddress: () -> Unit
+    navAddAddress: (String) -> Unit
 ) {
     var isOpen by remember { mutableStateOf(true) }
 

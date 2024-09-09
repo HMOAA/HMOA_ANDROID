@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,7 +27,9 @@ import com.hmoa.core_designsystem.theme.pretendard
 fun TagBadge(
     height : Dp = 28.dp,
     backgroundColor : Color = Color.White,
+    shape: Shape = RoundedCornerShape(14.dp),
     textColor : Color = CustomColor.gray3,
+    borderColor: Color = CustomColor.gray3,
     tag : String,
     isClickable : Boolean = false,
     onClick : (String) -> Unit = {},
@@ -35,8 +38,8 @@ fun TagBadge(
         modifier = Modifier
             .wrapContentWidth()
             .height(height)
-            .background(color = backgroundColor, shape = RoundedCornerShape(14.dp))
-            .border(width = 1.dp, color = CustomColor.gray3, shape = RoundedCornerShape(14.dp))
+            .background(color = backgroundColor, shape = shape)
+            .border(width = 1.dp, color = borderColor, shape = shape)
             .then(
                 if (isClickable) {
                     Modifier.clickable{onClick(tag)}

@@ -179,7 +179,15 @@ class OrderViewModel @Inject constructor(
                 }
                 return@launch
             }
-            (uiState.value as OrderUiState.Success).updateBuyerInfo(DefaultOrderInfoDto(name, phoneNumber))
+            _uiState.update{
+                if(uiState.value is OrderUiState.Success){
+                    OrderUiState.Success(
+                        buyerInfo = DefaultOrderInfoDto(name, phoneNumber),
+                        addressInfo = (uiState.value as OrderUiState.Success).addressInfo,
+                        orderInfo = (uiState.value as OrderUiState.Success).orderInfo
+                    )
+                } else {return@launch}
+            }
             isSavedBuyerInfo.update{true}
         }
     }

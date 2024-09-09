@@ -484,7 +484,7 @@ private fun UserInfoDesc(
             Text(
                 modifier = Modifier.clickable {
                     val addressInfoToJson = Json.encodeToString(addressInfo)
-                    /** 주소 추가 화면으로 이동하기 */
+                    navAddAddress(addressInfoToJson)
                 },
                 text = "변경하기",
                 fontSize = 10.sp,

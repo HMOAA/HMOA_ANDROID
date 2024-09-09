@@ -23,6 +23,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         buildConfigField("String", "PRIVACY_CONSENT_URL", localProperties.getProperty("PRIVACY_CONSENT_URL"))
+        buildConfigField("String", "ADDRESS_SEARCH_URL", localProperties.getProperty("ADDRESS_SEARCH_URL"))
     }
 
     buildTypes {

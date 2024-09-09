@@ -423,54 +423,27 @@ private fun InputUserInfo(
             )
         }
         Spacer(Modifier.height(24.dp))
-    }
-}
-
-@Composable
-private fun DefaultBuyerInfo(buyerInfo: DefaultOrderInfoDto) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(20.dp),
-    ) {
-        Text(
-            text = buyerInfo.name,
-            fontSize = 14.sp,
-            fontFamily = CustomFont.semiBold,
-        )
-        Spacer(Modifier.width(10.dp))
-        Text(
-            text = buyerInfo.phoneNumber,
-            fontSize = 12.sp,
-            fontFamily = CustomFont.medium,
-            color = CustomColor.gray3
-        )
-    }
-}
-
-@Composable
-private fun InputAddress(
-    navAddAddress: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = "배송지",
-            fontSize = 18.sp,
-            fontFamily = CustomFont.bold
-        )
-        Text(
-            modifier = Modifier.clickable {navAddAddress()},
-            text = "배송지를 입력해주세요",
-            fontSize = 10.sp,
-            fontFamily = CustomFont.medium,
-            textDecoration = TextDecoration.Underline
-        )
+        HorizontalDivider(thickness = 1.dp, color = Color.Black)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "배송지",
+                fontSize = 18.sp,
+                fontFamily = CustomFont.bold
+            )
+            Text(
+                modifier = Modifier.clickable {navAddAddress("")},
+                text = "배송지를 입력해주세요",
+                fontSize = 10.sp,
+                fontFamily = CustomFont.medium,
+                textDecoration = TextDecoration.Underline
+            )
+        }
     }
 }
 

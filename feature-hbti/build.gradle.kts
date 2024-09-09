@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -5,6 +7,10 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
+}
+
+val localProperties = Properties().apply {
+    load(project.rootProject.file("./feature-hbti/local.properties").inputStream())
 }
 
 android {
@@ -16,6 +22,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "PRIVACY_CONSENT_URL", localProperties.getProperty("PRIVACY_CONSENT_URL"))
     }
 
     buildTypes {
@@ -36,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {

@@ -69,7 +69,7 @@ import kotlinx.serialization.json.Json
 fun OrderRoute(
     productIds: List<Int>,
     onNavBack: () -> Unit,
-    navAddAddress: () -> Unit,
+    navAddAddress: (String, String) -> Unit,
     viewModel: OrderViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit){viewModel.setIds(productIds)}
@@ -83,7 +83,11 @@ fun OrderRoute(
             viewModel.saveBuyerInfo(name, phoneNumber)
         },
         onNavBack = onNavBack,
-        navAddAddress = navAddAddress
+        navAddAddress = {
+            val productIdsToJson = Json.encodeToString(NoteProductIds(productIds))
+            Log.d("TAG TEST", "order json : ${productIdsToJson}")
+            navAddAddress(it, productIdsToJson)
+        }
     )
 }
 
@@ -135,7 +139,7 @@ private fun OrderScreenMainContent(
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
-    navAddAddress: () -> Unit
+    navAddAddress: (String) -> Unit
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()

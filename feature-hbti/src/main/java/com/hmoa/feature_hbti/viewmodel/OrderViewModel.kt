@@ -108,25 +108,37 @@ class OrderViewModel @Inject constructor(
         }
         result.data
     }
-    val uiState = combine(errorUiState, buyerInfoFlow, addressInfoFlow, orderInfoFlow){ errState, buyerInfo, addressInfo, orderInfo ->
-        Log.d("TAG TEST", "ui state flow combine : ${errState}\n${buyerInfo}\n${addressInfo}\n${orderInfo}")
-        if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("Error")
-        if (orderInfo == null) throw Exception("데이터가 없습니다")
-        Triple(buyerInfo, addressInfo, orderInfo)
-    }.asResult().map{ result ->
-        when(result){
-            Result.Loading -> OrderUiState.Loading
-            is Result.Error -> {
-                if(errorUiState.value !is ErrorUiState.ErrorData || !(errorUiState.value as ErrorUiState.ErrorData).isValidate()){generalErrorState.update{ Pair(true, result.exception.message) }}
-                OrderUiState.Error
-            }
-            is Result.Success -> OrderUiState.Success(result.data.first, result.data.second, result.data.third)
-        }
-    }.stateIn(
+    private val _uiState: MutableStateFlow<OrderUiState> = MutableStateFlow(OrderUiState.Loading)
+    val uiState = _uiState.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = OrderUiState.Loading
     )
+    init {
+        viewModelScope.launch{
+            combine(errorUiState, buyerInfoFlow, addressInfoFlow, orderInfoFlow){ errState, _buyerInfo, addressInfo, orderInfo ->
+                Log.d("TAG TEST", "ui state flow combine : ${errState}\n${_buyerInfo}\n${addressInfo}\n${orderInfo}")
+                if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("Error")
+                if (orderInfo == null) throw Exception("데이터가 없습니다")
+                var buyerInfo = if (_buyerInfo == null && addressInfo != null){
+                    DefaultOrderInfoDto(
+                        name = addressInfo.name,
+                        phoneNumber = addressInfo.phoneNumber
+                    )
+                } else _buyerInfo
+                Triple(buyerInfo, addressInfo, orderInfo)
+            }.asResult().map{ result ->
+                when(result){
+                    Result.Loading -> OrderUiState.Loading
+                    is Result.Error -> {
+                        if(errorUiState.value !is ErrorUiState.ErrorData || !(errorUiState.value as ErrorUiState.ErrorData).isValidate()){generalErrorState.update{ Pair(true, result.exception.message) }}
+                        OrderUiState.Error
+                    }
+                    is Result.Success -> OrderUiState.Success(result.data.first, result.data.second, result.data.third)
+                }
+            }.collect{_uiState.value = it}
+        }
+    }
     fun setIds(initIds: List<Int>) {
         productIds.update{initIds}
         Log.d("TAG TEST", "init ids : ${initIds}")

@@ -17,9 +17,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -33,6 +34,7 @@ class OrderViewModel @Inject constructor(
     private val memberRepository: MemberRepository
 ): ViewModel() {
     private var orderId = MutableStateFlow<Int?>(null)
+    var isSavedBuyerInfo = MutableStateFlow<Boolean>(false)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -54,31 +56,40 @@ class OrderViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ErrorUiState.Loading
     )
-    private val _isExistBuyerInfo = MutableStateFlow<Boolean>(false)
-    val isExistBuyerInfo get() = _isExistBuyerInfo.asStateFlow()
-    private val _isExistAddressInfo = MutableStateFlow<Boolean>(false)
-    val isExistAddressInfo get() =_isExistAddressInfo.asStateFlow()
-    private val buyerInfoFlow = isExistBuyerInfo.map{
-        if(it) {
-            val result = memberRepository.getOrderInfo()
-            if (result.errorMessage != null){
-                when(result.errorMessage!!.message){
-                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
-                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
-                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
-                    else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
+    private val isExistBuyerInfo = MutableStateFlow<Boolean>(false)
+    private val isExistAddressInfo = MutableStateFlow<Boolean>(false)
+    private val buyerInfoFlow = isExistBuyerInfo.flatMapLatest{
+        flow{
+            Log.d("TAG TEST", "is exist buyer info map : ${it}")
+            if (it) {
+                val result = memberRepository.getOrderInfo()
+                Log.d("TAG TEST", "buyer info flow : ${result}")
+                if (result.errorMessage != null) {
+                    when (result.errorMessage!!.message) {
+                        ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update { true }
+                        ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update { true }
+                        ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update { true }
+                        else -> generalErrorState.update {
+                            Pair(
+                                true,
+                                result.errorMessage!!.message
+                            )
+                        }
+                    }
+                    emit(null)
+                } else {
+                    emit(result.data)
                 }
-                null
             } else {
-                result.data
+                emit(null)
             }
-        } else {
-            null
         }
     }
     private val addressInfoFlow = isExistAddressInfo.map{
+        Log.d("TAG TEST", "is exist address info map : ${it}")
         if(it){
             val result = memberRepository.getAddress()
+            Log.d("TAG TEST", "address info flow : ${result}")
             if (result.errorMessage != null){
                 when(result.errorMessage!!.message){
                     ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
@@ -110,6 +121,7 @@ class OrderViewModel @Inject constructor(
         result.data
     }
     val uiState = combine(errorUiState, buyerInfoFlow, addressInfoFlow, orderInfoFlow){ errState, buyerInfo, addressInfo, orderInfo ->
+        Log.d("TAG TEST", "ui state flow combine : ${errState}\n${buyerInfo}\n${addressInfo}\n${orderInfo}")
         if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("Error")
         if (orderInfo == null) throw Exception("데이터가 없습니다")
         Triple(buyerInfo, addressInfo, orderInfo)
@@ -129,10 +141,12 @@ class OrderViewModel @Inject constructor(
     )
     fun setIds(initIds: List<Int>) {
         productIds.update{initIds}
+        Log.d("TAG TEST", "init ids : ${initIds}")
         runBlocking{
             if(initIds.isNotEmpty()){
                 val requestDto = ProductListRequestDto(initIds)
                 val result = hshopRepository.postNoteOrder(requestDto)
+                Log.d("TAG TEST", "result : ${result}")
                 if (result.errorMessage != null){
                     when(result.errorMessage!!.message){
                         ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
@@ -142,8 +156,9 @@ class OrderViewModel @Inject constructor(
                     }
                     return@runBlocking
                 }
-                _isExistBuyerInfo.update{result.data!!.existMemberInfo}
-                _isExistAddressInfo.update{result.data!!.existMemberAddress}
+                isExistBuyerInfo.update{result.data!!.isExistMemberInfo}
+                isExistAddressInfo.update{result.data!!.isExistMemberAddress}
+                if(result.data!!.isExistMemberInfo){isSavedBuyerInfo.update{true}}
                 orderId.update{result.data!!.orderId}
             }
         }
@@ -152,6 +167,7 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch{
             val requestDto = DefaultOrderInfoDto(name, phoneNumber)
             val result = memberRepository.postOrderInfo(requestDto)
+            Log.d("TAG TEST", "save buyer info : ${result}")
             if (result.errorMessage != null){
                 when(result.errorMessage!!.message){
                     ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
@@ -162,6 +178,7 @@ class OrderViewModel @Inject constructor(
                 return@launch
             }
             (uiState.value as OrderUiState.Success).updateBuyerInfo(DefaultOrderInfoDto(name, phoneNumber))
+            isSavedBuyerInfo.update{true}
         }
     }
 

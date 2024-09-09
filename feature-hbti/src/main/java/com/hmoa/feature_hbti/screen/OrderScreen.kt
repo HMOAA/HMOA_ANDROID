@@ -800,6 +800,7 @@ private fun CheckPrivacyConsent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
+                modifier = Modifier.size(24.dp),
                 onClick = { onUpdateRefundChecked(!isRefundChecked) }
             ) {
                 Icon(
@@ -834,6 +835,7 @@ private fun CheckPrivacyConsent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
+                modifier = Modifier.size(24.dp),
                 onClick = { onUpdatePrivacyConsentGranted(!isPrivacyConsentGranted) }
             ) {
                 Icon(

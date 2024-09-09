@@ -265,7 +265,7 @@ fun SetUpNavGraph(
             navAddAddress = navController::navigateToAddAddress
         )
         addAddress (
-            navBack = navController::navigateToBack
+            navOrder = navController::navigateToOrder
         )
     }
 }

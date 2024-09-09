@@ -61,7 +61,8 @@ import kotlinx.serialization.json.Json
 @Composable
 fun AddAddressRoute(
     addressJson: String?,
-    onNavBack: () -> Unit,
+    productIds: String?,
+    navOrder: (String) -> Unit,
     viewModel: AddAddressViewModel = hiltViewModel()
 ) {
     val errorState = viewModel.errorState.collectAsStateWithLifecycle()
@@ -72,10 +73,10 @@ fun AddAddressRoute(
         onPostAddressClick = { name, addressName, phone, homePhone, postalCode, address, detailAddress, request ->
             viewModel.postAddress(name, addressName, phone, homePhone, postalCode, address, detailAddress, request)
         },
-        onNavBack = onNavBack,
+        navOrder = {navOrder(productIds ?: "")},
     )
     LaunchedEffect(isPostAddressCompleted) {
-        if (isPostAddressCompleted) onNavBack()
+        if (isPostAddressCompleted) navOrder(productIds ?: "")
     }
 }
 
@@ -84,22 +85,22 @@ fun AddAddressScreen(
     addressJson: String?,
     errorState: ErrorUiState,
     onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
-    onNavBack: () -> Unit,
+    navOrder: () -> Unit,
 ) {
     var isOpen by remember { mutableStateOf(true) }
 
     if (errorState is ErrorUiState.ErrorData && (errorState.expiredTokenError || errorState.wrongTypeTokenError || errorState.unknownError || errorState.generalError.first)) {
         ErrorUiSetView(
             isOpen = isOpen,
-            onConfirmClick = onNavBack,
+            onConfirmClick = navOrder,
             errorUiState = errorState,
-            onCloseClick = onNavBack
+            onCloseClick = navOrder
         )
     } else {
         AddAddressMainContent(
             addressJson = addressJson,
             onPostAddressClick = onPostAddressClick,
-            onNavBack = onNavBack
+            navOrder = navOrder
         )
     }
 }
@@ -108,7 +109,7 @@ fun AddAddressScreen(
 private fun AddAddressMainContent(
     addressJson: String?,
     onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
-    onNavBack: () -> Unit
+    navOrder: () -> Unit
 ) {
     var name by remember{ mutableStateOf("") }
     var addressName by remember{mutableStateOf("")}
@@ -151,7 +152,7 @@ private fun AddAddressMainContent(
         enabled = true,
         onBack = {
             if(showWebView) showWebView = false
-            else onNavBack()
+            else navOrder()
         }
     )
 
@@ -172,7 +173,7 @@ private fun AddAddressMainContent(
         TopBar(
             title = "주소 추가",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack
+            onNavClick = navOrder
         )
         Column(
             modifier = Modifier
@@ -698,7 +699,7 @@ private fun InputRequest(
 private fun UiTest() {
     AddAddressScreen(
         errorState = ErrorUiState.Loading,
-        onNavBack = {},
+        navOrder = {},
         onPostAddressClick = { a, b, c, d, e, f, g, h ->
 
         },

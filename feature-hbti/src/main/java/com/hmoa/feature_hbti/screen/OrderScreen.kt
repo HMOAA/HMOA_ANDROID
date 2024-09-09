@@ -335,23 +335,7 @@ private fun InputUserInfo(
             padding = PaddingValues(horizontal = 12.dp),
             placeHolder = "이름",
         )
-    }
-}
-
-@Composable
-private fun InputPhone(
-    phone1: String,
-    onPhone1Changed: (newPhone1: String) -> Unit,
-    phone2: String,
-    onPhone2Changed: (newPhone2: String) -> Unit,
-    phone3: String,
-    onPhone3Changed: (newPhone3: String) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp)
-    ) {
+        Spacer(Modifier.height(16.dp))
         Text(
             text = "휴대전화",
             fontSize = 12.sp,
@@ -508,12 +492,20 @@ private fun DefaultAddressInfo(addressInfo: DefaultAddressDto) {
                 textDecoration = TextDecoration.Underline
             )
         }
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = phone,
+            fontSize = 12.sp,
+            fontFamily = CustomFont.medium,
+            color = CustomColor.gray3
+        )
         Spacer(Modifier.height(16.dp))
         Text(
             text = "${addressInfo.streetAddress} ${addressInfo.detailAddress}",
             fontSize = 12.sp,
             fontFamily = CustomFont.medium
         )
+        Spacer(Modifier.height(24.dp))
     }
 }
 

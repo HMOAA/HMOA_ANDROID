@@ -24,6 +24,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         buildConfigField("String", "PRIVACY_CONSENT_URL", localProperties.getProperty("PRIVACY_CONSENT_URL"))
         buildConfigField("String", "ADDRESS_SEARCH_URL", localProperties.getProperty("ADDRESS_SEARCH_URL"))
+        buildConfigField("String", "BOOTPAY_APPLICATION_ID", localProperties.getProperty("BOOTPAY_APPLICATION_ID") as String)
     }
 
     buildTypes {
@@ -65,6 +66,8 @@ dependencies {
     implementation(project(":core-model"))
     implementation(project(":core-common"))
     implementation(project(":core-repository"))
+
+    implementation("io.github.bootpay:android:4.4.0") //boot pay
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
     implementation("com.google.code.gson:gson:2.9.0")

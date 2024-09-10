@@ -134,7 +134,7 @@ private fun HbtiSurveyResultContent(
                     ) { page ->
                         Column(modifier = Modifier.fillMaxWidth(1f).fillMaxHeight(0.8f).padding(end = 15.dp)) {
                             Column(
-                                modifier = Modifier.fillMaxWidth(1f).fillMaxHeight(0.6f)
+                                modifier = Modifier.fillMaxWidth(1f).fillMaxHeight(0.7f)
                             ) {
                                 ImageView(
                                     imageUrl = surveyResult[page].notePhotoUrl,
@@ -146,7 +146,7 @@ private fun HbtiSurveyResultContent(
                             }
                             Column(
                                 modifier = Modifier
-                                    .background(color = Color.Black)
+                                    .background(color = Color.Black).fillMaxHeight(1f)
                             ) {
                                 Text(
                                     "${surveyResult[page].noteName}",

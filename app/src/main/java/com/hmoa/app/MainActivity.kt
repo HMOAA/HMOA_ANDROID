@@ -55,6 +55,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kr.co.bootpay.android.BootpayAnalytics
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -93,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
         initFirebaseSetting()
+        BootpayAnalytics.init(this, BuildConfig.BOOTPAY_APPLICATION_ID)
 
         lifecycleScope.launch {
             val currentJob = coroutineContext.job

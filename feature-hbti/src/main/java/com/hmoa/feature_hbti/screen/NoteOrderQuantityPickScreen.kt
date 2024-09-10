@@ -18,6 +18,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.SurveyOptionList
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.feature_hbti.NoteOrderQuantity
 import com.hmoa.feature_hbti.viewmodel.NoteOrderQuantityPickUiState
@@ -68,10 +69,13 @@ fun NoteOrderQuantityPickContent(
                 }
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Button(
-                        isEnabled = true,
+                        isEnabled = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).isNextButtonDisabled,
                         btnText = "다음",
                         onClick = { onNextClick(noteOrderQuantityChoice) },
-                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
+                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(
+                            color = if ((uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).isNextButtonDisabled)
+                                Color.Black else CustomColor.gray3
+                        ),
                         textSize = 18,
                         textColor = Color.White,
                         radious = 5

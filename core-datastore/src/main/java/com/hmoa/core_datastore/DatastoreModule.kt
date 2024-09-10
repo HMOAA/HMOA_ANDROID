@@ -2,6 +2,8 @@ package com.hmoa.core_datastore
 
 import com.hmoa.core_datastore.Admin.AdminDataStore
 import com.hmoa.core_datastore.Admin.AdminDataStoreImpl
+import com.hmoa.core_datastore.Bootpay.BootpayDataStore
+import com.hmoa.core_datastore.Bootpay.BootpayDataStoreImpl
 import com.hmoa.core_datastore.Brand.BrandDataStore
 import com.hmoa.core_datastore.Brand.BrandDataStoreImpl
 import com.hmoa.core_datastore.BrandHPedia.BrandHPediaDataStore
@@ -146,4 +148,8 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun provideHshopRemoteDataStore(hshopRemoteDataStoreImpl: HshopRemoteDataStoreImpl): HshopRemoteDataStore
+
+    @Singleton
+    @Binds
+    fun provideBootpayDataStore(bootpayDataStoreImpl: BootpayDataStoreImpl): BootpayDataStore
 }

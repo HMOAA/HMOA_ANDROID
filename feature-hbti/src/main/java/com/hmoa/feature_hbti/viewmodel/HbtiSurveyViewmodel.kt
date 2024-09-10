@@ -26,6 +26,8 @@ class HbtiSurveyViewmodel @Inject constructor(
     val hbtiQuestionItemsState: StateFlow<HbtiQuestionItems?> = _hbtiQuestionItemsState
     private var _hbtiAnwserIdsState = MutableStateFlow<List<List<Int>>?>(null)
     val hbtiAnswerIdsState: StateFlow<List<List<Int>>?> = _hbtiAnwserIdsState
+    private var _isNextQuestionAvailable = MutableStateFlow<List<Boolean>?>(null)
+    val isNextQuestionAvailable: StateFlow<List<Boolean>?> = _isNextQuestionAvailable
     private var _expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var _wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var _unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -52,11 +54,13 @@ class HbtiSurveyViewmodel @Inject constructor(
     var uiState: StateFlow<HbtiSurveyUiState> =
         combine(
             _hbtiQuestionItemsState,
-            _hbtiAnwserIdsState
-        ) { hbtiQuestionItemsState, hbtiAnsewrIdsState ->
+            _hbtiAnwserIdsState,
+            _isNextQuestionAvailable
+        ) { hbtiQuestionItemsState, hbtiAnsewrIdsState, isNextQuestionAvailable ->
             HbtiSurveyUiState.HbtiData(
                 hbtiQuestionItems = hbtiQuestionItemsState,
                 hbtiAnswerIds = hbtiAnsewrIdsState,
+                isNextQuestionAvailable = isNextQuestionAvailable
             )
         }.stateIn(
             scope = viewModelScope,
@@ -91,6 +95,11 @@ class HbtiSurveyViewmodel @Inject constructor(
         return emptyList()
     }
 
+    fun initializeIsNextQuestionAvailableState(surveyQuestions: SurveyQuestionsResponseDto?): List<Boolean> {
+        val size = surveyQuestions?.questions?.size ?: 0
+        return List(size) { false }
+    }
+
     fun updateHbtiAnswerIdState(hbtiQuestionItems: HbtiQuestionItems): List<List<Int>> {
         val updatedHbtiAnswersId: MutableList<MutableList<Int>> =
             MutableList(hbtiQuestionItems.hbtiQuestions.size) { mutableListOf() }
@@ -122,6 +131,7 @@ class HbtiSurveyViewmodel @Inject constructor(
                             )
                         }
                         _hbtiAnwserIdsState.update { initializeHbtiAnswerIdsState(result.data.data) }
+                        _isNextQuestionAvailable.update { initializeIsNextQuestionAvailableState(result.data.data) }
                     }
 
                     is Result.Error -> {
@@ -159,7 +169,10 @@ class HbtiSurveyViewmodel @Inject constructor(
     }
 
     suspend fun postSurveyResponds(request: SurveyRespondRequestDto) {
-        flow { emit(surveyRepository.postSurveyResponds(request)) }.asResult()
+        flow {
+            val result = surveyRepository.postSurveyResponds(request)
+            result.emitOrThrow { emit(it) }
+        }.asResult()
             .collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
@@ -170,23 +183,13 @@ class HbtiSurveyViewmodel @Inject constructor(
                     }
 
                     is Result.Error -> {
-                        when (result.exception.message) {
-                            ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                _expiredTokenErrorState.update { true }
-                            }
-
-                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                _wrongTypeTokenErrorState.update { true }
-                            }
-
-                            ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                _unLoginedErrorState.update { true }
-                            }
-
-                            else -> {
-                                _generalErrorState.update { Pair(true, result.exception.message) }
-                            }
-                        }
+                        handleErrorType(
+                            error = result.exception,
+                            onExpiredTokenError = { _expiredTokenErrorState.update { true } },
+                            onWrongTypeTokenError = { _wrongTypeTokenErrorState.update { true } },
+                            onUnknownError = { _unLoginedErrorState.update { true } },
+                            onGeneralError = { _generalErrorState.update { Pair(true, result.exception.message) } }
+                        )
                     }
 
                     is Result.Loading -> {
@@ -234,6 +237,22 @@ class HbtiSurveyViewmodel @Inject constructor(
         return HbtiQuestionItems(hbtiQuestions = newHbtiQuestionItems)
     }
 
+    fun updatedIsNextQuestionAvailable(
+        page: Int,
+        value: Boolean,
+        isNextQuestionAvailable: List<Boolean>?
+    ): List<Boolean> {
+        val result = mutableListOf<Boolean>()
+        isNextQuestionAvailable?.mapIndexed { index, b ->
+            if (index == page) {
+                result.add(value)
+            } else {
+                result.add(b)
+            }
+        }
+        return result
+    }
+
     fun modifyAnswersToOptionId(
         page: Int,
         optionId: Int,
@@ -272,6 +291,13 @@ class HbtiSurveyViewmodel @Inject constructor(
         )
         _hbtiQuestionItemsState.update { newHbtiQuestionItems }
         _hbtiAnwserIdsState.update { updateHbtiAnswerIdState(newHbtiQuestionItems) }
+        _isNextQuestionAvailable.update {
+            updatedIsNextQuestionAvailable(
+                page,
+                isGoToSelectedState,
+                isNextQuestionAvailable.value
+            )
+        }
     }
 }
 
@@ -281,5 +307,6 @@ sealed interface HbtiSurveyUiState {
     data class HbtiData(
         val hbtiQuestionItems: HbtiQuestionItems?,
         val hbtiAnswerIds: List<List<Int>>?,
+        val isNextQuestionAvailable: List<Boolean>?
     ) : HbtiSurveyUiState
 }

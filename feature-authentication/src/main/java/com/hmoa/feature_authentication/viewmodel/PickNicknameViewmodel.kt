@@ -1,8 +1,9 @@
 package com.hmoa.feature_authentication.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.hmoa.core_domain.usecase.CheckNicknameDuplicationUseCase
-import com.hmoa.core_domain.usecase.SaveSignupInfoUseCase
+import com.hmoa.core_domain.repository.MemberRepository
+import com.hmoa.core_domain.repository.SignupRepository
+import com.hmoa.core_model.request.NickNameRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,19 +12,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PickNicknameViewmodel @Inject constructor(
-    private val checkNicknameDuplicate: CheckNicknameDuplicationUseCase,
-    private val saveSignupInfo: SaveSignupInfoUseCase,
+    private val memberRepository: MemberRepository,
+    private val signupRepository: SignupRepository,
 ) : ViewModel() {
 
     private val _isExistedNicknameState = MutableStateFlow(PickNicknameUiState.PickNickname(isExistedNickname = true))
     val isExistedNicknameState = _isExistedNicknameState.asStateFlow()
 
-    fun saveNickname(nickname: String) {
-        saveSignupInfo(nickname)
+    suspend fun saveNickname(nickname: String) {
+        signupRepository.saveNickname(nickname)
     }
 
     suspend fun onNicknameChanged(nickname: String?) {
-        val result = checkNicknameDuplicate(nickname)
+        val result = memberRepository.postExistsNickname(NickNameRequestDto(nickname)).data!!
         _isExistedNicknameState.update { PickNicknameUiState.PickNickname(result) }
     }
 }

@@ -2,10 +2,7 @@ package com.hmoa.feature_hbti.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hmoa.core_common.ErrorMessageType
-import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.Result
-import com.hmoa.core_common.asResult
+import com.hmoa.core_common.*
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.data.NoteSelect
@@ -150,27 +147,21 @@ class NotePickViewmodel @Inject constructor(
         val requestDto = _noteSelectDataState.value.filter { it.isSelected }.map { it.productId }
         selectedIds.update { requestDto }
         viewModelScope.launch(Dispatchers.IO) {
-            flow { emit(hshopRepository.postNotesSelected(ProductListRequestDto(productIds = requestDto))) }.asResult()
+            flow {
+                val result = hshopRepository.postNotesSelected(ProductListRequestDto(productIds = requestDto))
+                result.emitOrThrow { emit(it) }
+            }
+                .asResult()
                 .collectLatest { result ->
                     when (result) {
                         is Result.Error -> {
-                            when (result.exception.message) {
-                                ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                    expiredTokenErrorState.update { true }
-                                }
-
-                                ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                    wrongTypeTokenErrorState.update { true }
-                                }
-
-                                ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                    unLoginedErrorState.update { true }
-                                }
-
-                                else -> {
-                                    generalErrorState.update { Pair(true, result.exception.message) }
-                                }
-                            }
+                            handleErrorType(
+                                error = result.exception,
+                                onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                                onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                                onUnknownError = { unLoginedErrorState.update { true } },
+                                onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                            )
                         }
 
                         Result.Loading -> {}

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.HmoaLogoLoading
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyLoadingViewmodel
 import kotlinx.coroutines.delay
@@ -40,6 +41,7 @@ fun HbtiSurveyResultLoading(onNextScreen: () -> Unit, viewmodel: HbtiSurveyLoadi
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            HmoaLogoLoading()
             Text(
                 "잠시만 기다려주세요...",
                 style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Medium, fontSize = 16.sp)

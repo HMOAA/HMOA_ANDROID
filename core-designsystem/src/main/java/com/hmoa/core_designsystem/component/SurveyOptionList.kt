@@ -1,12 +1,10 @@
 package com.hmoa.core_designsystem.component
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,16 +46,8 @@ fun SurveyOptionList(
         }
     }.toMutableList()
 
-    fun immediateSelectedStateChange(index: Int){
+    fun immediateSelectedStateChange(index: Int) {
         selectedStates[index].value = !selectedStates[index].value
-    }
-
-    LaunchedEffect(answerIds) {
-        Log.d("answerIds", "${answerIds}")
-    }
-
-    LaunchedEffect(selectedOptionIds) {
-        Log.d("SurveyOptionList", "${selectedOptionIds}")
     }
 
     val scrollState = rememberScrollState()

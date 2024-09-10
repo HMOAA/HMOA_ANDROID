@@ -23,6 +23,7 @@ class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepos
         listOf(NoteOrderQuantity.TWO, NoteOrderQuantity.FIVE, NoteOrderQuantity.EIGHT, NoteOrderQuantity.NOLIMIT)
     private var _topRecommendedNote = MutableStateFlow<String>("")
     private var _isNextButtonDisabled = MutableStateFlow<Boolean>(false)
+    val isNextButtonDisabled: StateFlow<Boolean> = _isNextButtonDisabled
     private var _noteQuantityChoiceAnswersId = MutableStateFlow<List<Int>>(listOf())
     val noteQuantityChoiceAnswersId: StateFlow<List<Int>> = _noteQuantityChoiceAnswersId
     private var _noteOrderQuantityChoice = MutableStateFlow<NoteOrderQuantity>(noteOrderQuantityChoiceList[0])
@@ -60,9 +61,6 @@ class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepos
 
     fun updateAnswerOption(answerIds: List<Int>, optionIndex: Int): List<Int> {
         val updatedAnswer: MutableList<Int> = mutableListOf()
-        if (answerIds.isNotEmpty()) {
-            updatedAnswer.removeAt(0)
-        }
         updatedAnswer.add(optionIndex)
         return updatedAnswer
     }
@@ -79,6 +77,7 @@ class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepos
                 _noteQuantityChoiceAnswersId.update { emptyList() }
             }
         }
+        _isNextButtonDisabled.update { isGoToSelectedState }
     }
 }
 

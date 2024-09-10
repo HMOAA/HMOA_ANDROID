@@ -68,6 +68,8 @@ import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.data.NoteProductIds
+import com.hmoa.core_model.data.PaymentType
+import com.hmoa.core_model.data.TestType
 import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
@@ -86,6 +88,7 @@ fun OrderRoute(
     viewModel: OrderViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit){viewModel.setIds(productIds)}
+    val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val isSaveBuyerInfo = viewModel.isSavedBuyerInfo.collectAsStateWithLifecycle()
@@ -93,6 +96,9 @@ fun OrderRoute(
         uiState = uiState.value,
         errState = errState.value,
         isSaveBuyerInfo = isSaveBuyerInfo.value,
+        onPaymentClick = { phone, paymentType ->
+            viewModel.doPayment(context, phone, paymentType)
+        },
         deleteNote = { viewModel.deleteNote(it) },
         saveBuyerInfo = { name, phoneNumber ->
             viewModel.saveBuyerInfo(name, phoneNumber)
@@ -111,6 +117,7 @@ fun OrderScreen(
     uiState: OrderUiState,
     errState: ErrorUiState,
     isSaveBuyerInfo: Boolean,
+    onPaymentClick: (String, TestType) -> Unit,
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
@@ -128,6 +135,7 @@ fun OrderScreen(
                 buyerInfo = uiState.buyerInfo,
                 deleteNote = deleteNote,
                 saveBuyerInfo = saveBuyerInfo,
+                onPaymentClick = onPaymentClick,
                 onNavBack = onNavBack,
                 navAddAddress = navAddAddress
             )
@@ -155,6 +163,7 @@ private fun OrderScreenMainContent(
     buyerInfo: DefaultOrderInfoDto?,
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
+    onPaymentClick: (String, TestType) -> Unit,
     onNavBack: () -> Unit,
     navAddAddress: (String) -> Unit
 ) {
@@ -164,7 +173,7 @@ private fun OrderScreenMainContent(
     var phone1 by remember { mutableStateOf("") }
     var phone2 by remember { mutableStateOf("") }
     var phone3 by remember { mutableStateOf("") }
-    val options = listOf("토스페이", "카카오페이", "페이코", "일반 결제")
+    val options = listOf<TestType>(TestType.카드, TestType.가상계좌, TestType.네이버페이, TestType.카카오페이)
     var selectedOption by remember { mutableStateOf(options[0]) }
     var isRefundChecked by remember { mutableStateOf(false) }
     var isPrivacyConsentGranted by remember { mutableStateOf(false) }
@@ -284,7 +293,7 @@ private fun OrderScreenMainContent(
                     btnText = "결제하기",
                     onClick = {
                         Toast.makeText(context, "${orderInfo} ${addressInfo} ${buyerInfo}", Toast.LENGTH_LONG).show()
-                        /** 결제 && navigation */
+                        onPaymentClick("${phone1}-${phone2}-${phone3}", selectedOption)
                     }
                 )
             }
@@ -706,9 +715,9 @@ private fun Receipt(
 
 @Composable
 private fun SelectPaymentType(
-    options: List<String>,
-    selectedOption: String,
-    onValueChanged: (value: String) -> Unit
+    options: List<TestType>,
+    selectedOption: TestType,
+    onValueChanged: (value: TestType) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -731,9 +740,9 @@ private fun SelectPaymentType(
 
 @Composable
 private fun VerticalOptions(
-    options: List<String>,
-    selectedOption: String,
-    onValueChanged: (value: String) -> Unit,
+    options: List<TestType>,
+    selectedOption: TestType,
+    onValueChanged: (value: TestType) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -758,7 +767,7 @@ private fun VerticalOptions(
                 }
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = it,
+                    text = it.name,
                     fontSize = 12.sp,
                     fontFamily = CustomFont.semiBold
                 )
@@ -981,6 +990,9 @@ private fun UITest() {
         errState = ErrorUiState.Loading,
         isSaveBuyerInfo = false,
         saveBuyerInfo = { a, b ->
+
+        },
+        onPaymentClick = { a, b ->
 
         },
         onNavBack = {},

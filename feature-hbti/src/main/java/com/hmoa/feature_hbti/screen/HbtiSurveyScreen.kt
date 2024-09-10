@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_model.data.HbtiQuestionItem
 import com.hmoa.core_model.data.HbtiQuestionItems
@@ -85,8 +86,9 @@ fun HbtiSurveyScreen(
         HbtiSurveyUiState.Loading -> AppLoadingScreen()
         is HbtiSurveyUiState.HbtiData -> {
             HbtiSurveyContent(
-                hbtiQuestionItems = (uiState as HbtiSurveyUiState.HbtiData).hbtiQuestionItems,
-                hbtiAnswerIds = (uiState as HbtiSurveyUiState.HbtiData).hbtiAnswerIds,
+                hbtiQuestionItems = uiState.hbtiQuestionItems,
+                hbtiAnswerIds = uiState.hbtiAnswerIds,
+                isNextQuestionAvailable = uiState.isNextQuestionAvailable,
                 onClickOption = { optionId, page, item, isGoToSelectedState ->
                     viewModel.modifyAnswersToOptionId(
                         optionId = optionId,
@@ -112,6 +114,7 @@ fun HbtiSurveyScreen(
 fun HbtiSurveyContent(
     hbtiQuestionItems: HbtiQuestionItems?,
     hbtiAnswerIds: List<List<Int>>?,
+    isNextQuestionAvailable: List<Boolean>?,
     onClickOption: (optionId: Int, page: Int, item: HbtiQuestionItem, isGoToSelectedState: Boolean) -> Unit,
     onClickFinishSurvey: () -> Unit,
     onBackClick: () -> Unit
@@ -123,7 +126,6 @@ fun HbtiSurveyContent(
     val additionalProgress = calculateProgressStepSize(hbtiQuestionItems?.hbtiQuestions?.values)
     val pagerState =
         rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
-
 
     fun addProgress() {
         targetProgress += additionalProgress
@@ -207,7 +209,7 @@ fun HbtiSurveyContent(
                 }
                 if (pagerState.currentPage < pagerState.pageCount - 1) {
                     Button(
-                        isEnabled = true,
+                        isEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
                         btnText = "다음",
                         onClick = {
                             addProgress()
@@ -215,19 +217,27 @@ fun HbtiSurveyContent(
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
                         },
-                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
+                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(
+                            color = if (isNextQuestionAvailable?.get(pagerState.currentPage)
+                                    ?: true
+                            ) Color.Black else CustomColor.gray3
+                        ),
                         textSize = 18,
                         textColor = Color.White,
                         radious = 5
                     )
                 } else {
                     Button(
-                        isEnabled = true,
+                        isEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
                         btnText = "다음",
                         onClick = {
                             onClickFinishSurvey()
                         },
-                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black)
+                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(
+                            color = if (isNextQuestionAvailable?.get(pagerState.currentPage)
+                                    ?: true
+                            ) Color.Black else CustomColor.gray3
+                        )
                             .semantics { testTag = "NextButton" },
                         textSize = 18,
                         textColor = Color.White,

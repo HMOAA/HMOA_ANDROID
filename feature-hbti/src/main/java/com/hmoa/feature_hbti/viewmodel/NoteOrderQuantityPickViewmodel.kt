@@ -61,9 +61,6 @@ class NoteOrderQuantityPickViewmodel @Inject constructor(private val surveyRepos
 
     fun updateAnswerOption(answerIds: List<Int>, optionIndex: Int): List<Int> {
         val updatedAnswer: MutableList<Int> = mutableListOf()
-        if (answerIds.isNotEmpty()) {
-            updatedAnswer.removeAt(0)
-        }
         updatedAnswer.add(optionIndex)
         return updatedAnswer
     }

@@ -96,6 +96,13 @@ class HbtiSurveyViewModelTest : TestCase() {
     }
 
     @Test
+    fun `test_getSurveyQuestions 요청 성공 후 isNextQuestionAvailable의 초기화된 상태값 확인`() = coroutineRule.runTest {
+        val expectedValue = listOf(false, false)
+        launch { viewModel.getSurveyQuestions() }.join()
+        assertEquals(expectedValue, viewModel.isNextQuestionAvailable.value)
+    }
+
+    @Test
     fun `test_getSurveyQuestions Unkown error요청실패_unLoginedErrorState값 확인`() = coroutineRule.runTest {
         val expectedUnLoginedErrorState = true
         Mockito.`when`(surveyRepository.getSurveyQuestions()).thenReturn(
@@ -320,5 +327,18 @@ class HbtiSurveyViewModelTest : TestCase() {
         )
         val result = viewModel.arrangeAllAnswersIdToFinalQuestionAnswerState()
         assertEquals(expectedValue, result)
+    }
+
+    @Test
+    fun `test_modifyFirstAnswerToTrue_reflectsIsNextQuestionAvailable`() = coroutineRule.runTest {
+        val expectedValue = listOf(true, false)
+        viewModel.getSurveyQuestions()
+        viewModel.modifyAnswersToOptionId(
+            0,
+            hbtiQuestionItem_singleChoice.optionIds[0],
+            hbtiQuestionItem_singleChoice,
+            true
+        )
+        assertEquals(expectedValue, viewModel.isNextQuestionAvailable.value)
     }
 }

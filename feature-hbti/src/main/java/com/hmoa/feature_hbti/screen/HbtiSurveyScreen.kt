@@ -164,47 +164,52 @@ fun HbtiSurveyContent(
             }
         )
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f)
+            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().background(color = Color.White).padding(top = 12.dp)
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(1f).background(color = Color.White)
+                    .padding(top = 12.dp)
                     .semantics { testTag = "HbtiSurveyForm" }
             ) {
-                ProgressBar(percentage = currentProgress)
-                HorizontalPager(
-                    userScrollEnabled = false,
-                    modifier = Modifier.fillMaxWidth(),
-                    state = pagerState,
-                    verticalAlignment = Alignment.Top
-                ) { page ->
-                    Column(verticalArrangement = Arrangement.SpaceBetween) {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                "Q. ${hbtiQuestionItems?.hbtiQuestions?.get(page)?.questionContent}",
-                                modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
-                                style = TextStyle(
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = pretendard
-                                )
-                            )
-                            SurveyOptionList(
-                                answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
-                                surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents ?: listOf(),
-                                surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds ?: listOf(),
-                                onButtonClick = { optionIndex, isGoToSelectedState ->
-                                    onClickOption(
-                                        hbtiQuestionItems?.hbtiQuestions?.get(page)!!.optionIds[optionIndex],
-                                        page,
-                                        hbtiQuestionItems?.hbtiQuestions?.get(page)!!,
-                                        isGoToSelectedState
+                Column {
+                    ProgressBar(percentage = currentProgress)
+                    HorizontalPager(
+                        userScrollEnabled = false,
+                        modifier = Modifier.fillMaxWidth().background(color = Color.White),
+                        state = pagerState,
+                        verticalAlignment = Alignment.Top
+                    ) { page ->
+                        Column(verticalArrangement = Arrangement.SpaceBetween) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    "Q. ${hbtiQuestionItems?.hbtiQuestions?.get(page)?.questionContent}",
+                                    modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
+                                    style = TextStyle(
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontFamily = pretendard
                                     )
-                                }
-                            )
-                        }
+                                )
+                                SurveyOptionList(
+                                    answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
+                                    surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents
+                                        ?: listOf(),
+                                    surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds
+                                        ?: listOf(),
+                                    onButtonClick = { optionIndex, isGoToSelectedState ->
+                                        onClickOption(
+                                            hbtiQuestionItems?.hbtiQuestions?.get(page)!!.optionIds[optionIndex],
+                                            page,
+                                            hbtiQuestionItems?.hbtiQuestions?.get(page)!!,
+                                            isGoToSelectedState
+                                        )
+                                    }
+                                )
+                            }
 
+                        }
                     }
                 }
                 if (pagerState.currentPage < pagerState.pageCount - 1) {

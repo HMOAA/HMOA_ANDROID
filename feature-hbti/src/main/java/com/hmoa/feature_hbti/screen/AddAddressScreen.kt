@@ -135,7 +135,7 @@ private fun AddAddressMainContent(
                 && detailAddress.isNotEmpty() && request.isNotEmpty()
     }}
     LaunchedEffect(Unit){
-        if (!addressJson.isNullOrEmpty()){
+        if (!addressJson.isNullOrEmpty() && addressJson != "NULL"){
             val initAddress = Json.decodeFromString<DefaultAddressDto>(addressJson)
             name = initAddress.name
             addressName = initAddress.addressName

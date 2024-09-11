@@ -471,9 +471,8 @@ private fun InputUserInfo(
 
 @Composable
 private fun UserInfoDesc(
-    name: String,
-    phone: String,
-    addressInfo: DefaultAddressDto,
+    buyerInfo: DefaultOrderInfoDto,
+    addressInfo: DefaultAddressDto?,
     navAddAddress: (String) -> Unit,
 ) {
     Column(
@@ -486,7 +485,7 @@ private fun UserInfoDesc(
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = name,
+                text = if(addressInfo == null) buyerInfo.name else addressInfo.name,
                 fontSize = 14.sp,
                 fontFamily = CustomFont.semiBold,
                 style = TextStyle(
@@ -494,40 +493,67 @@ private fun UserInfoDesc(
                     platformStyle = PlatformTextStyle(includeFontPadding = true)
                 )
             )
-            Spacer(Modifier.width(8.dp))
-            TagBadge(
-                tag = addressInfo.addressName,
-                backgroundColor = CustomColor.gray1,
-                borderColor = CustomColor.gray1,
-                textColor = Color.Black,
-                shape = RoundedCornerShape(5.dp)
-            )
-            Spacer(Modifier.weight(1f))
-            Text(
-                modifier = Modifier.clickable {
-                    val addressInfoToJson = Json.encodeToString(addressInfo)
-                    navAddAddress(addressInfoToJson)
-                },
-                text = "변경하기",
-                fontSize = 10.sp,
-                fontFamily = CustomFont.medium,
-                textDecoration = TextDecoration.Underline
-            )
+            if (addressInfo != null){
+                Spacer(Modifier.width(8.dp))
+                TagBadge(
+                    tag = addressInfo.addressName,
+                    backgroundColor = CustomColor.gray1,
+                    borderColor = CustomColor.gray1,
+                    textColor = Color.Black,
+                    shape = RoundedCornerShape(5.dp)
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    modifier = Modifier.clickable {
+                        val addressInfoToJson = Json.encodeToString(addressInfo)
+                        navAddAddress(addressInfoToJson)
+                    },
+                    text = "변경하기",
+                    fontSize = 10.sp,
+                    fontFamily = CustomFont.medium,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
         }
         Spacer(Modifier.height(10.dp))
         Text(
-            text = phone,
+            text = if(addressInfo == null) buyerInfo.phoneNumber else addressInfo.phoneNumber,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             color = CustomColor.gray3
         )
-        Spacer(Modifier.height(16.dp))
-        Text(
-            text = "${addressInfo.streetAddress} ${addressInfo.detailAddress}",
-            fontSize = 12.sp,
-            fontFamily = CustomFont.medium
-        )
-        Spacer(Modifier.height(24.dp))
+        if (addressInfo != null){
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = "${addressInfo.streetAddress} ${addressInfo.detailAddress}",
+                fontSize = 12.sp,
+                fontFamily = CustomFont.medium
+            )
+            Spacer(Modifier.height(24.dp))
+        } else {
+            Spacer(Modifier.height(24.dp))
+            HorizontalDivider(thickness = 1.dp, color = Color.Black)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "배송지",
+                    fontSize = 18.sp,
+                    fontFamily = CustomFont.bold
+                )
+                Text(
+                    modifier = Modifier.clickable {navAddAddress("NULL")},
+                    text = "배송지를 입력해주세요",
+                    fontSize = 10.sp,
+                    fontFamily = CustomFont.medium,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+        }
     }
 }
 

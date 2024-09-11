@@ -175,7 +175,7 @@ private fun OrderScreenMainContent(
     var isRefundChecked by remember { mutableStateOf(false) }
     var isPrivacyConsentGranted by remember { mutableStateOf(false) }
     var isAllChecked by remember {mutableStateOf(false)}
-    val isEnabled = remember {derivedStateOf { addressInfo != null && buyerInfo != null }}
+    val isEnabled = remember {derivedStateOf { addressInfo != null && buyerInfo != null && isAllChecked }}
     var flag by remember{mutableStateOf(false)}
     var showWebView by remember{mutableStateOf(false)}
     var webViewType by remember{mutableStateOf<WebviewType?>(null)}

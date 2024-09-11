@@ -151,6 +151,13 @@ class MainActivity : AppCompatActivity() {
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
             }
+            navHostController.addOnDestinationChangedListener { controller, destination, arguments ->
+                val backStack = controller.currentBackStack.value
+                val stackLog = backStack.joinToString(" -> ") {
+                    it.destination.route ?: "Unknown"
+                }
+                Log.d("NAVIGATION ROUTE TEST", "current stack : $stackLog")
+            }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
             val deeplink = remember { handleDeeplink(intent) }
 

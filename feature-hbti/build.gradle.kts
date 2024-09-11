@@ -25,6 +25,7 @@ android {
         buildConfigField("String", "PRIVACY_CONSENT_URL", localProperties.getProperty("PRIVACY_CONSENT_URL"))
         buildConfigField("String", "ADDRESS_SEARCH_URL", localProperties.getProperty("ADDRESS_SEARCH_URL"))
         buildConfigField("String", "BOOTPAY_APPLICATION_ID", localProperties.getProperty("BOOTPAY_APPLICATION_ID") as String)
+        buildConfigField("String", "SHIPPING_REFUND_URL", localProperties.getProperty("SHIPPING_REFUND_URL") as String)
     }
 
     buildTypes {

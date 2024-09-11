@@ -232,9 +232,8 @@ private fun OrderScreenMainContent(
                 }
                 if (isSaveBuyerInfo) {
                     UserInfoDesc(
-                        name = name,
-                        phone = "${phone1}-${phone2}-${phone3}",
-                        addressInfo = addressInfo!!,
+                        buyerInfo = buyerInfo!!,
+                        addressInfo = addressInfo,
                         navAddAddress = navAddAddress
                     )
                 } else {

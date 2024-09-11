@@ -68,8 +68,7 @@ import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.core_model.data.PaymentType
-import com.hmoa.core_model.data.TestType
+import com.hmoa.core_model.data.WebviewType
 import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
@@ -179,6 +178,7 @@ private fun OrderScreenMainContent(
     val isEnabled = remember {derivedStateOf { addressInfo != null && buyerInfo != null }}
     var flag by remember{mutableStateOf(false)}
     var showWebView by remember{mutableStateOf(false)}
+    var webViewType by remember{mutableStateOf<WebviewType?>(null)}
     BackHandler(
         enabled = true,
         onBack = {
@@ -186,7 +186,7 @@ private fun OrderScreenMainContent(
             else onNavBack()
         }
     )
-    if(showWebView){NotificationWebView()}
+    if(showWebView){NotificationWebView(webViewType)}
     else {
         Column(
             modifier = Modifier
@@ -275,7 +275,14 @@ private fun OrderScreenMainContent(
                     onUpdateRefundChecked = {isRefundChecked = it},
                     isPrivacyConsentGranted = isPrivacyConsentGranted,
                     onUpdatePrivacyConsentGranted = { isPrivacyConsentGranted = it},
-                    showPrivacyConsent = {showWebView = true},
+                    showPrivacyConsent = {
+                        webViewType = WebviewType.PRIVACY_CONSENT
+                        showWebView = true
+                    },
+                    showShippingRefund = {
+                        webViewType = WebviewType.SHIPPING_REFUND
+                        showWebView = true
+                    }
                 )
                 Button(
                     buttonModifier = Modifier
@@ -740,6 +747,7 @@ private fun CheckPrivacyConsent(
     isPrivacyConsentGranted: Boolean,
     onUpdatePrivacyConsentGranted: (Boolean) -> Unit,
     showPrivacyConsent: () -> Unit,
+    showShippingRefund: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -839,8 +847,13 @@ private fun CheckPrivacyConsent(
 }
 
 @Composable
-private fun NotificationWebView(){
+private fun NotificationWebView(webviewType: WebviewType?){
     val context = LocalContext.current
+    val url = when(webviewType){
+        WebviewType.PRIVACY_CONSENT -> BuildConfig.PRIVACY_CONSENT_URL
+        WebviewType.SHIPPING_REFUND -> BuildConfig.SHIPPING_REFUND_URL
+        else -> ""
+    }
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = {
@@ -854,7 +867,7 @@ private fun NotificationWebView(){
 
                 }
 
-                loadUrl(BuildConfig.PRIVACY_CONSENT_URL)
+                loadUrl(url)
             }
         }
     )

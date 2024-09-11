@@ -7,20 +7,14 @@ import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.data.DefaultAddressDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddAddressViewModel @Inject constructor(
     private val memberRepository: MemberRepository
-): ViewModel() {
+) : ViewModel() {
     private val _isPostAddressCompleted = MutableStateFlow<Boolean>(false)
     val isPostAddressCompleted get() = _isPostAddressCompleted.asStateFlow()
     private val generalErrorState = MutableStateFlow<Pair<Boolean, String>>(Pair(false, ""))
@@ -53,8 +47,8 @@ class AddAddressViewModel @Inject constructor(
         address: String,
         detailAddress: String,
         request: String
-    ){
-        viewModelScope.launch{
+    ) {
+        viewModelScope.launch {
             val requestDto = DefaultAddressDto(
                 addressName = addressName,
                 detailAddress = detailAddress,
@@ -75,7 +69,7 @@ class AddAddressViewModel @Inject constructor(
                 }
                 return@launch
             }
-            _isPostAddressCompleted.update{ true }
+            _isPostAddressCompleted.update { true }
         }
     }
 }

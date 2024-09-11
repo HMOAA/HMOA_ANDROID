@@ -23,8 +23,7 @@ fun HbtiProcessRoute(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -
 @Composable
 private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize().background(color = Color.White).padding(horizontal = 16.dp)
-            .padding(bottom = 40.dp),
+        modifier = Modifier.fillMaxSize().background(color = Color.White).padding(bottom = 40.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -34,22 +33,24 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickCl
                 navIcon = painterResource(R.drawable.ic_back),
                 onNavClick = { onBackClick() }
             )
-            Column(modifier = Modifier.padding(top = 22.dp)) {
+            Column(modifier = Modifier.padding(top = 22.dp).padding(horizontal = 16.dp)) {
                 VerticalStepBar(
                     arrayOf("향료 선택", "배송", "향수 추천"),
                     arrayOf("향BTI 검사 이후 추천하는 향료, 원하는 향료 선택(가격대 상이)", "결제 후 1~2일 내 배송 완료", "시향 후 가장 좋았던 향료 선택, 향수 추천 받기")
                 )
             }
         }
-        Button(
-            isEnabled = true,
-            btnText = "다음",
-            onClick = { onNoteOrderQuantityPickClick() },
-            buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
-            textSize = 18,
-            textColor = Color.White,
-            radious = 5
-        )
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Button(
+                isEnabled = true,
+                btnText = "다음",
+                onClick = { onNoteOrderQuantityPickClick() },
+                buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
+                textSize = 18,
+                textColor = Color.White,
+                radious = 5
+            )
+        }
     }
 }
 

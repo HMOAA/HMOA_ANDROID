@@ -18,6 +18,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.SurveyOptionList
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.feature_hbti.NoteOrderQuantity
 import com.hmoa.feature_hbti.viewmodel.NoteOrderQuantityPickUiState
@@ -40,38 +41,46 @@ fun NoteOrderQuantityPickContent(
 
     when (uiState) {
         is NoteOrderQuantityPickUiState.NoteOrderQuantityPickData -> {
-            Column(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
-                TopBar(
-                    title = "향BTI",
-                    titleColor = Color.Black,
-                    navIcon = painterResource(R.drawable.ic_back),
-                    onNavClick = { onBackClick() }
-                )
-                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                    Text(
-                        "추천받은 카테고리는 '${(uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).topRecommendedNote}'입니다.\n원하는 카테고리 배송 수량을\n선택해주세요",
-                        modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = pretendard
+            Column(
+                modifier = Modifier.fillMaxSize().background(color = Color.White),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    TopBar(
+                        title = "향BTI",
+                        titleColor = Color.Black,
+                        navIcon = painterResource(R.drawable.ic_back),
+                        onNavClick = { onBackClick() }
+                    )
+                    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                        Text(
+                            "추천받은 카테고리는 '${(uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).topRecommendedNote}'입니다.\n원하는 카테고리 배송 수량을\n선택해주세요",
+                            modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = pretendard
+                            )
                         )
-                    )
-                    SurveyOptionList(
-                        answerIds = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).noteQuantityChoiceAnswersId,
-                        surveyOptions = viewModel.noteOrderQuantityChoiceContents,
-                        surveyOptionIds = viewModel.NOTE_ORDER_QUANTITY_CHOICE_IDS,
-                        onButtonClick = { optionIndex, isGoToSelectedState ->
-                            viewModel.modifyAnswerOption(optionIndex, isGoToSelectedState)
-                        }
-                    )
+                        SurveyOptionList(
+                            answerIds = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).noteQuantityChoiceAnswersId,
+                            surveyOptions = viewModel.noteOrderQuantityChoiceContents,
+                            surveyOptionIds = viewModel.NOTE_ORDER_QUANTITY_CHOICE_IDS,
+                            onButtonClick = { optionIndex, isGoToSelectedState ->
+                                viewModel.modifyAnswerOption(optionIndex, isGoToSelectedState)
+                            }
+                        )
+                    }
                 }
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp)) {
                     Button(
-                        isEnabled = true,
+                        isEnabled = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).isNextButtonDisabled,
                         btnText = "다음",
                         onClick = { onNextClick(noteOrderQuantityChoice) },
-                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
+                        buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(
+                            color = if ((uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).isNextButtonDisabled)
+                                Color.Black else CustomColor.gray3
+                        ),
                         textSize = 18,
                         textColor = Color.White,
                         radious = 5

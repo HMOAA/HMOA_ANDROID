@@ -454,7 +454,7 @@ private fun InputUserInfo(
                 fontFamily = CustomFont.bold
             )
             Text(
-                modifier = Modifier.clickable {navAddAddress("")},
+                modifier = Modifier.clickable {navAddAddress("NULL")},
                 text = "배송지를 입력해주세요",
                 fontSize = 10.sp,
                 fontFamily = CustomFont.medium,

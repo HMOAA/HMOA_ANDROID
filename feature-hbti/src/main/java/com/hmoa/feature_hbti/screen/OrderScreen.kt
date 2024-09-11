@@ -289,10 +289,7 @@ private fun OrderScreenMainContent(
                         .height(52.dp),
                     isEnabled = isEnabled.value,
                     btnText = "결제하기",
-                    onClick = {
-                        Toast.makeText(context, "${orderInfo} ${addressInfo} ${buyerInfo}", Toast.LENGTH_LONG).show()
-                        onPaymentClick("${phone1}-${phone2}-${phone3}", selectedOption)
-                    }
+                    onClick = {onPaymentClick("${phone1}-${phone2}-${phone3}")}
                 )
             }
         }

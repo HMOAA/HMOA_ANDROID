@@ -951,7 +951,7 @@ private fun UITest() {
         saveBuyerInfo = { a, b ->
 
         },
-        onPaymentClick = { a, b ->
+        onPaymentClick = { a ->
 
         },
         onNavBack = {},

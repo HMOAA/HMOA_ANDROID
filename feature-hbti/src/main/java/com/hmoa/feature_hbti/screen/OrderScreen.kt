@@ -799,9 +799,7 @@ private fun CheckPrivacyConsent(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable {
-                    /** 환불 방법 관련 pop up 띄우기 */
-                },
+                modifier = Modifier.clickable {showShippingRefund()},
                 text = "보기",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,

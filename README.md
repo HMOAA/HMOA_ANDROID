@@ -14,11 +14,6 @@
 | <img src="https://private-user-images.githubusercontent.com/67788699/366166165-08b7cd21-c64b-41cb-8489-ffec5a4deac5.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ0MTgsIm5iZiI6MTcyNTk5NDExOCwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxNjYxNjUtMDhiN2NkMjEtYzY0Yi00MWNiLTg0ODktZmZlYzVhNGRlYWM1LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NDgzOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTUyYmM1ZDA1OWNlMjMyNjhmYTg0YjZjOGM4MjMyYjMzYTBhMzRjNjg2YmQ4NjRiZDhmZTg5ZjVlMzUzMzAyMmYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.QpIW48i8_aNRb2eGGT_EpsyFaUjNFU73MNWdcyB-ncw" width=250 height = 500/>  | <img src="https://private-user-images.githubusercontent.com/67788699/366134361-62ce2f41-04bc-41b0-92ae-225e5fecb830.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQzNjEtNjJjZTJmNDEtMDRiYy00MWIwLTkyYWUtMjI1ZTVmZWNiODMwLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWJmNjI0YmY0N2YzYzI5NDk1ODJmNTBiZTQ4ZTBjZjE3NjliMDU1YTY1NTlmYTUzMThkNGZhYmVkOTBjOTY2NzMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.HUcVw2bcFSFB1Gg3DP-m8atHzz3TvFRP528iz0yuUNs" width=250 height = 500/>  | <img src="https://private-user-images.githubusercontent.com/67788699/366134334-36f1df93-abb1-46e3-b82b-4e7dd13c0577.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQzMzQtMzZmMWRmOTMtYWJiMS00NmUzLWI4MmItNGU3ZGQxM2MwNTc3LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ1MWNjOTRiNWM3MWQyNjEzYzFkZjYyMmRkMjcyYzRlYWVmNmY4YTJjYjk0NTFhMWQ3ZTUyZDk4NDNjMDU0Y2EmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.BvXHQyHmlOADavz-fIA9wcRPbE2_JPGzKY5JveORMcE" width=250 height = 500/> |
 
 ### 다양한 브랜드 향수를 검색하고 향수를 찾아봐요
-브랜드: 80여개의 브랜드의 향수 정보를 확인해보세요
-<br>
-같은 브랜드 향수 보기: 같은 브랜드 향수의 향수를 확인해보세요
-<br>
-브랜드 검색: 궁금한 브랜드가 있다면 빠르게 찾아줄 수 있어요
 | 브랜드 | 같은 브랜드 향수 보기 | 브랜드 검색 |
 |--------|----------------------|-------------|
 |80여개의 브랜드의 향수 정보를 확인해보세요.|같은 브랜드 향수의 향수를 확인해보세요.|궁금한 브랜드가 있다면 빠르게 찾아줄 수 있어요.|
@@ -37,7 +32,17 @@
 |향수를 추천하고, 후기를 공유해주세요! 다양한 정보로 향수에 대한 여러분의 경험을 풍부하게 만들어줄거에요.|향수 추천, 시향기, 자유 게시판에서 향수이야기를 작성해주세요.|
 |<img src="https://private-user-images.githubusercontent.com/67788699/366134306-8b0dc226-bc30-4ac3-b994-27c33a14f6d2.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQzMDYtOGIwZGMyMjYtYmMzMC00YWMzLWI5OTQtMjdjMzNhMTRmNmQyLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ4YTE4YTg5YTc3MWE5YjE4ODMzYTUxMzA3YjU1MTc3ZDgzYmQ0N2IyZDYyOGJmOWFjMWZmYmZmNzVlZmMyNzgmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.dwh6v7aMexOmYB6QkzEjknpUNw_tYBVUYiB3cX4Vnvk" width=250 height = 500/> | <img src="https://private-user-images.githubusercontent.com/67788699/366134276-6de229c7-ddb5-4446-9d34-36662e97142d.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQyNzYtNmRlMjI5YzctZGRiNS00NDQ2LTlkMzQtMzY2NjJlOTcxNDJkLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ0MjU0MDIwYzM4ZDZlMDYzNTM1YzVlNjQ4OGQxZmQ1OWU3ZjViZjMzNDI2NDYwMjQ1MDQ2MmU4OTM0MGY3NDcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.V_DEhvYOAyS_DwFtgodGhGSPaJOIonTNZb3la57fmtY" width=250 height = 500/> |
 
-## 프로젝트 아키텍처 및 모듈구성
-<img width="692" alt="image" src="https://github.com/user-attachments/assets/b32a6d77-e9cf-495f-a05f-8dcd53c244d1">
-<img width="692" alt="image" src="https://github.com/user-attachments/assets/477425eb-c4ab-4400-bf33-d040775d0203">
+# 프로젝트 아키텍처 및 모듈구성
+## 안드로이드 권장 아키텍처 적용 구조
+<img width="380" alt="image" src="https://github.com/user-attachments/assets/9ea80c81-d6d3-4248-941c-afde311de7ac">
+
+## 멀티 모듈의 관심사 분리 및 아키텍처 적용
+<img width="590" alt="image" src="https://github.com/user-attachments/assets/477425eb-c4ab-4400-bf33-d040775d0203">
+
+## MVVM 적용
+<img width="380" alt="image" src="https://github.com/user-attachments/assets/979d10ac-d57a-4654-9668-476284c9ef2b">
+
+### 데이터 전달 및 상태관리 구체화 구조
+<img width="380" alt="image" src="https://github.com/user-attachments/assets/c1fcf841-7baa-4bea-8bf2-63dcaeb66455">
+
 

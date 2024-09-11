@@ -14,7 +14,6 @@ import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.core_model.data.DefaultOrderInfoDto
-import com.hmoa.core_model.data.TestType
 import com.hmoa.core_model.request.ConfirmBootpayRequestDto
 import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.FinalOrderResponseDto
@@ -230,15 +229,12 @@ class OrderViewModel @Inject constructor(
 
     fun doPayment(
         context: Context,
-        phone: String,
-        paymentType: TestType,
+        phone: String
     ){
         val activity = context as FragmentActivity
         val bootUser = BootUser().setPhone(phone)
         val successUiState = (uiState.value as OrderUiState.Success)
         val bootItems = successUiState.orderInfo.productInfo.noteProducts.map{product ->
-            Log.d("TAG TEST", "price : ${product.price.toDouble()}")
-            Log.d("TAG TEST", "price : ${product.notesCount}")
             BootItem(
                 product.productName,
                 product.notesCount,
@@ -264,7 +260,6 @@ class OrderViewModel @Inject constructor(
                 Payload().setApplicationId(BuildConfig.BOOTPAY_APPLICATION_ID)
                     .setPg("KCP")
                     .setUser(bootUser)
-                    .setMethod(paymentType.name)
                     .setOrderName("향료 결제")
                     .setOrderId(orderId.value!!.toString())
                     .setPrice(successUiState.orderInfo.totalAmount.toDouble())
@@ -277,7 +272,6 @@ class OrderViewModel @Inject constructor(
 
                     override fun onError(p0: String?) {
                         Log.d("Payment Event", "error : ${p0}")
-                        generalErrorState.update{Pair(true, p0)}
                     }
 
                     override fun onClose() {

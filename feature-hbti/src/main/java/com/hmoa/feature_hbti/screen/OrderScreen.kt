@@ -96,8 +96,8 @@ fun OrderRoute(
         uiState = uiState.value,
         errState = errState.value,
         isSaveBuyerInfo = isSaveBuyerInfo.value,
-        onPaymentClick = { phone, paymentType ->
-            viewModel.doPayment(context, phone, paymentType)
+        onPaymentClick = { phone ->
+            viewModel.doPayment(context, phone)
         },
         deleteNote = { viewModel.deleteNote(it) },
         saveBuyerInfo = { name, phoneNumber ->
@@ -117,7 +117,7 @@ fun OrderScreen(
     uiState: OrderUiState,
     errState: ErrorUiState,
     isSaveBuyerInfo: Boolean,
-    onPaymentClick: (String, TestType) -> Unit,
+    onPaymentClick: (String) -> Unit,
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
@@ -163,7 +163,7 @@ private fun OrderScreenMainContent(
     buyerInfo: DefaultOrderInfoDto?,
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
-    onPaymentClick: (String, TestType) -> Unit,
+    onPaymentClick: (String) -> Unit,
     onNavBack: () -> Unit,
     navAddAddress: (String) -> Unit
 ) {
@@ -173,8 +173,6 @@ private fun OrderScreenMainContent(
     var phone1 by remember { mutableStateOf("") }
     var phone2 by remember { mutableStateOf("") }
     var phone3 by remember { mutableStateOf("") }
-    val options = listOf<TestType>(TestType.카드, TestType.가상계좌, TestType.네이버페이, TestType.카카오페이)
-    var selectedOption by remember { mutableStateOf(options[0]) }
     var isRefundChecked by remember { mutableStateOf(false) }
     var isPrivacyConsentGranted by remember { mutableStateOf(false) }
     var isAllChecked by remember {mutableStateOf(false)}
@@ -265,12 +263,6 @@ private fun OrderScreenMainContent(
                     shippingPayment = orderInfo.shippingAmount,
                     totalPayment = orderInfo.totalAmount,
                     finalPayment = orderInfo.paymentAmount
-                )
-                HorizontalDivider(thickness = 1.dp, color = Color.Black)
-                SelectPaymentType(
-                    options = options,
-                    selectedOption = selectedOption,
-                    onValueChanged = { selectedOption = it }
                 )
                 HorizontalDivider(thickness = 1.dp, color = Color.Black)
                 CheckPrivacyConsent(

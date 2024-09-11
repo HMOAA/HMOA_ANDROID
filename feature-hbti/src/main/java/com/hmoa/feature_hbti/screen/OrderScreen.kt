@@ -789,7 +789,7 @@ private fun CheckPrivacyConsent(
             }
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "환불 방법",
+                text = "배송/취소/반품/교환정책",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
                 color = CustomColor.gray3

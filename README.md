@@ -6,46 +6,38 @@
 
 향수 추천 정보, 향수 리뷰 및 커뮤니티, 브랜드 별 향수정보를 제공함으로써   
 사용자가 본인에게 최적화된 향수를 찾을 수 있도록 도와줍니다.
-![브랜드](https://github.com/user-attachments/assets/d9c1d161-fc38-4891-a56f-23b6c1b6d529)
-<img src="https://github.com/user-attachments/assets/08b7cd21-c64b-41cb-8489-ffec5a4deac5" width=250 height = 500/> 
+
 ### 🌹다양한 향수를 검색하고 정보를 얻어봐요🌹
-#### 홈
-<img src="https://github.com/user-attachments/assets/08b7cd21-c64b-41cb-8489-ffec5a4deac5" width=250 height = 500/> 
-
-#### 향수 투표
-<img src="https://github.com/user-attachments/assets/62ce2f41-04bc-41b0-92ae-225e5fecb830" width=250 height = 500/> 
-
-#### 향수 검색 기능
-<img src="https://github.com/user-attachments/assets/36f1df93-abb1-46e3-b82b-4e7dd13c0577" width=250 height = 500/> 
-
+| 홈 | 향수 투표 및 정보| 향수 검색 기능 |
+|------------|---------------|----------------|
+|향모아의 추천 향수들을 만나보세요.|테이스팅 노트와 향수에 대한 사용자들의 평가를 확인해보세요. <br>향수마다 계절감, 성별, 연령대 투표에 참여해주세요.<br> 모호했던 향수의 정체를 알게될 거에요!😍|다양한 향수를 검색해보세요.|
+| <img src="https://private-user-images.githubusercontent.com/67788699/366166165-08b7cd21-c64b-41cb-8489-ffec5a4deac5.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ0MTgsIm5iZiI6MTcyNTk5NDExOCwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxNjYxNjUtMDhiN2NkMjEtYzY0Yi00MWNiLTg0ODktZmZlYzVhNGRlYWM1LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NDgzOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTUyYmM1ZDA1OWNlMjMyNjhmYTg0YjZjOGM4MjMyYjMzYTBhMzRjNjg2YmQ4NjRiZDhmZTg5ZjVlMzUzMzAyMmYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.QpIW48i8_aNRb2eGGT_EpsyFaUjNFU73MNWdcyB-ncw" width=250 height = 500/>  | <img src="https://private-user-images.githubusercontent.com/67788699/366134361-62ce2f41-04bc-41b0-92ae-225e5fecb830.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQzNjEtNjJjZTJmNDEtMDRiYy00MWIwLTkyYWUtMjI1ZTVmZWNiODMwLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWJmNjI0YmY0N2YzYzI5NDk1ODJmNTBiZTQ4ZTBjZjE3NjliMDU1YTY1NTlmYTUzMThkNGZhYmVkOTBjOTY2NzMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.HUcVw2bcFSFB1Gg3DP-m8atHzz3TvFRP528iz0yuUNs" width=250 height = 500/>  | <img src="https://private-user-images.githubusercontent.com/67788699/366134334-36f1df93-abb1-46e3-b82b-4e7dd13c0577.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQzMzQtMzZmMWRmOTMtYWJiMS00NmUzLWI4MmItNGU3ZGQxM2MwNTc3LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ1MWNjOTRiNWM3MWQyNjEzYzFkZjYyMmRkMjcyYzRlYWVmNmY4YTJjYjk0NTFhMWQ3ZTUyZDk4NDNjMDU0Y2EmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.BvXHQyHmlOADavz-fIA9wcRPbE2_JPGzKY5JveORMcE" width=250 height = 500/> |
 
 ### 다양한 브랜드 향수를 검색하고 향수를 찾아봐요
-#### 브랜드
-<img src="https://github.com/user-attachments/assets/d9c1d161-fc38-4891-a56f-23b6c1b6d529" width=250 height = 500/> 
+브랜드: 80여개의 브랜드의 향수 정보를 확인해보세요
+<br>
+같은 브랜드 향수 보기: 같은 브랜드 향수의 향수를 확인해보세요
+<br>
+브랜드 검색: 궁금한 브랜드가 있다면 빠르게 찾아줄 수 있어요
+| 브랜드 | 같은 브랜드 향수 보기 | 브랜드 검색 |
+|--------|----------------------|-------------|
+|80여개의 브랜드의 향수 정보를 확인해보세요.|같은 브랜드 향수의 향수를 확인해보세요.|궁금한 브랜드가 있다면 빠르게 찾아줄 수 있어요.|
+| <img src="https://private-user-images.githubusercontent.com/67788699/366133963-d9c1d161-fc38-4891-a56f-23b6c1b6d529.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzM5NjMtZDljMWQxNjEtZmMzOC00ODkxLWE1NmYtMjNiNmMxYjZkNTI5LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWM2N2FjNTg3N2NhM2U2MzRkMDgxODI3MDQ1NWEwOThiMWE4NzNjM2IyNTMzZTQwNDY1NGY0MmI3ODUwNWZhMzkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.MKy1LK3WODXJUVywCEP16iCAAZBLGGyd1dN9nyS8yRI" width=250 height = 500/> | <img src="https://private-user-images.githubusercontent.com/67788699/366165960-b815507f-8e73-4c41-882c-07a20c48a913.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxNjU5NjAtYjgxNTUwN2YtOGU3My00YzQxLTg4MmMtMDdhMjBjNDhhOTEzLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTlhMjI3NjdlNWFmZDE4YjM0OWZmZWQ2YThkNDM5NWVlNjRiOTMzMGZiYWY3MzUyMWRhY2Q0MzhjYTUxZjkxYjQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0._uAg8nZIFqqU40DnYcqqXQzqA7oF7j4mA0ofCtWvAAc" width=250 height = 500/> | <img src="https://private-user-images.githubusercontent.com/67788699/366134229-8cbb32fa-ec32-4211-91d7-26a67cbd9d53.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQyMjktOGNiYjMyZmEtZWMzMi00MjExLTkxZDctMjZhNjdjYmQ5ZDUzLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWNlMDVmNjhlYjE1MTRhNzIxNjlkOTA4YTQyZTJlNGZkYWYyY2Q0ZWJiNjgzODRlNDM3OGUwYTUxNGVmOTU0NTImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.D3Oc-trm1uUBVarALieTphg_KlT_Z_wr6zheZMutvnM" width=250 height = 500/> |
 
-#### 같은 브랜드 향수 보기
-<img src="https://github.com/user-attachments/assets/b815507f-8e73-4c41-882c-07a20c48a913" width=250 height = 500/> 
-
-#### 브랜드 검색
-<img src="https://github.com/user-attachments/assets/8cbb32fa-ec32-4211-91d7-26a67cbd9d53" width=250 height = 500/> 
 
 ### 🪻향수 용어와 새로운 소식을 소개해줄게요🪻
-#### HPedia 용어
-<img src="https://github.com/user-attachments/assets/44e9dbe7-3f00-4fad-8f30-6e18a5fde123" width=250 height = 500/> 
-
-#### 향모아 매거진
-<img src="https://github.com/user-attachments/assets/f12628b7-8744-41c8-8b7f-ff67b0b02055" width=250 height = 500/> 
-
-#### 향모아 매거진 콘텐츠
-<img src="https://github.com/user-attachments/assets/5467ac75-b034-44a0-b097-1abcda4ce908" width=250 height = 500/> 
+| HPedia 용어 | 향모아 매거진 | 향모아 매거진 콘텐츠 |
+|--------|----------------------|-------------|
+|HPedia는 그동안 알기 어려웠던 향수, 향료 용어들을 알려줄거에요.|최근 출시향수, Top 시향기, 매거진 콘텐츠 등을 구경해보세요.|향수를 사랑하는 여러분에게 들려주고 싶은 향수 이야기, 최신 트렌드 및 소식이에요.|
+|<img src="https://private-user-images.githubusercontent.com/67788699/366137038-44e9dbe7-3f00-4fad-8f30-6e18a5fde123.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzcwMzgtNDRlOWRiZTctM2YwMC00ZmFkLThmMzAtNmUxOGE1ZmRlMTIzLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTM0MGFhMTc5YmVmMjNmOGEzMTA3NTlhZTIwMDc2NDQ0MTQxZGU2M2I1MTFiNzRjYzRlYmFjMmFmYTVjNDBmNmYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.dF6xLKD-xk9AZdLf2uHPZvoMQFmO_Nl6sfeaq_HRZ6Y" width=250 height = 500/> |<img src="https://private-user-images.githubusercontent.com/67788699/366166095-f12628b7-8744-41c8-8b7f-ff67b0b02055.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxNjYwOTUtZjEyNjI4YjctODc0NC00MWM4LThiN2YtZmY2N2IwYjAyMDU1LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWI5NzNkODA5NTNkNGE0MzM1NjU2N2EwZDFlMThlODU1Y2JiZTFlYTQ1Mzg4OGQxYmMzNjUwMGViOWE0ZTJiOTgmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.mefHLxzU__71CuvPzbq4o4ElD3MxKeihkCQa6gWJS1c" width=250 height = 500/> |<img src="https://private-user-images.githubusercontent.com/67788699/366166157-5467ac75-b034-44a0-b097-1abcda4ce908.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxNjYxNTctNTQ2N2FjNzUtYjAzNC00NGEwLWIwOTctMWFiY2RhNGNlOTA4LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTE0Nzc1OTdmYmY5YjY3NjA4MTViNjQ5ODc0NTVhNDhlNjI0MjE4NGM0ODZkYzkzODliOTI5M2E2ODYxZjg5YzcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.OvwDAlQvQXJoP0rMN50q78KLu7jyLsiy-NbV-pZPXPc" width=250 height = 500/> |
 
 ### 🍀사용자들과 향수 이야기를 나눠봐요🍀
-#### 시향기 글쓰기
-<img src="https://github.com/user-attachments/assets/6de229c7-ddb5-4446-9d34-36662e97142d" width=250 height = 500/> 
-
-#### 커뮤니티 게시글
-<img src="https://github.com/user-attachments/assets/8b0dc226-bc30-4ac3-b994-27c33a14f6d2" width=250 height = 500/> 
+| 커뮤니티 게시글 | 시향기 글쓰기 |
+|--------|----------------------|
+|향수를 추천하고, 후기를 공유해주세요! 다양한 정보로 향수에 대한 여러분의 경험을 풍부하게 만들어줄거에요.|향수 추천, 시향기, 자유 게시판에서 향수이야기를 작성해주세요.|
+|<img src="https://private-user-images.githubusercontent.com/67788699/366134306-8b0dc226-bc30-4ac3-b994-27c33a14f6d2.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQzMDYtOGIwZGMyMjYtYmMzMC00YWMzLWI5OTQtMjdjMzNhMTRmNmQyLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ4YTE4YTg5YTc3MWE5YjE4ODMzYTUxMzA3YjU1MTc3ZDgzYmQ0N2IyZDYyOGJmOWFjMWZmYmZmNzVlZmMyNzgmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.dwh6v7aMexOmYB6QkzEjknpUNw_tYBVUYiB3cX4Vnvk" width=250 height = 500/> | <img src="https://private-user-images.githubusercontent.com/67788699/366134276-6de229c7-ddb5-4446-9d34-36662e97142d.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjU5OTQ2ODYsIm5iZiI6MTcyNTk5NDM4NiwicGF0aCI6Ii82Nzc4ODY5OS8zNjYxMzQyNzYtNmRlMjI5YzctZGRiNS00NDQ2LTlkMzQtMzY2NjJlOTcxNDJkLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTEwVDE4NTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ0MjU0MDIwYzM4ZDZlMDYzNTM1YzVlNjQ4OGQxZmQ1OWU3ZjViZjMzNDI2NDYwMjQ1MDQ2MmU4OTM0MGY3NDcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.V_DEhvYOAyS_DwFtgodGhGSPaJOIonTNZb3la57fmtY" width=250 height = 500/> |
 
 ## 프로젝트 아키텍처 및 모듈구성
-<img width="692" alt="image" src="https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/a4685e8f-59cc-4279-b4c5-54f9cf0a027f">
+<img width="692" alt="image" src="https://github.com/user-attachments/assets/b32a6d77-e9cf-495f-a05f-8dcd53c244d1">
+<img width="692" alt="image" src="https://github.com/user-attachments/assets/477425eb-c4ab-4400-bf33-d040775d0203">
 

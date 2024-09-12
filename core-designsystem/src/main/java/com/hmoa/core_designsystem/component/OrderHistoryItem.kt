@@ -34,6 +34,9 @@ fun OrderHistoryItem(
     notes: List<String>,
     noteCount: Int,
     price: Int,
+    navCheckDeliveryStatus: () -> Unit,
+    onRefundClick: () -> Unit,
+    onReturnClick: () -> Unit,
 ){
     val notes = notes.joinToString {it}
     val totalPrice = noteCount * price
@@ -143,7 +146,10 @@ private fun OrderHistoryItemUiTest(){
             noteName = "시트러스",
             notes = listOf("라임 만다린", "베르가못", "비터 오렌지", "자몽"),
             noteCount = 4,
-            price = 1200
+            price = 1200,
+            navCheckDeliveryStatus = {},
+            onRefundClick = {},
+            onReturnClick = {}
         )
         OrderHistoryItem(
             shippingType = "배송 완료",
@@ -151,7 +157,10 @@ private fun OrderHistoryItemUiTest(){
             noteName = "플로럴",
             notes = listOf("네롤리", "화이트 로즈", "링크 로즈", "화이트로즈", "바이올렛", "피오니"),
             noteCount = 6,
-            price = 1200
+            price = 1200,
+            navCheckDeliveryStatus = {},
+            onRefundClick = {},
+            onReturnClick = {}
         )
     }
 }

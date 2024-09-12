@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.OrderHistoryItem
+import com.hmoa.core_designsystem.component.OrderRecordItem
 
 @Composable
 fun OrderRecordRoute(){
@@ -39,7 +39,7 @@ fun OrderRecordScreen(){
             modifier = Modifier.fillMaxSize()
         ){
             items(dummyData){
-                OrderHistoryItem(
+                OrderRecordItem(
                     shippingType = "배송 중",
                     noteUrl = "",
                     noteName = "시트러스",
@@ -47,10 +47,10 @@ fun OrderRecordScreen(){
                     noteCount = 4,
                     price = 1200,
                     navCheckDeliveryStatus = { /** 배송 조회 화면으로 navigation */},
-                    onRefundClick = { /** 환불 신청 이벤트 (boot pay로 넘어가야 함) */},
-                    onReturnClick = { /** 반품 신청 이벤트 (카카오톡 1대1 문의로 넘기기) */}
+                    onRefundClick = { /** 환불 신청 화면으로 navigation */},
+                    onReturnClick = { /** 반품 신청 화면으로 navigation */}
                 )
-                OrderHistoryItem(
+                OrderRecordItem(
                     shippingType = "배송 완료",
                     noteUrl = "",
                     noteName = "플로럴",
@@ -58,8 +58,8 @@ fun OrderRecordScreen(){
                     noteCount = 6,
                     price = 1200,
                     navCheckDeliveryStatus = { /** 배송 조회 화면으로 navigation */},
-                    onRefundClick = { /** 환불 신청 이벤트 (boot pay로 넘어가야 함) */},
-                    onReturnClick = { /** 반품 신청 이벤트 (카카오톡 1대1 문의로 넘기기) */}
+                    onRefundClick = { /** 환불 신청 화면으로 navigation */},
+                    onReturnClick = { /** 반품 신청 화면으로 navigation */}
                 )
             }
         }

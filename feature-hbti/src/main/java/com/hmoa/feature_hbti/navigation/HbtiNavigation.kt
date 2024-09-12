@@ -42,8 +42,14 @@ fun NavController.navigateToSelectSpice() = navigate(HbtiRoute.SelectSpiceRoute.
 fun NavController.navigateToNotePickResult(productIdsToJson: String) =
     navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}")
 
-fun NavController.navigateToOrder(productIdsToJson: String) =
-    navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
+fun NavController.navigateToOrder(fromRoute: String, productIdsToJson: String) =
+    if (fromRoute == HbtiRoute.NotePickResultRoute.name){
+        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
+    } else{
+        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}"){
+            popUpTo("${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}"){inclusive = true}
+        }
+    }
 
 fun NavController.navigateToAddAddress(addressJson: String, productIds: String) = navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}/${productIds}"){
     popUpTo("${HbtiRoute.OrderRoute.name}/{productIdsToJson}"){inclusive = true}
@@ -134,7 +140,7 @@ fun NavGraphBuilder.notePickScreen(
 
 fun NavGraphBuilder.notePickResult(
     onBackClick: () -> Unit,
-    onNextClick: (String) -> Unit,
+    onNextClick: (String, String) -> Unit,
     onBackToHbtiScreen: () -> Unit,
 ) {
     composable(route = "${HbtiRoute.NotePickResultRoute.name}/{productIdsToJson}") {
@@ -196,7 +202,7 @@ fun NavGraphBuilder.order(
 }
 
 fun NavGraphBuilder.addAddress(
-    navOrder: (String) -> Unit
+    navOrder: (String, String) -> Unit
 ) {
     composable(
         route = "${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}",

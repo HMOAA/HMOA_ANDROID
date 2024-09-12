@@ -56,6 +56,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.feature_hbti.BuildConfig
+import com.hmoa.feature_hbti.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.AddAddressViewModel
 import kotlinx.serialization.json.Json
 
@@ -63,7 +64,7 @@ import kotlinx.serialization.json.Json
 fun AddAddressRoute(
     addressJson: String?,
     productIds: String?,
-    navOrder: (String) -> Unit,
+    navOrder: (String, String) -> Unit,
     viewModel: AddAddressViewModel = hiltViewModel()
 ) {
     val errorState = viewModel.errorState.collectAsStateWithLifecycle()
@@ -74,10 +75,10 @@ fun AddAddressRoute(
         onPostAddressClick = { name, addressName, phone, homePhone, postalCode, address, detailAddress, request ->
             viewModel.postAddress(name, addressName, phone, homePhone, postalCode, address, detailAddress, request)
         },
-        navOrder = {navOrder(productIds ?: "")},
+        navOrder = {navOrder(HbtiRoute.AddAddressRoute.name, productIds ?: "")},
     )
     LaunchedEffect(isPostAddressCompleted) {
-        if (isPostAddressCompleted) navOrder(productIds ?: "")
+        if (isPostAddressCompleted) navOrder(HbtiRoute.AddAddressRoute.name, productIds ?: "")
     }
 }
 

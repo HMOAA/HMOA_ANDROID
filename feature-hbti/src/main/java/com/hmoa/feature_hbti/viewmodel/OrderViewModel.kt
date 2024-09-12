@@ -16,6 +16,7 @@ import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.request.ConfirmBootpayRequestDto
 import com.hmoa.core_model.request.ProductListRequestDto
+import com.hmoa.core_model.response.BootpayResponseDto
 import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.feature_hbti.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import kr.co.bootpay.android.Bootpay
 import kr.co.bootpay.android.events.BootpayEventListener
 import kr.co.bootpay.android.models.BootItem
@@ -291,8 +293,10 @@ class OrderViewModel @Inject constructor(
                         Log.d("Payment Event", "done : ${p0}")
                         viewModelScope.launch{
                             if (p0 != null){
-                                val requestDto = ConfirmBootpayRequestDto(p0)
+                                val purchaseResponse = Json.decodeFromString<BootpayResponseDto>(p0)
+                                val requestDto = ConfirmBootpayRequestDto(purchaseResponse.data.receipt_id)
                                 val result = bootpayRepository.postConfirm(requestDto)
+                                Log.d("TAG TEST", "on done result : ${result}")
                                 if (result.errorMessage != null){
                                     when(result.errorMessage!!.message){
                                         ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
@@ -301,9 +305,10 @@ class OrderViewModel @Inject constructor(
                                         else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                                     }
                                 }
+                                return@launch
                             }
+                            isDone.update{true}
                         }
-                        isDone.update{true}
                     }
                 }
             ).requestPayment()

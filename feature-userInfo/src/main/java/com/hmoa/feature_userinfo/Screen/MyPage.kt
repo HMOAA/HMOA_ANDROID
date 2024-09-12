@@ -176,6 +176,9 @@ private fun MyPageContent(
     onNavManageMyInfo: () -> Unit,
 ) {
     val columnInfo = listOf(
+        ColumnData("주문 내역"){},
+        ColumnData("취소/반품 내역"){},
+        ColumnData("이용 약관"){},
         ColumnData("나의 향수") { onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
@@ -209,7 +212,7 @@ private fun MyPageContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(46.dp)
+                    .height(52.dp)
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween

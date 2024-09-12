@@ -27,7 +27,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
-fun OrderHistoryItem(
+fun OrderRecordItem(
     shippingType: String,
     noteUrl: String,
     noteName: String,
@@ -140,7 +140,7 @@ private fun OrderHistoryItemUiTest(){
             .background(color = Color.White)
             .padding(horizontal = 16.dp)
     ){
-        OrderHistoryItem(
+        OrderRecordItem(
             shippingType = "배송 중",
             noteUrl = "",
             noteName = "시트러스",
@@ -151,7 +151,7 @@ private fun OrderHistoryItemUiTest(){
             onRefundClick = {},
             onReturnClick = {}
         )
-        OrderHistoryItem(
+        OrderRecordItem(
             shippingType = "배송 완료",
             noteUrl = "",
             noteName = "플로럴",

@@ -11,7 +11,8 @@
 | 홈 | 향수 투표 및 정보| 향수 검색 기능 |
 |------------|---------------|----------------|
 |향모아의 추천 향수들을 만나보세요.|테이스팅 노트와 향수에 대한 사용자들의 평가를 확인해보세요. <br>향수마다 계절감, 성별, 연령대 투표에 참여해주세요.<br> 모호했던 향수의 정체를 알게될 거에요!😍|다양한 향수를 검색해보세요.|
-| <img src="https://velog.velcdn.com/images/yongin01/post/a3d7e385-54e6-41a2-aea0-08b5745dd734/image.gif" width=250 height = 500/>  | <img src="https://velog.velcdn.com/images/yongin01/post/151f3659-4d24-4cc5-bb29-dbe9f50f40bc/image.gif" width=250 height = 500/>  | <img src="https://velog.velcdn.com/images/yongin01/post/032821f9-f9a2-4326-a343-0cd9bfbf6a40/image.gif" width=250 height = 500/> |
+| <img src="https://velog.velcdn.com/images/yongin01/post/a3d7e385-54e6-41a2-aea0-08b5745dd734/image.gif" width=250 height = 500/> | 
+<img src="https://velog.velcdn.com/images/yongin01/post/151f3659-4d24-4cc5-bb29-dbe9f50f40bc/image.gif" width=250 height = 500/> | <img src="https://velog.velcdn.com/images/yongin01/post/032821f9-f9a2-4326-a343-0cd9bfbf6a40/image.gif" width=250 height = 500/> |
 
 ### 다양한 브랜드 향수를 검색하고 향수를 찾아봐요
 | 브랜드 | 같은 브랜드 향수 보기 | 브랜드 검색 |
@@ -24,7 +25,7 @@
 | HPedia 용어 | 향모아 매거진 | 향모아 매거진 콘텐츠 |
 |--------|----------------------|-------------|
 |HPedia는 그동안 알기 어려웠던 향수, 향료 용어들을 알려줄거에요.|최근 출시향수, Top 시향기, 매거진 콘텐츠 등을 구경해보세요.|향수를 사랑하는 여러분에게 들려주고 싶은 향수 이야기, 최신 트렌드 및 소식이에요.|
-|<img src="https://velog.velcdn.com/images/yongin01/post/a6dd17c0-de5f-4702-8483-f91a5d6ce194/image.gif" width=250 height = 500/> |<img src="https://velog.velcdn.com/images/yongin01/post/151f3659-4d24-4cc5-bb29-dbe9f50f40bc/image.gif" width=250 height = 500/> |<img src="https://velog.velcdn.com/images/yongin01/post/a2f58005-4d15-4262-87ba-d978e6a00271/image.gif" width=250 height = 500/> |
+|<img src="https://velog.velcdn.com/images/yongin01/post/a6dd17c0-de5f-4702-8483-f91a5d6ce194/image.gif" width=250 height = 500/> |<img src="https://velog.velcdn.com/images/yongin01/post/7a908280-4d58-4c2d-b8fc-058f908be5a6/image.gif" width=250 height = 500/> |<img src="https://velog.velcdn.com/images/yongin01/post/a2f58005-4d15-4262-87ba-d978e6a00271/image.gif" width=250 height = 500/> |
 
 ### 🍀사용자들과 향수 이야기를 나눠봐요🍀
 | 커뮤니티 게시글 | 시향기 글쓰기 |

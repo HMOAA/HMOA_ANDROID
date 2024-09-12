@@ -43,6 +43,6 @@
 <img width="380" alt="image" src="https://github.com/user-attachments/assets/979d10ac-d57a-4654-9668-476284c9ef2b">
 
 ### 데이터 전달 및 상태관리 구체화 구조
-<img width="380" alt="image" src="https://github.com/user-attachments/assets/c1fcf841-7baa-4bea-8bf2-63dcaeb66455">
+<img width="420" alt="image" src="https://github.com/user-attachments/assets/c1fcf841-7baa-4bea-8bf2-63dcaeb66455">
 
 

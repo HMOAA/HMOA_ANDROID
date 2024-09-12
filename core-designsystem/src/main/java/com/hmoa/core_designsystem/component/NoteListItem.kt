@@ -62,7 +62,8 @@ fun NoteListItem(
         Spacer(Modifier.width(10.dp))
         Column(
             modifier = Modifier.width(50.dp),
-            verticalArrangement = Arrangement.Bottom
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.End
         ) {
             Text(
                 text = "${formatWon(price)}원/개",

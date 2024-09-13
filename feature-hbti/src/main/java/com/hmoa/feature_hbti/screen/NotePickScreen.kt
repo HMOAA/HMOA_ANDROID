@@ -171,7 +171,7 @@ fun NotePickGridWindow(
         Text("데이터가 없습니다")
     } else {
         LazyVerticalGrid(columns = GridCells.Fixed(3), verticalArrangement = Arrangement.SpaceBetween) {
-            itemsIndexed(notes?.data!!) { index, item ->
+            itemsIndexed(notes?.data ?: emptyList()) { index, item ->
                 Column(
                     modifier = Modifier.padding(vertical = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally

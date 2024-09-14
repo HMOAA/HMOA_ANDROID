@@ -278,6 +278,7 @@ class OrderViewModel @Inject constructor(
 
                     override fun onClose() {
                         Log.d("Payment Event", "close")
+                        Bootpay.removePaymentWindow()
                     }
 
                     override fun onIssued(p0: String?) {

@@ -1,6 +1,5 @@
 package com.hmoa.feature_hbti.screen
 
-import android.util.Log
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -84,9 +83,9 @@ fun OrderRoute(
     productIds: List<Int>,
     onNavBack: () -> Unit,
     navAddAddress: (String, String) -> Unit,
+    navOrderResult: () -> Unit,
     viewModel: OrderViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit){viewModel.setIds(productIds)}
     val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
@@ -105,7 +104,6 @@ fun OrderRoute(
         onNavBack = onNavBack,
         navAddAddress = {
             val productIdsToJson = Json.encodeToString(NoteProductIds(productIds))
-            Log.d("TAG TEST", "order json : ${productIdsToJson}")
             navAddAddress(it, productIdsToJson)
         }
     )

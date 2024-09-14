@@ -186,6 +186,7 @@ fun NavGraphBuilder.spiceSelectScreen() {
 fun NavGraphBuilder.order(
     navBack: () -> Unit,
     navAddAddress: (String, String) -> Unit,
+    navOrderResult: () -> Unit,
 ) {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
         val productIdsToJson = it.arguments?.getString("productIdsToJson")
@@ -194,6 +195,7 @@ fun NavGraphBuilder.order(
             productIds = productIds.productIds,
             onNavBack = navBack,
             navAddAddress = navAddAddress,
+            navOrderResult = navOrderResult
         )
     }
 }

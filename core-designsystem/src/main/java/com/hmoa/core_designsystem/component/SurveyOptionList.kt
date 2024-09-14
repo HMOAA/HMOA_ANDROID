@@ -21,6 +21,7 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun SurveyOptionList(
+    isMutipleAnswerAvailable: Boolean,
     answerIds: List<Int>,
     surveyOptions: List<String>,
     surveyOptionIds: List<Int>,
@@ -50,6 +51,23 @@ fun SurveyOptionList(
         selectedStates[index].value = !selectedStates[index].value
     }
 
+    fun cancelAllAnswersExceptIndex(index:Int){
+        if (!isMutipleAnswerAvailable) {
+            selectedStates.mapIndexed { idx, mutableState ->
+                if (mutableState.value && idx != index){
+                    immediateSelectedStateChange(idx)
+                }
+            }
+        }
+    }
+
+    fun handleAnswerSelectedState(index: Int) {
+        val state = selectedStates[index].value
+        immediateSelectedStateChange(index)
+        onButtonClick(index, !state)
+        cancelAllAnswersExceptIndex(index)
+    }
+
     val scrollState = rememberScrollState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,11 +78,7 @@ fun SurveyOptionList(
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
                 SurveyOptionItem(
                     text = surveyOptions[index],
-                    onClick = {
-                        val state = selectedStates[index].value
-                        immediateSelectedStateChange(index)
-                        onButtonClick(index, !state)
-                    },
+                    onClick = { handleAnswerSelectedState(index) },
                     isSelected = selectedStates[index].value
                 )
             }
@@ -111,7 +125,7 @@ fun SurveyOptionItemPreview() {
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxHeight(1f)
     ) {
-        SurveyOptionList(listOf(5, 1), seasons, listOf(5, 1, 2, 3), { idx, isGoTo -> })
+        SurveyOptionList(isMutipleAnswerAvailable = true, answerIds = listOf(), surveyOptions = seasons, surveyOptionIds = listOf(5, 1, 2, 3), onButtonClick = { idx, isGoTo -> })
         Button(
             isEnabled = true,
             btnText = "다음",

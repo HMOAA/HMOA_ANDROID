@@ -193,6 +193,7 @@ fun HbtiSurveyContent(
                                     )
                                 )
                                 SurveyOptionList(
+                                    isMutipleAnswerAvailable = hbtiQuestionItems?.hbtiQuestions?.get(page)?.isMultipleChoice!!,
                                     answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
                                     surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents
                                         ?: listOf(),

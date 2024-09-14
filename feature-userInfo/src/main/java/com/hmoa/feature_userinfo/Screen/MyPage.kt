@@ -6,7 +6,15 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -15,7 +23,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -176,11 +189,13 @@ private fun MyPageContent(
     onNavManageMyInfo: () -> Unit,
 ) {
     val columnInfo = listOf(
+        ColumnData("주문 내역"){},
+        ColumnData("취소/반품 내역"){},
+        ColumnData("이용 약관"){},
         ColumnData("나의 향수") { onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
-        ColumnData("이용 약관") { },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
         ColumnData("버전 정보 ${APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
@@ -209,7 +224,7 @@ private fun MyPageContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(46.dp)
+                    .height(52.dp)
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -226,7 +241,7 @@ private fun MyPageContent(
                 ) {
                     Icon(
                         modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
+                        painter = painterResource(R.drawable.ic_next),
                         contentDescription = "Navigation Button",
                         tint = CustomColor.gray2
                     )

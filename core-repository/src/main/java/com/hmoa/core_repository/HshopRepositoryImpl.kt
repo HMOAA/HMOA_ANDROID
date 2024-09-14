@@ -28,4 +28,11 @@ class HshopRepositoryImpl @Inject constructor(private val hshopRemoteDataStore: 
     override suspend fun getFinalOrderResult(orderId: Int): ResultResponse<FinalOrderResponseDto> {
         return hshopRemoteDataStore.getFinalOrderResult(orderId)
     }
+
+    override suspend fun deleteNoteInOrder(
+        orderId: Int,
+        productId: Int
+    ): ResultResponse<FinalOrderResponseDto> {
+        return hshopRemoteDataStore.deleteNoteInOrder(orderId, productId)
+    }
 }

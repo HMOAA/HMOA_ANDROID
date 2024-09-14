@@ -19,17 +19,14 @@ class AddAddressViewModel @Inject constructor(
     val isPostAddressCompleted get() = _isPostAddressCompleted.asStateFlow()
     private val generalErrorState = MutableStateFlow<Pair<Boolean, String>>(Pair(false, ""))
     private val expiredTokenError = MutableStateFlow<Boolean>(false)
+    private val unknownError = MutableStateFlow<Boolean>(false)
     private val wrongTypeToken = MutableStateFlow<Boolean>(false)
-    val errorState: StateFlow<ErrorUiState> = combine(
-        generalErrorState,
-        expiredTokenError,
-        wrongTypeToken
-    ) { generalError, expiredTokenError, wrongTypeTokenError ->
-        if (generalError.first || expiredTokenError || wrongTypeTokenError) {
+    val errorState: StateFlow<ErrorUiState> = combine(generalErrorState, expiredTokenError, unknownError, wrongTypeToken){generalError, expiredTokenError, unknownError, wrongTypeTokenError ->
+        if (generalError.first || expiredTokenError || wrongTypeTokenError){
             ErrorUiState.ErrorData(
                 expiredTokenError = expiredTokenError,
                 wrongTypeTokenError = wrongTypeTokenError,
-                unknownError = false,
+                unknownError = unknownError,
                 generalError = generalError
             )
         } else {
@@ -46,7 +43,7 @@ class AddAddressViewModel @Inject constructor(
         addressName: String,
         phone: String,
         homePhone: String,
-        postalCode: Int,
+        postalCode: String,
         address: String,
         detailAddress: String,
         request: String
@@ -60,14 +57,15 @@ class AddAddressViewModel @Inject constructor(
                 phoneNumber = phone,
                 request = request,
                 streetAddress = address,
-                zipCode = postalCode.toString()
+                zipCode = postalCode
             )
             val result = memberRepository.postAddress(requestDto)
-            if (result.errorMessage != null) {
-                when (result.errorMessage!!.code) {
-                    ErrorMessageType.EXPIRED_TOKEN.code.toString() -> expiredTokenError.update { true }
-                    ErrorMessageType.WRONG_TYPE_TOKEN.code.toString() -> wrongTypeToken.update { true }
-                    else -> generalErrorState.update { Pair(true, result.errorMessage!!.message) }
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message) {
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenError.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeToken.update{true}
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unknownError.update{true}
+                    else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                 }
                 return@launch
             }

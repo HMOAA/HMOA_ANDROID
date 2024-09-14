@@ -1,7 +1,14 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -32,6 +39,7 @@ import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
+import com.hmoa.feature_hbti.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.NotePickResultState
 import com.hmoa.feature_hbti.viewmodel.NotePickResultViewModel
 
@@ -39,7 +47,7 @@ import com.hmoa.feature_hbti.viewmodel.NotePickResultViewModel
 fun NotePickResultRoute(
     productIds: List<Int>,
     onBackClick: () -> Unit,
-    onNextClick: (String) -> Unit,
+    onNextClick: (String, String) -> Unit,
     onBackToHbtiScreen: () -> Unit,
     viewModel: NotePickResultViewModel = hiltViewModel()
 ) {
@@ -54,7 +62,7 @@ fun NotePickResultRoute(
             val gson = GsonBuilder().create()
             val dto = NoteProductIds(productIds)
             val productIdsToJson = gson.toJson(dto)
-            onNextClick(productIdsToJson)
+            onNextClick(HbtiRoute.NotePickResultRoute.name, productIdsToJson)
         },
         onBackToHbtiScreen = { onBackToHbtiScreen() }
     )

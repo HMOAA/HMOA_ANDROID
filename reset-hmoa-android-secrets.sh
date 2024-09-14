@@ -7,6 +7,7 @@ FILES=(
   "./core-network/local.properties"
   "./feature-authentication/local.properties"
   "./feature-userInfo/local.properties"
+  "./feature-hbti/local.properties"
 )
 
 # 파일 삭제

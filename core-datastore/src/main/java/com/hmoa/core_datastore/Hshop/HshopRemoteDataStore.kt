@@ -13,4 +13,5 @@ interface HshopRemoteDataStore {
     suspend fun postNoteOrder(dto: ProductListRequestDto): ResultResponse<PostNoteOrderResponseDto>
     suspend fun postNotesSelected(dto: ProductListRequestDto): ResultResponse<PostNoteSelectedResponseDto>
     suspend fun getFinalOrderResult(orderId: Int): ResultResponse<FinalOrderResponseDto>
+    suspend fun deleteNoteInOrder(orderId: Int, productId: Int): ResultResponse<FinalOrderResponseDto>
 }

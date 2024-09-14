@@ -17,6 +17,7 @@ import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
 import com.hmoa.feature_hbti.screen.NoteOrderQuantityPickRoute
 import com.hmoa.feature_hbti.screen.NotePickResultRoute
 import com.hmoa.feature_hbti.screen.NotePickRoute
+import com.hmoa.feature_hbti.screen.OrderResultRoute
 import com.hmoa.feature_hbti.screen.OrderRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
@@ -27,21 +28,17 @@ fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}")
-
 fun NavController.navigateToHbtiSurveyLoading() =
     navigate("${HbtiRoute.HbtiSurveyLoading}")
-
 fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}")
 fun NavController.navigateToNoteOrderQuantityPick() = navigate("${HbtiRoute.NoteOrderQuantityPick}")
 fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
     navigate("${HbtiRoute.NotePick}/${noteOrderQuantity.number}")
-
 fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
 fun NavController.navigateToSelectSpice() = navigate(HbtiRoute.SelectSpiceRoute.name)
 fun NavController.navigateToNotePickResult(productIdsToJson: String) =
     navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}")
-
 fun NavController.navigateToOrder(fromRoute: String, productIdsToJson: String) =
     if (fromRoute == HbtiRoute.NotePickResultRoute.name){
         navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
@@ -50,11 +47,11 @@ fun NavController.navigateToOrder(fromRoute: String, productIdsToJson: String) =
             popUpTo("${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}"){inclusive = true}
         }
     }
-
 fun NavController.navigateToAddAddress(addressJson: String, productIds: String) = navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}/${productIds}"){
     popUpTo("${HbtiRoute.OrderRoute.name}/{productIdsToJson}"){inclusive = true}
     launchSingleTop = true
 }
+fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name)
 
 fun NavGraphBuilder.hbtiScreen(onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -217,6 +214,20 @@ fun NavGraphBuilder.addAddress(
             addressJson = addressJson,
             productIds = productIds,
             navOrder = navOrder
+        )
+    }
+}
+
+fun NavGraphBuilder.orderResult(
+    navBack: () -> Unit,
+    navHome: () -> Unit
+){
+    composable(
+        route = HbtiRoute.OrderResultRoute.name
+    ){
+        OrderResultRoute(
+            navBack = navBack,
+            navHome = navHome
         )
     }
 }

@@ -305,8 +305,8 @@ class OrderViewModel @Inject constructor(
                                         ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
                                         else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                                     }
+                                    return@launch
                                 }
-                                return@launch
                             }
                             isDone.update{true}
                         }

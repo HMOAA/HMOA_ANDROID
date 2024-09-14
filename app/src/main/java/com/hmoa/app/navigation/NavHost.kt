@@ -50,6 +50,7 @@ import com.hmoa.feature_hbti.navigation.navigateToNoteOrderQuantityPick
 import com.hmoa.feature_hbti.navigation.navigateToNotePick
 import com.hmoa.feature_hbti.navigation.navigateToNotePickResult
 import com.hmoa.feature_hbti.navigation.navigateToOrder
+import com.hmoa.feature_hbti.navigation.navigateToOrderResult
 import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
 import com.hmoa.feature_hbti.navigation.notePickResult
 import com.hmoa.feature_hbti.navigation.notePickScreen
@@ -263,7 +264,8 @@ fun SetUpNavGraph(
         )
         order(
             navBack = navController::navigateToBack,
-            navAddAddress = navController::navigateToAddAddress
+            navAddAddress = navController::navigateToAddAddress,
+            navOrderResult = navController::navigateToOrderResult
         )
         addAddress (
             navOrder = navController::navigateToOrder

@@ -54,6 +54,7 @@ import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
 import com.hmoa.feature_hbti.navigation.notePickResult
 import com.hmoa.feature_hbti.navigation.notePickScreen
 import com.hmoa.feature_hbti.navigation.order
+import com.hmoa.feature_hbti.navigation.orderResult
 import com.hmoa.feature_home.navigation.allPerfumeScreen
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToAllPerfume
@@ -266,6 +267,10 @@ fun SetUpNavGraph(
         )
         addAddress (
             navOrder = navController::navigateToOrder
+        )
+        orderResult(
+            navBack = navController::navigateToBack,
+            navHome = navController::navigateToHome
         )
     }
 }

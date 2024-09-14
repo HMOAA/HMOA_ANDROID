@@ -90,6 +90,7 @@ fun OrderRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val isSaveBuyerInfo = viewModel.isSavedBuyerInfo.collectAsStateWithLifecycle()
+    val isDone = viewModel.isDone.collectAsStateWithLifecycle()
     OrderScreen(
         uiState = uiState.value,
         errState = errState.value,
@@ -107,6 +108,12 @@ fun OrderRoute(
             navAddAddress(it, productIdsToJson)
         }
     )
+    LaunchedEffect(Unit){viewModel.setIds(productIds)}
+    LaunchedEffect(isDone.value){
+        if(isDone.value){
+            navOrderResult()
+        }
+    }
 }
 
 @Composable

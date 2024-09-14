@@ -304,7 +304,7 @@ private fun OrderScreenMainContent(
             name = buyerInfo.name
             phone1 = buyerInfo.phoneNumber.substring(0,3)
             phone2 = buyerInfo.phoneNumber.substring(4,8)
-            phone3 = buyerInfo.phoneNumber.substring(9,13)
+            phone3 = buyerInfo.phoneNumber.substring(9)
         }
     }
     LaunchedEffect(isAllChecked){

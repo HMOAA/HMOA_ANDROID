@@ -23,8 +23,11 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
-fun OrderResultRoute(){
-
+fun OrderResultRoute(
+    navBack: () -> Unit,
+    navHome: () -> Unit
+){
+    OrderResultScreen(navBack, navHome)
 }
 
 @Composable

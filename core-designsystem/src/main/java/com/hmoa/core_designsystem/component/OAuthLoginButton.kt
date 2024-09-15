@@ -43,23 +43,23 @@ fun OAuthLoginButton(
             .clickable {
                 onPress()
             }.addModifier(buttonModifier),
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(modifier = Modifier.padding(start = screenWidth / 6))
-        Image(
-            modifier = Modifier.size(iconSize.dp).addModifier(iconModifier),
-            painter = painterResource(iconId),
-            contentDescription = "OAuth Type Icon",
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                modifier = Modifier.size(iconSize.dp).addModifier(iconModifier),
+                painter = painterResource(iconId),
+                contentDescription = "OAuth Type Icon",
+            )
 
-        Text(
-            text = buttonText,
-            fontSize = textSize.sp,
-            color = textColor,
-            modifier = Modifier.padding(start = 20.dp)
-        )
-
+            Text(
+                text = buttonText,
+                fontSize = textSize.sp,
+                color = textColor,
+                modifier = Modifier.padding(start = 20.dp)
+            )
+        }
     }
 }
 
@@ -82,5 +82,17 @@ fun TestOAuthLoginBtn() {
             },
 
         )
+
     }
+    OAuthLoginButton(
+        backgroundColor = Color.White,
+        iconId = com.hmoa.core_designsystem.R.drawable.ic_google,
+        iconSize = 40,
+        buttonText = " Google로 로그인",
+        textColor = Color.Black,
+        textSize = 16,
+        onPress = {
+
+        },
+    )
 }

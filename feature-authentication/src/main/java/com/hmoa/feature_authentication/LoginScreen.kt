@@ -123,7 +123,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.padding(top = 100.dp))
             OAuthLoginButton(
                 backgroundColor = Color.White,
-                iconId = com.hmoa.core_designsystem.R.mipmap.ic_google_foreground,
+                iconId = com.hmoa.core_designsystem.R.drawable.ic_google,
                 iconSize = 40,
                 buttonText = " Google로 로그인",
                 textColor = Color.Black,

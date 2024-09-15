@@ -44,10 +44,9 @@ import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
 import kotlinx.coroutines.launch
 
-const val APP_VERSION = "1.1.0"
-
 @Composable
 internal fun MyPageRoute(
+    appVersion: String,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
@@ -101,7 +100,8 @@ internal fun MyPageRoute(
             onNavMyActivity = onNavMyActivity,
             onNavManageMyInfo = onNavManageMyInfo,
             onErrorHandleLoginAgain = onNavLogin,
-            onBackClick = onNavBack
+            onBackClick = onNavBack,
+            appVersion = appVersion
         )
     } else {
         //로그인 안 되어 있으면
@@ -114,6 +114,7 @@ internal fun MyPageRoute(
 //인증이 되어 있는 My Page
 @Composable
 fun MyPage(
+    appVersion: String,
     uiState: UserInfoUiState,
     errorUiState: ErrorUiState,
     logoutEvent: () -> Unit,
@@ -149,6 +150,7 @@ fun MyPage(
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
+                appVersion = appVersion
             )
         }
 
@@ -166,6 +168,7 @@ fun MyPage(
 
 @Composable
 private fun MyPageContent(
+    appVersion: String,
     profile: String,
     nickname: String,
     provider: String,
@@ -187,7 +190,7 @@ private fun MyPageContent(
         ColumnData("오픈소스라이센스") { doOpenLicense() },
         ColumnData("이용 약관") { openTermsOfServiceLink() },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
-        ColumnData("버전 정보 ${APP_VERSION}") {},
+        ColumnData("버전 정보 ${appVersion}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
         ColumnData("로그아웃") { logoutEvent() },
         ColumnData("계정삭제") { onDelAccount() }

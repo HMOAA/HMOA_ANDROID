@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity() {
                 Box(
                     modifier = Modifier.padding(bottom = it.calculateBottomPadding())
                 ) {
-                    SetUpNavGraph(navHostController, initialRoute)
+                    SetUpNavGraph(navHostController, initialRoute, BuildConfig.VERSION_NAME)
                 }
             }
         }

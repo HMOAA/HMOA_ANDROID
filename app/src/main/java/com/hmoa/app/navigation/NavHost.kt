@@ -60,7 +60,8 @@ import com.hmoa.feature_perfume.navigation.specificComment
 @Composable
 fun SetUpNavGraph(
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
+    appVersion:String
 ) {
     NavHost(
         navController = navController,
@@ -113,7 +114,8 @@ fun SetUpNavGraph(
             onNavMyBirth = navController::navigateToMyBirth,
             onNavMyGender = navController::navigateToMyGenderPage,
             onNavMyPerfume = navController::navigateToLike,
-            onNavPerfume = navController::navigateToPerfume
+            onNavPerfume = navController::navigateToPerfume,
+            appVersion = appVersion
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */

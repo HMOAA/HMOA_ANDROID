@@ -16,10 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_designsystem.component.PerfumeItemView
@@ -29,9 +31,10 @@ import com.hmoa.core_model.response.PerfumeNameSearchResponseDto
 import com.hmoa.core_model.response.PerfumeSearchResponseDto
 import com.hmoa.feature_home.PerfumeSearchViewType
 import com.hmoa.feature_home.viewmodel.PerfumeSearchViewmodel
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
-fun PerfumeSearchRoute( onBackClick: () -> Unit) {
+fun PerfumeSearchRoute(onBackClick: () -> Unit) {
     PerfumeSearchScreen(
         onBackClick = { onBackClick() }
     )
@@ -88,7 +91,7 @@ fun PerfumeSearchContent(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().background(color = Color.White)
     ) {
         Row(Modifier.fillMaxWidth().padding(start = 16.dp)) {
             SearchTopBar(
@@ -100,7 +103,10 @@ fun PerfumeSearchContent(
             )
         }
         Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2))
-        Column(modifier = Modifier.fillMaxWidth().padding(start = 16.dp).padding(vertical = 10.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp).background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             when (viewType) {
                 PerfumeSearchViewType.List -> {
                     PerfumeNameSearchResultList(
@@ -146,7 +152,8 @@ fun PerfumeSearchResultList(
     ) {
         items(perfumeList?.itemSnapshotList?.items ?: emptyList()) {
             Column(modifier = Modifier.clickable { onPerfumeSearchResultClick(it.perfumeName) }
-                .padding(bottom = 16.dp)) {
+                .padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 PerfumeItemView(
                     imageUrl = it?.perfumeImageUrl ?: "",
                     perfumeName = it?.perfumeName ?: "",
@@ -161,4 +168,63 @@ fun PerfumeSearchResultList(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PerfumeSearchScreenPreview() {
+    PerfumeSearchContent(
+        searchWord = null,
+        perfumeNameSearchResult = flowOf(
+            PagingData.from(
+                listOf(
+                    PerfumeNameSearchResponseDto(perfumeName = "어쩌구1"),
+                    PerfumeNameSearchResponseDto(perfumeName = "어쩌구1"),
+                    PerfumeNameSearchResponseDto(perfumeName = "어쩌구1"),
+                    PerfumeNameSearchResponseDto(perfumeName = "어쩌구1"),
+                    PerfumeNameSearchResponseDto(perfumeName = "어쩌구1")
+                )
+            )
+        ).collectAsLazyPagingItems(),
+        perfumeSearchResult = flowOf(
+            PagingData.from(
+                listOf(
+                    PerfumeSearchResponseDto(
+                        brandName = "channel",
+                        heart = true,
+                        perfumeId = 0,
+                        perfumeImageUrl = "",
+                        perfumeName = "어쩌구1"
+                    ),
+                    PerfumeSearchResponseDto(
+                        brandName = "channel",
+                        heart = true,
+                        perfumeId = 0,
+                        perfumeImageUrl = "",
+                        perfumeName = "어쩌구1"
+                    ),
+                    PerfumeSearchResponseDto(
+                        brandName = "channel",
+                        heart = true,
+                        perfumeId = 0,
+                        perfumeImageUrl = "",
+                        perfumeName = "어쩌구1"
+                    ),
+                    PerfumeSearchResponseDto(
+                        brandName = "channel",
+                        heart = true,
+                        perfumeId = 0,
+                        perfumeImageUrl = "",
+                        perfumeName = "어쩌구1"
+                    )
+                )
+            )
+        ).collectAsLazyPagingItems(),
+        viewType = PerfumeSearchViewType.List,
+        onChangedWord = {},
+        onClearWord = {},
+        onClickSearch = {},
+        onPerfumeSearchResultClick = {},
+        onBackClick = {}
+    )
 }

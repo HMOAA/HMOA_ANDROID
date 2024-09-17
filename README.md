@@ -39,7 +39,7 @@
 <img width="380" alt="image" src="https://github.com/user-attachments/assets/9ea80c81-d6d3-4248-941c-afde311de7ac">
 
 ## 멀티 모듈의 관심사 분리 및 아키텍처 적용
-<img width="590" alt="image" src="https://github.com/user-attachments/assets/477425eb-c4ab-4400-bf33-d040775d0203">
+<img width="591" alt="image" src="https://github.com/user-attachments/assets/96590045-3cf8-4c52-b9fd-ea5e3c5d4195">
 
 ## MVVM 적용
 <img width="380" alt="image" src="https://github.com/user-attachments/assets/979d10ac-d57a-4654-9668-476284c9ef2b">

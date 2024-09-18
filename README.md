@@ -3,6 +3,8 @@
 당신을 위한 향수 커뮤니티 어플 HMOA
 
 🙏gif가 조금 깨질 수 있으며 개선하기 위해 노력 중이니 양해부탁드립니다
+# 🎉구글 플레이 스토어에서 만나요
+[구글 플레이 스토어 링크](https://play.google.com/store/apps/details?id=com.hmoa.app&hl=ko)
 
 # ✅ 주요 기능
 

@@ -12,7 +12,9 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MagazineRepository
+import com.hmoa.core_domain.usecase.GetMagazineDescription
 import com.hmoa.core_model.data.ErrorMessage
+import com.hmoa.core_model.data.MagazineSuccessItem
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.feature_magazine.MagazinePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +35,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MagazineDescViewModel @Inject constructor(
     private val magazineRepository: MagazineRepository,
-    private val loginRepository: LoginRepository
+    private val loginRepository: LoginRepository,
+    val getMagazineDescription : GetMagazineDescription
 ) : ViewModel() {
     private val PAGE_SIZE = 5
     private val id = MutableStateFlow<Int?>(null)
@@ -69,7 +72,7 @@ class MagazineDescViewModel @Inject constructor(
     val uiState : StateFlow<MagazineDescUiState> = combine(id, flag){ id, flag ->
         if(id == null) throw NullPointerException("Magazine ID is NULL")
         if(flag == null) throw Exception(ErrorMessageType.UNKNOWN_ERROR.message)
-        val result = magazineRepository.getMagazine(id)
+        val result = getMagazineDescription(id)
         if(result.errorMessage is ErrorMessage) throw Exception(result.errorMessage!!.message)
         result.data!!
     }.asResult().map{ result ->
@@ -77,61 +80,8 @@ class MagazineDescViewModel @Inject constructor(
             Result.Loading -> MagazineDescUiState.Loading
             is Result.Success -> {
                 val data = result.data
-
-                //content 데이터 정리
-                val contents = mutableListOf<MagazineContentItem>()
-                for(x in 0 until data.contents.size){
-                    contents.add(MagazineContentItem())
-                }
-                var curIdx = 0
-                data.contents.forEachIndexed{ idx, value ->
-                    if(value.type == "content"){
-                        contents[curIdx].content = value.data
-                    } else if(value.type == "header") {
-                        contents[curIdx].header = value.data
-                    } else if(value.type == "image"){
-                        contents[curIdx].image = value.data
-                    }
-                    if(contents[curIdx].content != null && contents[curIdx].header != null){
-                        curIdx += 1
-                    }
-                }
-
-                //날짜 데이터 형식 변경
-                val month = when(data.createAt.split(" ")[0]){
-                    "Jan" -> 1
-                    "Feb" -> 2
-                    "Mar" -> 3
-                    "Apr" -> 4
-                    "May" -> 5
-                    "Jun" -> 6
-                    "Jul" -> 7
-                    "Aug" -> 8
-                    "Sep" -> 9
-                    "Oct" -> 10
-                    "Nov" -> 11
-                    "Dec" -> 12
-                    else -> 0
-                }
-                val day = data.createAt.split(" ")[1].replace(",", "")
-                val year = data.createAt.split(" ")[2]
-                val newDate = "${year}.${month}.${day}"
-
-                //preview 개행 제거
-                val preview = data.preview.replace("\\n", "")
-
-                _isLiked.update{ data.liked }
-
-                MagazineDescUiState.Success(
-                    title = data.title,
-                    createAt = newDate,
-                    previewImgUrl = data.previewImgUrl,
-                    contents = contents,
-                    preview = preview,
-                    tags = data.tags,
-                    viewCount = data.viewCount,
-                    likeCount = data.likeCount
-                )
+                _isLiked.update{ data.isLiked }
+                MagazineDescUiState.Success(magazine = data)
             }
             is Result.Error -> {
                 generalErrorState.update{ Pair(true, result.exception.message) }
@@ -192,23 +142,11 @@ class MagazineDescViewModel @Inject constructor(
     }
 }
 
-data class MagazineContentItem(
-    var header : String? = null,
-    var content : String? = null,
-    var image : String? = null
-)
 
 sealed interface MagazineDescUiState{
     data object Loading : MagazineDescUiState
     data class Success(
-        val title : String,
-        val createAt : String,
-        val previewImgUrl : String,
-        val preview : String,
-        val contents : List<MagazineContentItem>,
-        val tags : List<String>,
-        val viewCount : Int,
-        val likeCount : Int,
+        val magazine : MagazineSuccessItem
     ) : MagazineDescUiState
     data class Error(
         val message : String

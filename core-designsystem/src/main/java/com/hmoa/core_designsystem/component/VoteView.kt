@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun VoteView(
@@ -83,7 +84,7 @@ fun VoteView(
         }
         Text(
             title,
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, fontFamily = pretendard),
             modifier = Modifier.padding(vertical = 9.dp)
         )
     }

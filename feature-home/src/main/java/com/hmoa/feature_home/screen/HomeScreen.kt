@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -31,15 +32,20 @@ import com.hmoa.feature_home.viewmodel.HomeViewModel
 @Composable
 fun HomeRoute(
     onPerfumeClick: (perfumeId: Int) -> Unit,
-    onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit
+    onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
+    onHbtiClick: () -> Unit
 ) {
-    HomeScreen(onPerfumeClick = { onPerfumeClick(it) }, onAllPerfumeClick = { onAllPerfumeClick(it) })
+    HomeScreen(
+        onPerfumeClick = { onPerfumeClick(it) },
+        onAllPerfumeClick = { onAllPerfumeClick(it) },
+        onHbtiClick = { onHbtiClick() })
 }
 
 @Composable
 private fun HomeScreen(
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
+    onHbtiClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val firstMenuWithBannerState by viewModel.firstMenuWithBannerState.collectAsStateWithLifecycle()
@@ -58,12 +64,23 @@ private fun HomeScreen(
             }
 
             is HomeViewModel.BannerWithFirstMenuState.Data -> {
-                FirstMenuWithBannerContent(
-                    onPerfumeClick = { onPerfumeClick(it) },
-                    bannerImgUrl = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerImg,
-                    bannerTitle = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerTitle,
-                    firstMenu = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
-                )
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                    FirstMenuWithBannerContent(
+                        onPerfumeClick = { onPerfumeClick(it) },
+                        bannerImgUrl = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerImg,
+                        bannerTitle = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerTitle,
+                        firstMenu = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
+                    )
+                    Button(
+                        isEnabled = true,
+                        btnText = "# 향bti 검사하기",
+                        onClick = { onHbtiClick() },
+                        buttonModifier = Modifier.background(color = Color.Black).fillMaxWidth(0.9f).height(47.dp),
+                        textColor = Color.White,
+                        textSize = 14,
+                        radious = 8
+                    )
+                }
             }
 
             is HomeViewModel.BannerWithFirstMenuState.Error -> {
@@ -308,15 +325,29 @@ fun ImageWithTitleView(
 @Composable
 @Preview
 private fun HomePreview() {
-    FirstMenuWithBannerContent(
-        {}, "", "시향지 체험단 모집 ~09.18", HomeMenuDefaultResponseDto(
-            listOf(
-                HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
-            ), "겨울 이 향수 어떠세요?"
-        )
-    )
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+            FirstMenuWithBannerContent(
+                {}, "", "시향지 체험단 모집 ~09.18", HomeMenuDefaultResponseDto(
+                    listOf(
+                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
+                    ), "겨울 이 향수 어떠세요?"
+                )
+            )
+            Button(
+                isEnabled = true,
+                btnText = "향bti 검사하기",
+                onClick = {},
+                buttonModifier = Modifier.background(color = Color.Black).fillMaxWidth(0.9f).height(47.dp)
+                    .padding(horizontal = 20.dp),
+                textColor = Color.White,
+                textSize = 14,
+                radious = 8
+            )
+        }
+    }
     BottomMenuContent(
         {}, {}, listOf(
             HomeMenuDefaultResponseDto(

@@ -28,11 +28,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
@@ -52,11 +54,15 @@ fun CommentInputBar(
 
         val commentTextStyle = TextStyle(
             fontSize = 14.sp,
-            color = Color.Black
+            color = Color.Black,
+            fontWeight = FontWeight.Normal,
+            fontFamily = pretendard
         )
         val placeHolderTextStyle = TextStyle(
             fontSize = 14.sp,
-            color = CustomColor.gray3
+            color = CustomColor.gray3,
+            fontWeight = FontWeight.Normal,
+            fontFamily = pretendard
         )
 
         /** loading 화면을 따로 받을 수 있다면 추가 */
@@ -85,7 +91,9 @@ fun CommentInputBar(
         Spacer(Modifier.width(2.dp))
 
         Text(
-            text = ":"
+            text = ":",
+            fontWeight = FontWeight.Normal,
+            fontFamily = pretendard
         )
 
         BasicTextField(

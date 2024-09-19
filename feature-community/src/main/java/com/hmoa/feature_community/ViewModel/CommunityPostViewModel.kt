@@ -4,11 +4,17 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
+import com.hmoa.core_model.data.ErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -20,7 +26,6 @@ class CommunityPostViewModel @Inject constructor(
     private val application: Application,
     private val repository: CommunityRepository
 ) : ViewModel() {
-
     val context = application.applicationContext
 
     //게시글 타입
@@ -39,9 +44,27 @@ class CommunityPostViewModel @Inject constructor(
     private val _pictures = MutableStateFlow<List<Uri>>(listOf())
     val pictures get() = _pictures.asStateFlow()
 
-    //error state
-    private val _errState = MutableStateFlow<String?>(null)
-    val errState get() = _errState.asStateFlow()
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
 
     //category 설정
     fun setCategory(newCategory: String) {
@@ -51,56 +74,45 @@ class CommunityPostViewModel @Inject constructor(
             "자유" -> _category.update { Category.자유 }
         }
     }
-
     //title update
-    fun updateTitle(title: String) {
-        _title.update { title }
-    }
-
+    fun updateTitle(title: String) = _title.update { title }
     //content update
-    fun updateContent(content: String) {
-        _content.update { content }
-    }
-
+    fun updateContent(content: String) = _content.update { content }
     //사진 update
     fun updatePictures(newPictures: List<Uri>) {
         _pictures.update {
             val result = arrayListOf<Uri>()
-            newPictures.forEach {
-                result.add(it)
-            }
+            newPictures.forEach {result.add(it)}
             result
         }
     }
 
     //사진 삭제
     fun deletePicture(idx: Int) {
-        _pictures.update {
-            val data = it
-            data.minus(it[idx])
-        }
+        _pictures.update {picture ->picture.minus(picture[idx])}
     }
 
     //게시글 게시
     fun postCommunity() {
         val images = arrayListOf<File>()
         pictures.value.map { picture ->
-            val path = absolutePath(picture) ?: throw NullPointerException("file path is NULL")
+            val path = absolutePath(picture)
+            if(path == null) {
+                generalErrorState.update { Pair(true, "file path is NULL") }
+                return
+            }
             images.add(File(path))
         }
         viewModelScope.launch {
-
             val result = repository.postCommunitySave(
                 images = images.map { it.absoluteFile }.toTypedArray(),
                 category = category.value.name,
                 title = title.value,
                 content = content.value
             )
-
-            if (result.errorMessage != null) {
-                _errState.update { "Exception : ${result.errorMessage!!.message}" }
-            } else {
-                result.data
+            if (result.errorMessage is ErrorMessage) {
+                generalErrorState.update { Pair(true, result.errorMessage!!.message) }
+                return@launch
             }
         }
     }

@@ -32,6 +32,20 @@ import com.hmoa.feature_community.Navigation.navigateToCommunityPage
 import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
 import com.hmoa.feature_community.Navigation.navigateToCommunitySearchRoute
+import com.hmoa.feature_community.Navigation.nestedCommunityGraph
+import com.hmoa.feature_fcm.alarmRoute
+import com.hmoa.feature_hbti.navigation.hbtiProcessScreen
+import com.hmoa.feature_hbti.navigation.hbtiScreen
+import com.hmoa.feature_hbti.navigation.hbtiSurveyResultScreen
+import com.hmoa.feature_hbti.navigation.hbtiSurveyScreen
+import com.hmoa.feature_hbti.navigation.navigateToHbti
+import com.hmoa.feature_hbti.navigation.navigateToHbtiProcess
+import com.hmoa.feature_hbti.navigation.navigateToHbtiSurvey
+import com.hmoa.feature_hbti.navigation.navigateToHbtiSurveyResult
+import com.hmoa.feature_hbti.navigation.navigateToNoteOrderQuantityPick
+import com.hmoa.feature_hbti.navigation.navigateToNotePick
+import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
+import com.hmoa.feature_hbti.navigation.notePickScreen
 import com.hmoa.feature_home.navigation.allPerfumeScreen
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToAllPerfume
@@ -69,14 +83,24 @@ fun SetUpNavGraph(
     ) {
 
         /** home 모듈 */
-        homeScreen(onPerfumeClick = { perfumeId ->
-            navController.navigateToPerfume(perfumeId)
-        }, onAllPerfumeClick = { navController.navigateToAllPerfume(it) })
+        homeScreen(
+            onPerfumeClick = { perfumeId ->
+                navController.navigateToPerfume(perfumeId)
+            },
+            onAllPerfumeClick = { navController.navigateToAllPerfume(it) },
+            onHbtiClick = { navController.navigateToHbti() })
         perfumeSearchScreen(onBackClick = navController::navigateToBack)
         allPerfumeScreen(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
             onPerfumeClick = { navController.navigateToPerfume(it) })
+
+        /** fcm 모듈 */
+        alarmRoute(
+            onNavBack = navController::navigateToBack,
+            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
+            onNavPerfumeComment = navController::navigateToPerfumeComment
+        )
 
         /** authentication 모듈 */
         loginScreen(onSignupClick = navController::navigateToSignup, onHomeClick = navController::navigateToHome)
@@ -104,7 +128,6 @@ fun SetUpNavGraph(
             onNavLogin = navController::navigateToLogin,
             onNavBack = navController::navigateToBack,
             onNavCommunity = navController::navigateToCommunityDescriptionRoute,
-            onNavEditPost = navController::navigateToCommunityEditRoute,
             onNavEditProfile = navController::navigateToEditProfilePage,
             onNavManageMyInfo = navController::navigateToMyInfoPage,
             onNavMyActivity = navController::navigateToMyActivity,
@@ -121,18 +144,26 @@ fun SetUpNavGraph(
         /** HPedia 모듈 (내부에 Community 모듈 포함) */
         this.nestedHPediaGraph(
             onNavBack = navController::navigateToBack,
-            onNavCommunityPost = navController::navigateToCommunityPostRoute,
-            onNavCommunityEdit = navController::navigateToCommunityEditRoute,
             onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunityPage = navController::navigateToCommunityPage,
             onNavCommunityGraph = navController::navigateToCommunityRoute,
-            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
-            onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
             onNavHPediaDesc = navController::navigateToHPediaDescRoute,
             onNavHPediaSearch = navController::navigateToHPediaSearchRoute,
             onNavLogin = navController::navigateToLogin,
             onNavHome = navController::navigateToHome,
-            onNavHPedia = navController::navigateToHPedia
+        )
+        this.nestedCommunityGraph(
+            onNavBack = navController::navigateToBack,
+            onNavCommunityPage = navController::navigateToCommunityPage,
+            onNavCommunityPost = navController::navigateToCommunityPostRoute,
+            onNavCommunityEdit = navController::navigateToCommunityEditRoute,
+            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
+            onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
+            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onNavLogin = navController::navigateToLogin,
+            onNavHome = navController::navigateToHome,
+            onNavHPedia = navController::navigateToHPedia,
+            onNavPopStack = { navController.popBackStack() }
         )
 
         /** perfume 모듈 */
@@ -188,5 +219,27 @@ fun SetUpNavGraph(
             onNavLogin = navController::navigateToLogin,
             onNavDesc = navController::navigateToMagazineDesc
         )
+
+        /** hbti 모듈 */
+        hbtiScreen(onHbtiSurveyClick = navController::navigateToHbtiSurvey)
+        hbtiSurveyScreen(
+            onBackClick = navController::navigateToBack,
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onHbtiSurveyResultClick = navController::navigateToHbtiSurveyResult
+        )
+        hbtiSurveyResultScreen(
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onBackClick = navController::navigateToBack,
+            onHbtiProcessClick = navController::navigateToHbtiProcess
+        )
+        hbtiProcessScreen(
+            onBackClick = navController::navigateToBack,
+            onNoteOrderQuantityPickClick = navController::navigateToNoteOrderQuantityPick
+        )
+        noteOrderQuantityPickScreen(
+            onBackClick = navController::navigateToBack,
+            onNextClick = { noteOrderQuantity -> navController.navigateToNotePick(noteOrderQuantity) }
+        )
+        notePickScreen(onBackClick = navController::navigateToBack, onNextClick = {})
     }
 }

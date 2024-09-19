@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun AppDefaultDialog(
@@ -52,14 +53,17 @@ fun AppDefaultDialog(
                 Text(
                     text = title,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = pretendard
                 )
 
                 Spacer(Modifier.height(8.dp))
 
                 Text(
                     text = content,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = pretendard
                 )
 
                 Spacer(Modifier.height(22.dp))
@@ -80,6 +84,7 @@ fun AppDefaultDialog(
                         text = "취소",
                         fontSize = 16.sp,
                         color = CustomColor.blue2,
+                        fontFamily = pretendard,
                         fontWeight = FontWeight.Medium
                     )
                 }

@@ -6,6 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
@@ -88,9 +89,19 @@ class CommunityDescViewModel @Inject constructor(
         result.data!!
     }.asResult().map{ communityResult ->
         when(communityResult) {
-            is Result.Error -> CommunityDescUiState.Error
             is Result.Loading -> CommunityDescUiState.Loading
             is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data)
+            is Result.Error -> {
+                if(!generalErrorState.value.first) {
+                    when (communityResult.exception.message) {
+                        ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
+                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
+                        ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
+                        else -> generalErrorState.update {Pair(true,communityResult.exception.message)}
+                    }
+                }
+                CommunityDescUiState.Error
+            }
         }
     }.stateIn(
         scope = viewModelScope,

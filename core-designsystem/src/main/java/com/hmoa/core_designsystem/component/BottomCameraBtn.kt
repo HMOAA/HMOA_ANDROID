@@ -1,9 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,16 +16,8 @@ import com.hmoa.core_designsystem.R
 
 @Composable
 fun BottomCameraBtn(
-    onUpdatePictures : (List<Uri>) -> Unit,
+    onClick: () -> Unit,
 ){
-    //갤러리에서 사진 가져오기
-    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = {uris ->
-            onUpdatePictures(uris)
-        }
-    )
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,13 +27,7 @@ fun BottomCameraBtn(
             modifier = Modifier
                 .fillMaxHeight()
                 .aspectRatio(1f),
-            onClick = {
-                multiplePhotoPickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
-                )
-            }
+            onClick = onClick
         ){
             Icon(
                 modifier = Modifier.fillMaxSize(),

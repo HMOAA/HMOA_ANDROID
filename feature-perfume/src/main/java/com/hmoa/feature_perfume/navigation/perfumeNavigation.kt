@@ -5,7 +5,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.hmoa.feature_perfume.screen.*
+import androidx.navigation.navDeepLink
+import com.hmoa.feature_perfume.screen.CreateNewPerfumeCommentRoute
+import com.hmoa.feature_perfume.screen.EditMyPerfumeCommentRoute
+import com.hmoa.feature_perfume.screen.PerfumeCommentRoute
+import com.hmoa.feature_perfume.screen.PerfumeRoute
+import com.hmoa.feature_perfume.screen.SpecificCommentRoute
 
 fun NavController.navigateToPerfume(perfumeId: Int) = navigate("${PerfumeRoute.Perfume.name}/${perfumeId}")
 fun NavController.navigateToPerfumeComment(perfumeId: Int) =
@@ -33,7 +38,7 @@ fun NavGraphBuilder.perfumeScreen(
 ) {
     composable(
         route = "${PerfumeRoute.Perfume.name}/{perfumeId}",
-        arguments = listOf(navArgument("perfumeId") { type = NavType.StringType })
+        arguments = listOf(navArgument("perfumeId") { type = NavType.StringType }),
     ) {
         val perfumeId = it.arguments?.getString("perfumeId")
         PerfumeRoute(
@@ -57,7 +62,8 @@ fun NavGraphBuilder.perfumeComment(
 ) {
     composable(
         route = "${PerfumeRoute.PerfumeComment.name}/{perfumeId}",
-        arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })
+        arguments = listOf(navArgument("perfumeId") { type = NavType.IntType }),
+        deepLinks = listOf(navDeepLink { uriPattern="hmoa://perfume_comment/{perfumeId}" })
     ) {
         val perfumeId = it.arguments?.getInt("perfumeId")
         PerfumeCommentRoute(

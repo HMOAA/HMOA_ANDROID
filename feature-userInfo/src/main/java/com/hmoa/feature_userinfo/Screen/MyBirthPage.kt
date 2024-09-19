@@ -1,19 +1,25 @@
 package com.example.feature_userinfo
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,13 +27,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.Spinner
 import com.hmoa.component.TopBar
 import com.hmoa.component.YearPickerDialog
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.viewModel.MyBirthUiState
 import com.hmoa.feature_userinfo.viewModel.MyBirthViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+
 @Composable
 fun MyBirthRoute(
     onNavBack: () -> Unit,
@@ -36,12 +46,14 @@ fun MyBirthRoute(
     val availableYearRange = (1950..LocalDateTime.now().year).toList()
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val birth = viewModel.birth.collectAsStateWithLifecycle()
 
     MyBirthPage(
         availableYearRange = availableYearRange,
         uiState = uiState.value,
+        errorState = errorState.value,
         birth = birth.value,
         isEnabled = isEnabled.value,
         onUpdateBirth = {viewModel.updateBirth(it)},
@@ -54,6 +66,7 @@ fun MyBirthRoute(
 fun MyBirthPage(
     availableYearRange : List<Int>,
     uiState: MyBirthUiState,
+    errorState: ErrorUiState,
     birth : Int?,
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
@@ -61,9 +74,7 @@ fun MyBirthPage(
     onNavBack: () -> Unit
 ) {
     when (uiState) {
-        MyBirthUiState.Loading -> {
-            AppLoadingScreen()
-        }
+        MyBirthUiState.Loading -> AppLoadingScreen()
         MyBirthUiState.Success -> {
             SelectBirthContent(
                 availableYearRange = availableYearRange,
@@ -75,7 +86,11 @@ fun MyBirthPage(
             )
         }
         MyBirthUiState.Error -> {
-            Text("Error : 뭐징")
+            ErrorUiSetView(
+                onConfirmClick = onNavBack,
+                errorUiState = errorState,
+                onCloseClick = onNavBack
+            )
         }
     }
 }
@@ -138,6 +153,7 @@ private fun SelectBirthContent(
                 Text(
                     text = "출생연도",
                     fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                     color = CustomColor.gray4
                 )
                 Spacer(Modifier.height(8.dp))

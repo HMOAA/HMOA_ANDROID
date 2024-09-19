@@ -112,7 +112,7 @@ fun PostCommunityPage(
     //오류가 없다면
     if (errState is ErrorUiState.ErrorData && errState.generalError.first){
         ErrorUiSetView(
-            onConfirmClick = onNavBack,
+            onLoginClick = onNavBack,
             errorUiState = errState,
             onCloseClick = onNavBack
         )

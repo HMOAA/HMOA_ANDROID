@@ -56,19 +56,20 @@ fun OAuthLoginButton(
                 contentDescription = "OAuth Type Icon",
             )
 
-        Text(
-            text = buttonText,
-            fontSize = textSize.sp,
-            color = textColor,
-            modifier = Modifier.padding(start = 20.dp),
-            style = TextStyle(fontWeight = FontWeight.Normal,
-                fontFamily = pretendard
+            Text(
+                text = buttonText,
+                fontSize = textSize.sp,
+                color = textColor,
+                modifier = Modifier.padding(start = 20.dp),
+                style = TextStyle(
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = pretendard
+                )
             )
-        )
 
+        }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun TestOAuthLoginBtn() {
@@ -87,7 +88,7 @@ fun TestOAuthLoginBtn() {
 
             },
 
-        )
+            )
 
     }
     OAuthLoginButton(

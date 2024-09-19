@@ -71,15 +71,6 @@ private fun HomeScreen(
                         bannerTitle = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerTitle,
                         firstMenu = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
                     )
-                    Button(
-                        isEnabled = true,
-                        btnText = "# 향bti 검사하기",
-                        onClick = { onHbtiClick() },
-                        buttonModifier = Modifier.background(color = Color.Black).fillMaxWidth(0.9f).height(47.dp),
-                        textColor = Color.White,
-                        textSize = 14,
-                        radious = 8
-                    )
                 }
             }
 

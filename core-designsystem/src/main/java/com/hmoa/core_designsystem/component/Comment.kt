@@ -10,8 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +48,6 @@ fun Comment(
         Spacer(Modifier.height(11.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircleImageView(imgUrl = profile, width = 28, height = 28)
@@ -56,7 +56,8 @@ fun Comment(
                 text = nickname,
                 fontSize = 14.sp,
                 lineHeight = 14.sp,
-                fontWeight = FontWeight(400),
+                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 color = Color.Black
             )
             Spacer(Modifier.width(7.dp))
@@ -89,11 +90,10 @@ fun Comment(
             ) {
                 if (isEditable) {
                     IconButton(
-                        modifier = Modifier.size(16.dp),
                         onClick = onChangeSelect
                     ) {
                         Icon(
-                            modifier = Modifier.fillMaxSize(1f),
+                            modifier = Modifier.size(22.dp),
                             painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
                             tint = if (isSelected) CustomColor.red else CustomColor.gray2,
                             contentDescription = "Comment Like Button"
@@ -108,20 +108,20 @@ fun Comment(
                     )
                 }
                 Spacer(Modifier.width(8.dp))
-                Text(
-                    text = if (heartCount <= 999) heartCount.toString() else "999+",
-                    color = Color.Black,
-                    fontSize = 12.sp
-                )
             }
+            Text(
+                text = if (heartCount <= 999) heartCount.toString() else "999+",
+                color = Color.Black,
+                fontSize = 12.sp
+            )
             if (isEditable) {
-                Spacer(Modifier.width(8.dp))
-
                 IconButton(
                     onClick = onOpenBottomDialog
                 ) {
                     Icon(
+                        modifier = Modifier.size(16.dp),
                         painter = painterResource(R.drawable.three_dot_menu_horizontal),
+                        tint = CustomColor.gray2,
                         contentDescription = "Bottom Dialog Status Controller"
                     )
                 }

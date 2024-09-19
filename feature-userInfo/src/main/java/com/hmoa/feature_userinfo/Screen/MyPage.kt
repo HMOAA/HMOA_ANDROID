@@ -65,14 +65,19 @@ internal fun MyPageRoute(
     val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
     val isEnabledAlarm = viewModel.isEnabled.collectAsStateWithLifecycle()
     val onChangeAlarm: (Boolean) -> Unit = {
-        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {viewModel.changeAlarmSetting(it)}
-        else {Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()}
+        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {
+            viewModel.changeAlarmSetting(it)
+        } else {
+            Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()
+        }
     }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val navKakao = {
         TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
-            if (err != null) {Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()}
+            if (err != null) {
+                Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
+            }
         }
     }
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {}
@@ -189,7 +194,7 @@ private fun MyPageContent(
     openPrivacyPolicyLink: () -> Unit,
     openTermsOfServiceLink: () -> Unit,
     onDelAccount: () -> Unit,
-    onNavMyPerfume : () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
@@ -251,7 +256,9 @@ private fun MyPageContent(
                     )
                 }
             }
-            if (idx % 3 == 2) {HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)}
+            if (idx % 3 == 2) {
+                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+            }
         }
     }
 }
@@ -329,9 +336,10 @@ private fun ServiceAlarm(
         )
     }
 }
+
 @Preview
 @Composable
-private fun TestUiMyPage(){
+private fun TestUiMyPage() {
     MyPage(
         uiState = UserInfoUiState.User("", "안드 호준", "Kakao"),
         errorUiState = ErrorUiState.Loading,
@@ -347,7 +355,8 @@ private fun TestUiMyPage(){
         onNavEditProfile = { /*TODO*/ },
         onNavMyActivity = { /*TODO*/ },
         onNavManageMyInfo = { /*TODO*/ },
-        onErrorHandleLoginAgain = { /*TODO*/ }) {
+        onErrorHandleLoginAgain = { /*TODO*/ },
+        openTermsOfServiceLink = {}) {
 
     }
 }

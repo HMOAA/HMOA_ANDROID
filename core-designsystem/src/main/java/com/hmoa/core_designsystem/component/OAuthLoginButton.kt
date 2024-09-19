@@ -94,7 +94,7 @@ fun TestOAuthLoginBtn() {
     OAuthLoginButton(
         backgroundColor = Color.White,
         iconId = com.hmoa.core_designsystem.R.drawable.ic_google,
-        iconSize = 40,
+        iconSize = 16,
         buttonText = " Google로 로그인",
         textColor = Color.Black,
         textSize = 16,

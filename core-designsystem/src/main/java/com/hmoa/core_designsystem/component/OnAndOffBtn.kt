@@ -31,7 +31,7 @@ fun OnAndOffBtn(
         checked = isChecked,
         onCheckedChange = onChangeChecked,
         colors = SwitchDefaults.colors(
-            checkedTrackColor = CustomColor.gray2,
+            checkedTrackColor = CustomColor.green,
             uncheckedBorderColor = CustomColor.gray2,
             uncheckedThumbColor = CustomColor.gray3
         )

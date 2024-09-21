@@ -6,6 +6,7 @@ import com.hmoa.core_datastore.Survey.SurveyRemoteDataStore
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
+import com.hmoa.core_model.response.PerfumeSurveyResponseDto
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
 import javax.inject.Inject
@@ -40,6 +41,10 @@ class SurveyRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllNotes() {
         surveyLocalDataStore.deleteAllNotes()
+    }
+
+    override suspend fun getPerfumeSurvey(): ResultResponse<PerfumeSurveyResponseDto> {
+        return surveyRemoteDataStore.getPerfumeSurvey()
     }
 
 }

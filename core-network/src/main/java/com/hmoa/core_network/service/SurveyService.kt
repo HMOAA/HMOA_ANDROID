@@ -5,6 +5,7 @@ import com.hmoa.core_model.request.SurveyRespondRequestDto
 import com.hmoa.core_model.request.SurveySaveAnswerRequestDtos
 import com.hmoa.core_model.request.SurveySaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.PerfumeSurveyResponseDto
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
 import com.skydoves.sandwich.ApiResponse
@@ -21,20 +22,23 @@ interface SurveyService {
     suspend fun postSurveyResponds(@Body dto: SurveyRespondRequestDto): ApiResponse<RecommendNotesResponseDto>
 
     @POST("/survey/save")
-    suspend fun saveSurvey(@Body dto: SurveySaveRequestDto) : ApiResponse<DataResponseDto<Any>>
+    suspend fun saveSurvey(@Body dto: SurveySaveRequestDto): ApiResponse<DataResponseDto<Any>>
 
     @POST("/survey/save-answer-note")
-    suspend fun saveAnswerNote(@Body dto: SurveySaveAnswerRequestDtos) : ApiResponse<DataResponseDto<Any>>
+    suspend fun saveAnswerNote(@Body dto: SurveySaveAnswerRequestDtos): ApiResponse<DataResponseDto<Any>>
 
     @POST("/survey/save-answer/{questionId")
     suspend fun saveAnswerByQuestionId(
         @Body dto: ContentRequestDto,
-        @Path("questionId") questionId : Int,
-    ) : ApiResponse<DataResponseDto<Any>>
+        @Path("questionId") questionId: Int,
+    ): ApiResponse<DataResponseDto<Any>>
 
     @POST("/survey/save-question/{surveyId}")
     suspend fun saveQuestionBySurveyId(
         @Body dto: ContentRequestDto,
-        @Path("surveyId") surveyId : Int
-    ) : ApiResponse<DataResponseDto<Any>>
+        @Path("surveyId") surveyId: Int
+    ): ApiResponse<DataResponseDto<Any>>
+
+    @GET("/survey/perfume")
+    suspend fun getPerfumeSurvey(): ApiResponse<PerfumeSurveyResponseDto>
 }

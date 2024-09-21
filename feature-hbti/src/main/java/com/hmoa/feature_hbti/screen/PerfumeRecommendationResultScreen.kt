@@ -2,12 +2,7 @@ package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
@@ -17,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,12 +29,12 @@ import com.hmoa.feature_hbti.viewmodel.PerfumeResultUiState
 @Composable
 fun PerfumeRecommendationResultRoute(
     onNavBack: () -> Unit,
-    onNavPerfumeDesc : (Int) -> Unit,
+    onNavPerfumeDesc: (Int) -> Unit,
     viewModel: PerfumeRecommendationResultViewModel = hiltViewModel()
-){
+) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorState = viewModel.errorState.collectAsStateWithLifecycle()
-    PerfumeRecommendationResultScreen (
+    PerfumeRecommendationResultScreen(
         uiState = uiState.value,
         errorState = errorState.value,
         onNavBack = onNavBack,
@@ -52,10 +46,10 @@ fun PerfumeRecommendationResultRoute(
 fun PerfumeRecommendationResultScreen(
     uiState: PerfumeResultUiState,
     errorState: ErrorUiState,
-    onNavBack : () -> Unit,
-    onNavPerfumeDesc : (Int) -> Unit,
-){
-    when(uiState){
+    onNavBack: () -> Unit,
+    onNavPerfumeDesc: (Int) -> Unit,
+) {
+    when (uiState) {
         PerfumeResultUiState.Loading -> AppLoadingScreen()
         is PerfumeResultUiState.Success -> {
             PerfumeCommentResultContent(
@@ -63,10 +57,11 @@ fun PerfumeRecommendationResultScreen(
                 onNavPerfumeDesc = onNavPerfumeDesc
             )
         }
+
         PerfumeResultUiState.Error -> {
             /** Error 발생 시 어디로 가는 것이 좋을까? **/
             ErrorUiSetView(
-                onConfirmClick = { /*TODO*/ },
+                onLoginClick = { /*TODO*/ },
                 errorUiState = errorState,
                 onCloseClick = {}
             )
@@ -79,12 +74,12 @@ fun PerfumeRecommendationResultScreen(
 private fun PerfumeCommentResultContent(
     onNavBack: () -> Unit,
     onNavPerfumeDesc: (Int) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-    ){
+    ) {
         TopBar(
             title = "향수 추천",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
@@ -95,7 +90,7 @@ private fun PerfumeCommentResultContent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 20.dp)
-        ){
+        ) {
             Text(
                 text = "고객님에게 어울릴 향수는",
                 fontSize = 20.sp,
@@ -136,17 +131,17 @@ private fun PerfumeCommentResultContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PerfumeResult(
-    modifier : Modifier,
-    bestPerfumeBrand : String,
-    bestPerfumeName : String,
-    perfumes : List<PerfumeLikeResponseDto>,
-    onNavPerfumeDesc : (Int) -> Unit,
-){
-    val pagerState = rememberPagerState(pageCount = {perfumes.size})
+    modifier: Modifier,
+    bestPerfumeBrand: String,
+    bestPerfumeName: String,
+    perfumes: List<PerfumeLikeResponseDto>,
+    onNavPerfumeDesc: (Int) -> Unit,
+) {
+    val pagerState = rememberPagerState(pageCount = { perfumes.size })
     Column(
         modifier = modifier
             .padding(top = 20.dp)
-    ){
+    ) {
         Text(
             text = "브랜드 : ${bestPerfumeBrand}",
             fontSize = 14.sp,
@@ -162,7 +157,7 @@ private fun PerfumeResult(
             modifier = Modifier
                 .padding(horizontal = 25.dp),
             state = pagerState
-        ) {page ->
+        ) { page ->
             val perfume = perfumes[page]
             LikeRowItem(
                 brand = perfume.brandName,
@@ -170,7 +165,7 @@ private fun PerfumeResult(
                 price = perfume.price.toString(),
                 itemNameKo = perfume.koreanName,
                 itemNameEng = perfume.englishName,
-                onClickClose = {/** 아무 이벤트도 실행하지 않음 */},
+                onClickClose = { /** 아무 이벤트도 실행하지 않음 */ },
                 onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) }
             )
         }

@@ -69,7 +69,7 @@ fun MyGenderPage(
         }
         MyGenderUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onLoginClick = onNavBack,
                 errorUiState = errorState,
                 onCloseClick = onNavBack
             )

@@ -87,7 +87,7 @@ fun MyBirthPage(
         }
         MyBirthUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onLoginClick = onNavBack,
                 errorUiState = errorState,
                 onCloseClick = onNavBack
             )

@@ -55,7 +55,7 @@ private fun HbtiSurveyResultScreen(
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
 
     ErrorUiSetView(
-        onConfirmClick = { onErrorHandleLoginAgain() },
+        onLoginClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
         onCloseClick = { onBackClick() }
     )

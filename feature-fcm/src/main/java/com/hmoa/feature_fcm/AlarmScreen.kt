@@ -68,7 +68,7 @@ fun AlarmScreen(
         AlarmUiState.Loading -> AppLoadingScreen()
         AlarmUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onLoginClick = onNavBack,
                 errorUiState = errState,
                 onCloseClick = onNavBack
             )

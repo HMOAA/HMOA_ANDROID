@@ -10,7 +10,7 @@ import com.hmoa.core_common.ErrorUiState
 
 
 @Composable
-fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onCloseClick: () -> Unit) {
+fun ErrorUiSetView(onLoginClick: () -> Unit, errorUiState: ErrorUiState, onCloseClick: () -> Unit) {
     var isOpen by remember { mutableStateOf(true) }
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
@@ -26,7 +26,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                     buttonTitle = "로그인 하러가기",
                     onOkClick = {
                         isOpen = false
-                        onConfirmClick()
+                        onLoginClick()
                     },
                     onCloseClick = {
                         isOpen = false
@@ -43,7 +43,7 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                     buttonTitle = "로그인 하러가기",
                     onOkClick = {
                         isOpen = false
-                        onConfirmClick()
+                        onLoginClick()
                     },
                     onCloseClick = {
                         isOpen = false
@@ -60,7 +60,24 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
                     buttonTitle = "로그인 하러가기",
                     onOkClick = {
                         isOpen = false
-                        onConfirmClick()
+                        onLoginClick()
+                    },
+                    onCloseClick = {
+                        isOpen = false
+                        onCloseClick()
+                    }
+                )
+            } else if (errorUiState.memberNotFoundError ?: false) {
+                AppDesignDialog(
+                    isOpen = isOpen,
+                    modifier = Modifier.wrapContentHeight()
+                        .width(screenWidth - 88.dp),
+                    title = "사용자를 찾을 수 없습니다",
+                    content = "다시 로그인해주세요",
+                    buttonTitle = "로그인 하러가기",
+                    onOkClick = {
+                        isOpen = false
+                        onLoginClick()
                     },
                     onCloseClick = {
                         isOpen = false
@@ -70,11 +87,11 @@ fun ErrorUiSetView(onConfirmClick: () -> Unit, errorUiState: ErrorUiState, onClo
             } else if (errorUiState.generalError.first) {
                 AppDefaultDialog(
                     isOpen = isOpen,
-                    title = "이런 오류가 발생했어요 :(",
-                    content = (errorUiState as ErrorUiState.ErrorData).generalError.second ?: "",
+                    title = "오류가 발생했어요 :(",
+                    content = (errorUiState as ErrorUiState.ErrorData).generalError.second
+                        ?: "서비스 정상화를 위해 노력하고 있습니다 :)",
                     onDismiss = {
                         isOpen = false
-                        onCloseClick()
                     },
                     modifier = Modifier.wrapContentHeight()
                         .width(screenWidth - 88.dp)

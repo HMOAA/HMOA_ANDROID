@@ -134,7 +134,7 @@ fun CommunityPage(
         }
         is CommunityMainUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onErrorHandleLoginAgain,
+                onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
                 onCloseClick = onErrorHandleLoginAgain
             )

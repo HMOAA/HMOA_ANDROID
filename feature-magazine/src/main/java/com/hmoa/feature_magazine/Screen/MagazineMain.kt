@@ -100,7 +100,7 @@ fun MagazineMainScreen(
         }
         is MagazineMainUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = { onNavHome() },
+                onLoginClick = { onNavHome() },
                 errorUiState = errorState,
                 onCloseClick = { onNavHome() }
             )

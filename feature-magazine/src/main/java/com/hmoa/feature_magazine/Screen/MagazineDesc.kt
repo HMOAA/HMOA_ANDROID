@@ -113,7 +113,7 @@ fun MagazineDescScreen(
         }
         is MagazineDescUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavLogin,
+                onLoginClick = onNavLogin,
                 errorUiState = errState,
                 onCloseClick = onNavBack
             )

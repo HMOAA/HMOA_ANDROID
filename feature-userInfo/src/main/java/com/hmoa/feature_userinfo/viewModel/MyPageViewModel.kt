@@ -14,6 +14,7 @@ import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.FCMTokenSaveRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -70,17 +71,20 @@ class MyPageViewModel @Inject constructor(
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var memberNotFoundErrorState = MutableStateFlow<Boolean>(false)
     private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
     val errorUiState: StateFlow<ErrorUiState> = combine(
         expiredTokenErrorState,
         wrongTypeTokenErrorState,
         unLoginedErrorState,
+        memberNotFoundErrorState,
         generalErrorState
-    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, memberNotFoundError, generalError ->
         ErrorUiState.ErrorData(
             expiredTokenError = expiredTokenError,
             wrongTypeTokenError = wrongTypeTokenError,
             unknownError = unknownError,
+            memberNotFoundError = memberNotFoundError,
             generalError = generalError
         )
     }.stateIn(
@@ -107,11 +111,13 @@ class MyPageViewModel @Inject constructor(
                 val data = result.data
                 UserInfoUiState.User(data.profile, data.nickname, data.provider)
             }
+
             is Result.Error -> {
                 when (result.exception.message) {
                     ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
                     ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
                     ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
+                    ErrorMessageType.MEMBER_NOT_FOUND.message -> memberNotFoundErrorState.update { true }
                     else -> generalErrorState.update { Pair(true, result.exception.message) }
                 }
                 UserInfoUiState.Error
@@ -122,8 +128,9 @@ class MyPageViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = UserInfoUiState.Loading
     )
+
     private fun getAuthToken() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             loginRepository.getAuthToken().onEmpty { }.collectLatest {
                 authTokenState.value = it
             }
@@ -138,17 +145,18 @@ class MyPageViewModel @Inject constructor(
         }
     }
     //로그아웃
-    fun logout() {
-        viewModelScope.launch {
+    suspend fun logout() {
+        viewModelScope.launch(Dispatchers.IO) {
             fcmRepository.deleteRemoteFcmToken()
             fcmRepository.deleteLocalFcmToken()
             loginRepository.deleteAuthToken()
             loginRepository.deleteRememberedToken()
         }
     }
+
     //계정 삭제
     fun delAccount() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             fcmRepository.deleteRemoteFcmToken()
             fcmRepository.deleteLocalFcmToken()
             try {

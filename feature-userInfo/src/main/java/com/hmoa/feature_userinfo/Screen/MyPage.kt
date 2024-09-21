@@ -7,15 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -27,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,9 +48,11 @@ import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun MyPageRoute(
+    appVersion: String,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
@@ -67,23 +62,29 @@ internal fun MyPageRoute(
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val appVersion = "1.0.1"
     val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
     val isEnabledAlarm = viewModel.isEnabled.collectAsStateWithLifecycle()
     val onChangeAlarm: (Boolean) -> Unit = {
-        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {viewModel.changeAlarmSetting(it)}
-        else {Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()}
+        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {
+            viewModel.changeAlarmSetting(it)
+        } else {
+            Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()
+        }
     }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val navKakao = {
         TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
-            if (err != null) {Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()}
+            if (err != null) {
+                Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
+            }
         }
     }
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {}
 
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
+    val termsOfServiceIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_OF_SERVICE)) }
+    val scope = rememberCoroutineScope()
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
@@ -93,14 +94,17 @@ internal fun MyPageRoute(
             isEnabledAlarm = isEnabledAlarm.value,
             onChangeAlarm = onChangeAlarm,
             logoutEvent = {
-                viewModel.logout()
-                onNavLogin()
+                scope.launch {
+                    launch { viewModel.logout() }.join()
+                    onNavLogin()
+                }
             },
             doOpenLicense = {
                 launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
                 OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
             },
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
+            openTermsOfServiceLink = { context.startActivity(termsOfServiceIntent) },
             onDelAccount = {
                 viewModel.delAccount()
                 onNavLogin()
@@ -133,6 +137,7 @@ fun MyPage(
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavMyPerfume: () -> Unit,
     onNavEditProfile: () -> Unit,
@@ -154,6 +159,7 @@ fun MyPage(
                 logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
                 openPrivacyPolicyLink = openPrivacyPolicyLink,
+                openTermsOfServiceLink = openTermsOfServiceLink,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
                 onNavMyPerfume = onNavMyPerfume,
@@ -162,13 +168,15 @@ fun MyPage(
                 onNavManageMyInfo = onNavManageMyInfo,
             )
         }
+
         UserInfoUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = { onErrorHandleLoginAgain() },
+                onLoginClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = { onBackClick() }
             )
         }
+
         else -> {}
     }
 }
@@ -184,19 +192,20 @@ private fun MyPageContent(
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onDelAccount: () -> Unit,
-    onNavMyPerfume : () -> Unit,
+    onNavMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
 ) {
     val columnInfo = listOf(
-        ColumnData("나의 향수") {onNavMyPerfume() },
+        ColumnData("나의 향수") { onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
-        ColumnData("이용 약관") { },
+        ColumnData("이용 약관") { openTermsOfServiceLink() },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
         ColumnData("버전 정보 ${appVersion}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
@@ -209,7 +218,7 @@ private fun MyPageContent(
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        item{
+        item {
             TopBar(title = "마이페이지")
             UserProfileInfo(
                 profile = profile,
@@ -247,7 +256,9 @@ private fun MyPageContent(
                     )
                 }
             }
-            if (idx % 3 == 2) {HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)}
+            if (idx % 3 == 2) {
+                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+            }
         }
     }
 }
@@ -325,9 +336,10 @@ private fun ServiceAlarm(
         )
     }
 }
+
 @Preview
 @Composable
-private fun TestUiMyPage(){
+private fun TestUiMyPage() {
     MyPage(
         uiState = UserInfoUiState.User("", "안드 호준", "Kakao"),
         errorUiState = ErrorUiState.Loading,
@@ -343,7 +355,8 @@ private fun TestUiMyPage(){
         onNavEditProfile = { /*TODO*/ },
         onNavMyActivity = { /*TODO*/ },
         onNavManageMyInfo = { /*TODO*/ },
-        onErrorHandleLoginAgain = { /*TODO*/ }) {
+        onErrorHandleLoginAgain = { /*TODO*/ },
+        openTermsOfServiceLink = {}) {
 
     }
 }

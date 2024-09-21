@@ -164,7 +164,7 @@ fun CommunityDescriptionPage(
         }
         CommunityDescUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onErrorHandleLoginAgain,
+                onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
                 onCloseClick = onNavBack,
             )
@@ -288,7 +288,6 @@ private fun CommunityDescMainContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
         ){
             Spacer(Modifier.height(16.dp))
@@ -300,8 +299,6 @@ private fun CommunityDescMainContent(
                 fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
                 color = CustomColor.gray2
             )
-            Spacer(Modifier.height(18.dp))
-
             PostContent(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -317,29 +314,29 @@ private fun CommunityDescMainContent(
                 onChangeLike = onChangeLike,
                 pictures = photoList
             )
-            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-            Spacer(Modifier.height(32.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Text(
-                    text = "답변",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
-                    color = Color.Black
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = "+${commentList.itemCount}",
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
-                    color = Color.Black
-                )
+            Column(modifier = Modifier.padding(16.dp)) {
+                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                Spacer(Modifier.height(32.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text = "답변",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
+                        color = Color.Black
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = "+${commentList.itemCount}",
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
+                        color = Color.Black
+                    )
+                }
             }
-
             Spacer(Modifier.height(21.dp))
-
             Comments(
                 commentList = commentList,
                 changeBottomOptionState = { onDialogOpen() },
@@ -348,6 +345,7 @@ private fun CommunityDescMainContent(
                 setComment = { setComment(it) }
             )
         }
+
         CommentInputBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -392,13 +390,14 @@ private fun Comments(
                 )
                 if (index != comments.size - 1) {
                     Spacer(Modifier.height(15.dp))
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2, modifier = Modifier.padding(16.dp))
                 }
             }
         }
     } else {
         Spacer(Modifier.height(40.dp))
         Text(
+            modifier = Modifier.padding(start = 16.dp),
             text = "아직 작성한 댓글이 없습니다",
             fontSize = 20.sp,
             fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),

@@ -27,7 +27,7 @@ fun PerfumeItemView(
     imageBackgroundColor: Color,
     imageBorderStroke: BorderStroke?,
 ) {
-    Column(modifier = Modifier.padding(end = 8.dp).width(containerWidth.dp)) {
+    Column(modifier = Modifier.width(containerWidth.dp)) {
         Column(
             modifier = Modifier.width(containerWidth.dp).height(containerHeight.dp)
                 .background(imageBackgroundColor).border(border = imageBorderStroke?: BorderStroke(width = 0.dp, color = Color.Transparent)),

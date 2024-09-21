@@ -72,7 +72,7 @@ fun CommunitySearchPage(
         }
         CommunitySearchUiState.Error -> {
             ErrorUiSetView(
-                onConfirmClick = onNavBack,
+                onLoginClick = onNavBack,
                 errorUiState = errState,
                 onCloseClick = onNavBack
             )

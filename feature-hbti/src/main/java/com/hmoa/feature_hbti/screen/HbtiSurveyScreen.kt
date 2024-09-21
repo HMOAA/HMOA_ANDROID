@@ -81,7 +81,7 @@ fun HbtiSurveyScreen(
     }
 
     ErrorUiSetView(
-        onConfirmClick = { onErrorHandleLoginAgain() },
+        onLoginClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
         onCloseClick = { onBackClick() })
 

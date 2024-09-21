@@ -21,9 +21,9 @@ android {
     defaultConfig {
         applicationId = "com.hmoa.app"
         minSdk = 26
-        targetSdk = 33
-        versionCode = 12
-        versionName = "1.0.0"
+        targetSdk = 34
+        versionCode = 21
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String
@@ -31,9 +31,6 @@ android {
     }
 
     signingConfigs {
-        getByName("debug") {
-            storeFile = file("./debug.keystore")
-        }
         create("release") {
             keyAlias = localProperties.getProperty("KEY_ALIAS")
             keyPassword = localProperties.getProperty("KEY_PASSWORD")
@@ -87,17 +84,6 @@ android {
         }
     }
 
-//    applicationVariants.all { variant ->
-//        variant.mergeResourcesProvider.configure {
-//            doLast {
-//                // processResources에 의존하는 작업 수행
-//                copy{
-//                    from project(':AndroidSecretSecure').file('./gabojait-android-googleapi-services.json')
-//                    into "../app"
-//                }
-//            }
-//        }
-//    }
 }
 
 
@@ -117,7 +103,6 @@ dependencies {
     implementation(project(":feature-like"))
     implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
-    implementation(project(":feature-hbti"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
     implementation(project(":core-domain"))

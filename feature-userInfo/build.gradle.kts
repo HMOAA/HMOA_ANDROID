@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.library")
@@ -83,6 +83,12 @@ dependencies {
     //open licence
     implementation("com.google.android.gms:play-services-oss-licenses:17.0.0")
 
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-messaging:21.1.0")
+    implementation("com.google.firebase:firebase-analytics")
+
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
@@ -103,4 +109,13 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
+
+    //hilt test
+    testImplementation("com.google.dagger:hilt-android-testing:2.44")
+    kaptTest("com.google.dagger:hilt-android:compiler:2.44")
+    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
+
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
+    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
 }

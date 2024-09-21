@@ -14,6 +14,8 @@ import com.hmoa.core_datastore.Fcm.FcmLocalDataStore
 import com.hmoa.core_datastore.Fcm.FcmLocalDataStoreImpl
 import com.hmoa.core_datastore.Fcm.FcmRemoteDataStore
 import com.hmoa.core_datastore.Fcm.FcmRemoteDataStoreImpl
+import com.hmoa.core_datastore.Hshop.HshopRemoteDataStore
+import com.hmoa.core_datastore.Hshop.HshopRemoteDataStoreImpl
 import com.hmoa.core_datastore.Login.LoginLocalDataStore
 import com.hmoa.core_datastore.Login.LoginLocalDataStoreImpl
 import com.hmoa.core_datastore.Login.LoginRemoteDataStore
@@ -38,6 +40,10 @@ import com.hmoa.core_datastore.Search.SearchDataStore
 import com.hmoa.core_datastore.Search.SearchDataStoreImpl
 import com.hmoa.core_datastore.Signup.SignupDataStore
 import com.hmoa.core_datastore.Signup.SignupDataStoreImpl
+import com.hmoa.core_datastore.Survey.SurveyLocalDataStore
+import com.hmoa.core_datastore.Survey.SurveyLocalDataStoreImpl
+import com.hmoa.core_datastore.Survey.SurveyRemoteDataStore
+import com.hmoa.core_datastore.Survey.SurveyRemoteDataStoreImpl
 import com.hmoa.core_datastore.Term.TermDataStore
 import com.hmoa.core_datastore.Term.TermDataStoreImpl
 import dagger.Binds
@@ -127,6 +133,17 @@ interface DatastoreModule {
 
     @Singleton
     @Binds
-    fun provideMagazineDataStore(magazineDataStoreImpl: MagazineDataStoreImpl) : MagazineDataStore
+    fun provideMagazineDataStore(magazineDataStoreImpl: MagazineDataStoreImpl): MagazineDataStore
 
+    @Singleton
+    @Binds
+    fun provideSurveyRemoteDataStore(surveyRemoteDataStoreImpl: SurveyRemoteDataStoreImpl): SurveyRemoteDataStore
+
+    @Singleton
+    @Binds
+    fun provideSurveyLocalDataStore(surveyLocalDataStore: SurveyLocalDataStoreImpl): SurveyLocalDataStore
+
+    @Singleton
+    @Binds
+    fun provideHshopRemoteDataStore(hshopRemoteDataStoreImpl: HshopRemoteDataStoreImpl): HshopRemoteDataStore
 }

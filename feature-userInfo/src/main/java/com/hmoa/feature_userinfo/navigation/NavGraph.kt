@@ -45,11 +45,11 @@ fun NavController.navigateToMyPostPage() = navigate(UserInfoGraph.MyPostRoute.na
 fun NavController.navigateToBack() = navigateUp()
 
 fun NavGraphBuilder.nestedUserInfoGraph(
-    onNavMyPerfume : () -> Unit,
+    appVersion: String,
+    onNavMyPerfume: () -> Unit,
     onNavLogin: () -> Unit,
     onNavBack: () -> Unit,
     onNavCommunity: (Int) -> Unit,
-    onNavEditPost: (Int) -> Unit,
     onNavEditProfile: () -> Unit,
     onNavManageMyInfo: () -> Unit,
     onNavMyActivity: () -> Unit,
@@ -58,7 +58,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     onNavMyComment: () -> Unit,
     onNavMyBirth: () -> Unit,
     onNavMyGender: () -> Unit,
-    onNavPerfume : (Int) -> Unit,
+    onNavPerfume: (Int) -> Unit,
 ) {
     navigation(
         startDestination = UserInfoGraph.MyPage.name,
@@ -71,7 +71,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
                 onNavLogin = onNavLogin,
-                onNavBack = onNavBack
+                onNavBack = onNavBack,
+                appVersion = appVersion
             )
         }
         composable(route = UserInfoGraph.EditProfileRoute.name) {
@@ -80,7 +81,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         composable(route = UserInfoGraph.MyPostRoute.name) {
             MyPostRoute(
                 onNavBack = onNavBack,
-                onNavEditPost = onNavEditPost
+                onNavCommunity = onNavCommunity
             )
         }
         composable(route = UserInfoGraph.MyActivityRoute.name) {

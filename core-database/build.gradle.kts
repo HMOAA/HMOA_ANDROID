@@ -46,7 +46,10 @@ android {
 dependencies {
     val hilt_version = "2.48.1"
     val datastore_version = "1.0.0"
+    val room_version = "2.6.1"
 
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     implementation("androidx.datastore:datastore-preferences:$datastore_version")

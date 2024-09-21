@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 import kotlinx.coroutines.launch
 
 @Composable
@@ -72,7 +75,9 @@ fun YearPickerDialog(
                 ) {
                     Text(
                         text = "출생연도",
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        fontFamily = pretendard
                     )
                 }
 
@@ -149,7 +154,10 @@ fun YearPickerDialog(
                             },
                         text = "${year}",
                         fontSize = fontSize,
-                        color = color
+                        color = color,
+                        style = TextStyle(fontWeight = FontWeight.Normal,
+                            fontFamily = pretendard
+                        )
                     )
                 }
             }

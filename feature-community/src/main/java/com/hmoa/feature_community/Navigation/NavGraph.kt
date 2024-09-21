@@ -2,8 +2,11 @@ package com.hmoa.feature_community.Navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
 import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
 import com.hmoa.feature_community.Screen.CommunityEditRoute
@@ -23,15 +26,20 @@ fun NavController.navigateToCommunityHome() = navigate(CommunityRoute.CommunityH
 
 //게시글 등록 화면
 fun NavController.navigateToCommunityPostRoute(type: String) =
-    navigate("${CommunityRoute.CommunityPostRoute.name}/${type}")
+    navigate("${CommunityRoute.CommunityPostRoute.name}/${type}"){
+        popUpTo("${CommunityRoute.CommunityPostRoute.name}/{type}") { inclusive = true }
+    }
 
 //게시글 수정 화면
-fun NavController.navigateToCommunityEditRoute(id: Int) = navigate("${CommunityRoute.CommunityEditRoute.name}/${id}")
+fun NavController.navigateToCommunityEditRoute(id: Int) =
+    navigate("${CommunityRoute.CommunityEditRoute.name}/${id}"){
+        popUpTo("${CommunityRoute.CommunityEditRoute.name}/{id}") { inclusive = true }
+    }
 
 //게시글 상세 화면
 fun NavController.navigateToCommunityDescriptionRoute(id: Int) =
     navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}") {
-        popUpTo("${CommunityRoute.CommunityDescriptionRoute.name}/{id}") { inclusive = true }
+        popUpTo("${CommunityRoute.CommunityDescriptionRoute.name}/{id}"){inclusive = true}
     }
 
 //게시글 검색 화면
@@ -53,10 +61,11 @@ fun NavGraphBuilder.nestedCommunityGraph(
     onNavLogin : () -> Unit,
     onNavHome : () -> Unit,
     onNavHPedia : () -> Unit,
+    onNavPopStack: () -> Unit,
 ) {
     navigation(
         startDestination = CommunityRoute.CommunityPreviewRoute.name,
-        route = CommunityRoute.CommunityGraphRoute.name
+        route = CommunityRoute.CommunityGraphRoute.name,
     ) {
         composable(route = CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
@@ -93,16 +102,21 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavCommunityDesc = onNavCommunityDescription
             )
         }
-        composable(route = "${CommunityRoute.CommunityDescriptionRoute.name}/{id}") {
-            val id = it.arguments?.getString("id") ?: "0"
+        composable(
+            route = "${CommunityRoute.CommunityDescriptionRoute.name}/{id}",
+            arguments = listOf(navArgument("id"){type = NavType.IntType}),
+            deepLinks = listOf(navDeepLink{uriPattern = "hmoa://community/{id}"})
+        ) {
+            val id = it.arguments?.getInt("id")
 
             CommunityDescriptionRoute(
-                id = id.toInt(),
+                id = id,
                 onNavCommunityEdit = onNavCommunityEdit,
                 onNavCommentEdit = onNavCommunityCommentEdit,
                 onNavLogin = onNavLogin,
                 onNavBack = onNavBack,
-                onNavHPedia = onNavHPedia
+                onNavHPedia = onNavHPedia,
+                onNavPopStack = onNavPopStack
             )
         }
         composable(route = CommunityRoute.CommunitySearchRoute.name) {

@@ -2,7 +2,11 @@ package com.hmoa.feature_userinfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +30,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 @Composable
 fun MyPostRoute(
     onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit,
+    onNavCommunity: (Int) -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -34,7 +38,7 @@ fun MyPostRoute(
     MyPostPage(
         uiState = uiState.value,
         onNavBack = onNavBack,
-        onNavEditPost = onNavEditPost,
+        onNavCommunity = onNavCommunity,
     )
 }
 
@@ -42,18 +46,16 @@ fun MyPostRoute(
 fun MyPostPage(
     uiState : PostUiState,
     onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit
+    onNavCommunity: (Int) -> Unit
 ) {
     when(uiState) {
-        PostUiState.Loading -> {
-            AppLoadingScreen()
-        }
+        PostUiState.Loading -> AppLoadingScreen()
         is PostUiState.Posts -> {
             val posts = uiState.posts.collectAsLazyPagingItems().itemSnapshotList
             MyPostContent(
                 posts = posts,
                 onNavBack = onNavBack,
-                onNavEditPost = onNavEditPost
+                onNavCommunity = onNavCommunity
             )
         }
         PostUiState.Error -> {
@@ -67,7 +69,7 @@ fun MyPostPage(
 private fun MyPostContent(
     posts : ItemSnapshotList<CommunityByCategoryResponseDto>,
     onNavBack: () -> Unit,
-    onNavEditPost: (communityId : Int) -> Unit
+    onNavCommunity: (communityId : Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -101,7 +103,7 @@ private fun MyPostContent(
                                         color = CustomColor.gray2,
                                         shape = RoundedCornerShape(10.dp)
                                     ),
-                                onPostClick = { onNavEditPost(post.communityId) },
+                                onPostClick = { onNavCommunity(post.communityId) },
                                 postType = post.category,
                                 postTitle = post.title,
                                 heartCount = post.heartCount,

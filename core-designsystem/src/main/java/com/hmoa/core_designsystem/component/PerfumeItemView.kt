@@ -13,6 +13,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun PerfumeItemView(
@@ -26,7 +27,7 @@ fun PerfumeItemView(
     imageBackgroundColor: Color,
     imageBorderStroke: BorderStroke?,
 ) {
-    Column(modifier = Modifier.padding(end = 8.dp).width(containerWidth.dp)) {
+    Column(modifier = Modifier.width(containerWidth.dp)) {
         Column(
             modifier = Modifier.width(containerWidth.dp).height(containerHeight.dp)
                 .background(imageBackgroundColor).border(border = imageBorderStroke?: BorderStroke(width = 0.dp, color = Color.Transparent)),
@@ -42,11 +43,14 @@ fun PerfumeItemView(
             )
         }
         Text(
-            text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
+            text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal,
+                fontFamily = pretendard
+            ),
             modifier = Modifier.padding(end = 4.dp, top = 8.dp, bottom = 6.dp)
         )
         Text(
-            text = perfumeName, style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
+            text = perfumeName, style = TextStyle(fontSize = 12.sp,fontWeight = FontWeight.Normal,
+                fontFamily = pretendard),
             modifier = Modifier.padding(end = 4.dp), softWrap = true
         )
     }

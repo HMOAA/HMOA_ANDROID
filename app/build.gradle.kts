@@ -21,9 +21,9 @@ android {
     defaultConfig {
         applicationId = "com.hmoa.app"
         minSdk = 26
-        targetSdk = 33
-        versionCode = 18
-        versionName = "1.0.0"
+        targetSdk = 34
+        versionCode = 21
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String
@@ -101,6 +101,7 @@ dependencies {
     implementation(project(":feature-brand"))
     implementation(project(":feature-hpedia"))
     implementation(project(":feature-like"))
+    implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))

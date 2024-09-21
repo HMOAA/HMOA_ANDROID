@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hmoa.core_designsystem.theme.pretendard
 
 
 @Composable
@@ -30,18 +31,18 @@ fun TopBarWithEvent(
         Text(
             text = "취소",
             fontSize = 16.sp,
-            style = TextStyle(fontWeight = FontWeight.Normal),
+            style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard),
             modifier = Modifier.clickable { onCancelClick() }
         )
         Text(
             text = title,
             fontSize = 20.sp,
-            style = TextStyle(fontWeight = FontWeight.Medium)
+            style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard)
         )
         Text(
             text = "확인",
             fontSize = 16.sp,
-            style = TextStyle(fontWeight = FontWeight.Normal),
+            style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard),
             modifier = Modifier.clickable { onConfirmClick() }
         )
     }

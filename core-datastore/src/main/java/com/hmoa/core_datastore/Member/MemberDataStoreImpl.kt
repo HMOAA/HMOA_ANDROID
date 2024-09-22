@@ -13,6 +13,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
+import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.core_network.service.MemberService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
@@ -123,6 +124,18 @@ class MemberDataStoreImpl @Inject constructor(
         }
         return result
     }
+
+    override suspend fun getOrder(): ResultResponse<List<OrderRecordDto>> {
+        val result = ResultResponse<List<OrderRecordDto>>()
+        memberService.getOrder().suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+
     override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {
         val result = ResultResponse<DefaultOrderInfoDto>()
         memberService.getOrderInfo().suspendOnSuccess{

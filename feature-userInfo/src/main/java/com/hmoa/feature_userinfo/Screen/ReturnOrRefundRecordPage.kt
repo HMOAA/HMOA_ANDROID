@@ -105,7 +105,7 @@ private fun ReturnOrRefundRecordItem(
                 Note(noteName = "피오니", noteContent = ""),
             ),
             noteCounts = 6,
-            price = 1200
+            totalPrice = 1200
         )
     }
 }

@@ -66,6 +66,7 @@ internal fun MyPageRoute(
     onNavManageMyInfo: () -> Unit,
     onNavLogin: () -> Unit,
     onNavMyPerfume: () -> Unit,
+    navOrderRecord: () -> Unit,
     onNavBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
@@ -111,6 +112,7 @@ internal fun MyPageRoute(
             onNavEditProfile = onNavEditProfile,
             onNavMyActivity = onNavMyActivity,
             onNavManageMyInfo = onNavManageMyInfo,
+            navOrderRecord = navOrderRecord,
             onErrorHandleLoginAgain = onNavLogin,
             onBackClick = onNavBack
         )
@@ -136,6 +138,7 @@ fun MyPage(
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
+    navOrderRecord: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -157,6 +160,7 @@ fun MyPage(
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
+                navOrderRecord = navOrderRecord
             )
         }
 
@@ -187,9 +191,10 @@ private fun MyPageContent(
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
+    navOrderRecord: () -> Unit
 ) {
     val columnInfo = listOf(
-        ColumnData("주문 내역"){},
+        ColumnData("주문 내역"){navOrderRecord()},
         ColumnData("취소/반품 내역"){},
         ColumnData("이용 약관"){},
         ColumnData("나의 향수") { onNavMyPerfume() },

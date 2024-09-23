@@ -2,14 +2,18 @@ package com.example.feature_userinfo
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.example.userinfo.MyActivityRoute
 import com.example.userinfo.MyCommentRoute
 import com.example.userinfo.MyPageRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
 import com.hmoa.feature_userinfo.MyPostRoute
 import com.hmoa.feature_userinfo.NoAuthMyPage
+import com.hmoa.feature_userinfo.Screen.OrderRecordRoute
+import com.hmoa.feature_userinfo.Screen.RefundRoute
 
 //graph 이동
 fun NavController.navigateToUserInfoGraph() = navigate(UserInfoGraph.UserInfoGraph.name)
@@ -41,6 +45,10 @@ fun NavController.navigateToMyBirth() = navigate(UserInfoGraph.MyBirthRoute.name
 //내 게시글 페이지
 fun NavController.navigateToMyPostPage() = navigate(UserInfoGraph.MyPostRoute.name)
 
+//환불 & 반품
+fun NavController.navigateToRefund(type: String, orderId: Int) = navigate("${UserInfoGraph.RefundRoute.name}/${type}/${orderId}")
+//주문 내역
+fun NavController.navigateToOrderRecord() = navigate(UserInfoGraph.OrderRecordRoute.name)
 //뒤로가기
 fun NavController.navigateToBack() = navigateUp()
 
@@ -59,6 +67,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     onNavMyBirth: () -> Unit,
     onNavMyGender: () -> Unit,
     onNavPerfume : (Int) -> Unit,
+    navRefund: (pageType: String, orderId: Int?) -> Unit,
 ) {
     navigation(
         startDestination = UserInfoGraph.MyPage.name,
@@ -120,6 +129,27 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         }
         composable(route = UserInfoGraph.NoAuthMyPage.name) {
             NoAuthMyPage(onNavLogin = onNavLogin)
+        }
+        composable(route = UserInfoGraph.UserInfoGraph.name){
+            OrderRecordRoute(
+                navBack = onNavBack,
+                navReturnOrRefund = navRefund,
+            )
+        }
+        composable(
+            route = "${UserInfoGraph.RefundRoute.name}/{type}/{orderId}",
+            arguments = listOf(
+                navArgument("type"){type = NavType.StringType},
+                navArgument("orderId"){type = NavType.IntType}
+            )
+        ){
+            val type = it.arguments?.getString("type")
+            val orderId = it.arguments?.getInt("orderId")
+            RefundRoute(
+                type = type,
+                orderId = orderId,
+                navBack = onNavBack
+            )
         }
     }
 }

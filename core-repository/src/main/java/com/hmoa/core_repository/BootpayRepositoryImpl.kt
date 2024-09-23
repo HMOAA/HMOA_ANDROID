@@ -19,4 +19,8 @@ class BootpayRepositoryImpl @Inject constructor(
     override suspend fun postCancel(requestDto: CancelBootpayRequestDto): ResultResponse<DataResponseDto<Any>> {
         return bootpayDataStore.postCancel(requestDto)
     }
+
+    override suspend fun deleteOrder(orderId: Int): ResultResponse<DataResponseDto<Any>> {
+        return bootpayDataStore.deleteOrder(orderId)
+    }
 }

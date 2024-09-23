@@ -35,4 +35,14 @@ class BootpayDataStoreImpl @Inject constructor(
         }
         return result
     }
+
+    override suspend fun deleteOrder(orderId: Int): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        bootpayService.deleteOrder(orderId).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }
+        return result
+    }
 }

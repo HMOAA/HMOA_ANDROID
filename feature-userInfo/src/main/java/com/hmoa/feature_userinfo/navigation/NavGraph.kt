@@ -67,7 +67,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     onNavMyBirth: () -> Unit,
     onNavMyGender: () -> Unit,
     onNavPerfume : (Int) -> Unit,
-    navRefund: (pageType: String, orderId: Int?) -> Unit,
+    navOrderRecord: () -> Unit,
+    navRefund: (pageType: String, orderId: Int) -> Unit,
 ) {
     navigation(
         startDestination = UserInfoGraph.MyPage.name,
@@ -80,7 +81,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
                 onNavLogin = onNavLogin,
-                onNavBack = onNavBack
+                onNavBack = onNavBack,
+                navOrderRecord = navOrderRecord
             )
         }
         composable(route = UserInfoGraph.EditProfileRoute.name) {
@@ -130,7 +132,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         composable(route = UserInfoGraph.NoAuthMyPage.name) {
             NoAuthMyPage(onNavLogin = onNavLogin)
         }
-        composable(route = UserInfoGraph.UserInfoGraph.name){
+        composable(route = UserInfoGraph.OrderRecordRoute.name){
             OrderRecordRoute(
                 navBack = onNavBack,
                 navReturnOrRefund = navRefund,

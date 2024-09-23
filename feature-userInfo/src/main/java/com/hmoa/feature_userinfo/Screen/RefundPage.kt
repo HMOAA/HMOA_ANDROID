@@ -1,5 +1,6 @@
 package com.hmoa.feature_userinfo.Screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,9 +53,11 @@ fun RefundRoute(
     navBack: () -> Unit,
     viewModel: RefundViewModel = hiltViewModel()
 ){
+    Log.d("TAG TEST", "type : ${type} / orderId : ${orderId}")
     viewModel.setId(orderId)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val isDone = viewModel.isDone.collectAsStateWithLifecycle()
     ReturnOrRefundScreen(
         uiState = uiState.value,
         errState = errState.value,
@@ -61,6 +65,9 @@ fun RefundRoute(
         doRefund = {viewModel.refundOrder()},
         navBack = navBack
     )
+    LaunchedEffect(isDone.value){
+        if(isDone.value) navBack()
+    }
 }
 
 @Composable
@@ -107,12 +114,6 @@ private fun RefundContent(
     val title = if(type == "refund") "환불 신청" else "반품 신청"
     val buttonText = if(type == "refund") "환불 신청" else "반품 신청 (1대1 문의)"
     val context = LocalContext.current
-    val buttonEvent = if(type == "refund") doRefund()
-        else TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
-                if (err != null) {
-                    Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
-                }
-            }
 
     Column(
         modifier = Modifier
@@ -139,7 +140,6 @@ private fun RefundContent(
                 Spacer(Modifier.height(24.dp))
             }
             item{
-                Spacer(Modifier.height(24.dp))
                 HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Color.Black)
                 Row(
                     modifier = Modifier
@@ -231,7 +231,14 @@ private fun RefundContent(
             isEnabled = true,
             btnText = buttonText,
             radious = 5,
-            onClick = { buttonEvent }
+            onClick = {
+                if(type == "refund") doRefund()
+                else TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
+                    if (err != null) {
+                        Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         )
     }
 }

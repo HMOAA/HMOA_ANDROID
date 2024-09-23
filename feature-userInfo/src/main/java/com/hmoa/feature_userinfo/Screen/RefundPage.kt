@@ -134,7 +134,7 @@ private fun RefundContent(
                     productName = product.productName,
                     notes = product.notes,
                     noteCounts = product.notesCount,
-                    price = product.price
+                    totalPrice = product.price
                 )
             }
             item{
@@ -152,7 +152,7 @@ private fun RefundContent(
                         fontFamily = CustomFont.bold
                     )
                     Text(
-                        text = "${formatWon(data.paymentAmount)}원",
+                        text = "${formatWon(data.totalAmount)}원",
                         fontSize = 20.sp,
                         fontFamily = CustomFont.bold,
                         color = CustomColor.red
@@ -175,7 +175,7 @@ private fun RefundContent(
                             color = CustomColor.gray3
                         )
                         Text(
-                            text = "${formatWon(data.totalAmount)}원",
+                            text = "${formatWon(data.paymentAmount)}원",
                             fontSize = 12.sp,
                             fontFamily = CustomFont.medium,
                             color = CustomColor.gray3

@@ -136,6 +136,7 @@ private fun RefundContent(
                     noteCounts = product.notesCount,
                     totalPrice = product.price
                 )
+                Spacer(Modifier.height(24.dp))
             }
             item{
                 Spacer(Modifier.height(24.dp))

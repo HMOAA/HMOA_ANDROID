@@ -32,7 +32,7 @@ import com.hmoa.feature_userinfo.viewModel.OrderRecordViewModel
 @Composable
 fun OrderRecordRoute(
     navBack: () -> Unit,
-    navReturnOrRefund: (pageType: String, orderId: Int?) -> Unit,
+    navReturnOrRefund: (pageType: String, orderId: Int) -> Unit,
     viewModel: OrderRecordViewModel = hiltViewModel()
 ){
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,7 +50,7 @@ fun OrderRecordScreen(
     uiState: OrderRecordUiState,
     errState: ErrorUiState,
     navBack: () -> Unit,
-    navReturnOrRefund: (pageType: String, orderId: Int?) -> Unit
+    navReturnOrRefund: (pageType: String, orderId: Int) -> Unit
 ){
     var isOpen by remember{mutableStateOf(true)}
     when(uiState){
@@ -83,7 +83,7 @@ fun OrderRecordScreen(
 fun OrderRecordContent(
     data: List<OrderRecordDto>,
     navBack: () -> Unit,
-    navReturnOrRefund: (pageType: String, orderId: Int?) -> Unit
+    navReturnOrRefund: (pageType: String, orderId: Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -102,10 +102,10 @@ fun OrderRecordContent(
             items(data) { order ->
                 OrderRecordItem(
                     shippingType = order.orderStatus,
-                    courierCompany = order.courierCompany,
+                    courierCompany = order.courierCompany ?: "Null Company",
                     products = order.orderProducts.productInfo.noteProducts,
                     totalPrice = order.orderProducts.totalAmount,
-                    trackingNumber = order.trackingNumber,
+                    trackingNumber = order.trackingNumber ?: "Tracking Number",
                     onRefundClick = { navReturnOrRefund("refund", order.orderId) },
                     onReturnClick = { navReturnOrRefund("return", order.orderId) }
                 )

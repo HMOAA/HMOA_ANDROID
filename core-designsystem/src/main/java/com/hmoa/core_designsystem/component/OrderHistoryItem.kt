@@ -124,7 +124,7 @@ fun ProductView(
     product: NoteProduct
 ){
     val notes = product.notes.joinToString {it.noteName}
-    val totalPrice = product.notesCount * product.price
+    val price = product.price / product.notesCount
 
     Row(modifier = Modifier.fillMaxWidth()){
         CircleImageView(
@@ -147,14 +147,14 @@ fun ProductView(
             )
             Spacer(Modifier.height(18.dp))
             Text(
-                text = "수량 ${product.notesCount}개 ${formatWon(product.price)}원/개",
+                text = "수량 ${product.notesCount}개 ${formatWon(price)}원/개",
                 fontSize = 10.sp,
                 fontFamily = CustomFont.medium,
                 color = CustomColor.gray3
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "${formatWon(totalPrice)}원",
+                text = "${formatWon(product.price)}원",
                 fontSize = 14.sp,
                 fontFamily = CustomFont.semiBold,
             )

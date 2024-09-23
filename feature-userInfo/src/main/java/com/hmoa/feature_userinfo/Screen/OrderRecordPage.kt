@@ -7,23 +7,84 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.OrderRecordItem
+import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.feature_userinfo.viewModel.OrderRecordUiState
+import com.hmoa.feature_userinfo.viewModel.OrderRecordViewModel
 
+// 주문 내역 화면
 @Composable
-fun OrderRecordRoute(){
-
+fun OrderRecordRoute(
+    navBack: () -> Unit,
+    navReturnOrRefund: (pageType: String, orderId: Int?) -> Unit,
+    viewModel: OrderRecordViewModel = hiltViewModel()
+){
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    OrderRecordScreen(
+        uiState = uiState.value,
+        errState = errState.value,
+        navBack = navBack,
+        navReturnOrRefund = navReturnOrRefund
+    )
 }
 
 @Composable
-fun OrderRecordScreen(){
-    val dummyData = listOf(0)
+fun OrderRecordScreen(
+    uiState: OrderRecordUiState,
+    errState: ErrorUiState,
+    navBack: () -> Unit,
+    navReturnOrRefund: (pageType: String, orderId: Int?) -> Unit
+){
+    var isOpen by remember{mutableStateOf(true)}
+    when(uiState){
+        OrderRecordUiState.Loading -> AppLoadingScreen()
+        OrderRecordUiState.Error -> {
+            ErrorUiSetView(
+                isOpen = isOpen,
+                onConfirmClick = {
+                    isOpen = false
+                    navBack()
+                },
+                errorUiState = errState,
+                onCloseClick = {
+                    isOpen = false
+                    navBack()
+                }
+            )
+        }
+        is OrderRecordUiState.Success -> {
+            OrderRecordContent(
+                data = uiState.orderRecords,
+                navBack = navBack,
+                navReturnOrRefund = navReturnOrRefund
+            )
+        }
+    }
+}
+
+@Composable
+fun OrderRecordContent(
+    data: List<OrderRecordDto>,
+    navBack: () -> Unit,
+    navReturnOrRefund: (pageType: String, orderId: Int?) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,33 +94,20 @@ fun OrderRecordScreen(){
         TopBar(
             title = "주문 내역",
             navIcon = painterResource(R.drawable.ic_back),
-            onNavClick = {/** 뒤로가기 */}
+            onNavClick = navBack
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ){
-            items(dummyData){
+            items(data) { order ->
                 OrderRecordItem(
-                    shippingType = "배송 중",
-                    noteUrl = "",
-                    noteName = "시트러스",
-                    notes = listOf("라임 만다린", "베르가못", "비터 오렌지", "자몽"),
-                    noteCount = 4,
-                    price = 1200,
-                    navCheckDeliveryStatus = { /** 배송 조회 화면으로 navigation */},
-                    onRefundClick = { /** 환불 신청 화면으로 navigation */},
-                    onReturnClick = { /** 반품 신청 화면으로 navigation */}
-                )
-                OrderRecordItem(
-                    shippingType = "배송 완료",
-                    noteUrl = "",
-                    noteName = "플로럴",
-                    notes = listOf("네롤리", "화이트 로즈", "링크 로즈", "화이트로즈", "바이올렛", "피오니"),
-                    noteCount = 6,
-                    price = 1200,
-                    navCheckDeliveryStatus = { /** 배송 조회 화면으로 navigation */},
-                    onRefundClick = { /** 환불 신청 화면으로 navigation */},
-                    onReturnClick = { /** 반품 신청 화면으로 navigation */}
+                    shippingType = order.orderStatus,
+                    courierCompany = order.courierCompany,
+                    products = order.orderProducts.productInfo.noteProducts,
+                    totalPrice = order.orderProducts.totalAmount,
+                    trackingNumber = order.trackingNumber,
+                    onRefundClick = { navReturnOrRefund("refund", order.orderId) },
+                    onReturnClick = { navReturnOrRefund("return", order.orderId) }
                 )
             }
         }
@@ -69,5 +117,12 @@ fun OrderRecordScreen(){
 @Composable
 @Preview
 private fun OrderRecordUITest(){
-    OrderRecordScreen()
+    OrderRecordScreen(
+        uiState = OrderRecordUiState.Loading,
+        errState = ErrorUiState.Loading,
+        navBack = {},
+        navReturnOrRefund = { a, b ->
+
+        }
+    )
 }

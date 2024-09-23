@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrderRecordDto(
-    val courierCompany: String,
+    val courierCompany: String?,
     val orderId: Int,
     val orderProducts: FinalOrderResponseDto,
     val orderStatus: OrderStatus,
-    val trackingNumber: String
+    val trackingNumber: String?
 )

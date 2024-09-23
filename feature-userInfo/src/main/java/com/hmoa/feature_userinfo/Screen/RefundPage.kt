@@ -15,6 +15,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -22,45 +26,94 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.formatWon
+import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteListItem
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.feature_userinfo.BuildConfig
+import com.hmoa.feature_userinfo.viewModel.RefundUiState
+import com.hmoa.feature_userinfo.viewModel.RefundViewModel
 import com.kakao.sdk.talk.TalkApiClient
 
+//반품 & 환불 화면
 @Composable
-fun ReturnOrRefundRoute(
-    type: String
+fun RefundRoute(
+    type: String?,
+    orderId: Int?,
+    navBack: () -> Unit,
+    viewModel: RefundViewModel = hiltViewModel()
 ){
-    val context = LocalContext.current
-    val onChatClick = {
-        TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
-            if (err != null) {
-                Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    viewModel.setId(orderId)
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     ReturnOrRefundScreen(
-        type = type,
-        onChatClick = onChatClick
+        uiState = uiState.value,
+        errState = errState.value,
+        type = type!!,
+        doRefund = {viewModel.refundOrder()},
+        navBack = navBack
     )
 }
 
 @Composable
 fun ReturnOrRefundScreen(
+    uiState: RefundUiState,
+    errState: ErrorUiState,
     type: String,
-    onChatClick: () -> Unit
+    doRefund: () -> Unit,
+    navBack: () -> Unit,
+){
+    var isOpen by remember{mutableStateOf(false)}
+    when(uiState){
+        RefundUiState.Loading -> AppLoadingScreen()
+        is RefundUiState.Success -> {
+            RefundContent(
+                type = type,
+                data = uiState.data,
+                doRefund = doRefund,
+                navBack = navBack
+            )
+        }
+        RefundUiState.Error -> {
+            ErrorUiSetView(
+                isOpen = isOpen,
+                onConfirmClick = {
+                    isOpen = false
+                },
+                errorUiState = errState,
+                onCloseClick = {
+                    isOpen = false
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun RefundContent(
+    type: String,
+    data: FinalOrderResponseDto,
+    doRefund: () -> Unit,
+    navBack: () -> Unit,
 ){
     val title = if(type == "refund") "환불 신청" else "반품 신청"
     val buttonText = if(type == "refund") "환불 신청" else "반품 신청 (1대1 문의)"
-    val buttonEvent = if(type == "refund") {/** 환불 신청 api */} else onChatClick()
-    val dummyData = listOf(0)
-    val totalPrice = 15000
-    val totalOrderPrice = 12000
-    val shippingPrice = 3000
+    val context = LocalContext.current
+    val buttonEvent = if(type == "refund") doRefund()
+        else TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
+                if (err != null) {
+                    Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
+                }
+            }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,18 +124,17 @@ fun ReturnOrRefundScreen(
         TopBar(
             title = title,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = { /** 뒤로가기 navigation */ }
+            onNavClick = navBack
         )
         LazyColumn{
             item{Spacer(Modifier.height(20.dp))}
-            items(dummyData){
-                /** dummy data */
+            items(data.productInfo.noteProducts){product ->
                 NoteListItem(
-                    noteUrl = "",
-                    productName = "플로럴",
-                    notes = listOf("네롤리", "화이트 로즈", "피읔 로즈", "화이트로즈", "바이올렛", "피오니"),
-                    noteCounts = 6,
-                    price = 1200
+                    noteUrl = product.productPhotoUrl,
+                    productName = product.productName,
+                    notes = product.notes,
+                    noteCounts = product.notesCount,
+                    price = product.price
                 )
             }
             item{
@@ -100,7 +152,7 @@ fun ReturnOrRefundScreen(
                         fontFamily = CustomFont.bold
                     )
                     Text(
-                        text = "${formatWon(totalPrice)}",
+                        text = "${formatWon(data.paymentAmount)}원",
                         fontSize = 20.sp,
                         fontFamily = CustomFont.bold,
                         color = CustomColor.red
@@ -123,7 +175,7 @@ fun ReturnOrRefundScreen(
                             color = CustomColor.gray3
                         )
                         Text(
-                            text = "${formatWon(totalOrderPrice)}원",
+                            text = "${formatWon(data.totalAmount)}원",
                             fontSize = 12.sp,
                             fontFamily = CustomFont.medium,
                             color = CustomColor.gray3
@@ -142,7 +194,7 @@ fun ReturnOrRefundScreen(
                             color = CustomColor.gray3
                         )
                         Text(
-                            text = "${formatWon(shippingPrice)}원",
+                            text = "${formatWon(data.shippingAmount)}원",
                             fontSize = 12.sp,
                             fontFamily = CustomFont.medium,
                             color = CustomColor.gray3
@@ -162,7 +214,7 @@ fun ReturnOrRefundScreen(
                         fontFamily = CustomFont.semiBold
                     )
                     Text(
-                        text = "${formatWon(totalPrice)}원",
+                        text = "${formatWon(data.totalAmount)}원",
                         fontSize = 12.sp,
                         fontFamily = CustomFont.semiBold
                     )
@@ -188,6 +240,9 @@ fun ReturnOrRefundScreen(
 private fun ReturnOrRefundUITest(){
     ReturnOrRefundScreen(
         type = "refund",
-        onChatClick = {}
+        uiState = RefundUiState.Loading,
+        errState = ErrorUiState.Loading,
+        doRefund = {},
+        navBack = {}
     )
 }

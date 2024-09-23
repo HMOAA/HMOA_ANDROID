@@ -1,5 +1,6 @@
 package com.hmoa.feature_userinfo.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorUiState
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -47,14 +47,16 @@ class OrderRecordViewModel @Inject constructor(
     )
 
     val uiState: StateFlow<OrderRecordUiState> = errorUiState.map{
-        if (it is ErrorUiState.ErrorData && it.isValidate()) return@map
+        Log.d("TAG TEST", "error state : ${it}")
+//        if (it is ErrorUiState.ErrorData && it.isValidate()) return@map
         val result = memberRepository.getOrder()
         if (result.errorMessage != null) throw Exception(result.errorMessage!!.message)
         result.data!!
-    }.filterNot{it == Unit}.asResult().map{ result ->
+    }.asResult().map{ result ->
+        Log.d("TAG TEST", "result : ${result}")
         when(result){
             Result.Loading -> OrderRecordUiState.Loading
-            is Result.Success -> OrderRecordUiState.Success(result.data as List<OrderRecordDto>)
+            is Result.Success -> OrderRecordUiState.Success(result.data)
             is Result.Error -> {
                 handleErrorType(
                     error = result.exception,

@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -53,11 +52,10 @@ class RefundViewModel @Inject constructor(
     )
 
     val uiState = errorUiState.map{
-        if(it is ErrorUiState.ErrorData && it.isValidate()) return@map
         val result = hshopRepository.getFinalOrderResult(orderId = orderId.value!!)
         if(result.errorMessage != null) throw Exception(result.errorMessage!!.message)
         result.data!!
-    }.filterNot{it == Unit}.asResult().map{ result ->
+    }.asResult().map{ result ->
         when(result){
             Result.Loading -> RefundUiState.Loading
             is Result.Success -> RefundUiState.Success(result.data as FinalOrderResponseDto)

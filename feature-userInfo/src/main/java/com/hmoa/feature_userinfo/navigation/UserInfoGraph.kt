@@ -12,4 +12,6 @@ enum class UserInfoGraph {
     MyInfoRoute, //내 정보 화면
     MyBirthRoute, //출생연도 화면
     MyGenderRoute, //성별 화면
+    OrderRecordRoute, //주문 내역
+    RefundRoute, //환불 & 반품 화면
 }

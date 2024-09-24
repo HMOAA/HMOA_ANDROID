@@ -25,18 +25,20 @@ import com.hmoa.core_designsystem.theme.pretendard
 @Composable
 fun TagBadge(
     height : Dp = 28.dp,
-    backgroundColor : Color = Color.White,
-    textColor : Color = CustomColor.gray3,
     tag : String,
     isClickable : Boolean = false,
+    isSelected:Boolean? = false,
     onClick : (String) -> Unit = {},
 ){
+    val backgroundColor = if (isSelected?:true) Color.Black else Color.White
+    val borderColor = if (isSelected?:true) Color.Black else CustomColor.gray3
+    val textColor = if (isSelected?:true) Color.White else Color.Black
     Text(
         modifier = Modifier
             .wrapContentWidth()
             .height(height)
             .background(color = backgroundColor, shape = RoundedCornerShape(14.dp))
-            .border(width = 1.dp, color = CustomColor.gray3, shape = RoundedCornerShape(14.dp))
+            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(14.dp))
             .then(
                 if (isClickable) {
                     Modifier.clickable{onClick(tag)}
@@ -44,13 +46,13 @@ fun TagBadge(
                     Modifier
                 }
             )
-            .padding(horizontal = 14.dp, vertical = 8.dp),
+            .padding(horizontal = 14.dp).padding(top = 7.dp, bottom = 8.dp),
         text = tag,
         fontSize = 12.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         color = textColor,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 }
 
@@ -62,6 +64,8 @@ fun TestMagazineTag(){
             .fillMaxSize()
             .background(color = Color.White)
     ){
-        TagBadge(tag = "#Test", isClickable = true)
+        TagBadge(tag = "#매거진", isClickable = true)
+        TagBadge(tag = "#HBTI", isClickable = false, isSelected = true)
+        TagBadge(tag = "#HBTI", isClickable = false, isSelected = false)
     }
 }

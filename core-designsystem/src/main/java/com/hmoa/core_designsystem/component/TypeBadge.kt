@@ -35,7 +35,7 @@ fun TypeBadge(
     unSelectedIcon: Painter? = null,
     iconColor: Color? = null,
     selectedColor: Color = Color.Black,
-    unSelectedColor: Color = CustomColor.gray2
+    unSelectedColor: Color = CustomColor.gray2,
 ) {
     val fontStyle = TextStyle(
         fontSize = fontSize,

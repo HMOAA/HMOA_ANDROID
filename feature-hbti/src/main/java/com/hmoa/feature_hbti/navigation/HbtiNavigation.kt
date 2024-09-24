@@ -25,7 +25,6 @@ fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
 
 fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
-fun NavController.navigateToSelectSpice() = navigate(HbtiRoute.SelectSpiceRoute.name)
 fun NavController.navigateToNotePickResult(productIdsToJson: String) =
     navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}")
 
@@ -154,15 +153,6 @@ fun NavGraphBuilder.perfumeRecommendationResultRoute() {
     }
 }
 
-fun NavGraphBuilder.spiceSelectScreen() {
-    composable(route = HbtiRoute.SelectSpiceRoute.name) {
-        SelectSpiceRoute(
-            /** navigation event 추후 추가 **/
-            onNavNext = { /*TODO*/ },
-            onNavBack = { /*TODO*/ }
-        )
-    }
-}
 
 fun NavGraphBuilder.order() {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {

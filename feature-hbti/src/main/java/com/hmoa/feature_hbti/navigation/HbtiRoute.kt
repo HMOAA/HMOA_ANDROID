@@ -5,7 +5,6 @@ enum class HbtiRoute {
     HbtiSurvey,
     PerfumeRecommendationRoute,
     PerfumeRecommendationResultRoute,
-    SelectSpiceRoute,
     HbtiSurveyResult,
     HbtiSurveyLoading,
     HbtiProcess,

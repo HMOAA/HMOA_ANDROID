@@ -1,6 +1,5 @@
 package com.hmoa.feature_userinfo.Screen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +52,6 @@ fun RefundRoute(
     navBack: () -> Unit,
     viewModel: RefundViewModel = hiltViewModel()
 ){
-    Log.d("TAG TEST", "type : ${type} / orderId : ${orderId}")
     viewModel.setId(orderId)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()

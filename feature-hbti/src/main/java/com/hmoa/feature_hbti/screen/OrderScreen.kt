@@ -405,8 +405,6 @@ private fun DefaultAddressInfo(addressInfo: DefaultAddressDto) {
             TagBadge(
                 tag = addressInfo.addressName,
                 height = 20.dp,
-                backgroundColor = CustomColor.gray1,
-                textColor = Color.Black
             )
             Spacer(Modifier.weight(1f))
             Text(

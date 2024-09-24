@@ -63,6 +63,7 @@ fun NoteOrderQuantityPickContent(
                             )
                         )
                         SurveyOptionList(
+                            isMutipleAnswerAvailable = false,
                             answerIds = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).noteQuantityChoiceAnswersId,
                             surveyOptions = viewModel.noteOrderQuantityChoiceContents,
                             surveyOptionIds = viewModel.NOTE_ORDER_QUANTITY_CHOICE_IDS,

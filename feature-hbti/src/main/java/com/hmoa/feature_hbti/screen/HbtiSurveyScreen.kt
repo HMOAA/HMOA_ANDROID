@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.calculateProgressStepSize
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
@@ -29,15 +30,6 @@ import com.hmoa.core_model.data.HbtiQuestionItems
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
 import kotlinx.coroutines.launch
-
-fun calculateProgressStepSize(questions: MutableCollection<HbtiQuestionItem>?): Float {
-    if ((questions?.size ?: 0) <= 1) {
-        return 100f
-    } else {
-        return ((100).div(questions?.size?.minus(1) ?: 10)).div(100.0).toFloat()
-    }
-
-}
 
 @Composable
 fun HbtiSurveyRoute(
@@ -123,7 +115,8 @@ fun HbtiSurveyContent(
     var currentProgress by remember { mutableStateOf(0f) }
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
-    val additionalProgress = calculateProgressStepSize(hbtiQuestionItems?.hbtiQuestions?.values)
+    val pageContent = hbtiQuestionItems?.hbtiQuestions?.values?.map { it }
+    val additionalProgress = calculateProgressStepSize(pageContent)
     val pagerState =
         rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
 

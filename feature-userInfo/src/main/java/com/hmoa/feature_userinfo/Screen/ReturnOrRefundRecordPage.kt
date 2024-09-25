@@ -26,6 +26,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.NoteListItem
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_model.response.Note
 
 @Composable
 fun ReturnOrRefundRecordRoute(){
@@ -95,9 +96,16 @@ private fun ReturnOrRefundRecordItem(
         NoteListItem(
             noteUrl = "",
             productName = "플로럴",
-            notes = listOf("네롤리","화이트로즈","핑크 로즈", "화이트 로즈", "바이올렛", "피오니"),
+            notes = listOf(
+                Note(noteName = "네롤리", noteContent = ""),
+                Note(noteName = "화이트로즈", noteContent = ""),
+                Note(noteName = "핑크 로즈", noteContent = ""),
+                Note(noteName = "화이트 로즈", noteContent = ""),
+                Note(noteName = "바이올렛", noteContent = ""),
+                Note(noteName = "피오니", noteContent = ""),
+            ),
             noteCounts = 6,
-            price = 1200
+            totalPrice = 1200
         )
     }
 }

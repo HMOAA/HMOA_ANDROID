@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,17 +17,18 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_common.formatWon
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_model.response.Note
 
 @Composable
 fun NoteListItem(
     noteUrl: String,
     productName: String,
-    notes: List<String>,
+    notes: List<Note>,
     noteCounts: Int,
-    price: Int
+    totalPrice: Int
 ){
-    val notes = notes.joinToString { it }
-    val totalPrice = noteCounts * price
+    val notes = notes.joinToString { it.noteName }
+    val price = totalPrice / noteCounts
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Bottom
@@ -61,7 +63,7 @@ fun NoteListItem(
         }
         Spacer(Modifier.width(10.dp))
         Column(
-            modifier = Modifier.width(50.dp),
+            modifier = Modifier.wrapContentWidth(),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.End
         ) {

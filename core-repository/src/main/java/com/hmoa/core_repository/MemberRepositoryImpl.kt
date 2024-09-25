@@ -12,6 +12,7 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
+import com.hmoa.core_model.response.OrderRecordDto
 import java.io.File
 import javax.inject.Inject
 
@@ -65,6 +66,10 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun updateNickname(request: NickNameRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateNickname(request)
+    }
+
+    override suspend fun getOrder(): ResultResponse<List<OrderRecordDto>> {
+        return memberDataStore.getOrder()
     }
 
     override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {

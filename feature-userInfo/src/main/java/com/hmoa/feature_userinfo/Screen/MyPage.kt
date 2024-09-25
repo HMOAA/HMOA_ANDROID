@@ -1,8 +1,11 @@
 package com.example.userinfo
 
 import android.content.Intent
-import android.net.Uri
+import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -38,6 +41,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature_userinfo.viewModel.MyPageViewModel
@@ -66,6 +70,7 @@ internal fun MyPageRoute(
     onNavManageMyInfo: () -> Unit,
     onNavLogin: () -> Unit,
     onNavMyPerfume: () -> Unit,
+    navOrderRecord: () -> Unit,
     onNavBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
@@ -83,7 +88,6 @@ internal fun MyPageRoute(
     }
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
     }
-    val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
@@ -99,7 +103,6 @@ internal fun MyPageRoute(
                 launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
                 OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
             },
-            openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
             onDelAccount = {
                 scope.launch {
                     launch { viewModel.delAccount() }.join()
@@ -111,6 +114,7 @@ internal fun MyPageRoute(
             onNavEditProfile = onNavEditProfile,
             onNavMyActivity = onNavMyActivity,
             onNavManageMyInfo = onNavManageMyInfo,
+            navOrderRecord = navOrderRecord,
             onErrorHandleLoginAgain = onNavLogin,
             onBackClick = onNavBack
         )
@@ -130,12 +134,12 @@ fun MyPage(
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
-    openPrivacyPolicyLink: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavMyPerfume: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
+    navOrderRecord: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -150,13 +154,14 @@ fun MyPage(
                 provider = uiState.provider,
                 logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
-                openPrivacyPolicyLink = openPrivacyPolicyLink,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
                 onNavMyPerfume = onNavMyPerfume,
                 onNavEditProfile = onNavEditProfile,
                 onNavMyActivity = onNavMyActivity,
                 onNavManageMyInfo = onNavManageMyInfo,
+                navOrderRecord = navOrderRecord,
+                navBack = onBackClick
             )
         }
 
@@ -180,75 +185,95 @@ private fun MyPageContent(
     provider: String,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
-    openPrivacyPolicyLink: () -> Unit,
     onDelAccount: () -> Unit,
     onNavMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
+    navOrderRecord: () -> Unit,
+    navBack: () -> Unit
 ) {
+    var isOpen by remember{mutableStateOf(false)}
+    var url by remember{mutableStateOf("")}
     val columnInfo = listOf(
-        ColumnData("주문 내역"){},
+        ColumnData("주문 내역"){navOrderRecord()},
         ColumnData("취소/반품 내역"){},
-        ColumnData("이용 약관"){},
+        ColumnData("이용 약관"){
+            isOpen = true
+            url = BuildConfig.TERMS_OF_SERVICE
+        },
         ColumnData("나의 향수") { onNavMyPerfume() },
         ColumnData("내 활동") { onNavMyActivity() },
         ColumnData("내 정보관리") { onNavManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
-        ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
+        ColumnData("개인정보 처리방침") {
+            isOpen = true
+            url = BuildConfig.PRIVACY_POLICY_URI
+        },
         ColumnData("버전 정보 ${APP_VERSION}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
         ColumnData("로그아웃") { logoutEvent() },
         ColumnData("계정삭제") { onDelAccount() }
     )
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
-    ) {
-        item {
-            TopBar(title = "마이페이지")
-            UserProfileInfo(
-                profile = profile,
-                nickname = nickname,
-                provider = provider,
-                onNavEditProfile = onNavEditProfile
-            )
-            //ServiceAlarm()
-            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+    BackHandler(
+        enabled = true,
+        onBack = {
+            if (isOpen) isOpen = false
+            else navBack()
         }
-
-        itemsIndexed(columnInfo) { idx, it ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = it.title,
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    )
+    if (isOpen){
+        CustomWebView(url)
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.White)
+        ) {
+            item {
+                TopBar(title = "마이페이지")
+                UserProfileInfo(
+                    profile = profile,
+                    nickname = nickname,
+                    provider = provider,
+                    onNavEditProfile = onNavEditProfile
                 )
-
-                IconButton(
-                    modifier = Modifier.size(20.dp),
-                    onClick = it.onNavClick
-                ) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(R.drawable.ic_next),
-                        contentDescription = "Navigation Button",
-                        tint = CustomColor.gray2
-                    )
-                }
-            }
-            if (idx % 3 == 2) {
+                //ServiceAlarm()
                 HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+            }
+
+            itemsIndexed(columnInfo) { idx, it ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = it.title,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                    )
+
+                    IconButton(
+                        modifier = Modifier.size(20.dp),
+                        onClick = it.onNavClick
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            painter = painterResource(R.drawable.ic_next),
+                            contentDescription = "Navigation Button",
+                            tint = CustomColor.gray2
+                        )
+                    }
+                }
+                if (idx % 3 == 2) {
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                }
             }
         }
     }
@@ -322,4 +347,26 @@ private fun ServiceAlarm(
         /** service alarm 토글 버튼 */
         OnAndOffBtn()
     }
+}
+
+@Composable
+private fun CustomWebView(url: String){
+    val context = LocalContext.current
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = {
+            WebView(context).apply{
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                settings.domStorageEnabled = true
+                webViewClient = object: WebViewClient(){
+
+                }
+
+                loadUrl(url)
+            }
+        }
+    )
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
@@ -77,9 +78,9 @@ fun PostListItem(
                         icon = R.drawable.ic_heart_filled,
                         count = heartCount
                     )
-                    Spacer(Modifier.width(8.dp))
                 }
                 if (commentCount > 0) {
+                    Spacer(Modifier.width(8.dp))
                     CountBadge(
                         icon = R.drawable.ic_kakao,
                         count = commentCount
@@ -94,6 +95,7 @@ fun PostListItem(
                 fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
+                fontFamily = CustomFont.regular
             )
         }
     }
@@ -108,7 +110,7 @@ fun TestPostListItem(){
         PostListItem (
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .height(52.dp)
                 .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
             onPostClick = {},
             postType = "추천해주세요",
@@ -120,7 +122,7 @@ fun TestPostListItem(){
         PostListItem (
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .height(52.dp)
                 .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
             onPostClick = {},
             postType = "추천해주세요",

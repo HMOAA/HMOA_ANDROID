@@ -4,7 +4,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,10 +35,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeWithCountItemView
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_domain.entity.data.SortType
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
@@ -148,12 +156,12 @@ fun BrandView(koreanTitle: String, englishTitle: String, imageUrl: String) {
             Text(
                 text = englishTitle,
                 modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.White)
+                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.White, fontFamily = CustomFont.regular)
             )
             Text(
                 text = koreanTitle,
                 modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.White)
+                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.White, fontFamily = CustomFont.regular)
             )
         }
         Column(
@@ -209,13 +217,13 @@ fun PerfumeGridView(
                 ) {
                     Text(
                         "좋아요순",
-                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
+                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light, fontFamily = CustomFont.regular),
                         modifier = Modifier.padding(end = 4.dp).clickable { onSortLikeClick() },
                         color = likeColor
                     )
                     Text(
                         "최신순",
-                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light),
+                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light, fontFamily = CustomFont.regular),
                         modifier = Modifier.clickable { onSortLatestClick() },
                         color = latestColor
                     )

@@ -37,11 +37,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.LikeGridItem
 import com.hmoa.core_designsystem.component.LikeRowItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
 import com.hmoa.feature_like.ViewModel.LikeUiState
@@ -98,7 +99,7 @@ fun LikeScreen(
                     onNavPerfumeDesc = onNavPerfumeDesc
                 )
             } else {
-                NoSavePerfumeScreen()
+                EmptyDataPage(mainText = "좋아요한 향수가 없습니다.")
             }
         }
         is LikeUiState.Error -> {

@@ -1,9 +1,22 @@
 package com.hmoa.feature_home.screen
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,9 +37,10 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
-import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.feature_home.viewmodel.HomeViewModel
 
 @Composable
@@ -138,7 +152,8 @@ private fun FirstMenuWithBannerContent(
                 bannerTitle ?: "글씨가 없습니다",
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                fontFamily = CustomFont.regular
             )
         }
         FirstMenuView(firstMenu, { onPerfumeClick(it) })
@@ -188,7 +203,8 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         fontWeight = FontWeight.Medium,
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .padding(vertical = 12.dp)
+            .padding(vertical = 12.dp),
+        fontFamily = CustomFont.regular
     )
     Row(
         modifier = Modifier
@@ -274,12 +290,14 @@ fun BottomMenuView(
             data?.title ?: "글씨가 없습니다",
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
+            fontFamily = CustomFont.regular
         )
         Text(
             "전체보기",
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.clickable { onAllPerfumeClick() }
+            modifier = Modifier.clickable { onAllPerfumeClick() },
+            fontFamily = CustomFont.regular
         )
     }
     LazyRow() {
@@ -318,7 +336,7 @@ fun ImageWithTitleView(
             backgroundColor = CustomColor.gray8,
             contentScale = ContentScale.Fit
         )
-        Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 10.sp, modifier = Modifier.padding(8.dp))
+        Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 10.sp, modifier = Modifier.padding(8.dp), fontFamily = CustomFont.regular)
     }
 }
 

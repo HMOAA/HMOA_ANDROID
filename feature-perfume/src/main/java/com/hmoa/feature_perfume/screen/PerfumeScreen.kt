@@ -61,6 +61,7 @@ import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.component.VoteView
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_domain.entity.data.Perfume
 import com.hmoa.core_domain.entity.data.PerfumeGender
 import com.hmoa.core_domain.entity.data.Weather
@@ -308,7 +309,7 @@ fun PerfumeContent(
                 )
                 Text(
                     "같은 브랜드의 제품",
-                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
                     modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
                 )
                 Spacer(
@@ -365,18 +366,18 @@ fun PerfumeInfo(
     )
     Text(
         perfumeKoreanName,
-        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(bottom = 8.dp, top = 8.dp)
     )
     Text(
         perfumeEnglishName,
-        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Normal),
+        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Normal, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(bottom = 22.dp)
     )
     Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2))
     Text(
         "₩${price}",
-        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(top = 16.dp)
     )
     LazyRow(modifier = Modifier.padding(bottom = 16.dp)) {
@@ -425,12 +426,12 @@ fun BrandCard(imageUrl: String, brandEnglishName: String?, brandKoreanName: Stri
             Text(
                 brandEnglishName ?: "",
                 color = Color.White,
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular)
             )
             Text(
                 brandKoreanName,
                 color = Color.White,
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular)
             )
         }
     }
@@ -440,7 +441,7 @@ fun BrandCard(imageUrl: String, brandEnglishName: String?, brandKoreanName: Stri
 fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: List<String>) {
     Text(
         "테이스팅 노트",
-        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(bottom = 16.dp).padding(top = 48.dp)
     )
     Column {
@@ -459,6 +460,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             textAlign = TextAlign.Center,
+                            fontFamily = CustomFont.regular
                         ),
                         modifier = Modifier.fillMaxWidth().height(60.dp).padding(top = 24.dp)
                     )
@@ -469,7 +471,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
                 )
                 Text(
                     notes[index],
-                    style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+                    style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -477,7 +479,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
 
         Text(
             "이 제품에 대해 평가해주세요",
-            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
             modifier = Modifier.padding(bottom = 8.dp).padding(top = 48.dp)
         )
     }
@@ -487,7 +489,7 @@ fun TastingNoteView(notes: Array<String>, imageUrls: List<String>, noteTitle: Li
 fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData: PerfumeWeatherResponseDto?) {
     Text(
         "계절감",
-        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(vertical = 16.dp)
     )
     Row(
@@ -520,7 +522,7 @@ fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData
         )
     }
     Text(
-        "여러분의 생각을 투표해주세요", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+        "여러분의 생각을 투표해주세요", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(vertical = 20.dp).fillMaxWidth(), textAlign = TextAlign.End
     )
 }
@@ -530,7 +532,7 @@ fun PerfumeWeathernessView(onWeatherClick: (value: Weather) -> Unit, weatherData
 fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData: PerfumeGenderResponseDto?) {
     Text(
         "성별",
-        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(vertical = 16.dp)
     )
     Row(
@@ -557,7 +559,7 @@ fun PerfumeGenderView(onGenderClick: (value: PerfumeGender) -> Unit, genderData:
         )
     }
     Text(
-        "여러분의 생각을 투표해주세요", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+        "여러분의 생각을 투표해주세요", style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
         modifier = Modifier.padding(vertical = 20.dp).fillMaxWidth(), textAlign = TextAlign.End
     )
 }
@@ -575,7 +577,7 @@ fun PerfumeAgeView(
         ) {
             Text(
                 "연령대",
-                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
             )
             Icon(
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_initialize),
@@ -589,17 +591,17 @@ fun PerfumeAgeView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                "10대", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+                "10대", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, fontFamily = CustomFont.regular),
                 modifier = Modifier.padding(11.dp)
             )
             if (ageData?.writed == true) {
                 Text(
-                    "평균 ${ageData.age}세", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
+                    "평균 ${ageData.age}세", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, fontFamily = CustomFont.regular),
                     modifier = Modifier.padding(11.dp)
                 )
             }
             Text(
-                "50대 이상", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal)
+                "50대 이상", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, fontFamily = CustomFont.regular)
             )
         }
     }
@@ -620,18 +622,18 @@ fun CommentView(
     ) {
         Text(
             "댓글",
-            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
             modifier = Modifier.padding(end = 4.dp)
         )
         Text(
             "${commentCount}",
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light)
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, fontFamily = CustomFont.regular)
         )
     }
     if (commentCount == 0) {
         Text(
             "해당 제품에 대한 의견을 남겨주세요",
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = CustomColor.gray3),
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = CustomColor.gray3, fontFamily = CustomFont.regular),
             modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
             textAlign = TextAlign.Center
         )
@@ -705,7 +707,7 @@ fun BottomToolBar(isLiked: Boolean, onLikeClick: (value: Boolean) -> Unit, onCom
             Text(
                 "댓글작성",
                 modifier = Modifier.padding(start = 8.dp),
-                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp, color = Color.White)
+                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp, color = Color.White, fontFamily = CustomFont.regular)
             )
         }
     }

@@ -1,14 +1,17 @@
 package com.hmoa.feature_hbti.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_common.emitOrThrow
+import com.hmoa.core_domain.repository.SurveyRepository
+import com.hmoa.core_domain.usecase.CalculateMinAndMaxPriceOutOfStringUseCase
 import com.hmoa.core_domain.usecase.GetPerfumeSurveyUseCase
+import com.hmoa.core_model.data.NoteCategoryTag
 import com.hmoa.core_model.data.PerfumeSurveyContents
+import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,11 +19,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PerfumeRecommendationViewModel @Inject constructor(
-    private val getPerfumeSurveyUseCase: GetPerfumeSurveyUseCase
+    private val getPerfumeSurveyUseCase: GetPerfumeSurveyUseCase,
+    private val calculateMinAndMaxPriceOutOfStringUseCase: CalculateMinAndMaxPriceOutOfStringUseCase,
+    private val surveyRepository: SurveyRepository
 ) : ViewModel() {
     private var _perfumeSurveyContentsState = MutableStateFlow<PerfumeSurveyContents?>(null)
-    private var _isNextButtonAvailableState = MutableStateFlow<List<Boolean>>(listOf())
-    private var _selectedPriceOptionIdsState = MutableStateFlow<List<Int>?>(null)
+    val perfumeSurveyContentsState: StateFlow<PerfumeSurveyContents?> = _perfumeSurveyContentsState
+    private var _isNextButtonAvailableState = MutableStateFlow<List<Boolean>>(List(2) { false }) // price, note 2가지 질문
+    val isNextButtonAvailableState: StateFlow<List<Boolean>> = _isNextButtonAvailableState
+    private var _selectedPriceOptionIdsState = MutableStateFlow<List<Int>?>(emptyList())
+    val selectedPriceOptionIdsState: StateFlow<List<Int>?> = _selectedPriceOptionIdsState
+    private var _selectedNoteTagsOptionState = MutableStateFlow<List<String>>(listOf())
+    val selectedNoteTagsOptionState: StateFlow<List<String>> = _selectedNoteTagsOptionState
+    private var _noteCategoryTagsState = MutableStateFlow<List<NoteCategoryTag>?>(emptyList())
+    val noteCategoryTagsState: StateFlow<List<NoteCategoryTag>?> = _noteCategoryTagsState
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -43,13 +55,18 @@ class PerfumeRecommendationViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
     val uiState: StateFlow<PerfumeRecommendationUiState> = combine(
-        _perfumeSurveyContentsState, _isNextButtonAvailableState, _selectedPriceOptionIdsState
-    ) { perfumeSurveyContents, isNextButtonAvailable, selectedPriceOptionIds ->
+        _perfumeSurveyContentsState,
+        _isNextButtonAvailableState,
+        _selectedPriceOptionIdsState,
+        _selectedNoteTagsOptionState,
+        _noteCategoryTagsState
+    ) { perfumeSurveyContents, isNextButtonAvailable, selectedPriceOptionIds, selectedNoteTagsOption, noteCategoryTags ->
         PerfumeRecommendationUiState.PerfumeRecommendationData(
             contents = perfumeSurveyContents,
             isNextButtonAvailable = isNextButtonAvailable,
-            selectedPriceOptionIds = selectedPriceOptionIds
-
+            selectedPriceOptionIds = selectedPriceOptionIds,
+            selectedNoteTagsOption = selectedNoteTagsOption,
+            noteCategoryTags = noteCategoryTags
         )
     }.stateIn(
         scope = viewModelScope,
@@ -65,6 +82,8 @@ class PerfumeRecommendationViewModel @Inject constructor(
             when (result) {
                 is Result.Success -> {
                     _perfumeSurveyContentsState.update { result.data.data }
+                    _noteCategoryTagsState.update { result.data.data?.noteCategoryTags }
+                    _isNextButtonAvailableState.update { List(2) { false } } //price, note 2페이지에 대한 버튼 상태 초기화
                 }
 
                 is Result.Error -> {
@@ -72,25 +91,142 @@ class PerfumeRecommendationViewModel @Inject constructor(
                 }
 
                 is Result.Loading -> {
-
+                    PerfumeRecommendationUiState.Loading
                 }
             }
         }
     }
 
-    //설문 조사 저장
     fun postSurveyResult() {
         viewModelScope.launch {
-            /** 여기는 서버에 저장하는 부분
-             * API 변경되면 그 때 마저 변경 **/
-            Log.d("Survey TAG", "서버에 정보 저장 in Perfume Recommendation View Model")
+            val index = _selectedPriceOptionIdsState.value?.indexOf(0)!!
+            val priceRange = _perfumeSurveyContentsState.value?.priceQuestionOptions?.get(index) ?: ""
+            val minAndMaxPrice = calculateMinAndMaxPriceOutOfStringUseCase.invoke(priceRange)
+            val dto = PerfumeSurveyAnswerRequestDto(
+                maxPrice = minAndMaxPrice.first,
+                minPrice = minAndMaxPrice.second,
+                notes = selectedNoteTagsOptionState.value
+            )
+            surveyRepository.postPerfumeSurveyAnswers(dto = dto, isContainAll = true)
         }
     }
 
-    fun onClickNextButton() {
+    fun handlePriceQuestionAnswer(optionIndex: Int, isGoToSelectedState: Boolean) {
+        val selectedOptionId = _perfumeSurveyContentsState.value?.priceQuestionOptionIds?.get(optionIndex)!!
+        var result: List<Int>
+        if (isGoToSelectedState) {
+            result = addNewPriceOption(
+                selectedOptionId,
+                _perfumeSurveyContentsState.value?.isPriceMultipleChoice!!,
+                _selectedPriceOptionIdsState.value
+            )
 
+        } else {
+            result = substractPriceOption(
+                selectedOptionId,
+                _perfumeSurveyContentsState.value?.isPriceMultipleChoice!!,
+                _selectedPriceOptionIdsState.value
+            )
+        }
+        _selectedPriceOptionIdsState.update { result }
+
+        handleIsNextAvailableState()
     }
 
+    fun handleIsNextAvailableState() {
+        val updatedIsNextAvailableState = mutableListOf<Boolean>()
+        if (_selectedPriceOptionIdsState.value.isNullOrEmpty()) {
+            updatedIsNextAvailableState.add(false)
+        } else {
+            updatedIsNextAvailableState.add(true)
+        }
+
+        if (_selectedNoteTagsOptionState.value.isEmpty()) {
+            updatedIsNextAvailableState.add(false)
+        } else {
+            updatedIsNextAvailableState.add(true)
+        }
+        _isNextButtonAvailableState.update { updatedIsNextAvailableState }
+    }
+
+    fun addNewPriceOption(optionId: Int, isMultipleChoice: Boolean, selectedPriceOptionIds: List<Int>?): List<Int> {
+        val updatedPriceOptionsIds = mutableListOf<Int>()
+        if (isMultipleChoice) {
+            selectedPriceOptionIds?.map {
+                updatedPriceOptionsIds.add(it)
+            }
+        }
+        updatedPriceOptionsIds.add(optionId)
+        return updatedPriceOptionsIds
+    }
+
+    fun substractPriceOption(optionId: Int, isMultipleChoice: Boolean, selectedPriceOptionIds: List<Int>?): List<Int> {
+        val updatedPriceOptionsIds = mutableListOf<Int>()
+        if (isMultipleChoice) {
+            selectedPriceOptionIds?.map {
+                if (optionId != it) {
+                    updatedPriceOptionsIds.add(it)
+                }
+            }
+        }
+        return updatedPriceOptionsIds
+    }
+
+    fun handleNoteQuestionAnswer(note: String, categoryIndex: Int, noteIndex: Int, isGotoState: Boolean) {
+        _noteCategoryTagsState.update { handleNoteCategoryTags(categoryIndex, noteIndex, isGotoState) }
+        if (isGotoState) {
+            _selectedNoteTagsOptionState.update { addNoteTagOption(note, _selectedNoteTagsOptionState.value) }
+        } else {
+            _selectedNoteTagsOptionState.update { deleteNoteTagOption(note, _selectedNoteTagsOptionState.value) }
+        }
+
+        handleIsNextAvailableState()
+    }
+
+    fun handleNoteCategoryTags(categoryIndex: Int, noteIndex: Int, isGotoState: Boolean): List<NoteCategoryTag> {
+        val updatedNoteQuestionAnswer = mutableListOf<NoteCategoryTag>()
+        _noteCategoryTagsState.value?.mapIndexed { index, noteCategoryTag ->
+            val isSelectedNotes = mutableListOf<Boolean>()
+            noteCategoryTag.isSelected.mapIndexed { isSelectedIndex, b ->
+                if (categoryIndex == index && noteIndex == isSelectedIndex) {
+                    isSelectedNotes.add(isGotoState)
+                } else {
+                    isSelectedNotes.add(b)
+                }
+            }
+
+            updatedNoteQuestionAnswer.add(
+                NoteCategoryTag(
+                    category = noteCategoryTag.category,
+                    note = noteCategoryTag.note,
+                    isSelected = isSelectedNotes
+                )
+            )
+        }
+        return updatedNoteQuestionAnswer
+    }
+
+    fun addNoteTagOption(noteTag: String, selectedNoteTagsOption: List<String>?): List<String> {
+        val updatedSelectedNoteTagsOption = mutableListOf<String>(noteTag)
+        selectedNoteTagsOption?.map {
+            updatedSelectedNoteTagsOption.add(it)
+        }
+        return updatedSelectedNoteTagsOption
+    }
+
+    fun deleteNoteTagOption(noteTag: String, selectedNoteTagsOption: List<String>?): List<String> {
+        val updatedSelectedNoteTagsOption = mutableListOf<String>()
+        selectedNoteTagsOption?.map {
+            if (it != noteTag) {
+                updatedSelectedNoteTagsOption.add(it)
+            }
+        }
+        return updatedSelectedNoteTagsOption
+    }
+
+    fun deleteAllNoteTagOptions() {
+        _selectedNoteTagsOptionState.update { listOf() }
+    }
 }
 
 sealed interface PerfumeRecommendationUiState {
@@ -98,7 +234,9 @@ sealed interface PerfumeRecommendationUiState {
     data class PerfumeRecommendationData(
         val contents: PerfumeSurveyContents?,
         val isNextButtonAvailable: List<Boolean>?,
-        val selectedPriceOptionIds: List<Int>?
+        val selectedPriceOptionIds: List<Int>?,
+        val selectedNoteTagsOption: List<String>?,
+        val noteCategoryTags: List<NoteCategoryTag>?,
     ) : PerfumeRecommendationUiState
 
     data object Error : PerfumeRecommendationUiState

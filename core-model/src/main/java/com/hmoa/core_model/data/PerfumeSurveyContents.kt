@@ -6,11 +6,11 @@ data class PerfumeSurveyContents(
     val priceQuestionOptionIds: List<Int>?,
     val noteQuestionTitle: String?,
     val noteCategoryTags: List<NoteCategoryTag>?,
-    val isMultipleAnswerAvailable: Boolean
+    val isPriceMultipleChoice: Boolean,
 )
 
 data class NoteCategoryTag(
-    val category:String,
-    val note:List<String>,
-    val isSelected:List<Boolean>
+    val category: String,
+    val note: List<String>,
+    val isSelected: List<Boolean>
 )

@@ -1,6 +1,9 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -30,15 +35,15 @@ import com.hmoa.core_designsystem.theme.CustomColor
 
 
 @Composable
-private fun DeletableTagBadgeScroller(
+fun DeletableTagBadgeScroller(
     tags: List<String>,
     onDeleteAll: () -> Unit,
     onDeleteTag: (String) -> Unit
 ){
+    val scrollState = rememberScrollState()
     LazyRow(
         modifier = Modifier
-            .height(52.dp)
-            .padding(bottom = 20.dp),
+            .height(52.dp).scrollable(state = scrollState, orientation = Orientation.Horizontal),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ){
@@ -70,7 +75,8 @@ private fun DeletableTag(
             .height(32.dp)
             .wrapContentWidth()
             .background(color = CustomColor.gray3, shape = RoundedCornerShape(size = 14.dp))
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clickable(enabled = true) { onDeleteTag(tag) },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){

@@ -26,6 +26,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_common.calculateProgressStepSize
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.NoteCategoryTag
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationUiState
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationViewModel
@@ -38,31 +39,59 @@ fun PerfumeRecommendationRoute(
     viewModel: PerfumeRecommendationViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-
+    LaunchedEffect(true) {
+        viewModel.getSurveyResult()
+    }
     when (uiState.value) {
         PerfumeRecommendationUiState.Error -> {}
         PerfumeRecommendationUiState.Loading -> AppLoadingScreen()
         is PerfumeRecommendationUiState.PerfumeRecommendationData -> PerfumeRecommendationScreen(
             selectedOptionIds = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedPriceOptionIds
                 ?: emptyList(),
-            onChangedOption = { optionIndex, isGoToSelectedState -> {} },
             surveyQuestionTitle = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionTitle
                 ?: "",
             surveyOptions = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptions
                 ?: emptyList(),
             surveyOptionIds = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptionIds
                 ?: emptyList(),
+            noteQuestionTitle = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.noteQuestionTitle
+                ?: "",
+            noteCategoryTags = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).noteCategoryTags
+                ?: emptyList(),
+            selectedNotes = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedNoteTagsOption
+                ?: emptyList(),
             isEnabledBtn = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).isNextButtonAvailable
                 ?: emptyList(),
+            onChangePriceOption = { optionIndex, isGoToSelectedState ->
+                viewModel.handlePriceQuestionAnswer(
+                    optionIndex,
+                    isGoToSelectedState
+                )
+                viewModel.handleIsNextAvailableState()
+            },
+            onChangeNoteOption = { note, categoryIndex, noteIndex, isGotoState ->
+                viewModel.handleNoteQuestionAnswer(
+                    note,
+                    categoryIndex,
+                    noteIndex,
+                    isGotoState
+                )
+                viewModel.handleIsNextAvailableState()
+            },
+            onDeleteTag = { tag ->
+                viewModel.deleteNoteTagOption(
+                    tag,
+                    (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedNoteTagsOption
+                )
+            },
+            onDeleteAll = { viewModel.deleteAllNoteTagOptions() },
+            onNavBack = onNavBack,
             onClickNext = {
-                viewModel.onClickNextButton()
+                viewModel.postSurveyResult()
                 onNavNext()
             },
-            onNavBack = onNavBack,
-            isMultipleAnswerAvailable = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isMultipleAnswerAvailable
+            isMultipleAnswerAvailable = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isPriceMultipleChoice
                 ?: false,
-            noteQuestionTitle = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.noteQuestionTitle
-                ?: ""
         )
     }
 }
@@ -71,15 +100,20 @@ fun PerfumeRecommendationRoute(
 @Composable
 fun PerfumeRecommendationScreen(
     selectedOptionIds: List<Int>,
-    onChangedOption: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit,
     surveyQuestionTitle: String,
     surveyOptions: List<String>,
     surveyOptionIds: List<Int>,
     noteQuestionTitle: String,
+    noteCategoryTags: List<NoteCategoryTag>,
+    selectedNotes: List<String>,
     isEnabledBtn: List<Boolean>,
     isMultipleAnswerAvailable: Boolean,
-    onClickNext: () -> Unit,
+    onChangePriceOption: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit,
+    onChangeNoteOption: (note: String, categoryIndex: Int, noteIndex: Int, isGotoState: Boolean) -> Unit,
+    onDeleteTag: (tag: String) -> Unit,
+    onDeleteAll: () -> Unit,
     onNavBack: () -> Unit,
+    onClickNext: () -> Unit
 ) {
     val questionTitles = listOf(surveyQuestionTitle, noteQuestionTitle)
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { questionTitles.size })
@@ -150,7 +184,7 @@ fun PerfumeRecommendationScreen(
                         isMultipleAnswerAvailable = isMultipleAnswerAvailable,
                         answerIds = selectedOptionIds,
                         onChangedValue = { optionIndex, isGoToSelectedState ->
-                            onChangedOption(
+                            onChangePriceOption(
                                 optionIndex,
                                 isGoToSelectedState
                             )
@@ -158,7 +192,21 @@ fun PerfumeRecommendationScreen(
                     )
                 }
                 if (page == 1) {
-
+                    NoteScreen(
+                        noteQuestionTitle = noteQuestionTitle,
+                        noteCategoryTags = noteCategoryTags,
+                        onClickNote = { note, categoryIndex, noteIndex, isGotoState ->
+                            onChangeNoteOption(
+                                note,
+                                categoryIndex,
+                                noteIndex,
+                                isGotoState
+                            )
+                        },
+                        selectedNotes = selectedNotes,
+                        onDeleteAll = { onDeleteAll() },
+                        onDeleteTag = { tag -> onDeleteTag(tag) }
+                    )
                 }
                 Button(
                     buttonModifier = Modifier
@@ -169,8 +217,10 @@ fun PerfumeRecommendationScreen(
                     onClick = {
                         if (pagerState.currentPage < pagerState.pageCount - 1) {
                             addProgress()
+                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                        } else {
+                            onClickNext()
                         }
-                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                     }
                 )
 
@@ -186,7 +236,7 @@ private fun PriceScreen(
     surveyOptions: List<String>,
     surveyOptionsId: List<Int>,
     isMultipleAnswerAvailable: Boolean,
-    answerIds: List<Int>?,
+    answerIds: List<Int>,
     onChangedValue: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit,
 ) {
     Column(
@@ -204,7 +254,7 @@ private fun PriceScreen(
             onButtonClick = { optionIndex, isGoToSelectedState ->
                 onChangedValue(optionIndex, isGoToSelectedState)
             },
-            answerIds = answerIds ?: emptyList(),
+            answerIds = answerIds,
             surveyOptionIds = surveyOptionsId,
         )
     }
@@ -216,45 +266,57 @@ private fun PriceScreen(
 private fun NoteScreen(
     noteQuestionTitle: String,
     noteCategoryTags: List<NoteCategoryTag>,
-    onClickNote: (note: String, categoryIndex: Int, noteIndex: Int, isGotoState: Boolean) -> Unit
+    selectedNotes: List<String>,
+    onClickNote: (note: String, categoryIndex: Int, noteIndex: Int, isGotoState: Boolean) -> Unit,
+    onDeleteTag: (tag: String) -> Unit,
+    onDeleteAll: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    Column(modifier = Modifier.fillMaxSize(1f).verticalScroll(scrollState)) {
-        Text(
-            text = "Q. ${noteQuestionTitle}",
-            fontSize = 20.sp,
-            fontFamily = FontFamily(Font(R.font.pretendard_semi_bold))
-        )
-        LazyColumn() {
-            itemsIndexed(noteCategoryTags) { categoryIndex, item ->
-                Text(
-                    text = "Q. ${noteCategoryTags.get(categoryIndex)}",
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_semi_bold))
-                )
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    noteCategoryTags.get(categoryIndex).note.forEachIndexed { noteIndex, noteName ->
-                        val isSelected = noteCategoryTags.get(categoryIndex).isSelected.get(noteIndex)
-                        TagBadge(
-                            tag = noteName,
-                            isClickable = true,
-                            isSelected = isSelected,
-                            onClick = { onClickNote(it, categoryIndex, noteIndex, !isSelected) },
-                            height = 32.dp
-                        )
+    Column {
+        DeletableTagBadgeScroller(
+            tags = selectedNotes,
+            onDeleteTag = { tag -> onDeleteTag(tag) },
+            onDeleteAll = { onDeleteAll() })
+        Column(modifier = Modifier.fillMaxSize(1f).verticalScroll(scrollState)) {
+            Text(
+                text = "Q. ${noteQuestionTitle}",
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_semi_bold))
+            )
+            Spacer(modifier = Modifier.fillMaxWidth(1f).height(1.dp).background(color = CustomColor.gray1))
+            LazyColumn() {
+                itemsIndexed(noteCategoryTags) { categoryIndex, item ->
+                    Text(
+                        text = "Q. ${noteCategoryTags.get(categoryIndex)}",
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
+                    )
+                    Spacer(modifier = Modifier.padding(top = 16.dp))
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        noteCategoryTags.get(categoryIndex).note.forEachIndexed { noteIndex, noteName ->
+                            val isSelected = noteCategoryTags.get(categoryIndex).isSelected.get(noteIndex)
+                            TagBadge(
+                                tag = noteName,
+                                isClickable = true,
+                                isSelected = isSelected,
+                                onClick = { onClickNote(it, categoryIndex, noteIndex, !isSelected) },
+                                height = 32.dp
+                            )
+                        }
                     }
+                    Spacer(Modifier.height(24.dp))
                 }
-                Spacer(Modifier.height(24.dp))
             }
         }
     }
 }
 
 
+@OptIn(ExperimentalLayoutApi::class)
 @Preview
 @Composable
 private fun PreviewScreen() {
@@ -272,8 +334,25 @@ private fun PreviewScreen() {
 //        surveyQuestionTitle = "선호하시는 가격대를 설정해주세요",
 //        noteQuestionTitle = "시향 후 마음에 드는 향료를 골라주세요"
 //    )
-    NoteScreen(
-        "시향 후 마음에 드는 향료를 골라주세요",
-        listOf(NoteCategoryTag(category = "스파이스", note = listOf("통카빈", "페퍼"), isSelected = listOf(false, false))),
-        {note, categoryIndex, noteIndex, isGotoState ->  {}})
+//    NoteScreen(
+//        "시향 후 마음에 드는 향료를 골라주세요",
+//        listOf(NoteCategoryTag(category = "스파이스", note = listOf("통카빈", "페퍼"), isSelected = listOf(false, false))),
+//        {note, categoryIndex, noteIndex, isGotoState ->  {}})
+    Column {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            listOf("dfdfdf1", "rewrw2", "rwerwer3", "rwerwe4", "rwerwer3", "rwerwe4").forEach {
+                TagBadge(
+                    tag = it,
+                    isClickable = true,
+                    isSelected = false,
+                    onClick = { },
+                    height = 32.dp
+                )
+            }
+        }
+    }
 }

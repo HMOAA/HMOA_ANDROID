@@ -50,7 +50,8 @@ class HbtiSurveyScreenTest : TestCase() {
         )
         val hbtiData = HbtiSurveyUiState.HbtiData(
             hbtiQuestionItems = HbtiQuestionItems(mutableMapOf(0 to hbtiQuestionItem_singleChoice)),
-            hbtiAnswerIds = null
+            hbtiAnswerIds = null,
+            isNextQuestionAvailable = null
         )
     }
 

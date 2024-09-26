@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
-import com.hmoa.feature_userinfo.Screen.*
+import com.hmoa.feature_userinfo.screen.*
 
 //graph 이동
 fun NavController.navigateToUserInfoGraph() = navigate(UserInfoRoute.UserInfoGraph.name)

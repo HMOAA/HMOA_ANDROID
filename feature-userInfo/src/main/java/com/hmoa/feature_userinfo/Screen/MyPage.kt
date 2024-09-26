@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo.Screen
+package com.hmoa.feature_userinfo.screen
 
 import android.content.Intent
 import android.view.ViewGroup
@@ -44,8 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature_userinfo.viewModel.MyPageViewModel
-import com.example.feature_userinfo.viewModel.UserInfoUiState
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
@@ -55,9 +53,11 @@ import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.OnAndOffBtn
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.core_domain.entity.data.ColumnData
-import com.hmoa.feature_userinfo.NoAuthMyPage
+import com.hmoa.feature_userinfo.BuildConfig
+import com.hmoa.feature_userinfo.Screen.NoAuthMyPage
+import com.hmoa.feature_userinfo.viewModel.MyPageViewModel
+import com.hmoa.feature_userinfo.viewModel.UserInfoUiState
 import com.kakao.sdk.talk.TalkApiClient
 import kotlinx.coroutines.launch
 

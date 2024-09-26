@@ -51,12 +51,12 @@ class RefundRecordViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<OrderRecordUiState> = errorUiState.map{
+    val uiState: StateFlow<RefundRecordUiState> = errorUiState.map{
         refundRecordPagingSource()
     }.asResult().map{ result ->
         when(result){
-            Result.Loading -> OrderRecordUiState.Loading
-            is Result.Success -> OrderRecordUiState.Success(result.data)
+            Result.Loading -> RefundRecordUiState.Loading
+            is Result.Success -> RefundRecordUiState.Success(result.data)
             is Result.Error -> {
                 handleErrorType(
                     error = result.exception,
@@ -65,13 +65,13 @@ class RefundRecordViewModel @Inject constructor(
                     onUnknownError = {unLoginedErrorState.update{true}},
                     onGeneralError = {generalErrorState.update{Pair(true, result.exception.message)}}
                 )
-                OrderRecordUiState.Error
+                RefundRecordUiState.Error
             }
         }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = OrderRecordUiState.Loading
+        initialValue = RefundRecordUiState.Loading
     )
 
 
@@ -88,4 +88,12 @@ class RefundRecordViewModel @Inject constructor(
     private fun getRefundRecordPaging() = RefundRecordPagingSource(
         memberRepository = memberRepository
     )
+}
+
+sealed interface RefundRecordUiState{
+    data object Loading: RefundRecordUiState
+    data object Error: RefundRecordUiState
+    data class Success(
+        val data: Flow<PagingData<OrderRecordDto>>
+    ): RefundRecordUiState
 }

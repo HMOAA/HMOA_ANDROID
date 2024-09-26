@@ -30,7 +30,7 @@ import com.hmoa.feature_hpedia.ViewModel.HPediaDescViewModel
 fun HPediaDescRoute(
     id : Int?,
     type : String?,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
     viewModel : HPediaDescViewModel = hiltViewModel()
 ){
     LaunchedEffect(true){
@@ -45,7 +45,7 @@ fun HPediaDescRoute(
     HPediaDescScreen(
         type = type.value,
         uiState = uiState.value,
-        onNavBack = onNavBack,
+        navBack = navBack,
     )
 }
 
@@ -53,7 +53,7 @@ fun HPediaDescRoute(
 fun HPediaDescScreen(
     type : HpediaType,
     uiState : HPediaDescUiState,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
 ){
     when(uiState){
         HPediaDescUiState.Error -> {}
@@ -67,7 +67,7 @@ fun HPediaDescScreen(
                 TopBar(
                     title = type.title,
                     navIcon = painterResource(R.drawable.ic_back),
-                    onNavClick = onNavBack
+                    onNavClick = navBack
                 )
                 Column(
                     modifier = Modifier

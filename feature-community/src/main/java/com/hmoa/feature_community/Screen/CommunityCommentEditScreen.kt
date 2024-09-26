@@ -26,7 +26,7 @@ import com.hmoa.feature_community.ViewModel.CommunityCommentEditViewModel
 @Composable
 fun CommunityCommentEditRoute(
     _commentId : Int?,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
     viewModel : CommunityCommentEditViewModel = hiltViewModel()
 ){
     viewModel.setId(_commentId)
@@ -42,9 +42,9 @@ fun CommunityCommentEditRoute(
         },
         onEditDone = {
             viewModel.editComment()
-            onNavBack()
+            navBack()
         },
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -54,7 +54,7 @@ fun CommunityCommentEditScreen(
     comment : String,
     onCommentChange : (String) -> Unit,
     onEditDone : () -> Unit,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
 ){
     when(uiState){
         CommunityCommentEditUiState.Loading -> {
@@ -67,7 +67,7 @@ fun CommunityCommentEditScreen(
                     .background(color = Color.White)
             ){
                 TopBarWithEvent(
-                    onCancelClick = onNavBack,
+                    onCancelClick = navBack,
                     onConfirmClick = onEditDone,
                     title = "댓글"
                 )

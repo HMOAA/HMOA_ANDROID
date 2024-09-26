@@ -28,14 +28,14 @@ import com.hmoa.feature_community.Screen.CommunityHomeRoute
 
 @Composable
 fun HPediaRoute(
-    onNavHPediaSearch: (String) -> Unit,
+    navHPediaSearch: (String) -> Unit,
     onNavCommunityDesc: (Int) -> Unit,
     onNavCommunityGraph: () -> Unit,
     onNavLogin: () -> Unit,
     onNavHome : () -> Unit,
 ) {
     HPediaScreen(
-        onNavHPediaSearch = onNavHPediaSearch,
+        navHPediaSearch = navHPediaSearch,
         onNavCommunityDesc = onNavCommunityDesc,
         onNavCommunityGraph = onNavCommunityGraph,
         onErrorHandleLoginAgain = onNavLogin,
@@ -46,7 +46,7 @@ fun HPediaRoute(
 
 @Composable
 fun HPediaScreen(
-    onNavHPediaSearch: (String) -> Unit,
+    navHPediaSearch: (String) -> Unit,
     onNavCommunityDesc: (Int) -> Unit,
     onNavCommunityGraph: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
@@ -64,7 +64,7 @@ fun HPediaScreen(
         ) {
             HPediaScreenTitle("HPedia")
             SelectSearchType(
-                onNavHPediaSearch = onNavHPediaSearch
+                navHPediaSearch = navHPediaSearch
             )
         }
         Spacer(Modifier.height(27.dp))
@@ -95,7 +95,7 @@ fun HPediaScreenTitle(title: String) {
 
 @Composable
 fun SelectSearchType(
-    onNavHPediaSearch: (String) -> Unit
+    navHPediaSearch: (String) -> Unit
 ) {
     val data = listOf(
         listOf("용어", "Top notes\n탑노트란?"),
@@ -121,7 +121,7 @@ fun SelectSearchType(
                     .weight(1f)
                     .background(color = Color.Black, shape = RectangleShape)
                     .clickable {
-                        onNavHPediaSearch(data[0])
+                        navHPediaSearch(data[0])
                     }
                     .padding(16.dp)
             ) {

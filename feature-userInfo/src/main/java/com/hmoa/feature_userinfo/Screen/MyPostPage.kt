@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo.Screen
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,14 +19,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.feature_userinfo.viewModel.PostUiState
-import com.example.feature_userinfo.viewModel.PostViewModel
 import com.hmoa.component.PostListItem
-import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.feature_userinfo.NoDataPage
+import com.hmoa.feature_userinfo.screen.NoDataPage
+import com.hmoa.feature_userinfo.viewModel.PostUiState
+import com.hmoa.feature_userinfo.viewModel.PostViewModel
 
 @Composable
 fun MyPostRoute(

@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo.Screen
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.Spinner
-import com.hmoa.component.TopBar
-import com.hmoa.component.YearPickerDialog
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.Spinner
+import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.YearPickerDialog
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.viewModel.MyBirthUiState
 import com.hmoa.feature_userinfo.viewModel.MyBirthViewModel

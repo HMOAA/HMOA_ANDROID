@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo.Screen
+package com.hmoa.feature_userinfo.screen
 
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -34,13 +34,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.AppDefaultDialog
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.NicknameInput
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.feature_userinfo.R
 import com.hmoa.feature_userinfo.viewModel.EditProfileUiState
 import com.hmoa.feature_userinfo.viewModel.EditProfileViewModel
 
@@ -213,7 +212,7 @@ private fun EditProfileButton(
         ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),
-                painter = painterResource(R.drawable.profile_edit_btn),
+                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_comment_input),
                 contentDescription = "Profile Edit Button",
                 tint = CustomColor.gray2
             )

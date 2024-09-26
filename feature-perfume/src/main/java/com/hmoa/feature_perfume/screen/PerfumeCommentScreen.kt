@@ -25,8 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppDesignDialog
 import com.hmoa.core_designsystem.component.CommentItem
 import com.hmoa.core_designsystem.component.ReportModal

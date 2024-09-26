@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.NicknameInput
 import com.hmoa.core_designsystem.theme.CustomColor

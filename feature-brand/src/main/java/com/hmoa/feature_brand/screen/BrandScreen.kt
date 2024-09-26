@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeWithCountItemView
 import com.hmoa.core_designsystem.theme.CustomColor

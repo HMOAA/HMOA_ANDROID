@@ -233,7 +233,7 @@ sealed interface PerfumeRecommendationUiState {
     data object Loading : PerfumeRecommendationUiState
     data class PerfumeRecommendationData(
         val contents: PerfumeSurveyContents?,
-        val isNextButtonAvailable: List<Boolean>?,
+        val isNextButtonAvailable: List<Boolean>,
         val selectedPriceOptionIds: List<Int>?,
         val selectedNoteTagsOption: List<String>?,
         val noteCategoryTags: List<NoteCategoryTag>?,

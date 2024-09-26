@@ -4,20 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -39,15 +30,14 @@ fun DeletableTagBadgeScroller(
     tags: List<String>,
     onDeleteAll: () -> Unit,
     onDeleteTag: (String) -> Unit
-){
+) {
     val scrollState = rememberScrollState()
     LazyRow(
-        modifier = Modifier
-            .height(52.dp).scrollable(state = scrollState, orientation = Orientation.Horizontal),
+        modifier = Modifier.scrollable(state = scrollState, orientation = Orientation.Horizontal),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ){
-        item{
+    ) {
+        item {
             IconButton(
                 modifier = Modifier.size(18.dp),
                 onClick = onDeleteAll
@@ -59,8 +49,8 @@ fun DeletableTagBadgeScroller(
                 )
             }
         }
-        items(tags){tag ->
-            DeletableTag(tag = tag,onDeleteTag = onDeleteTag)
+        items(tags) { tag ->
+            DeletableTag(tag = tag, onDeleteTag = onDeleteTag)
         }
     }
 }
@@ -79,7 +69,7 @@ private fun DeletableTag(
             .clickable(enabled = true) { onDeleteTag(tag) },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Text(
             text = tag,
             fontSize = 12.sp,
@@ -90,7 +80,7 @@ private fun DeletableTag(
         IconButton(
             modifier = Modifier.size(12.dp),
             onClick = { onDeleteTag(tag) }
-        ){
+        ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),
                 painter = painterResource(com.hmoa.core_designsystem.R.drawable.btn_close),
@@ -103,6 +93,9 @@ private fun DeletableTag(
 
 @Preview
 @Composable
-fun DeletableTagBadgeScrollerPreview(){
-    DeletableTagBadgeScroller(tags = listOf("수산화","화이트 로즈","귤","베르가못","라벤더","만다린"), onDeleteTag = {}, onDeleteAll = {})
+fun DeletableTagBadgeScrollerPreview() {
+    DeletableTagBadgeScroller(
+        tags = listOf("수산화", "화이트 로즈", "귤", "베르가못", "라벤더", "만다린"),
+        onDeleteTag = {},
+        onDeleteAll = {})
 }

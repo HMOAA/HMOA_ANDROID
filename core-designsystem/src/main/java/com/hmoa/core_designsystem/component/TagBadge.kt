@@ -46,7 +46,7 @@ fun TagBadge(
                     Modifier
                 }
             )
-            .padding(horizontal = 14.dp).padding(top = 7.dp, bottom = 8.dp),
+            .padding(horizontal = 14.dp).padding(top = 8.dp, bottom = 8.dp),
         text = tag,
         fontSize = 12.sp,
         fontFamily = pretendard,

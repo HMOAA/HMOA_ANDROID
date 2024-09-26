@@ -5,10 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,6 +29,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.data.NoteCategoryTag
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationUiState
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,21 +47,21 @@ fun PerfumeRecommendationRoute(
         PerfumeRecommendationUiState.Loading -> AppLoadingScreen()
         is PerfumeRecommendationUiState.PerfumeRecommendationData -> PerfumeRecommendationScreen(
             selectedOptionIds = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedPriceOptionIds
-                ?: emptyList(),
+                ?: listOf(),
             surveyQuestionTitle = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionTitle
                 ?: "",
             surveyOptions = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptions
-                ?: emptyList(),
+                ?: listOf(),
             surveyOptionIds = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptionIds
-                ?: emptyList(),
+                ?: listOf(),
             noteQuestionTitle = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.noteQuestionTitle
                 ?: "",
             noteCategoryTags = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).noteCategoryTags
-                ?: emptyList(),
+                ?: listOf(),
             selectedNotes = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedNoteTagsOption
-                ?: emptyList(),
+                ?: listOf(),
             isEnabledBtn = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).isNextButtonAvailable
-                ?: emptyList(),
+                ?: listOf(),
             onChangePriceOption = { optionIndex, isGoToSelectedState ->
                 viewModel.handlePriceQuestionAnswer(
                     optionIndex,
@@ -168,16 +168,16 @@ fun PerfumeRecommendationScreen(
         ) {
             Spacer(Modifier.height(15.dp))
             ProgressBar(percentage = currentProgress)
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(24.dp))
             HorizontalPager(
                 userScrollEnabled = false,
-                modifier = Modifier.fillMaxWidth().background(color = Color.White),
+                modifier = Modifier.background(color = Color.White),
                 state = pagerState,
                 verticalAlignment = Alignment.Top
             ) { page ->
                 if (page == 0) {
+                    Spacer(Modifier.height(16.dp))
                     PriceScreen(
-                        modifier = Modifier.weight(1f),
                         surveyQuestionTitle = surveyQuestionTitle,
                         surveyOptions = surveyOptions,
                         surveyOptionsId = surveyOptionIds,
@@ -188,6 +188,11 @@ fun PerfumeRecommendationScreen(
                                 optionIndex,
                                 isGoToSelectedState
                             )
+                        },
+                        isEnabledBtn = isEnabledBtn[page],
+                        onClickNext = {
+                            addProgress()
+                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                         }
                     )
                 }
@@ -203,27 +208,13 @@ fun PerfumeRecommendationScreen(
                                 isGotoState
                             )
                         },
+                        isEnabledBtn = isEnabledBtn[page],
                         selectedNotes = selectedNotes,
                         onDeleteAll = { onDeleteAll() },
-                        onDeleteTag = { tag -> onDeleteTag(tag) }
+                        onDeleteTag = { tag -> onDeleteTag(tag) },
+                        onClickNext = { onClickNext() }
                     )
                 }
-                Button(
-                    buttonModifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    isEnabled = isEnabledBtn.get(page),
-                    btnText = "다음",
-                    onClick = {
-                        if (pagerState.currentPage < pagerState.pageCount - 1) {
-                            addProgress()
-                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                        } else {
-                            onClickNext()
-                        }
-                    }
-                )
-
             }
         }
     }
@@ -231,17 +222,16 @@ fun PerfumeRecommendationScreen(
 
 @Composable
 private fun PriceScreen(
-    modifier: Modifier,
     surveyQuestionTitle: String,
     surveyOptions: List<String>,
     surveyOptionsId: List<Int>,
     isMultipleAnswerAvailable: Boolean,
+    isEnabledBtn: Boolean,
     answerIds: List<Int>,
     onChangedValue: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit,
+    onClickNext: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = Modifier.background(color = Color.White).wrapContentSize(unbounded = false)) {
         Text(
             text = "Q. ${surveyQuestionTitle}",
             fontSize = 20.sp,
@@ -257,45 +247,75 @@ private fun PriceScreen(
             answerIds = answerIds,
             surveyOptionIds = surveyOptionsId,
         )
+        Button(
+            buttonModifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            radious = 5,
+            isEnabled = isEnabledBtn,
+            btnText = "다음",
+            onClick = { onClickNext() }
+        )
     }
 }
 
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun NoteScreen(
     noteQuestionTitle: String,
     noteCategoryTags: List<NoteCategoryTag>,
     selectedNotes: List<String>,
+    isEnabledBtn: Boolean,
     onClickNote: (note: String, categoryIndex: Int, noteIndex: Int, isGotoState: Boolean) -> Unit,
+    onClickNext: () -> Unit,
     onDeleteTag: (tag: String) -> Unit,
     onDeleteAll: () -> Unit
 ) {
-    val scrollState = rememberScrollState()
-    Column {
-        DeletableTagBadgeScroller(
-            tags = selectedNotes,
-            onDeleteTag = { tag -> onDeleteTag(tag) },
-            onDeleteAll = { onDeleteAll() })
-        Column(modifier = Modifier.fillMaxSize(1f).verticalScroll(scrollState)) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(Unit) {
+        val size = noteCategoryTags.size
+        // 화면이 처음 로드되었을 때 맨 아래로 스크롤
+        listState.scrollToItem(noteCategoryTags.lastIndex)
+        // 잠시 대기
+        delay(300) // 대기
+        // 맨 위로 스크롤하는 애니메이션 실행
+        listState.animateScrollToItem(size / 2)
+        delay(400) // 대기
+        listState.animateScrollToItem(0)
+    }
+
+    Column(modifier = Modifier.fillMaxHeight()) {
+        if (selectedNotes.isNotEmpty()) {
+            DeletableTagBadgeScroller(
+                tags = selectedNotes,
+                onDeleteTag = { tag -> onDeleteTag(tag) },
+                onDeleteAll = { onDeleteAll() })
+        }
+        Column {
             Text(
                 text = "Q. ${noteQuestionTitle}",
                 fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.pretendard_semi_bold))
+                fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
+                modifier = Modifier.padding(bottom = 16.dp).padding(top = 16.dp)
             )
-            Spacer(modifier = Modifier.fillMaxWidth(1f).height(1.dp).background(color = CustomColor.gray1))
-            LazyColumn() {
+            Spacer(
+                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray1)
+                    .padding(bottom = 16.dp)
+            )
+            LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth(), state = listState) {
                 itemsIndexed(noteCategoryTags) { categoryIndex, item ->
                     Text(
-                        text = "Q. ${noteCategoryTags.get(categoryIndex)}",
-                        fontSize = 20.sp,
+                        text = "${noteCategoryTags.get(categoryIndex).category}",
+                        fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
+                        modifier = Modifier.padding(bottom = 16.dp).padding(top = 24.dp)
                     )
-                    Spacer(modifier = Modifier.padding(top = 16.dp))
                     FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Start),
+                        verticalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Bottom),
                     ) {
                         noteCategoryTags.get(categoryIndex).note.forEachIndexed { noteIndex, noteName ->
                             val isSelected = noteCategoryTags.get(categoryIndex).isSelected.get(noteIndex)
@@ -308,7 +328,21 @@ private fun NoteScreen(
                             )
                         }
                     }
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(
+                        modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray1)
+                            .padding(bottom = 12.dp)
+                    )
+                }
+                item {
+                    Button(
+                        buttonModifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        radious = 5,
+                        isEnabled = isEnabledBtn,
+                        btnText = "다음",
+                        onClick = { onClickNext() }
+                    )
                 }
             }
         }
@@ -320,39 +354,4 @@ private fun NoteScreen(
 @Preview
 @Composable
 private fun PreviewScreen() {
-    val surveyOptions = listOf("5만원 이하", "5만원 이상", "10만원 이상", "가격 상관 없음")
-
-//    PerfumeRecommendationScreen(
-//        selectedOptionIds = listOf(0),
-//        onChangedOption = { optionIndex, isGoToSelectedState -> },
-//        surveyOptions = surveyOptions,
-//        isEnabledBtn = listOf(true, true),
-//        onNavBack = {},
-//        onClickNext = {},
-//        isMultipleAnswerAvailable = false,
-//        surveyOptionIds = listOf(0, 1, 2, 3),
-//        surveyQuestionTitle = "선호하시는 가격대를 설정해주세요",
-//        noteQuestionTitle = "시향 후 마음에 드는 향료를 골라주세요"
-//    )
-//    NoteScreen(
-//        "시향 후 마음에 드는 향료를 골라주세요",
-//        listOf(NoteCategoryTag(category = "스파이스", note = listOf("통카빈", "페퍼"), isSelected = listOf(false, false))),
-//        {note, categoryIndex, noteIndex, isGotoState ->  {}})
-    Column {
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            listOf("dfdfdf1", "rewrw2", "rwerwer3", "rwerwe4", "rwerwer3", "rwerwe4").forEach {
-                TagBadge(
-                    tag = it,
-                    isClickable = true,
-                    isSelected = false,
-                    onClick = { },
-                    height = 32.dp
-                )
-            }
-        }
-    }
 }

@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,25 +28,13 @@ fun SurveyOptionList(
     surveyOptionIds: List<Int>,
     onButtonClick: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit
 ) {
-    val selectedOptionIds = remember {
-        surveyOptionIds.mapIndexed { index, it ->
-            if (it in answerIds) {
-                mutableStateOf(it)
-            } else {
-                mutableStateOf(null)
-            }
+    val selectedStates = surveyOptionIds.mapIndexed { index, it ->
+        if (it in answerIds) {
+            mutableStateOf(true)
+        } else {
+            mutableStateOf(false)
         }
     }
-
-    val selectedStates = remember {
-        surveyOptionIds.mapIndexed { index, it ->
-            if (it in answerIds) {
-                mutableStateOf(true)
-            } else {
-                mutableStateOf(false)
-            }
-        }
-    }.toMutableList()
 
     fun immediateSelectedStateChange(index: Int) {
         selectedStates[index].value = !selectedStates[index].value
@@ -69,17 +58,22 @@ fun SurveyOptionList(
     }
 
     val scrollState = rememberScrollState()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        modifier = Modifier.fillMaxHeight(0.7f).verticalScroll(scrollState).background(color = Color.White)
+        modifier = Modifier.wrapContentHeight().verticalScroll(scrollState).background(color = Color.White)
     ) {
         surveyOptions.forEachIndexed { index, it ->
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
                 SurveyOptionItem(
                     text = surveyOptions[index],
                     onClick = { handleAnswerSelectedState(index) },
-                    isSelected = selectedStates[index].value
+                    isSelected = try {
+                        selectedStates[index].value
+                    }catch (e:IndexOutOfBoundsException){
+                        false
+                    }
                 )
             }
         }

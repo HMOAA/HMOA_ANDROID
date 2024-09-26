@@ -1,11 +1,11 @@
 package com.hmoa.core_model.data
 
 data class PerfumeSurveyContents(
-    val priceQuestionTitle: String?,
-    val priceQuestionOptions: List<String>?,
-    val priceQuestionOptionIds: List<Int>?,
+    val priceQuestionTitle: String,
+    val priceQuestionOptions: List<String>,
+    val priceQuestionOptionIds: List<Int>,
     val noteQuestionTitle: String?,
-    val noteCategoryTags: List<NoteCategoryTag>?,
+    val noteCategoryTags: List<NoteCategoryTag>,
     val isPriceMultipleChoice: Boolean,
 )
 

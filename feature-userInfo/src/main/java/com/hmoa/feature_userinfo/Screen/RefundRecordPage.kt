@@ -32,15 +32,15 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.toDisplayString
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.EmptyDataPage
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteListItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.FinalOrderResponseDto
-import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.feature_userinfo.viewModel.RefundRecordUiState
 import com.hmoa.feature_userinfo.viewModel.RefundRecordViewModel
 
@@ -87,7 +87,7 @@ fun RefundRecordScreen(
 
 @Composable
 private fun RefundRecordContent(
-    data: ItemSnapshotList<OrderRecordDto>,
+    data: ItemSnapshotList<GetRefundRecordResponseDto>,
     navBack: () -> Unit,
 ){
     Column(
@@ -107,7 +107,7 @@ private fun RefundRecordContent(
                     if (record != null){
                         ReturnOrRefundRecordItem(
                             status = record.orderStatus.toDisplayString(),
-                            requestAt = "",
+                            requestAt = record.createdAt,
                             notes = record.orderProducts
                         )
                     }

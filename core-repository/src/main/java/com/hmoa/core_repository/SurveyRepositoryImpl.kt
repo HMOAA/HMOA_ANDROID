@@ -5,7 +5,9 @@ import com.hmoa.core_datastore.Survey.SurveyLocalDataStore
 import com.hmoa.core_datastore.Survey.SurveyRemoteDataStore
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
+import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
+import com.hmoa.core_model.response.PerfumeRecommendsResponseDto
 import com.hmoa.core_model.response.PerfumeSurveyResponseDto
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
@@ -45,6 +47,13 @@ class SurveyRepositoryImpl @Inject constructor(
 
     override suspend fun getPerfumeSurvey(): ResultResponse<PerfumeSurveyResponseDto> {
         return surveyRemoteDataStore.getPerfumeSurvey()
+    }
+
+    override suspend fun postPerfumeSurveyAnswers(
+        dto: PerfumeSurveyAnswerRequestDto,
+        isContainAll: Boolean
+    ): ResultResponse<PerfumeRecommendsResponseDto> {
+        return surveyRemoteDataStore.postPerfumeSurveyAnswers(dto, isContainAll)
     }
 
 }

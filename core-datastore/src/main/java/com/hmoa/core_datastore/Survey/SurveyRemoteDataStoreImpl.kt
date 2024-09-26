@@ -2,14 +2,8 @@ package com.hmoa.core_datastore.Survey
 
 import ResultResponse
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_model.request.ContentRequestDto
-import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.request.SurveySaveAnswerRequestDtos
-import com.hmoa.core_model.request.SurveySaveRequestDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.PerfumeSurveyResponseDto
-import com.hmoa.core_model.response.RecommendNotesResponseDto
-import com.hmoa.core_model.response.SurveyQuestionsResponseDto
+import com.hmoa.core_model.request.*
+import com.hmoa.core_model.response.*
 import com.hmoa.core_network.service.SurveyService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
@@ -87,6 +81,19 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
     override suspend fun getPerfumeSurvey(): ResultResponse<PerfumeSurveyResponseDto> {
         val result = ResultResponse<PerfumeSurveyResponseDto>()
         surveyService.getPerfumeSurvey().suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }
+        return result
+    }
+
+    override suspend fun postPerfumeSurveyAnswers(
+        dto: PerfumeSurveyAnswerRequestDto,
+        isContainAll: Boolean
+    ): ResultResponse<PerfumeRecommendsResponseDto> {
+        val result = ResultResponse<PerfumeRecommendsResponseDto>()
+        surveyService.postPerfumeSurveyAnswer(dto, isContainAll).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())

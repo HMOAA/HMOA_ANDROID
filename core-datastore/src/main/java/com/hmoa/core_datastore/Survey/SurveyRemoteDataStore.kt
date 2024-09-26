@@ -1,14 +1,8 @@
 package com.hmoa.core_datastore.Survey
 
 import ResultResponse
-import com.hmoa.core_model.request.ContentRequestDto
-import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.request.SurveySaveAnswerRequestDtos
-import com.hmoa.core_model.request.SurveySaveRequestDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.PerfumeSurveyResponseDto
-import com.hmoa.core_model.response.RecommendNotesResponseDto
-import com.hmoa.core_model.response.SurveyQuestionsResponseDto
+import com.hmoa.core_model.request.*
+import com.hmoa.core_model.response.*
 
 interface SurveyRemoteDataStore {
     suspend fun getSurveyQuestions(): ResultResponse<SurveyQuestionsResponseDto>
@@ -19,4 +13,8 @@ interface SurveyRemoteDataStore {
     suspend fun saveQuestionBySurveyId(dto: ContentRequestDto, surveyId: Int): ResultResponse<DataResponseDto<Any>>
 
     suspend fun getPerfumeSurvey(): ResultResponse<PerfumeSurveyResponseDto>
+    suspend fun postPerfumeSurveyAnswers(
+        dto: PerfumeSurveyAnswerRequestDto,
+        isContainAll: Boolean
+    ): ResultResponse<PerfumeRecommendsResponseDto>
 }

@@ -1,13 +1,7 @@
 package com.hmoa.core_network.service
 
-import com.hmoa.core_model.request.ContentRequestDto
-import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.request.SurveySaveAnswerRequestDtos
-import com.hmoa.core_model.request.SurveySaveRequestDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.PerfumeSurveyResponseDto
-import com.hmoa.core_model.response.RecommendNotesResponseDto
-import com.hmoa.core_model.response.SurveyQuestionsResponseDto
+import com.hmoa.core_model.request.*
+import com.hmoa.core_model.response.*
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -41,4 +35,10 @@ interface SurveyService {
 
     @GET("/survey/perfume")
     suspend fun getPerfumeSurvey(): ApiResponse<PerfumeSurveyResponseDto>
+
+    @POST("/survey/perfume/respond")
+    suspend fun postPerfumeSurveyAnswer(
+        @Body dto: PerfumeSurveyAnswerRequestDto,
+        @Path("isContainAll") isContainAll: Boolean
+    ): ApiResponse<PerfumeRecommendsResponseDto>
 }

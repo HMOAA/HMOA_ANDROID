@@ -2,7 +2,9 @@ package com.hmoa.core_domain.repository
 
 import ResultResponse
 import com.hmoa.core_model.request.NoteResponseDto
+import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
+import com.hmoa.core_model.response.PerfumeRecommendsResponseDto
 import com.hmoa.core_model.response.PerfumeSurveyResponseDto
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
@@ -18,4 +20,9 @@ interface SurveyRepository {
     suspend fun deleteSurveyResult(note: NoteResponseDto)
     suspend fun deleteAllNotes()
     suspend fun getPerfumeSurvey(): ResultResponse<PerfumeSurveyResponseDto>
+
+    suspend fun postPerfumeSurveyAnswers(
+        dto: PerfumeSurveyAnswerRequestDto,
+        isContainAll: Boolean
+    ): ResultResponse<PerfumeRecommendsResponseDto>
 }

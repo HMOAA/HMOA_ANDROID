@@ -71,7 +71,7 @@ fun OrderRecordScreen(
         }
         is OrderRecordUiState.Success -> {
             OrderRecordContent(
-                data = uiState.orderRecords,
+                data = uiState.orderRecords.collectAsLazyPagingItems,
                 navBack = navBack,
                 navReturnOrRefund = navReturnOrRefund
             )

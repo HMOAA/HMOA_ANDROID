@@ -11,6 +11,7 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.core_model.response.PagingData
 import com.skydoves.sandwich.ApiResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
@@ -53,7 +54,9 @@ interface MemberService {
     @PATCH("/member/nickname")
     suspend fun updateNickname(@Body request: NickNameRequestDto): ApiResponse<DataResponseDto<Any>>
     @GET("/member/order")
-    suspend fun getOrder(): ApiResponse<List<OrderRecordDto>>
+    suspend fun getOrder(
+        @Query("cursor") cursor: Int
+    ): ApiResponse<PagingData<OrderRecordDto>>
     @GET("/member/orderInfo")
     suspend fun getOrderInfo(): ApiResponse<DefaultOrderInfoDto>
     @POST("/member/orderInfo")

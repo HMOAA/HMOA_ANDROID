@@ -102,10 +102,10 @@ fun OrderRecordContent(
             items(data) { order ->
                 OrderRecordItem(
                     shippingType = order.orderStatus,
-                    courierCompany = order.courierCompany ?: "Null Company",
+                    courierCompany = order.courierCompany,
                     products = order.orderProducts.productInfo.noteProducts,
                     totalPrice = order.orderProducts.totalAmount,
-                    trackingNumber = order.trackingNumber ?: "Tracking Number",
+                    trackingNumber = order.trackingNumber,
                     onRefundClick = { navReturnOrRefund("refund", order.orderId) },
                     onReturnClick = { navReturnOrRefund("return", order.orderId) }
                 )

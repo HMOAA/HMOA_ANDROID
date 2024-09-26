@@ -36,11 +36,11 @@ import com.hmoa.core_model.response.NoteProduct
 
 @Composable
 fun OrderRecordItem(
-    courierCompany: String,
+    courierCompany: String?,
     shippingType: OrderStatus,
     products: List<NoteProduct>,
     totalPrice: Int,
-    trackingNumber: String,
+    trackingNumber: String?,
     onRefundClick: () -> Unit,
     onReturnClick: () -> Unit,
 ){

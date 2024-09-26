@@ -31,11 +31,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.formatWon
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteListItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.FinalOrderResponseDto
@@ -157,66 +157,68 @@ private fun RefundContent(
                         color = CustomColor.red
                     )
                 }
-                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray1)
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                ){
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                if(type == "refund"){
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray1)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
                     ){
-                        Text(
-                            text = "총 상품금액",
-                            fontSize = 12.sp,
-                            fontFamily = CustomFont.medium,
-                            color = CustomColor.gray3
-                        )
-                        Text(
-                            text = "${formatWon(data.paymentAmount)}원",
-                            fontSize = 12.sp,
-                            fontFamily = CustomFont.medium,
-                            color = CustomColor.gray3
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ){
+                            Text(
+                                text = "총 상품금액",
+                                fontSize = 12.sp,
+                                fontFamily = CustomFont.medium,
+                                color = CustomColor.gray3
+                            )
+                            Text(
+                                text = "${formatWon(data.paymentAmount)}원",
+                                fontSize = 12.sp,
+                                fontFamily = CustomFont.medium,
+                                color = CustomColor.gray3
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ){
+                            Text(
+                                text = "배송비",
+                                fontSize = 12.sp,
+                                fontFamily = CustomFont.medium,
+                                color = CustomColor.gray3
+                            )
+                            Text(
+                                text = "${formatWon(data.shippingAmount)}원",
+                                fontSize = 12.sp,
+                                fontFamily = CustomFont.medium,
+                                color = CustomColor.gray3
+                            )
+                        }
                     }
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray1)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 12.dp),
+                            .padding(top = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ){
                         Text(
-                            text = "배송비",
+                            text = "총 환불금액",
                             fontSize = 12.sp,
-                            fontFamily = CustomFont.medium,
-                            color = CustomColor.gray3
+                            fontFamily = CustomFont.semiBold
                         )
                         Text(
-                            text = "${formatWon(data.shippingAmount)}원",
+                            text = "${formatWon(data.totalAmount)}원",
                             fontSize = 12.sp,
-                            fontFamily = CustomFont.medium,
-                            color = CustomColor.gray3
+                            fontFamily = CustomFont.semiBold
                         )
                     }
-                }
-                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray1)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ){
-                    Text(
-                        text = "총 환불금액",
-                        fontSize = 12.sp,
-                        fontFamily = CustomFont.semiBold
-                    )
-                    Text(
-                        text = "${formatWon(data.totalAmount)}원",
-                        fontSize = 12.sp,
-                        fontFamily = CustomFont.semiBold
-                    )
                 }
             }
         }

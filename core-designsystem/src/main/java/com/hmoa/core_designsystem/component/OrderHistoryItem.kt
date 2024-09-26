@@ -90,8 +90,21 @@ fun OrderRecordItem(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ){
-            
+            Text(
+                text = "배송비",
+                fontSize = 12.sp,
+                fontFamily = CustomFont.medium,
+                color = CustomColor.gray3
+            )
+            Spacer(Modifier.width(7.dp))
+            Text(
+                text = "${formatWon(shippingPayment)}원",
+                fontSize = 12.sp,
+                fontFamily = CustomFont.medium,
+                color = CustomColor.gray3
+            )
         }
+        Spacer(Modifier.height(24.dp))
         HorizontalDivider(color = Color.Black, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(24.dp))
         Row(

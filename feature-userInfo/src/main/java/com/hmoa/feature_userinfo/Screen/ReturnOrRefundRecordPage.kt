@@ -28,8 +28,9 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.Note
 
+//환불 / 반품 내역 화면
 @Composable
-fun ReturnOrRefundRecordRoute(){
+fun RefundRecordRoute(){
 
 }
 

@@ -18,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.ItemSnapshotList
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
@@ -71,7 +73,7 @@ fun OrderRecordScreen(
         }
         is OrderRecordUiState.Success -> {
             OrderRecordContent(
-                data = uiState.orderRecords.collectAsLazyPagingItems,
+                data = uiState.orderRecords.collectAsLazyPagingItems().itemSnapshotList,
                 navBack = navBack,
                 navReturnOrRefund = navReturnOrRefund
             )
@@ -81,7 +83,7 @@ fun OrderRecordScreen(
 
 @Composable
 fun OrderRecordContent(
-    data: List<OrderRecordDto>,
+    data: ItemSnapshotList<OrderRecordDto>,
     navBack: () -> Unit,
     navReturnOrRefund: (pageType: String, orderId: Int) -> Unit
 ) {
@@ -100,15 +102,17 @@ fun OrderRecordContent(
             modifier = Modifier.fillMaxSize()
         ){
             items(data) { order ->
-                OrderRecordItem(
-                    shippingType = order.orderStatus,
-                    courierCompany = order.courierCompany,
-                    products = order.orderProducts.productInfo.noteProducts,
-                    totalPrice = order.orderProducts.totalAmount,
-                    trackingNumber = order.trackingNumber,
-                    onRefundClick = { navReturnOrRefund("refund", order.orderId) },
-                    onReturnClick = { navReturnOrRefund("return", order.orderId) }
-                )
+                if (order != null){
+                    OrderRecordItem(
+                        shippingType = order.orderStatus,
+                        courierCompany = order.courierCompany,
+                        products = order.orderProducts.productInfo.noteProducts,
+                        totalPrice = order.orderProducts.totalAmount,
+                        trackingNumber = order.trackingNumber,
+                        onRefundClick = { navReturnOrRefund("refund", order.orderId) },
+                        onReturnClick = { navReturnOrRefund("return", order.orderId) }
+                    )
+                }
             }
         }
     }

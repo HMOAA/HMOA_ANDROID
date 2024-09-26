@@ -1,15 +1,20 @@
 package com.hmoa.feature_userinfo.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.feature_userinfo.OrderPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -47,13 +52,8 @@ class OrderRecordViewModel @Inject constructor(
     )
 
     val uiState: StateFlow<OrderRecordUiState> = errorUiState.map{
-        Log.d("TAG TEST", "error state : ${it}")
-//        if (it is ErrorUiState.ErrorData && it.isValidate()) return@map
-        val result = memberRepository.getOrder()
-        if (result.errorMessage != null) throw Exception(result.errorMessage!!.message)
-        result.data!!
+        orderRecordPagingSource()
     }.asResult().map{ result ->
-        Log.d("TAG TEST", "result : ${result}")
         when(result){
             Result.Loading -> OrderRecordUiState.Loading
             is Result.Success -> OrderRecordUiState.Success(result.data)
@@ -74,12 +74,26 @@ class OrderRecordViewModel @Inject constructor(
         initialValue = OrderRecordUiState.Loading
     )
 
+
+    //주문 내역 Paging
+    private fun orderRecordPagingSource() : Flow<PagingData<OrderRecordDto>> = Pager(
+        config = PagingConfig(pageSize = 5),
+        pagingSourceFactory = {
+            getOrderRecordPaging()
+        }
+    ).flow.cachedIn(viewModelScope)
+
+
+    //paging
+    private fun getOrderRecordPaging() = OrderPagingSource(
+        memberRepository = memberRepository
+    )
 }
 
 sealed interface OrderRecordUiState{
     data object Loading: OrderRecordUiState
     data object Error: OrderRecordUiState
     data class Success(
-        val orderRecords: List<OrderRecordDto>
+        val orderRecords: Flow<PagingData<OrderRecordDto>>
     ): OrderRecordUiState
 }

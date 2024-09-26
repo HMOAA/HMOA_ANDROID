@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.Spinner
-import com.hmoa.component.TopBar
-import com.hmoa.component.YearPickerDialog
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.Spinner
+import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.YearPickerDialog
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.viewModel.MyBirthUiState
 import com.hmoa.feature_userinfo.viewModel.MyBirthViewModel
@@ -38,7 +38,7 @@ import java.time.LocalDateTime
 
 @Composable
 fun MyBirthRoute(
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     viewModel: MyBirthViewModel = hiltViewModel()
 ) {
     val availableYearRange = (1950..LocalDateTime.now().year).toList()
@@ -54,7 +54,7 @@ fun MyBirthRoute(
         isEnabled = isEnabled.value,
         onUpdateBirth = {viewModel.updateBirth(it)},
         onSaveBirth = {viewModel.saveBirth()},
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -66,7 +66,7 @@ fun MyBirthPage(
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
-    onNavBack: () -> Unit
+    navBack: () -> Unit
 ) {
     when (uiState) {
         MyBirthUiState.Loading -> AppLoadingScreen()
@@ -77,7 +77,7 @@ fun MyBirthPage(
                 isEnabled = isEnabled,
                 onUpdateBirth = onUpdateBirth,
                 onSaveBirth = onSaveBirth,
-                onNavBack = onNavBack
+                navBack = navBack
             )
         }
         MyBirthUiState.Error -> {
@@ -94,7 +94,7 @@ private fun SelectBirthContent(
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
-    onNavBack: () -> Unit
+    navBack: () -> Unit
 ){
     val scope = rememberCoroutineScope()
     val modalSheetState = androidx.compose.material.rememberModalBottomSheetState(
@@ -131,7 +131,7 @@ private fun SelectBirthContent(
         ) {
             TopBar(
                 navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = onNavBack,
+                onNavClick = navBack,
                 title = "출생연도"
             )
             Spacer(Modifier.height(36.dp))
@@ -164,7 +164,7 @@ private fun SelectBirthContent(
                 btnText = "변경",
                 onClick = {
                     onSaveBirth()
-                    onNavBack()
+                    navBack()
                 }
             )
         }

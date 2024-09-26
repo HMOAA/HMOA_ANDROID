@@ -8,8 +8,8 @@ import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_model.data.HbtiQuestionItem
-import com.hmoa.core_model.data.HbtiQuestionItems
+import com.hmoa.core_domain.entity.data.HbtiQuestionItem
+import com.hmoa.core_domain.entity.data.HbtiQuestionItems
 import com.hmoa.core_model.request.SurveyRespondRequestDto
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.feature_hbti.screen.HbtiSurveyScreen
@@ -50,7 +50,8 @@ class HbtiSurveyScreenTest : TestCase() {
         )
         val hbtiData = HbtiSurveyUiState.HbtiData(
             hbtiQuestionItems = HbtiQuestionItems(mutableMapOf(0 to hbtiQuestionItem_singleChoice)),
-            hbtiAnswerIds = null
+            hbtiAnswerIds = null,
+            isNextQuestionAvailable = null
         )
     }
 

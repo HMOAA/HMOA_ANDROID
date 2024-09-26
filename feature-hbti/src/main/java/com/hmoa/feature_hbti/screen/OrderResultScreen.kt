@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.theme.CustomFont
 

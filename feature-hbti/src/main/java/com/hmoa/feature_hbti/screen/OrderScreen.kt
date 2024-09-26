@@ -52,10 +52,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.concatWithComma
 import com.hmoa.core_common.formatWon
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.CircleImageView
@@ -67,7 +67,7 @@ import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.core_model.data.WebviewType
+import com.hmoa.core_domain.entity.data.WebviewType
 import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct

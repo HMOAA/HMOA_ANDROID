@@ -36,11 +36,12 @@ import com.hmoa.core_model.response.NoteProduct
 
 @Composable
 fun OrderRecordItem(
-    courierCompany: String,
+    courierCompany: String?,
     shippingType: OrderStatus,
     products: List<NoteProduct>,
     totalPrice: Int,
-    trackingNumber: String,
+    shippingPayment: Int,
+    trackingNumber: String?,
     onRefundClick: () -> Unit,
     onReturnClick: () -> Unit,
 ){
@@ -71,17 +72,38 @@ fun OrderRecordItem(
             ProductView(it)
             Spacer(Modifier.height(30.dp))
         }
-        Text(
-            modifier = Modifier.padding(start = 80.dp),
-            text = "택배사 : ${courierCompany}\n운송장 번호 : ${trackingNumber}",
-            textAlign = TextAlign.Justify,
-            style = TextStyle(
-                fontSize = 10.sp,
-                color = CustomColor.gray3,
-                fontFamily = CustomFont.regular,
-                platformStyle = PlatformTextStyle(includeFontPadding = false)
+        if (courierCompany != null && trackingNumber != null){
+            Text(
+                modifier = Modifier.padding(start = 80.dp),
+                text = "택배사 : ${courierCompany}\n운송장 번호 : ${trackingNumber}",
+                textAlign = TextAlign.Justify,
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    color = CustomColor.gray3,
+                    fontFamily = CustomFont.regular,
+                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                )
             )
-        )
+            Spacer(Modifier.height(24.dp))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ){
+            Text(
+                text = "배송비",
+                fontSize = 12.sp,
+                fontFamily = CustomFont.medium,
+                color = CustomColor.gray3
+            )
+            Spacer(Modifier.width(7.dp))
+            Text(
+                text = "${formatWon(shippingPayment)}원",
+                fontSize = 12.sp,
+                fontFamily = CustomFont.medium,
+                color = CustomColor.gray3
+            )
+        }
         Spacer(Modifier.height(24.dp))
         HorizontalDivider(color = Color.Black, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(24.dp))
@@ -207,7 +229,8 @@ private fun OrderHistoryItemUiTest(){
             ),
             totalPrice = 15000,
             onRefundClick = {},
-            onReturnClick = {}
+            onReturnClick = {},
+            shippingPayment = 3000
         )
         OrderRecordItem(
             courierCompany = "대한통운(CJ)",
@@ -245,7 +268,8 @@ private fun OrderHistoryItemUiTest(){
             ),
             totalPrice = 15000,
             onRefundClick = {},
-            onReturnClick = {}
+            onReturnClick = {},
+            shippingPayment = 3000
         )
     }
 }

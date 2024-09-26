@@ -28,29 +28,29 @@ import com.hmoa.feature_community.Screen.CommunityHomeRoute
 
 @Composable
 fun HPediaRoute(
-    onNavHPediaSearch: (String) -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavCommunityGraph: () -> Unit,
-    onNavLogin: () -> Unit,
-    onNavHome : () -> Unit,
+    navHPediaSearch: (String) -> Unit,
+    navCommunityDesc: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
+    navLogin: () -> Unit,
+    navHome : () -> Unit,
 ) {
     HPediaScreen(
-        onNavHPediaSearch = onNavHPediaSearch,
-        onNavCommunityDesc = onNavCommunityDesc,
-        onNavCommunityGraph = onNavCommunityGraph,
-        onErrorHandleLoginAgain = onNavLogin,
-        onNavHome = onNavHome
+        navHPediaSearch = navHPediaSearch,
+        navCommunityDesc = navCommunityDesc,
+        navCommunityGraph = navCommunityGraph,
+        onErrorHandleLoginAgain = navLogin,
+        navHome = navHome
     )
 
 }
 
 @Composable
 fun HPediaScreen(
-    onNavHPediaSearch: (String) -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavCommunityGraph: () -> Unit,
+    navHPediaSearch: (String) -> Unit,
+    navCommunityDesc: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    onNavHome : () -> Unit
+    navHome : () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -64,15 +64,15 @@ fun HPediaScreen(
         ) {
             HPediaScreenTitle("HPedia")
             SelectSearchType(
-                onNavHPediaSearch = onNavHPediaSearch
+                navHPediaSearch = navHPediaSearch
             )
         }
         Spacer(Modifier.height(27.dp))
         CommunityHomeRoute(
-            onNavCommunityGraph = onNavCommunityGraph,
-            onNavCommunityDescription = onNavCommunityDesc,
+            navCommunityGraph = navCommunityGraph,
+            navCommunityDescription = navCommunityDesc,
             onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-            onNavHome = onNavHome
+            navHome = navHome
         )
     }
 }
@@ -95,7 +95,7 @@ fun HPediaScreenTitle(title: String) {
 
 @Composable
 fun SelectSearchType(
-    onNavHPediaSearch: (String) -> Unit
+    navHPediaSearch: (String) -> Unit
 ) {
     val data = listOf(
         listOf("용어", "Top notes\n탑노트란?"),
@@ -121,7 +121,7 @@ fun SelectSearchType(
                     .weight(1f)
                     .background(color = Color.Black, shape = RectangleShape)
                     .clickable {
-                        onNavHPediaSearch(data[0])
+                        navHPediaSearch(data[0])
                     }
                     .padding(16.dp)
             ) {

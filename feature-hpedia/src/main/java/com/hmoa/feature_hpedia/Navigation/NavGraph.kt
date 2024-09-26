@@ -10,39 +10,39 @@ import com.hmoa.feature_hpedia.Screen.HPediaDescRoute
 import com.hmoa.feature_hpedia.Screen.HPediaRoute
 import com.hmoa.feature_hpedia.Screen.HPediaSearchRoute
 
-fun NavController.navigateToHPedia() = navigate(HPediaRoute.HPediaGraphRoute.name)
+fun NavController.navigateToHPedia() = navigate(com.hmoa.core_domain.entity.navigation.HPediaRoute.HPediaGraphRoute.name)
 
-fun NavController.navigateToHPediaHomeRoute() = navigate(HPediaRoute.HPedia.name)
+fun NavController.navigateToHPediaHomeRoute() = navigate(com.hmoa.core_domain.entity.navigation.HPediaRoute.HPedia.name)
 
 fun NavController.navigateToHPediaDescRoute(id: Int, type: String) =
-    navigate("${HPediaRoute.HPediaDescRoute.name}/${id}/${type}")
+    navigate("${com.hmoa.core_domain.entity.navigation.HPediaRoute.HPediaDescRoute.name}/${id}/${type}")
 
-fun NavController.navigateToHPediaSearchRoute(type: String) = navigate("${HPediaRoute.HPediaSearchRoute.name}/${type}")
+fun NavController.navigateToHPediaSearchRoute(type: String) = navigate("${com.hmoa.core_domain.entity.navigation.HPediaRoute.HPediaSearchRoute.name}/${type}")
 
 fun NavGraphBuilder.nestedHPediaGraph(
-    onNavBack: () -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavCommunityGraph: () -> Unit,
-    onNavHPediaSearch: (String) -> Unit,
-    onNavHPediaDesc: (Int, String) -> Unit,
-    onNavLogin: () -> Unit,
-    onNavHome : () -> Unit,
+    navBack: () -> Unit,
+    navCommunityDesc: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
+    navHPediaSearch: (String) -> Unit,
+    navHPediaDesc: (Int, String) -> Unit,
+    navLogin: () -> Unit,
+    navHome : () -> Unit,
 ) {
     navigation(
-        startDestination = HPediaRoute.HPedia.name,
-        route = HPediaRoute.HPediaGraphRoute.name,
+        startDestination = com.hmoa.core_domain.entity.navigation.HPediaRoute.HPedia.name,
+        route = com.hmoa.core_domain.entity.navigation.HPediaRoute.HPediaGraphRoute.name,
     ) {
-        composable("${HPediaRoute.HPediaSearchRoute.name}/{type}") {
+        composable("${com.hmoa.core_domain.entity.navigation.HPediaRoute.HPediaSearchRoute.name}/{type}") {
             val type = it.arguments?.getString("type")
             HPediaSearchRoute(
                 type = type,
-                onNavBack = onNavBack,
-                onNavHPediaDesc = onNavHPediaDesc
+                navBack = navBack,
+                navHPediaDesc = navHPediaDesc
             )
         }
 
         composable(
-            route = "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
+            route = "${com.hmoa.core_domain.entity.navigation.HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType },
                 navArgument("type") { type = NavType.StringType }
@@ -54,17 +54,17 @@ fun NavGraphBuilder.nestedHPediaGraph(
             HPediaDescRoute(
                 id = id,
                 type = type,
-                onNavBack = onNavBack,
+                navBack = navBack,
             )
         }
 
-        composable(HPediaRoute.HPedia.name) {
+        composable(com.hmoa.core_domain.entity.navigation.HPediaRoute.HPedia.name) {
             HPediaRoute(
-                onNavHPediaSearch = onNavHPediaSearch,
-                onNavCommunityDesc = onNavCommunityDesc,
-                onNavCommunityGraph = onNavCommunityGraph,
-                onNavLogin = onNavLogin,
-                onNavHome = onNavHome,
+                navHPediaSearch = navHPediaSearch,
+                navCommunityDesc = navCommunityDesc,
+                navCommunityGraph = navCommunityGraph,
+                navLogin = navLogin,
+                navHome = navHome,
             )
         }
     }

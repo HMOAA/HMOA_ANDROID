@@ -53,8 +53,8 @@ import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
 @Composable
 fun CommunityEditRoute(
     id: Int?,
-    onNavBack: () -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
+    navBack: () -> Unit,
+    navCommunityDesc: (Int) -> Unit,
     viewModel: CommunityEditViewModel = hiltViewModel()
 ) {
     //id가 null이 아니면 view model에 setting
@@ -88,8 +88,8 @@ fun CommunityEditRoute(
             //view model의 update community 사용
             viewModel.updateCommunity()
         },
-        onNavBack = onNavBack,
-        onNavCommunityDesc = { onNavCommunityDesc(id!!) }
+        navBack = navBack,
+        navCommunityDesc = { navCommunityDesc(id!!) }
     )
 }
 
@@ -105,8 +105,8 @@ fun CommunityEditPage(
     onUpdatePictures: (List<Uri>) -> Unit,
     onDeletePictures: (Uri) -> Unit,
     onPostCommunity: () -> Unit,
-    onNavBack: () -> Unit,
-    onNavCommunityDesc: () -> Unit
+    navBack: () -> Unit,
+    navCommunityDesc: () -> Unit
 ) {
     when (uiState) {
         CommunityEditUiState.Loading -> AppLoadingScreen()
@@ -118,10 +118,10 @@ fun CommunityEditPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TopBarWithEvent(
-                    onCancelClick = onNavBack,
+                    onCancelClick = navBack,
                     onConfirmClick = {
                         onPostCommunity()
-                        onNavCommunityDesc()
+                        navCommunityDesc()
                     },
                     title = category!!
                 )

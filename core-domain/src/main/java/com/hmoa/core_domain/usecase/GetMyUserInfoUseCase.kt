@@ -2,7 +2,7 @@ package com.hmoa.core_domain.usecase
 
 import ResultResponse
 import com.hmoa.core_domain.repository.MemberRepository
-import com.hmoa.core_model.data.UserInfo
+import com.hmoa.core_domain.entity.data.UserInfo
 import java.time.LocalDateTime
 import javax.inject.Inject
 

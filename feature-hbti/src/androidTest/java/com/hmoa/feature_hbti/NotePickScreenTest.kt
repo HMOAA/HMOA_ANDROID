@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_model.data.NoteSelect
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.core_model.response.ProductResponseDto
 import com.hmoa.feature_hbti.screen.NotePickGridWindow

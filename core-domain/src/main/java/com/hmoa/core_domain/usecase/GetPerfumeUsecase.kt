@@ -3,7 +3,7 @@ package com.hmoa.core_domain.usecase
 import ResultResponse
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_model.data.Perfume
+import com.hmoa.core_domain.entity.data.Perfume
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.core_model.response.PerfumeDetailResponseDto

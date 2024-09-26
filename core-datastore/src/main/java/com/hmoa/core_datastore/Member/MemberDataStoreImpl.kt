@@ -12,13 +12,16 @@ import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_network.service.MemberService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File
 import javax.inject.Inject
@@ -125,9 +128,20 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getOrder(): ResultResponse<List<OrderRecordDto>> {
-        val result = ResultResponse<List<OrderRecordDto>>()
-        memberService.getOrder().suspendOnSuccess{
+    override suspend fun getOrder(cursor: Int): ResultResponse<PagingData<OrderRecordDto>> {
+        val result = ResultResponse<PagingData<OrderRecordDto>>()
+        memberService.getOrder(cursor).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+
+    override suspend fun getRefundRecord(cursor: Int): ResultResponse<PagingData<GetRefundRecordResponseDto>> {
+        val result = ResultResponse<PagingData<GetRefundRecordResponseDto>>()
+        memberService.getRefundRecord(cursor).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())

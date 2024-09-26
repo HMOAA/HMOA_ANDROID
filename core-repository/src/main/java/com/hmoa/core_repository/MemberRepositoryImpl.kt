@@ -11,8 +11,10 @@ import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.core_model.response.PagingData
 import java.io.File
 import javax.inject.Inject
 
@@ -68,8 +70,12 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.updateNickname(request)
     }
 
-    override suspend fun getOrder(): ResultResponse<List<OrderRecordDto>> {
-        return memberDataStore.getOrder()
+    override suspend fun getOrder(cursor: Int): ResultResponse<PagingData<OrderRecordDto>> {
+        return memberDataStore.getOrder(cursor)
+    }
+
+    override suspend fun getRefundRecord(cursor: Int): ResultResponse<PagingData<GetRefundRecordResponseDto>> {
+        return memberDataStore.getRefundRecord(cursor)
     }
 
     override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {

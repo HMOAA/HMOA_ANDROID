@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.Spinner
-import com.hmoa.component.TopBar
-import com.hmoa.component.YearPickerDialog
+import com.hmoa.core_designsystem.component.Spinner
+import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.YearPickerDialog
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.RadioButtonList

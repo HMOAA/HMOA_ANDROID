@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo.Screen
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -18,12 +18,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
+import androidx.paging.ItemSnapshotList
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.OrderRecordItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.feature_userinfo.viewModel.OrderRecordUiState
 import com.hmoa.feature_userinfo.viewModel.OrderRecordViewModel
@@ -71,7 +74,7 @@ fun OrderRecordScreen(
         }
         is OrderRecordUiState.Success -> {
             OrderRecordContent(
-                data = uiState.orderRecords,
+                data = uiState.orderRecords.collectAsLazyPagingItems().itemSnapshotList,
                 navBack = navBack,
                 navReturnOrRefund = navReturnOrRefund
             )
@@ -81,7 +84,7 @@ fun OrderRecordScreen(
 
 @Composable
 fun OrderRecordContent(
-    data: List<OrderRecordDto>,
+    data: ItemSnapshotList<OrderRecordDto>,
     navBack: () -> Unit,
     navReturnOrRefund: (pageType: String, orderId: Int) -> Unit
 ) {
@@ -89,26 +92,36 @@ fun OrderRecordContent(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-            .padding(horizontal = 16.dp)
     ){
         TopBar(
             title = "주문 내역",
             navIcon = painterResource(R.drawable.ic_back),
             onNavClick = navBack
         )
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
         ){
-            items(data) { order ->
-                OrderRecordItem(
-                    shippingType = order.orderStatus,
-                    courierCompany = order.courierCompany ?: "Null Company",
-                    products = order.orderProducts.productInfo.noteProducts,
-                    totalPrice = order.orderProducts.totalAmount,
-                    trackingNumber = order.trackingNumber ?: "Tracking Number",
-                    onRefundClick = { navReturnOrRefund("refund", order.orderId) },
-                    onReturnClick = { navReturnOrRefund("return", order.orderId) }
-                )
+            if(data.isNotEmpty()){
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    items(data) { order ->
+                        if (order != null){
+                            OrderRecordItem(
+                                shippingType = order.orderStatus,
+                                courierCompany = order.courierCompany,
+                                products = order.orderProducts.productInfo.noteProducts,
+                                totalPrice = order.orderProducts.totalAmount,
+                                trackingNumber = order.trackingNumber,
+                                onRefundClick = { navReturnOrRefund("refund", order.orderId) },
+                                onReturnClick = { navReturnOrRefund("return", order.orderId) },
+                                shippingPayment = order.orderProducts.shippingAmount
+                            )
+                        }
+                    }
+                }
+            } else {
+                EmptyDataPage(mainText = "주문 내역이 없습니다.")
             }
         }
     }

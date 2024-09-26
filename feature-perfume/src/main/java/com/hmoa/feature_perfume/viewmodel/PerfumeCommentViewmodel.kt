@@ -11,7 +11,7 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_domain.usecase.UpdateLikePerfumeCommentUseCase
-import com.hmoa.core_model.data.SortType
+import com.hmoa.core_domain.entity.data.SortType
 import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.PerfumeCommentLatestPagingSource

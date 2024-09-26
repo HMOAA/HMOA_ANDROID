@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.RadioButtonList
@@ -25,7 +25,7 @@ import com.hmoa.feature_userinfo.viewModel.MyGenderViewModel
 
 @Composable
 fun MyGenderRoute(
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     viewModel: MyGenderViewModel = hiltViewModel()
 ) {
 
@@ -39,7 +39,7 @@ fun MyGenderRoute(
         onUpdateGender = {viewModel.updateGender(it)},
         onSaveGender = {viewModel.saveGender()},
         isEnabled = isEnabled.value,
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -50,7 +50,7 @@ fun MyGenderPage(
     onUpdateGender: (String) -> Unit,
     onSaveGender: () -> Unit,
     isEnabled: Boolean,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
 ) {
     when (uiState) {
         MyGenderUiState.Loading -> AppLoadingScreen()
@@ -60,7 +60,7 @@ fun MyGenderPage(
                 gender = gender!!,
                 onUpdateGender = onUpdateGender,
                 onSaveGender = onSaveGender,
-                onNavBack = onNavBack
+                navBack = navBack
             )
         }
         MyGenderUiState.Error -> {
@@ -75,7 +75,7 @@ private fun SelectGenderContent(
     gender : String,
     onUpdateGender : (String) -> Unit,
     onSaveGender : () -> Unit,
-    onNavBack: () -> Unit
+    navBack: () -> Unit
 ){
     Column(
         modifier = Modifier
@@ -84,7 +84,7 @@ private fun SelectGenderContent(
     ) {
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack,
+            onNavClick = navBack,
             title = "성별"
         )
         Spacer(Modifier.height(38.dp))
@@ -110,7 +110,7 @@ private fun SelectGenderContent(
             btnText = "변경",
             onClick = {
                 onSaveGender()
-                onNavBack()
+                navBack()
             }
         )
     }

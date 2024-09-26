@@ -3,7 +3,7 @@ package com.hmoa.feature_hbti
 import ResultResponse
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_model.data.NoteSelect
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.core_model.response.ProductResponseDto

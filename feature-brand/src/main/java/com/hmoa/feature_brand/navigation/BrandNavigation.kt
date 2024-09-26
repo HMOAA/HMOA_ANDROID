@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.hmoa.core_domain.entity.navigation.BrandRoute
 
 fun NavController.navigateToBrand(brandId: String) = navigate("${BrandRoute.Brand.name}/${brandId}")
 fun NavController.navigateToBrandSearch() = navigate("${BrandRoute.BrandSearch.name}")

@@ -7,7 +7,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.usecase.GetNoteUseCase
 import com.hmoa.core_domain.usecase.GetPerfumerUseCase
 import com.hmoa.core_domain.usecase.GetTermUseCase
-import com.hmoa.core_model.data.HpediaType
+import com.hmoa.core_domain.entity.data.HpediaType
 import com.hmoa.core_model.response.NoteDescResponseDto
 import com.hmoa.core_model.response.PerfumerDescResponseDto
 import com.hmoa.core_model.response.TermDescResponseDto

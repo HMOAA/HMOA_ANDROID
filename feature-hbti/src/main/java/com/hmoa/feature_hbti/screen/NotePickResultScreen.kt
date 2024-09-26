@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.gson.GsonBuilder
-import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.ErrorUiSetView
@@ -39,7 +39,7 @@ import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
-import com.hmoa.feature_hbti.navigation.HbtiRoute
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.NotePickResultState
 import com.hmoa.feature_hbti.viewmodel.NotePickResultViewModel
 

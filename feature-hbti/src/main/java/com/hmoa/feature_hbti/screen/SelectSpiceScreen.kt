@@ -35,11 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.data.Spice
+import com.hmoa.core_domain.entity.data.Spice
 import com.hmoa.feature_hbti.viewmodel.SelectSpiceViewModel
 
 @Composable

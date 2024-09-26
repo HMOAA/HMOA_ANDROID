@@ -36,8 +36,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.LikeGridItem

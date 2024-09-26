@@ -27,7 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_model.response.NoteDefaultResponseDto
@@ -38,8 +38,8 @@ import com.hmoa.feature_hpedia.ViewModel.HPediaSearchViewModel
 @Composable
 fun HPediaSearchRoute(
     type : String?,
-    onNavBack : () -> Unit,
-    onNavHPediaDesc : (Int, String) -> Unit,
+    navBack : () -> Unit,
+    navHPediaDesc : (Int, String) -> Unit,
     viewModel : HPediaSearchViewModel = hiltViewModel()
 ){
     viewModel.setType(type)
@@ -60,8 +60,8 @@ fun HPediaSearchRoute(
         termResult = if(type.value == "용어") (result as LazyPagingItems<TermDefaultResponseDto>) else null,
         noteResult = if(type.value == "노트") (result as LazyPagingItems<NoteDefaultResponseDto>) else null,
         perfumerResult = if (type.value == "조향사") (result as LazyPagingItems<PerfumerDefaultResponseDto>) else null,
-        onNavBack = onNavBack,
-        onNavHPediaDesc = onNavHPediaDesc,
+        navBack = navBack,
+        navHPediaDesc = navHPediaDesc,
     )
 }
 
@@ -77,8 +77,8 @@ fun HPediaSearchScreen(
     termResult : LazyPagingItems<TermDefaultResponseDto>? = null,
     noteResult : LazyPagingItems<NoteDefaultResponseDto>? = null,
     perfumerResult : LazyPagingItems<PerfumerDefaultResponseDto>? = null,
-    onNavBack: () -> Unit,
-    onNavHPediaDesc: (Int, String) -> Unit
+    navBack: () -> Unit,
+    navHPediaDesc: (Int, String) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -93,14 +93,14 @@ fun HPediaSearchScreen(
             onChangeSearchWord = onChangeSearchWord,
             onClearWord = onClearWord,
             onClickSearch = onClickSearch,
-            onNavBack = onNavBack
+            navBack = navBack
         )
         HPediaSearchResult(
             type = type ?: "Null Type",
             termResult = termResult,
             noteResult = noteResult,
             perfumerResult = perfumerResult,
-            onNavHPediaDesc = onNavHPediaDesc
+            navHPediaDesc = navHPediaDesc
         )
     }
 }
@@ -114,7 +114,7 @@ fun HPediaEventTopBar(
     onChangeSearchWord : (String) -> Unit,
     onClearWord : () -> Unit,
     onClickSearch : () -> Unit,
-    onNavBack : () -> Unit
+    navBack : () -> Unit
 ){
     if (topBarState){
         SearchTopBar(
@@ -122,13 +122,13 @@ fun HPediaEventTopBar(
             onChangeWord = { onChangeSearchWord(it) },
             onClearWord = onClearWord,
             onClickSearch = onClickSearch,
-            onNavBack = onNavBack
+            navBack = navBack
         )
     } else {
         TopBar(
             title = type,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack,
+            onNavClick = navBack,
             menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
             onMenuClick = {
                 onChagneTopBarState(true)
@@ -143,7 +143,7 @@ fun HPediaSearchResult(
     termResult : LazyPagingItems<TermDefaultResponseDto>? = null,
     noteResult : LazyPagingItems<NoteDefaultResponseDto>? = null,
     perfumerResult : LazyPagingItems<PerfumerDefaultResponseDto>? = null,
-    onNavHPediaDesc: (Int, String) -> Unit
+    navHPediaDesc: (Int, String) -> Unit
 ){
     LazyColumn(
         modifier = Modifier.fillMaxSize()
@@ -156,7 +156,7 @@ fun HPediaSearchResult(
                         id = it.termId,
                         koTitle = it.termTitle,
                         engTitle = it.termEnglishTitle,
-                        onNavHPediaDesc = onNavHPediaDesc
+                        navHPediaDesc = navHPediaDesc
                     )
                 }
             }
@@ -169,7 +169,7 @@ fun HPediaSearchResult(
                         id = it.noteId,
                         koTitle = it.noteTitle,
                         engTitle = it.noteSubtitle,
-                        onNavHPediaDesc = onNavHPediaDesc
+                        navHPediaDesc = navHPediaDesc
                     )
                 }
             }
@@ -183,7 +183,7 @@ fun HPediaSearchResult(
                         id = it.perfumerId,
                         koTitle = it.perfumerTitle,
                         engTitle = it.perfumerSubTitle,
-                        onNavHPediaDesc = onNavHPediaDesc
+                        navHPediaDesc = navHPediaDesc
                     )
                 }
             }
@@ -197,14 +197,14 @@ fun HPediaResultItem(
     id : Int,
     koTitle : String,
     engTitle : String,
-    onNavHPediaDesc: (Int, String) -> Unit
+    navHPediaDesc: (Int, String) -> Unit
 ){
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
             .clickable {
-                onNavHPediaDesc(id, type)
+                navHPediaDesc(id, type)
             }
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,

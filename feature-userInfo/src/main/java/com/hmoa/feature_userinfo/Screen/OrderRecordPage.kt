@@ -114,7 +114,8 @@ fun OrderRecordContent(
                                 totalPrice = order.orderProducts.totalAmount,
                                 trackingNumber = order.trackingNumber,
                                 onRefundClick = { navReturnOrRefund("refund", order.orderId) },
-                                onReturnClick = { navReturnOrRefund("return", order.orderId) }
+                                onReturnClick = { navReturnOrRefund("return", order.orderId) },
+                                shippingPayment = order.orderProducts.shippingAmount
                             )
                         }
                     }

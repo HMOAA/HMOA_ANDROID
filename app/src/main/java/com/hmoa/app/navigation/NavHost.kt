@@ -81,6 +81,7 @@ import com.hmoa.feature_userinfo.navigation.navigateToMyInfoPage
 import com.hmoa.feature_userinfo.navigation.navigateToMyPostPage
 import com.hmoa.feature_userinfo.navigation.navigateToOrderRecord
 import com.hmoa.feature_userinfo.navigation.navigateToRefund
+import com.hmoa.feature_userinfo.navigation.navigateToRefundRecord
 import com.hmoa.feature_userinfo.navigation.nestedUserInfoGraph
 
 @Composable
@@ -151,7 +152,8 @@ fun SetUpNavGraph(
             navMyPerfume = navController::navigateToLike,
             navPerfume = navController::navigateToPerfume,
             navOrderRecord = navController::navigateToOrderRecord,
-            navRefund = navController::navigateToRefund
+            navRefund = navController::navigateToRefund,
+            navRefundRecord = navController::navigateToRefundRecord
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */

@@ -73,6 +73,10 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.getOrder(cursor)
     }
 
+    override suspend fun getRefund(cursor: Int): ResultResponse<PagingData<OrderRecordDto>> {
+        return memberDataStore.getRefund(cursor)
+    }
+
     override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {
         return memberDataStore.getOrderInfo()
     }

@@ -28,6 +28,7 @@ interface MemberDataStore {
     suspend fun updateJoin(request: JoinUpdateRequestDto): ResultResponse<MemberResponseDto>
     suspend fun updateNickname(request: NickNameRequestDto): ResultResponse<DataResponseDto<Any>>
     suspend fun getOrder(cursor: Int): ResultResponse<PagingData<OrderRecordDto>>
+    suspend fun getRefund(cursor: Int): ResultResponse<PagingData<OrderRecordDto>>
     suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto>
     suspend fun postOrderInfo(request: DefaultOrderInfoDto): ResultResponse<DataResponseDto<Any>>
     suspend fun getPerfumeComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>>

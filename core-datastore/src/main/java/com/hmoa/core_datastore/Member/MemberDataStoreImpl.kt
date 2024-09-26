@@ -138,6 +138,17 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
+    override suspend fun getRefund(cursor: Int): ResultResponse<PagingData<OrderRecordDto>> {
+        val result = ResultResponse<PagingData<OrderRecordDto>>()
+        memberService.getRefund(cursor).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            result.errorMessage = errorMessage
+        }
+        return result
+    }
+
     override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {
         val result = ResultResponse<DefaultOrderInfoDto>()
         memberService.getOrderInfo().suspendOnSuccess{

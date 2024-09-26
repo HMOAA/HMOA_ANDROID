@@ -57,6 +57,10 @@ interface MemberService {
     suspend fun getOrder(
         @Query("cursor") cursor: Int
     ): ApiResponse<PagingData<OrderRecordDto>>
+    @GET("/member/order/cancel")
+    suspend fun getRefund(
+        @Query("cursor") cursor: Int
+    ): ApiResponse<PagingData<OrderRecordDto>>
     @GET("/member/orderInfo")
     suspend fun getOrderInfo(): ApiResponse<DefaultOrderInfoDto>
     @POST("/member/orderInfo")

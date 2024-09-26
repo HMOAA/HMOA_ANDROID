@@ -12,6 +12,7 @@ import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.core_model.response.PagingData
@@ -138,8 +139,8 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getRefundRecord(cursor: Int): ResultResponse<PagingData<OrderRecordDto>> {
-        val result = ResultResponse<PagingData<OrderRecordDto>>()
+    override suspend fun getRefundRecord(cursor: Int): ResultResponse<PagingData<GetRefundRecordResponseDto>> {
+        val result = ResultResponse<PagingData<GetRefundRecordResponseDto>>()
         memberService.getRefundRecord(cursor).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{

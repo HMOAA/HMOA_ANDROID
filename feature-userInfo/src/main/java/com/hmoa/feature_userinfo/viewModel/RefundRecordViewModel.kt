@@ -11,7 +11,7 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.MemberRepository
-import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.feature_userinfo.RefundRecordPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -76,7 +76,7 @@ class RefundRecordViewModel @Inject constructor(
 
 
     //주문 내역 Paging
-    private fun refundRecordPagingSource() : Flow<PagingData<OrderRecordDto>> = Pager(
+    private fun refundRecordPagingSource() : Flow<PagingData<GetRefundRecordResponseDto>> = Pager(
         config = PagingConfig(pageSize = 5),
         pagingSourceFactory = {
             getRefundRecordPaging()
@@ -94,6 +94,6 @@ sealed interface RefundRecordUiState{
     data object Loading: RefundRecordUiState
     data object Error: RefundRecordUiState
     data class Success(
-        val data: Flow<PagingData<OrderRecordDto>>
+        val data: Flow<PagingData<GetRefundRecordResponseDto>>
     ): RefundRecordUiState
 }

@@ -3,16 +3,16 @@ package com.hmoa.feature_userinfo
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hmoa.core_domain.repository.MemberRepository
-import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 
 class RefundRecordPagingSource(
     private val memberRepository: MemberRepository
-) : PagingSource<Int, OrderRecordDto>() {
+) : PagingSource<Int, GetRefundRecordResponseDto>() {
 
     private var totalCount = 0
     private var cursor = 0
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, OrderRecordDto> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GetRefundRecordResponseDto> {
         val pageNumber = params.key ?: 0
         val response = memberRepository.getRefundRecord(cursor)
         if (response.errorMessage != null) {
@@ -31,7 +31,7 @@ class RefundRecordPagingSource(
         )
     }
 
-    override fun getRefreshKey(state: PagingState<Int, OrderRecordDto>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, GetRefundRecordResponseDto>): Int? {
         return state.anchorPosition?.let {
             state.closestPageToPosition(it)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(it)?.nextKey?.minus(1)

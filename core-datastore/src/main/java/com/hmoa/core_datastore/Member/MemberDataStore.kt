@@ -10,6 +10,7 @@ import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.core_model.response.PagingData
@@ -28,7 +29,7 @@ interface MemberDataStore {
     suspend fun updateJoin(request: JoinUpdateRequestDto): ResultResponse<MemberResponseDto>
     suspend fun updateNickname(request: NickNameRequestDto): ResultResponse<DataResponseDto<Any>>
     suspend fun getOrder(cursor: Int): ResultResponse<PagingData<OrderRecordDto>>
-    suspend fun getRefundRecord(cursor: Int): ResultResponse<PagingData<OrderRecordDto>>
+    suspend fun getRefundRecord(cursor: Int): ResultResponse<PagingData<GetRefundRecordResponseDto>>
     suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto>
     suspend fun postOrderInfo(request: DefaultOrderInfoDto): ResultResponse<DataResponseDto<Any>>
     suspend fun getPerfumeComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>>

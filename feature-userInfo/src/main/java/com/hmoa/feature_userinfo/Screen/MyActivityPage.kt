@@ -31,30 +31,30 @@ import com.hmoa.feature_userinfo.ColumnData
 
 @Composable
 fun MyActivityRoute(
-    onNavMyFavoriteComment: () -> Unit,
-    onNavMyComment : () -> Unit,
-    onNavMyPost : () -> Unit,
+    navMyFavoriteComment: () -> Unit,
+    navMyComment : () -> Unit,
+    navMyPost : () -> Unit,
     navBack : () -> Unit,
 ){
     MyActivityPage(
-        onNavMyFavoriteComment = onNavMyFavoriteComment,
-        onNavMyComment = onNavMyComment,
-        onNavMyPost = onNavMyPost,
+        navMyFavoriteComment = navMyFavoriteComment,
+        navMyComment = navMyComment,
+        navMyPost = navMyPost,
         navBack = navBack
     )
 }
 
 @Composable
 fun MyActivityPage(
-    onNavMyFavoriteComment : () -> Unit,
-    onNavMyComment : () -> Unit,
-    onNavMyPost : () -> Unit,
+    navMyFavoriteComment : () -> Unit,
+    navMyComment : () -> Unit,
+    navMyPost : () -> Unit,
     navBack : () -> Unit
 ){
     val columnData = listOf(
-        ColumnData("좋아요 누른 댓글"){onNavMyFavoriteComment()},
-        ColumnData("작성한 댓글"){onNavMyComment()},
-        ColumnData("작성한 게시글"){onNavMyPost()}
+        ColumnData("좋아요 누른 댓글"){navMyFavoriteComment()},
+        ColumnData("작성한 댓글"){navMyComment()},
+        ColumnData("작성한 게시글"){navMyPost()}
     )
     Column(
         modifier = Modifier
@@ -106,9 +106,9 @@ fun MyActivityPage(
 @Composable
 fun TestMyActivity(){
     MyActivityPage(
-        onNavMyFavoriteComment = {},
-        onNavMyComment = {},
-        onNavMyPost = {},
+        navMyFavoriteComment = {},
+        navMyComment = {},
+        navMyPost = {},
         navBack = {}
     )
 }

@@ -29,17 +29,17 @@ import com.hmoa.feature_community.Screen.CommunityHomeRoute
 @Composable
 fun HPediaRoute(
     navHPediaSearch: (String) -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavCommunityGraph: () -> Unit,
-    onNavLogin: () -> Unit,
-    onNavHome : () -> Unit,
+    navCommunityDesc: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
+    navLogin: () -> Unit,
+    navHome : () -> Unit,
 ) {
     HPediaScreen(
         navHPediaSearch = navHPediaSearch,
-        onNavCommunityDesc = onNavCommunityDesc,
-        onNavCommunityGraph = onNavCommunityGraph,
-        onErrorHandleLoginAgain = onNavLogin,
-        onNavHome = onNavHome
+        navCommunityDesc = navCommunityDesc,
+        navCommunityGraph = navCommunityGraph,
+        onErrorHandleLoginAgain = navLogin,
+        navHome = navHome
     )
 
 }
@@ -47,10 +47,10 @@ fun HPediaRoute(
 @Composable
 fun HPediaScreen(
     navHPediaSearch: (String) -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavCommunityGraph: () -> Unit,
+    navCommunityDesc: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    onNavHome : () -> Unit
+    navHome : () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -69,10 +69,10 @@ fun HPediaScreen(
         }
         Spacer(Modifier.height(27.dp))
         CommunityHomeRoute(
-            onNavCommunityGraph = onNavCommunityGraph,
-            onNavCommunityDescription = onNavCommunityDesc,
+            navCommunityGraph = navCommunityGraph,
+            navCommunityDescription = navCommunityDesc,
             onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-            onNavHome = onNavHome
+            navHome = navHome
         )
     }
 }

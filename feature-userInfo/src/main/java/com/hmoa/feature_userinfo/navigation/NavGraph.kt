@@ -54,20 +54,20 @@ fun NavController.navigateToOrderRecord() = navigate(UserInfoRoute.OrderRecordRo
 fun NavController.navigateToBack() = navigateUp()
 
 fun NavGraphBuilder.nestedUserInfoGraph(
-    onNavMyPerfume : () -> Unit,
-    onNavLogin: () -> Unit,
-    onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
-    onNavEditPost: (Int) -> Unit,
-    onNavEditProfile: () -> Unit,
-    onNavManageMyInfo: () -> Unit,
-    onNavMyActivity: () -> Unit,
-    onNavMyFavoriteComment: () -> Unit,
-    onNavMyPost: () -> Unit,
-    onNavMyComment: () -> Unit,
-    onNavMyBirth: () -> Unit,
-    onNavMyGender: () -> Unit,
-    onNavPerfume : (Int) -> Unit,
+    navMyPerfume : () -> Unit,
+    navLogin: () -> Unit,
+    navBack: () -> Unit,
+    navCommunity: (Int) -> Unit,
+    navEditPost: (Int) -> Unit,
+    navEditProfile: () -> Unit,
+    navManageMyInfo: () -> Unit,
+    navMyActivity: () -> Unit,
+    navMyFavoriteComment: () -> Unit,
+    navMyPost: () -> Unit,
+    navMyComment: () -> Unit,
+    navMyBirth: () -> Unit,
+    navMyGender: () -> Unit,
+    navPerfume : (Int) -> Unit,
     navOrderRecord: () -> Unit,
     navRefund: (pageType: String, orderId: Int) -> Unit,
 ) {
@@ -77,65 +77,65 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     ) {
         composable(route = UserInfoRoute.MyPage.name) {
             MyPageRoute(
-                onNavMyPerfume = onNavMyPerfume,
-                onNavEditProfile = onNavEditProfile,
-                onNavMyActivity = onNavMyActivity,
-                onNavManageMyInfo = onNavManageMyInfo,
-                onNavLogin = onNavLogin,
-                onNavBack = onNavBack,
+                navMyPerfume = navMyPerfume,
+                navEditProfile = navEditProfile,
+                navMyActivity = navMyActivity,
+                navManageMyInfo = navManageMyInfo,
+                navLogin = navLogin,
+                navBack = navBack,
                 navOrderRecord = navOrderRecord
             )
         }
         composable(route = UserInfoRoute.EditProfileRoute.name) {
-            EditProfileRoute(onNavBack = onNavBack)
+            EditProfileRoute(navBack = navBack)
         }
         composable(route = UserInfoRoute.MyPostRoute.name) {
             MyPostRoute(
-                onNavBack = onNavBack,
-                onNavEditPost = onNavEditPost
+                navBack = navBack,
+                navEditPost = navEditPost
             )
         }
         composable(route = UserInfoRoute.MyActivityRoute.name) {
             MyActivityRoute(
-                onNavMyFavoriteComment = onNavMyFavoriteComment,
-                onNavMyComment = onNavMyComment,
-                onNavMyPost = onNavMyPost,
-                onNavBack = onNavBack
+                navMyFavoriteComment = navMyFavoriteComment,
+                navMyComment = navMyComment,
+                navMyPost = navMyPost,
+                navBack = navBack
             )
         }
         composable(route = UserInfoRoute.MyCommentRoute.name) {
             MyCommentRoute(
-                onNavBack = onNavBack,
-                onNavCommunity = onNavCommunity,
-                onNavPerfume = onNavPerfume
+                navBack = navBack,
+                navCommunity = navCommunity,
+                navPerfume = navPerfume
             )
         }
         composable(route = UserInfoRoute.MyFavoriteCommentRoute.name) {
             MyFavoriteCommentRoute(
-                onNavBack = onNavBack,
-                onNavCommunity = onNavCommunity,
-                onNavPerfume = onNavPerfume
+                navBack = navBack,
+                navCommunity = navCommunity,
+                navPerfume = navPerfume
             )
         }
         composable(route = UserInfoRoute.MyInfoRoute.name) {
             MyInfoRoute(
-                onNavBack = onNavBack,
-                onNavMyBirth = onNavMyBirth,
-                onNavMyGender = onNavMyGender
+                navBack = navBack,
+                navMyBirth = navMyBirth,
+                navMyGender = navMyGender
             )
         }
         composable(route = UserInfoRoute.MyBirthRoute.name) {
-            MyBirthRoute(onNavBack = onNavBack)
+            MyBirthRoute(navBack = navBack)
         }
         composable(route = UserInfoRoute.MyGenderRoute.name) {
-            MyGenderRoute(onNavBack = onNavBack)
+            MyGenderRoute(navBack = navBack)
         }
         composable(route = UserInfoRoute.NoAuthMyPage.name) {
-            NoAuthMyPage(onNavLogin = onNavLogin)
+            NoAuthMyPage(navLogin = navLogin)
         }
         composable(route = UserInfoRoute.OrderRecordRoute.name){
             OrderRecordRoute(
-                navBack = onNavBack,
+                navBack = navBack,
                 navReturnOrRefund = navRefund,
             )
         }
@@ -151,7 +151,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             RefundRoute(
                 type = type,
                 orderId = orderId,
-                navBack = onNavBack
+                navBack = navBack
             )
         }
     }

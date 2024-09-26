@@ -40,6 +40,7 @@ fun OrderRecordItem(
     shippingType: OrderStatus,
     products: List<NoteProduct>,
     totalPrice: Int,
+    shippingPayment: Int,
     trackingNumber: String?,
     onRefundClick: () -> Unit,
     onReturnClick: () -> Unit,
@@ -84,6 +85,12 @@ fun OrderRecordItem(
                 )
             )
             Spacer(Modifier.height(24.dp))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ){
+            
         }
         HorizontalDivider(color = Color.Black, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(24.dp))
@@ -209,7 +216,8 @@ private fun OrderHistoryItemUiTest(){
             ),
             totalPrice = 15000,
             onRefundClick = {},
-            onReturnClick = {}
+            onReturnClick = {},
+            shippingPayment = 3000
         )
         OrderRecordItem(
             courierCompany = "대한통운(CJ)",
@@ -247,7 +255,8 @@ private fun OrderHistoryItemUiTest(){
             ),
             totalPrice = 15000,
             onRefundClick = {},
-            onReturnClick = {}
+            onReturnClick = {},
+            shippingPayment = 3000
         )
     }
 }

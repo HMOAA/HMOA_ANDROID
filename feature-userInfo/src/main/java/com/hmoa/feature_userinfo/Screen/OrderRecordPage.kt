@@ -20,13 +20,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.EmptyDataPage
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.OrderRecordItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.feature_userinfo.viewModel.OrderRecordUiState
 import com.hmoa.feature_userinfo.viewModel.OrderRecordViewModel
@@ -92,37 +92,40 @@ fun OrderRecordContent(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-            .padding(horizontal = 16.dp)
     ){
         TopBar(
             title = "주문 내역",
             navIcon = painterResource(R.drawable.ic_back),
             onNavClick = navBack
         )
-        if(data.isNotEmpty()){
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ){
-                items(data) { order ->
-                    if (order != null){
-                        OrderRecordItem(
-                            shippingType = order.orderStatus,
-                            courierCompany = order.courierCompany,
-                            products = order.orderProducts.productInfo.noteProducts,
-                            totalPrice = order.orderProducts.totalAmount,
-                            trackingNumber = order.trackingNumber,
-                            onRefundClick = { navReturnOrRefund("refund", order.orderId) },
-                            onReturnClick = { navReturnOrRefund("return", order.orderId) }
-                        )
+        Column(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
+        ){
+            if(data.isNotEmpty()){
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    items(data) { order ->
+                        if (order != null){
+                            OrderRecordItem(
+                                shippingType = order.orderStatus,
+                                courierCompany = order.courierCompany,
+                                products = order.orderProducts.productInfo.noteProducts,
+                                totalPrice = order.orderProducts.totalAmount,
+                                trackingNumber = order.trackingNumber,
+                                onRefundClick = { navReturnOrRefund("refund", order.orderId) },
+                                onReturnClick = { navReturnOrRefund("return", order.orderId) }
+                            )
+                        }
                     }
                 }
+            } else {
+                EmptyDataPage(
+                    mainText = "주문 내역이 없습니다.",
+                    buttonText = "홈으로 돌아가기",
+                    onClick = navBack
+                )
             }
-        } else {
-            EmptyDataPage(
-                mainText = "주문 내역이 없습니다.",
-                buttonText = "홈으로 돌아가기",
-                onClick = navBack
-            )
         }
     }
 }

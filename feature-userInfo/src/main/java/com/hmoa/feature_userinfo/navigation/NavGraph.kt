@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.example.userinfo.MyActivityRoute
 import com.example.userinfo.MyCommentRoute
 import com.example.userinfo.MyPageRoute
+import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
 import com.hmoa.feature_userinfo.MyPostRoute
 import com.hmoa.feature_userinfo.NoAuthMyPage
@@ -16,39 +17,39 @@ import com.hmoa.feature_userinfo.Screen.OrderRecordRoute
 import com.hmoa.feature_userinfo.Screen.RefundRoute
 
 //graph 이동
-fun NavController.navigateToUserInfoGraph() = navigate(UserInfoGraph.UserInfoGraph.name)
+fun NavController.navigateToUserInfoGraph() = navigate(UserInfoRoute.UserInfoGraph.name)
 
 //마이페이지로 이동
-fun NavController.navigateToMyPage() = navigate(UserInfoGraph.MyPage.name)
+fun NavController.navigateToMyPage() = navigate(UserInfoRoute.MyPage.name)
 
 //내 활동 페이지
-fun NavController.navigateToMyActivity() = navigate(UserInfoGraph.MyActivityRoute.name)
+fun NavController.navigateToMyActivity() = navigate(UserInfoRoute.MyActivityRoute.name)
 
 //내 댓글 페이지
-fun NavController.navigateToMyCommentPage() = navigate(UserInfoGraph.MyCommentRoute.name)
+fun NavController.navigateToMyCommentPage() = navigate(UserInfoRoute.MyCommentRoute.name)
 
 //좋아요한 댓글 페이지
-fun NavController.navigateToMyFavoriteCommentPage() = navigate(UserInfoGraph.MyFavoriteCommentRoute.name)
+fun NavController.navigateToMyFavoriteCommentPage() = navigate(UserInfoRoute.MyFavoriteCommentRoute.name)
 
 //프로필 수정 화면
-fun NavController.navigateToEditProfilePage() = navigate(UserInfoGraph.EditProfileRoute.name)
+fun NavController.navigateToEditProfilePage() = navigate(UserInfoRoute.EditProfileRoute.name)
 
 //내 정보 페이지
-fun NavController.navigateToMyInfoPage() = navigate(UserInfoGraph.MyInfoRoute.name)
+fun NavController.navigateToMyInfoPage() = navigate(UserInfoRoute.MyInfoRoute.name)
 
 //내 성별 페이지
-fun NavController.navigateToMyGenderPage() = navigate(UserInfoGraph.MyGenderRoute.name)
+fun NavController.navigateToMyGenderPage() = navigate(UserInfoRoute.MyGenderRoute.name)
 
 //내 출생연도 페이지
-fun NavController.navigateToMyBirth() = navigate(UserInfoGraph.MyBirthRoute.name)
+fun NavController.navigateToMyBirth() = navigate(UserInfoRoute.MyBirthRoute.name)
 
 //내 게시글 페이지
-fun NavController.navigateToMyPostPage() = navigate(UserInfoGraph.MyPostRoute.name)
+fun NavController.navigateToMyPostPage() = navigate(UserInfoRoute.MyPostRoute.name)
 
 //환불 & 반품
-fun NavController.navigateToRefund(type: String, orderId: Int) = navigate("${UserInfoGraph.RefundRoute.name}/${type}/${orderId}")
+fun NavController.navigateToRefund(type: String, orderId: Int) = navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
 //주문 내역
-fun NavController.navigateToOrderRecord() = navigate(UserInfoGraph.OrderRecordRoute.name)
+fun NavController.navigateToOrderRecord() = navigate(UserInfoRoute.OrderRecordRoute.name)
 //뒤로가기
 fun NavController.navigateToBack() = navigateUp()
 
@@ -71,10 +72,10 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navRefund: (pageType: String, orderId: Int) -> Unit,
 ) {
     navigation(
-        startDestination = UserInfoGraph.MyPage.name,
-        route = UserInfoGraph.UserInfoGraph.name
+        startDestination = UserInfoRoute.MyPage.name,
+        route = UserInfoRoute.UserInfoGraph.name
     ) {
-        composable(route = UserInfoGraph.MyPage.name) {
+        composable(route = UserInfoRoute.MyPage.name) {
             MyPageRoute(
                 onNavMyPerfume = onNavMyPerfume,
                 onNavEditProfile = onNavEditProfile,
@@ -85,16 +86,16 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 navOrderRecord = navOrderRecord
             )
         }
-        composable(route = UserInfoGraph.EditProfileRoute.name) {
+        composable(route = UserInfoRoute.EditProfileRoute.name) {
             EditProfileRoute(onNavBack = onNavBack)
         }
-        composable(route = UserInfoGraph.MyPostRoute.name) {
+        composable(route = UserInfoRoute.MyPostRoute.name) {
             MyPostRoute(
                 onNavBack = onNavBack,
                 onNavEditPost = onNavEditPost
             )
         }
-        composable(route = UserInfoGraph.MyActivityRoute.name) {
+        composable(route = UserInfoRoute.MyActivityRoute.name) {
             MyActivityRoute(
                 onNavMyFavoriteComment = onNavMyFavoriteComment,
                 onNavMyComment = onNavMyComment,
@@ -102,44 +103,44 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 onNavBack = onNavBack
             )
         }
-        composable(route = UserInfoGraph.MyCommentRoute.name) {
+        composable(route = UserInfoRoute.MyCommentRoute.name) {
             MyCommentRoute(
                 onNavBack = onNavBack,
                 onNavCommunity = onNavCommunity,
                 onNavPerfume = onNavPerfume
             )
         }
-        composable(route = UserInfoGraph.MyFavoriteCommentRoute.name) {
+        composable(route = UserInfoRoute.MyFavoriteCommentRoute.name) {
             MyFavoriteCommentRoute(
                 onNavBack = onNavBack,
                 onNavCommunity = onNavCommunity,
                 onNavPerfume = onNavPerfume
             )
         }
-        composable(route = UserInfoGraph.MyInfoRoute.name) {
+        composable(route = UserInfoRoute.MyInfoRoute.name) {
             MyInfoRoute(
                 onNavBack = onNavBack,
                 onNavMyBirth = onNavMyBirth,
                 onNavMyGender = onNavMyGender
             )
         }
-        composable(route = UserInfoGraph.MyBirthRoute.name) {
+        composable(route = UserInfoRoute.MyBirthRoute.name) {
             MyBirthRoute(onNavBack = onNavBack)
         }
-        composable(route = UserInfoGraph.MyGenderRoute.name) {
+        composable(route = UserInfoRoute.MyGenderRoute.name) {
             MyGenderRoute(onNavBack = onNavBack)
         }
-        composable(route = UserInfoGraph.NoAuthMyPage.name) {
+        composable(route = UserInfoRoute.NoAuthMyPage.name) {
             NoAuthMyPage(onNavLogin = onNavLogin)
         }
-        composable(route = UserInfoGraph.OrderRecordRoute.name){
+        composable(route = UserInfoRoute.OrderRecordRoute.name){
             OrderRecordRoute(
                 navBack = onNavBack,
                 navReturnOrRefund = navRefund,
             )
         }
         composable(
-            route = "${UserInfoGraph.RefundRoute.name}/{type}/{orderId}",
+            route = "${UserInfoRoute.RefundRoute.name}/{type}/{orderId}",
             arguments = listOf(
                 navArgument("type"){type = NavType.StringType},
                 navArgument("orderId"){type = NavType.IntType}

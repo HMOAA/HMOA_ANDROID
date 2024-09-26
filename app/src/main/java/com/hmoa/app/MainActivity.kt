@@ -29,26 +29,26 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.feature_userinfo.UserInfoGraph
+import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.example.feature_userinfo.navigateToUserInfoGraph
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
-import com.hmoa.feature_authentication.navigation.AuthenticationRoute
+import com.hmoa.core_domain.entity.navigation.AuthenticationRoute
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
-import com.hmoa.feature_community.Navigation.CommunityRoute
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.feature_fcm.navigateToAlarmScreen
-import com.hmoa.feature_home.navigation.HomeRoute
+import com.hmoa.core_domain.entity.navigation.HomeRoute
 import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
-import com.hmoa.feature_hpedia.Navigation.HPediaRoute
+import com.hmoa.core_domain.entity.navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_like.Screen.LIKE_ROUTE
-import com.hmoa.feature_magazine.Navigation.MagazineRoute
+import com.hmoa.core_domain.entity.navigation.MagazineRoute
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
-import com.hmoa.feature_perfume.navigation.PerfumeRoute
+import com.hmoa.core_domain.entity.navigation.PerfumeRoute
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -72,12 +72,12 @@ class MainActivity : AppCompatActivity() {
         HPediaRoute.HPedia.name,
         "${HPediaRoute.HPediaSearchRoute.name}/{type}",
         "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
-        UserInfoGraph.MyPage.name,
-        UserInfoGraph.MyInfoRoute.name,
-        UserInfoGraph.MyFavoriteCommentRoute.name,
-        UserInfoGraph.MyActivityRoute.name,
-        UserInfoGraph.MyCommentRoute.name,
-        UserInfoGraph.MyPostRoute.name,
+        UserInfoRoute.MyPage.name,
+        UserInfoRoute.MyInfoRoute.name,
+        UserInfoRoute.MyFavoriteCommentRoute.name,
+        UserInfoRoute.MyActivityRoute.name,
+        UserInfoRoute.MyCommentRoute.name,
+        UserInfoRoute.MyPostRoute.name,
         LIKE_ROUTE,
         MagazineRoute.Magazine.name
     )

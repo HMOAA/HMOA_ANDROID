@@ -39,7 +39,7 @@ import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
-import com.hmoa.feature_hbti.navigation.HbtiRoute
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.NotePickResultState
 import com.hmoa.feature_hbti.viewmodel.NotePickResultViewModel
 

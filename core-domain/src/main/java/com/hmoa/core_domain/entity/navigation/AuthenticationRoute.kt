@@ -1,4 +1,4 @@
-package com.hmoa.feature_authentication.navigation
+package com.hmoa.core_domain.entity.navigation
 
 enum class AuthenticationRoute {
     Login,

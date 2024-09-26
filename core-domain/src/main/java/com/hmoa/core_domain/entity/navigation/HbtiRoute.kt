@@ -1,4 +1,4 @@
-package com.hmoa.feature_hbti.navigation
+package com.hmoa.core_domain.entity.navigation
 
 enum class HbtiRoute {
     Hbti,

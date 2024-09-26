@@ -11,16 +11,16 @@ import com.hmoa.feature_home.screen.HomeRoute
 import com.hmoa.feature_home.screen.PerfumeSearchRoute
 
 
-fun NavController.navigateToHome() = navigate("${HomeRoute.Home}")
-fun NavController.navigateToPerfumeSearch() = navigate("${HomeRoute.PerfumeSearch}")
-fun NavController.navigateToAllPerfume(screenId: AllPerfumeScreenId) = navigate("${HomeRoute.AllPerfume}/${screenId}")
+fun NavController.navigateToHome() = navigate("${com.hmoa.core_domain.entity.navigation.HomeRoute.Home}")
+fun NavController.navigateToPerfumeSearch() = navigate("${com.hmoa.core_domain.entity.navigation.HomeRoute.PerfumeSearch}")
+fun NavController.navigateToAllPerfume(screenId: AllPerfumeScreenId) = navigate("${com.hmoa.core_domain.entity.navigation.HomeRoute.AllPerfume}/${screenId}")
 
 fun NavGraphBuilder.homeScreen(
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
     onHbtiClick:()->Unit
 ) {
-    composable(route = "${HomeRoute.Home}") {
+    composable(route = "${com.hmoa.core_domain.entity.navigation.HomeRoute.Home}") {
         HomeRoute(onPerfumeClick = { onPerfumeClick(it) }, onAllPerfumeClick = { onAllPerfumeClick(it) }, onHbtiClick = {onHbtiClick()})
     }
 }
@@ -28,7 +28,7 @@ fun NavGraphBuilder.homeScreen(
 fun NavGraphBuilder.perfumeSearchScreen(
     onBackClick: () -> Unit
 ) {
-    composable(route = "${HomeRoute.PerfumeSearch}") {
+    composable(route = "${com.hmoa.core_domain.entity.navigation.HomeRoute.PerfumeSearch}") {
         PerfumeSearchRoute(
             onBackClick = { onBackClick() })
     }
@@ -40,7 +40,7 @@ fun NavGraphBuilder.allPerfumeScreen(
     onNavLogin: () -> Unit
 ) {
     composable(
-        route = "${HomeRoute.AllPerfume}/{screenId}",
+        route = "${com.hmoa.core_domain.entity.navigation.HomeRoute.AllPerfume}/{screenId}",
         arguments = listOf(navArgument("screenId") { type = NavType.StringType })
     ) {
         val screenId = it.arguments?.getString("screenId")

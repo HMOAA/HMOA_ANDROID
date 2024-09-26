@@ -1,4 +1,4 @@
-package com.hmoa.feature_magazine.Navigation
+package com.hmoa.core_domain.entity.navigation
 
 enum class MagazineRoute {
     MagazineDescRoute,

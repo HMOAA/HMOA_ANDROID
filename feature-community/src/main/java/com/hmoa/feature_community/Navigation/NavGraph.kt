@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
 import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
 import com.hmoa.feature_community.Screen.CommunityEditRoute

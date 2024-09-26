@@ -1,4 +1,4 @@
-package com.hmoa.feature_community.Navigation
+package com.hmoa.core_domain.entity.navigation
 
 enum class CommunityRoute {
     CommunityGraphRoute,

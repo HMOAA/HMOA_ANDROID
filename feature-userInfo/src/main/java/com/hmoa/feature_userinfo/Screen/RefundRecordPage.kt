@@ -114,11 +114,7 @@ private fun RefundRecordContent(
                 }
             }
         } else {
-            EmptyDataPage(
-                mainText = "환불/반품 내역이 없습니다.",
-                buttonText = "홈으로 돌아가기",
-                onClick = navBack
-            )
+            EmptyDataPage(mainText = "환불/반품 내역이 없습니다.")
         }
     }
 }

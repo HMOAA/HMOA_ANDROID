@@ -121,11 +121,7 @@ fun OrderRecordContent(
                     }
                 }
             } else {
-                EmptyDataPage(
-                    mainText = "주문 내역이 없습니다.",
-                    buttonText = "홈으로 돌아가기",
-                    onClick = navBack
-                )
+                EmptyDataPage(mainText = "주문 내역이 없습니다.")
             }
         }
     }

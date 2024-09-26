@@ -27,14 +27,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_designsystem.component.EmptyDataPage
 import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_domain.entity.data.MyPageCategory
+import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.feature_userinfo.viewModel.CommentUiState
 import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 
@@ -160,10 +161,7 @@ private fun MyCommentContent(
                     }
                 }
             } else {
-                NoDataPage(
-                    mainMsg = "작성한 댓글이\n없습니다",
-                    subMsg = "댓글을 작성해주세요"
-                )
+                EmptyDataPage(mainText = "작성한 댓글이\n없습니다")
             }
         }
     }

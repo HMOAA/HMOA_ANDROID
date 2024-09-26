@@ -14,4 +14,5 @@ enum class UserInfoRoute {
     MyGenderRoute, //성별 화면
     OrderRecordRoute, //주문 내역
     RefundRoute, //환불 & 반품 화면
+    RefundRecordRoute, //환불 & 반품 내역 화면
 }

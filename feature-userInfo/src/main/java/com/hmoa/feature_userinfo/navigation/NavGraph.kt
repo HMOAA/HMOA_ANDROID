@@ -7,7 +7,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
-import com.hmoa.feature_userinfo.screen.*
+import com.hmoa.feature_userinfo.screen.EditProfileRoute
+import com.hmoa.feature_userinfo.screen.MyActivityRoute
+import com.hmoa.feature_userinfo.screen.MyBirthRoute
+import com.hmoa.feature_userinfo.screen.MyCommentRoute
+import com.hmoa.feature_userinfo.screen.MyFavoriteCommentRoute
+import com.hmoa.feature_userinfo.screen.MyGenderRoute
+import com.hmoa.feature_userinfo.screen.MyInfoRoute
+import com.hmoa.feature_userinfo.screen.MyPageRoute
+import com.hmoa.feature_userinfo.screen.MyPostRoute
+import com.hmoa.feature_userinfo.screen.NoAuthMyPage
+import com.hmoa.feature_userinfo.screen.OrderRecordRoute
+import com.hmoa.feature_userinfo.screen.RefundRecordRoute
+import com.hmoa.feature_userinfo.screen.RefundRoute
 
 //graph 이동
 fun NavController.navigateToUserInfoGraph() = navigate(UserInfoRoute.UserInfoGraph.name)
@@ -43,6 +55,8 @@ fun NavController.navigateToMyPostPage() = navigate(UserInfoRoute.MyPostRoute.na
 fun NavController.navigateToRefund(type: String, orderId: Int) = navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
 //주문 내역
 fun NavController.navigateToOrderRecord() = navigate(UserInfoRoute.OrderRecordRoute.name)
+//환불 & 반품 내역
+fun NavController.navigateToRefundRecord() = navigate(UserInfoRoute.RefundRecordRoute.name)
 //뒤로가기
 fun NavController.navigateToBack() = navigateUp()
 
@@ -63,6 +77,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navPerfume : (Int) -> Unit,
     navOrderRecord: () -> Unit,
     navRefund: (pageType: String, orderId: Int) -> Unit,
+    navRefundRecord: () -> Unit,
 ) {
     navigation(
         startDestination = UserInfoRoute.MyPage.name,
@@ -76,7 +91,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 navManageMyInfo = navManageMyInfo,
                 navLogin = navLogin,
                 navBack = navBack,
-                navOrderRecord = navOrderRecord
+                navOrderRecord = navOrderRecord,
+                navRefundRecord = navRefundRecord,
             )
         }
         composable(route = UserInfoRoute.EditProfileRoute.name) {
@@ -146,6 +162,9 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 orderId = orderId,
                 navBack = navBack
             )
+        }
+        composable(route = "${UserInfoRoute.RefundRecordRoute.name}"){
+            RefundRecordRoute(navBack = navBack)
         }
     }
 }

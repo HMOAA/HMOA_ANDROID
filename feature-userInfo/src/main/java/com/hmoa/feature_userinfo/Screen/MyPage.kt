@@ -47,11 +47,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.OnAndOffBtn
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.ColumnData
 import com.hmoa.feature_userinfo.BuildConfig
@@ -70,6 +70,7 @@ internal fun MyPageRoute(
     navLogin: () -> Unit,
     navMyPerfume: () -> Unit,
     navOrderRecord: () -> Unit,
+    navRefundRecord: () -> Unit,
     navBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
@@ -114,6 +115,7 @@ internal fun MyPageRoute(
             navMyActivity = navMyActivity,
             navManageMyInfo = navManageMyInfo,
             navOrderRecord = navOrderRecord,
+            navRefundRecord = navRefundRecord,
             onErrorHandleLoginAgain = navLogin,
             onBackClick = navBack
         )
@@ -139,6 +141,7 @@ fun MyPage(
     navMyActivity: () -> Unit,
     navManageMyInfo: () -> Unit,
     navOrderRecord: () -> Unit,
+    navRefundRecord: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -160,6 +163,7 @@ fun MyPage(
                 navMyActivity = navMyActivity,
                 navManageMyInfo = navManageMyInfo,
                 navOrderRecord = navOrderRecord,
+                navRefundRecord = navRefundRecord,
                 navBack = onBackClick
             )
         }
@@ -191,13 +195,14 @@ private fun MyPageContent(
     navMyActivity: () -> Unit,
     navManageMyInfo: () -> Unit,
     navOrderRecord: () -> Unit,
+    navRefundRecord: () -> Unit,
     navBack: () -> Unit
 ) {
     var isOpen by remember{mutableStateOf(false)}
     var url by remember{mutableStateOf("")}
     val columnInfo = listOf(
         ColumnData("주문 내역"){navOrderRecord()},
-        ColumnData("취소/반품 내역"){},
+        ColumnData("취소/반품 내역"){navRefundRecord()},
         ColumnData("이용 약관"){
             isOpen = true
             url = BuildConfig.TERMS_OF_SERVICE

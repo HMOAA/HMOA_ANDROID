@@ -71,18 +71,20 @@ fun OrderRecordItem(
             ProductView(it)
             Spacer(Modifier.height(30.dp))
         }
-        Text(
-            modifier = Modifier.padding(start = 80.dp),
-            text = "택배사 : ${courierCompany}\n운송장 번호 : ${trackingNumber}",
-            textAlign = TextAlign.Justify,
-            style = TextStyle(
-                fontSize = 10.sp,
-                color = CustomColor.gray3,
-                fontFamily = CustomFont.regular,
-                platformStyle = PlatformTextStyle(includeFontPadding = false)
+        if (courierCompany != null && trackingNumber != null){
+            Text(
+                modifier = Modifier.padding(start = 80.dp),
+                text = "택배사 : ${courierCompany}\n운송장 번호 : ${trackingNumber}",
+                textAlign = TextAlign.Justify,
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    color = CustomColor.gray3,
+                    fontFamily = CustomFont.regular,
+                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                )
             )
-        )
-        Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(24.dp))
+        }
         HorizontalDivider(color = Color.Black, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(24.dp))
         Row(

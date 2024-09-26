@@ -12,7 +12,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -37,9 +41,9 @@ import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 
 @Composable
 fun MyCommentRoute(
-    onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
-    onNavPerfume : (Int) -> Unit,
+    navBack: () -> Unit,
+    navCommunity: (Int) -> Unit,
+    navPerfume : (Int) -> Unit,
     viewModel: CommentViewModel = hiltViewModel()
 ) {
     //comment list
@@ -51,12 +55,12 @@ fun MyCommentRoute(
         uiState = commentUiState.value,
         errState = errState.value,
         type = type.value,
-        onNavBack = onNavBack,
+        navBack = navBack,
         onNavParent = {
             if (type.value == MyPageCategory.향수.name){
-                onNavPerfume(it)
+                navPerfume(it)
             } else {
-                onNavCommunity(it)
+                navCommunity(it)
             }
         },
         onTypeChanged = {
@@ -70,7 +74,7 @@ fun MyCommentPage(
     uiState: CommentUiState,
     errState : ErrorUiState,
     type: String,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     onNavParent : (Int) -> Unit,
     onTypeChanged: (String) -> Unit
 ) {
@@ -84,16 +88,16 @@ fun MyCommentPage(
                 comments = comments,
                 type = type,
                 onTypeChanged = onTypeChanged,
-                onNavBack = onNavBack,
+                navBack = navBack,
                 onNavParent = onNavParent
             )
         }
         CommentUiState.Error -> {
             ErrorUiSetView(
                 isOpen = isOpen,
-                onConfirmClick = onNavBack,
+                onConfirmClick = navBack,
                 errorUiState = errState,
-                onCloseClick = onNavBack
+                onCloseClick = navBack
             )
         }
     }
@@ -104,7 +108,7 @@ private fun MyCommentContent(
     comments: ItemSnapshotList<CommunityCommentDefaultResponseDto>,
     type: String,
     onTypeChanged: (String) -> Unit,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     onNavParent: (Int) -> Unit,
 ) {
     val commentCount = comments.size
@@ -117,7 +121,7 @@ private fun MyCommentContent(
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             title = "작성한 댓글",
-            onNavClick = onNavBack
+            onNavClick = navBack
         )
         Column(
             modifier = Modifier
@@ -138,7 +142,7 @@ private fun MyCommentContent(
                                 comment = comment.content,
                                 isFirst = false,
                                 heartCount = comment.heartCount,
-                                onNavCommunity = { onNavParent(comment.parentId) },
+                                navCommunity = { onNavParent(comment.parentId) },
                                 onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
                                 isSelected = comment.liked,
                                 onChangeSelect = {

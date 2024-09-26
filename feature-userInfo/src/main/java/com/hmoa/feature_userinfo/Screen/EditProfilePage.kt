@@ -46,7 +46,7 @@ import com.hmoa.feature_userinfo.viewModel.EditProfileViewModel
 
 @Composable
 fun EditProfileRoute(
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsState()
@@ -71,7 +71,7 @@ fun EditProfileRoute(
         onChangeInfo = {viewModel.saveInfo()},
         checkDuplication = {viewModel.checkNicknameDup(it)},
         onUpdateNickname = {viewModel.updateNickname(it)},
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -86,7 +86,7 @@ fun EditProfilePage(
     onChangeInfo : () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
 ) {
     when (uiState) {
         EditProfileUiState.Loading -> AppLoadingScreen()
@@ -100,7 +100,7 @@ fun EditProfilePage(
                 onChangeInfo = onChangeInfo,
                 checkDuplication = checkDuplication,
                 onUpdateNickname = onUpdateNickname,
-                onNavBack = onNavBack
+                navBack = navBack
             )
         }
         is EditProfileUiState.Error -> {
@@ -112,7 +112,7 @@ fun EditProfilePage(
                 content = uiState.message,
                 onDismiss = {
                     showDialog = false
-                    onNavBack()
+                    navBack()
                 }
             )
         }
@@ -129,7 +129,7 @@ private fun EditProfileContent(
     onChangeInfo : () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -138,7 +138,7 @@ private fun EditProfileContent(
     ) {
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack,
+            onNavClick = navBack,
             title = "프로필 수정",
         )
         Spacer(Modifier.height(38.dp))
@@ -189,7 +189,7 @@ private fun EditProfileContent(
             btnText = "변경",
             onClick = {
                 onChangeInfo()
-                onNavBack()
+                navBack()
             }
         )
     }

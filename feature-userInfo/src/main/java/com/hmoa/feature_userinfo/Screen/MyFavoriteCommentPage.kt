@@ -12,7 +12,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -35,9 +39,9 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 
 @Composable
 fun MyFavoriteCommentRoute(
-    onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
-    onNavPerfume : (Int) -> Unit,
+    navBack: () -> Unit,
+    navCommunity: (Int) -> Unit,
+    navPerfume : (Int) -> Unit,
     viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
     //comment list
@@ -50,12 +54,12 @@ fun MyFavoriteCommentRoute(
         errState = errState.value,
         commentType = type.value,
         onTypeChanged = { viewModel.changeType(it) },
-        onNavBack = onNavBack,
+        navBack = navBack,
         onNavParent = {
             if (type.value == MyPageCategory.향수.name){
-                onNavPerfume(it)
+                navPerfume(it)
             } else {
-                onNavCommunity(it)
+                navCommunity(it)
             }
         }
     )
@@ -63,7 +67,7 @@ fun MyFavoriteCommentRoute(
 
 @Composable
 fun MyFavoriteCommentPage(
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     onNavParent: (Int) -> Unit,
     uiState: FavoriteCommentUiState,
     errState : ErrorUiState,
@@ -82,16 +86,16 @@ fun MyFavoriteCommentPage(
                 type = commentType,
                 onTypeChanged = onTypeChanged,
                 comments = comments.itemSnapshotList,
-                onNavBack = onNavBack,
+                navBack = navBack,
                 onNavParent = onNavParent
             )
         }
         FavoriteCommentUiState.Error -> {
             ErrorUiSetView(
                 isOpen = isOpen,
-                onConfirmClick = onNavBack,
+                onConfirmClick = navBack,
                 errorUiState = errState,
-                onCloseClick = onNavBack
+                onCloseClick = navBack
             )
         }
         else -> {}
@@ -103,7 +107,7 @@ fun FavoriteCommentContent(
     type: String,
     onTypeChanged: (String) -> Unit,
     comments: ItemSnapshotList<CommunityCommentDefaultResponseDto>,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     onNavParent: (Int) -> Unit,
 ) {
     val commentCount = comments.size
@@ -116,7 +120,7 @@ fun FavoriteCommentContent(
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             title = "좋아요 누른 댓글",
-            onNavClick = onNavBack //뒤로 가기
+            onNavClick = navBack //뒤로 가기
         )
         Column(
             modifier = Modifier
@@ -137,7 +141,7 @@ fun FavoriteCommentContent(
                                 comment = comment.content,
                                 isFirst = false,
                                 heartCount = comment.heartCount,
-                                onNavCommunity = { onNavParent(comment.parentId) },
+                                navCommunity = { onNavParent(comment.parentId) },
                                 onOpenBottomDialog = { /** 여기도 Bottom Dialog 사용하려면 사용합시다 */ },
                                 isSelected = comment.liked,
                                 onChangeSelect = {}

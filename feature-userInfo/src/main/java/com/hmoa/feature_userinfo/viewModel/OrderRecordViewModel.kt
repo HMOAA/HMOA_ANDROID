@@ -1,6 +1,5 @@
 package com.hmoa.feature_userinfo.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorUiState
@@ -47,13 +46,10 @@ class OrderRecordViewModel @Inject constructor(
     )
 
     val uiState: StateFlow<OrderRecordUiState> = errorUiState.map{
-        Log.d("TAG TEST", "error state : ${it}")
-//        if (it is ErrorUiState.ErrorData && it.isValidate()) return@map
-        val result = memberRepository.getOrder()
+        val result = memberRepository.getOrder(0)
         if (result.errorMessage != null) throw Exception(result.errorMessage!!.message)
         result.data!!
     }.asResult().map{ result ->
-        Log.d("TAG TEST", "result : ${result}")
         when(result){
             Result.Loading -> OrderRecordUiState.Loading
             is Result.Success -> OrderRecordUiState.Success(result.data)

@@ -29,24 +29,24 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 
 @Composable
 fun MyPostRoute(
-    onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit,
+    navBack: () -> Unit,
+    navEditPost: (Int) -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     MyPostPage(
         uiState = uiState.value,
-        onNavBack = onNavBack,
-        onNavEditPost = onNavEditPost,
+        navBack = navBack,
+        navEditPost = navEditPost,
     )
 }
 
 @Composable
 fun MyPostPage(
     uiState : PostUiState,
-    onNavBack: () -> Unit,
-    onNavEditPost: (Int) -> Unit
+    navBack: () -> Unit,
+    navEditPost: (Int) -> Unit
 ) {
     when(uiState) {
         PostUiState.Loading -> AppLoadingScreen()
@@ -54,8 +54,8 @@ fun MyPostPage(
             val posts = uiState.posts.collectAsLazyPagingItems().itemSnapshotList
             MyPostContent(
                 posts = posts,
-                onNavBack = onNavBack,
-                onNavEditPost = onNavEditPost
+                navBack = navBack,
+                navEditPost = navEditPost
             )
         }
         PostUiState.Error -> {
@@ -68,8 +68,8 @@ fun MyPostPage(
 @Composable
 private fun MyPostContent(
     posts : ItemSnapshotList<CommunityByCategoryResponseDto>,
-    onNavBack: () -> Unit,
-    onNavEditPost: (communityId : Int) -> Unit
+    navBack: () -> Unit,
+    navEditPost: (communityId : Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -79,7 +79,7 @@ private fun MyPostContent(
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             title = "작성한 게시글",
-            onNavClick = onNavBack
+            onNavClick = navBack
         )
         Column(
             modifier = Modifier.fillMaxSize()
@@ -103,7 +103,7 @@ private fun MyPostContent(
                                         color = CustomColor.gray2,
                                         shape = RoundedCornerShape(10.dp)
                                     ),
-                                onPostClick = { onNavEditPost(post.communityId) },
+                                onPostClick = { navEditPost(post.communityId) },
                                 postType = post.category,
                                 postTitle = post.title,
                                 heartCount = post.heartCount,

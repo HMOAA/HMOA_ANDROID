@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,20 +28,19 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.ColumnData
-import com.hmoa.feature_userinfo.R
 
 @Composable
 fun MyActivityRoute(
     onNavMyFavoriteComment: () -> Unit,
     onNavMyComment : () -> Unit,
     onNavMyPost : () -> Unit,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
 ){
     MyActivityPage(
         onNavMyFavoriteComment = onNavMyFavoriteComment,
         onNavMyComment = onNavMyComment,
         onNavMyPost = onNavMyPost,
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -52,7 +49,7 @@ fun MyActivityPage(
     onNavMyFavoriteComment : () -> Unit,
     onNavMyComment : () -> Unit,
     onNavMyPost : () -> Unit,
-    onNavBack : () -> Unit
+    navBack : () -> Unit
 ){
     val columnData = listOf(
         ColumnData("좋아요 누른 댓글"){onNavMyFavoriteComment()},
@@ -67,7 +64,7 @@ fun MyActivityPage(
         TopBar(
             title = "내 활동",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack
+            onNavClick = navBack
         )
         LazyColumn{
             itemsIndexed(columnData){idx, data ->
@@ -112,6 +109,6 @@ fun TestMyActivity(){
         onNavMyFavoriteComment = {},
         onNavMyComment = {},
         onNavMyPost = {},
-        onNavBack = {}
+        navBack = {}
     )
 }

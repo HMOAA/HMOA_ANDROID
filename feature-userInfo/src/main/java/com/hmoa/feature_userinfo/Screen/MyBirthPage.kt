@@ -38,7 +38,7 @@ import java.time.LocalDateTime
 
 @Composable
 fun MyBirthRoute(
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     viewModel: MyBirthViewModel = hiltViewModel()
 ) {
     val availableYearRange = (1950..LocalDateTime.now().year).toList()
@@ -54,7 +54,7 @@ fun MyBirthRoute(
         isEnabled = isEnabled.value,
         onUpdateBirth = {viewModel.updateBirth(it)},
         onSaveBirth = {viewModel.saveBirth()},
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -66,7 +66,7 @@ fun MyBirthPage(
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
-    onNavBack: () -> Unit
+    navBack: () -> Unit
 ) {
     when (uiState) {
         MyBirthUiState.Loading -> AppLoadingScreen()
@@ -77,7 +77,7 @@ fun MyBirthPage(
                 isEnabled = isEnabled,
                 onUpdateBirth = onUpdateBirth,
                 onSaveBirth = onSaveBirth,
-                onNavBack = onNavBack
+                navBack = navBack
             )
         }
         MyBirthUiState.Error -> {
@@ -94,7 +94,7 @@ private fun SelectBirthContent(
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
-    onNavBack: () -> Unit
+    navBack: () -> Unit
 ){
     val scope = rememberCoroutineScope()
     val modalSheetState = androidx.compose.material.rememberModalBottomSheetState(
@@ -131,7 +131,7 @@ private fun SelectBirthContent(
         ) {
             TopBar(
                 navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = onNavBack,
+                onNavClick = navBack,
                 title = "출생연도"
             )
             Spacer(Modifier.height(36.dp))
@@ -164,7 +164,7 @@ private fun SelectBirthContent(
                 btnText = "변경",
                 onClick = {
                     onSaveBirth()
-                    onNavBack()
+                    navBack()
                 }
             )
         }

@@ -65,13 +65,13 @@ const val APP_VERSION = "1.1.0"
 
 @Composable
 internal fun MyPageRoute(
-    onNavEditProfile: () -> Unit,
-    onNavMyActivity: () -> Unit,
-    onNavManageMyInfo: () -> Unit,
-    onNavLogin: () -> Unit,
-    onNavMyPerfume: () -> Unit,
+    navEditProfile: () -> Unit,
+    navMyActivity: () -> Unit,
+    navManageMyInfo: () -> Unit,
+    navLogin: () -> Unit,
+    navMyPerfume: () -> Unit,
     navOrderRecord: () -> Unit,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
@@ -96,7 +96,7 @@ internal fun MyPageRoute(
             logoutEvent = {
                 scope.launch {
                     launch { viewModel.logout() }.join()
-                    onNavLogin()
+                    navLogin()
                 }
             },
             doOpenLicense = {
@@ -106,22 +106,22 @@ internal fun MyPageRoute(
             onDelAccount = {
                 scope.launch {
                     launch { viewModel.delAccount() }.join()
-                    onNavLogin()
+                    navLogin()
                 }
             },
             onNavKakaoChat = navKakao,
-            onNavMyPerfume = onNavMyPerfume,
-            onNavEditProfile = onNavEditProfile,
-            onNavMyActivity = onNavMyActivity,
-            onNavManageMyInfo = onNavManageMyInfo,
+            navMyPerfume = navMyPerfume,
+            navEditProfile = navEditProfile,
+            navMyActivity = navMyActivity,
+            navManageMyInfo = navManageMyInfo,
             navOrderRecord = navOrderRecord,
-            onErrorHandleLoginAgain = onNavLogin,
-            onBackClick = onNavBack
+            onErrorHandleLoginAgain = navLogin,
+            onBackClick = navBack
         )
     } else {
         //로그인 안 되어 있으면
         NoAuthMyPage(
-            onNavLogin = onNavLogin
+            navLogin = navLogin
         )
     }
 }
@@ -135,10 +135,10 @@ fun MyPage(
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
     onNavKakaoChat: () -> Unit,
-    onNavMyPerfume: () -> Unit,
-    onNavEditProfile: () -> Unit,
-    onNavMyActivity: () -> Unit,
-    onNavManageMyInfo: () -> Unit,
+    navMyPerfume: () -> Unit,
+    navEditProfile: () -> Unit,
+    navMyActivity: () -> Unit,
+    navManageMyInfo: () -> Unit,
     navOrderRecord: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit
@@ -156,10 +156,10 @@ fun MyPage(
                 doOpenLicense = doOpenLicense,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
-                onNavMyPerfume = onNavMyPerfume,
-                onNavEditProfile = onNavEditProfile,
-                onNavMyActivity = onNavMyActivity,
-                onNavManageMyInfo = onNavManageMyInfo,
+                navMyPerfume = navMyPerfume,
+                navEditProfile = navEditProfile,
+                navMyActivity = navMyActivity,
+                navManageMyInfo = navManageMyInfo,
                 navOrderRecord = navOrderRecord,
                 navBack = onBackClick
             )
@@ -186,11 +186,11 @@ private fun MyPageContent(
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
-    onNavMyPerfume: () -> Unit,
+    navMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
-    onNavEditProfile: () -> Unit,
-    onNavMyActivity: () -> Unit,
-    onNavManageMyInfo: () -> Unit,
+    navEditProfile: () -> Unit,
+    navMyActivity: () -> Unit,
+    navManageMyInfo: () -> Unit,
     navOrderRecord: () -> Unit,
     navBack: () -> Unit
 ) {
@@ -203,9 +203,9 @@ private fun MyPageContent(
             isOpen = true
             url = BuildConfig.TERMS_OF_SERVICE
         },
-        ColumnData("나의 향수") { onNavMyPerfume() },
-        ColumnData("내 활동") { onNavMyActivity() },
-        ColumnData("내 정보관리") { onNavManageMyInfo() },
+        ColumnData("나의 향수") { navMyPerfume() },
+        ColumnData("내 활동") { navMyActivity() },
+        ColumnData("내 정보관리") { navManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
         ColumnData("개인정보 처리방침") {
             isOpen = true
@@ -238,7 +238,7 @@ private fun MyPageContent(
                     profile = profile,
                     nickname = nickname,
                     provider = provider,
-                    onNavEditProfile = onNavEditProfile
+                    navEditProfile = navEditProfile
                 )
                 //ServiceAlarm()
                 HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
@@ -284,7 +284,7 @@ private fun UserProfileInfo(
     profile: String,
     nickname: String,
     provider: String,
-    onNavEditProfile: () -> Unit,
+    navEditProfile: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -314,7 +314,7 @@ private fun UserProfileInfo(
         Spacer(Modifier.weight(1f))
         IconButton(
             modifier = Modifier.size(20.dp),
-            onClick = onNavEditProfile
+            onClick = navEditProfile
         ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),

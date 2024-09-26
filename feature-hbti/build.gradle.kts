@@ -57,7 +57,6 @@ android {
 }
 
 dependencies {
-    implementation("androidx.compose.material3:material3-android:1.3.0")
     val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
@@ -75,7 +74,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.9.0")
 
     implementation("androidx.compose.ui:ui:1.1.0")
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.navigation:navigation-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")

@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.hmoa.feature_userinfo.Screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

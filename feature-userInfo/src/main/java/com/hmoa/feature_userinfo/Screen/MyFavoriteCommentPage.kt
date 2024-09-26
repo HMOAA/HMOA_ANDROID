@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo
+package com.hmoa.feature_userinfo.Screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -37,6 +37,7 @@ import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
+import com.hmoa.feature_userinfo.NoDataPage
 
 @Composable
 fun MyFavoriteCommentRoute(

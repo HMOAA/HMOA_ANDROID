@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.hmoa.feature_userinfo.Screen
 
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher

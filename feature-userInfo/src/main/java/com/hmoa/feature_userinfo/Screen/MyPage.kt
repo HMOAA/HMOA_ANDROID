@@ -1,4 +1,4 @@
-package com.example.userinfo
+package com.hmoa.feature_userinfo.Screen
 
 import android.content.Intent
 import android.view.ViewGroup

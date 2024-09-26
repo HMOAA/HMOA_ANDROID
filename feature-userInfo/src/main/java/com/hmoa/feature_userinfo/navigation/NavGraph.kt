@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.hmoa.feature_userinfo.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -6,15 +6,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.example.userinfo.MyActivityRoute
-import com.example.userinfo.MyCommentRoute
-import com.example.userinfo.MyPageRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
-import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
-import com.hmoa.feature_userinfo.MyPostRoute
-import com.hmoa.feature_userinfo.NoAuthMyPage
-import com.hmoa.feature_userinfo.Screen.OrderRecordRoute
-import com.hmoa.feature_userinfo.Screen.RefundRoute
+import com.hmoa.feature_userinfo.Screen.*
 
 //graph 이동
 fun NavController.navigateToUserInfoGraph() = navigate(UserInfoRoute.UserInfoGraph.name)

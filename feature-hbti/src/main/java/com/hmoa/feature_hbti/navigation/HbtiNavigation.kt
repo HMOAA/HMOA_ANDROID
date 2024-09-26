@@ -33,9 +33,9 @@ fun NavController.navigateToOrder(productIdsToJson: String) =
 
 fun NavController.navigateToAddAddress() = navigate(HbtiRoute.AddAddressRoute.name)
 
-fun NavGraphBuilder.hbtiScreen(onNextClick: () -> Unit) {
+fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
-        HbtiRoute(onAfterOrderClick = {}, onHbtiSurveyClick = { onNextClick() })
+        HbtiRoute(onAfterOrderClick = { onAfterOrderClick() }, onHbtiSurveyClick = { onHbtiSurveyClick() })
     }
 }
 
@@ -133,22 +133,21 @@ fun NavGraphBuilder.notePickResult(
     }
 }
 
-fun NavGraphBuilder.perfumeRecommendationRoute() {
+fun NavGraphBuilder.perfumeRecommendationRoute(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     composable(route = HbtiRoute.PerfumeRecommendationRoute.name) {
         PerfumeRecommendationRoute(
             /** navigation event 추후 추가 **/
-            onNavNext = { /*TODO*/ },
-            onNavBack = { /*TODO*/ }
+            onNavNext = { onNextClick() },
+            onNavBack = { onBackClick() }
         )
     }
 }
 
-fun NavGraphBuilder.perfumeRecommendationResultRoute() {
+fun NavGraphBuilder.perfumeRecommendationResultRoute(onBackClick: () -> Unit, onNavPerfumeDescription: () -> Unit) {
     composable(route = HbtiRoute.PerfumeRecommendationResultRoute.name) {
         PerfumeRecommendationResultRoute(
-            /** navigation event 추후 추가 **/
-            onNavBack = { /*TODO*/ },
-            onNavPerfumeDesc = { /*TODO*/ }
+            onNavBack = { onBackClick() },
+            onNavPerfumeDesc = { onNavPerfumeDescription() }
         )
     }
 }

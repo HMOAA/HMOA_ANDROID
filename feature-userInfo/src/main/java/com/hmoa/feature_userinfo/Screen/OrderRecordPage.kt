@@ -24,6 +24,7 @@ import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.OrderRecordItem
 import com.hmoa.core_model.response.OrderRecordDto
@@ -98,22 +99,30 @@ fun OrderRecordContent(
             navIcon = painterResource(R.drawable.ic_back),
             onNavClick = navBack
         )
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ){
-            items(data) { order ->
-                if (order != null){
-                    OrderRecordItem(
-                        shippingType = order.orderStatus,
-                        courierCompany = order.courierCompany,
-                        products = order.orderProducts.productInfo.noteProducts,
-                        totalPrice = order.orderProducts.totalAmount,
-                        trackingNumber = order.trackingNumber,
-                        onRefundClick = { navReturnOrRefund("refund", order.orderId) },
-                        onReturnClick = { navReturnOrRefund("return", order.orderId) }
-                    )
+        if(data.isNotEmpty()){
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ){
+                items(data) { order ->
+                    if (order != null){
+                        OrderRecordItem(
+                            shippingType = order.orderStatus,
+                            courierCompany = order.courierCompany,
+                            products = order.orderProducts.productInfo.noteProducts,
+                            totalPrice = order.orderProducts.totalAmount,
+                            trackingNumber = order.trackingNumber,
+                            onRefundClick = { navReturnOrRefund("refund", order.orderId) },
+                            onReturnClick = { navReturnOrRefund("return", order.orderId) }
+                        )
+                    }
                 }
             }
+        } else {
+            EmptyDataPage(
+                mainText = "주문 내역이 없습니다.",
+                buttonText = "홈으로 돌아가기",
+                onClick = navBack
+            )
         }
     }
 }

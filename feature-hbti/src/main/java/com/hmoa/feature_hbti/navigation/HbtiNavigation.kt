@@ -22,6 +22,7 @@ import com.hmoa.feature_hbti.screen.OrderRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
 import com.hmoa.feature_hbti.screen.SelectSpiceRoute
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 fun NavController.navigateToHbti() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.Hbti}")
@@ -189,8 +190,8 @@ fun NavGraphBuilder.order(
     navOrderResult: () -> Unit,
 ) {
     composable(route = "${com.hmoa.core_domain.entity.navigation.HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
-        val productIdsToJson = it.arguments?.getString("productIdsToJson")
-        val productIds = Json.decodeFromString<NoteProductIds>(productIdsToJson ?: "")
+        val productIdsToJson = it.arguments?.getString("productIdsToJson") ?: ""
+        val productIds = Json.decodeFromString<NoteProductIds>(productIdsToJson)
         OrderRoute(
             productIds = productIds.productIds,
             onNavBack = navBack,

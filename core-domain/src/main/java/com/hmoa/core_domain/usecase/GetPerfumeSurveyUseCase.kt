@@ -26,9 +26,9 @@ class GetPerfumeSurveyUseCase @Inject constructor(private val surveyRepository: 
             priceQuestionOptionIds = value.priceQuestion.answers.map { it.optionId },
             noteQuestionTitle = value.noteQuestion.content,
             noteCategoryTags = value.noteQuestion.answer.map {
-                NoteCategoryTag(category = it.category, note = it.notes, isSelected = List(it.notes.size){false})
+                NoteCategoryTag(category = it.category, note = it.notes, isSelected = List(it.notes.size) { false })
             },
-            isMultipleAnswerAvailable = value.priceQuestion.isMultipleChoice
+            isPriceMultipleChoice = value.priceQuestion.isMultipleChoice
         )
     }
 }

@@ -79,13 +79,13 @@ class OrderRecordViewModel @Inject constructor(
     private fun orderRecordPagingSource() : Flow<PagingData<OrderRecordDto>> = Pager(
         config = PagingConfig(pageSize = 5),
         pagingSourceFactory = {
-            getFavoriteCommentPaging()
+            getOrderRecordPaging()
         }
     ).flow.cachedIn(viewModelScope)
 
 
     //paging
-    private fun getFavoriteCommentPaging() = OrderPagingSource(
+    private fun getOrderRecordPaging() = OrderPagingSource(
         memberRepository = memberRepository
     )
 }

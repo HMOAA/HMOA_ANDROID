@@ -56,7 +56,7 @@ import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.OnAndOffBtn
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.BuildConfig
-import com.hmoa.feature_userinfo.ColumnData
+import com.hmoa.core_domain.entity.data.ColumnData
 import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
 import kotlinx.coroutines.launch

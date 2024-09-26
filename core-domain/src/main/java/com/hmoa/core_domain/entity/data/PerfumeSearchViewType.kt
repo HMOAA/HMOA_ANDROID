@@ -1,4 +1,4 @@
-package com.hmoa.feature_home
+package com.hmoa.core_domain.entity.data
 
 enum class PerfumeSearchViewType {
     List, Grid

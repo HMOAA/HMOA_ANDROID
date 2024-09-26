@@ -1,4 +1,4 @@
-package com.hmoa.core_model.data
+package com.hmoa.core_domain.entity.data
 
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeReviewResponseDto

@@ -1,4 +1,4 @@
-package com.hmoa.core_model.data
+package com.hmoa.core_domain.entity.data
 
 enum class Consonant(val id: Int) {
     ㄱ(1),

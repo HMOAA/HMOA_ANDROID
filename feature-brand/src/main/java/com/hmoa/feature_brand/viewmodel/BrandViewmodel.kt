@@ -9,7 +9,7 @@ import androidx.paging.cachedIn
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.BrandRepository
-import com.hmoa.core_model.data.SortType
+import com.hmoa.core_domain.entity.data.SortType
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import com.hmoa.core_model.response.BrandPerfumeBriefResponseDto
 import com.hmoa.feature_brand.PerfumeLikePagingSource

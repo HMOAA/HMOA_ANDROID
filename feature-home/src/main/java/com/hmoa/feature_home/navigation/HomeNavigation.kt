@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.hmoa.feature_home.AllPerfumeScreenId
+import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.feature_home.screen.AllPerfumeRoute
 import com.hmoa.feature_home.screen.HomeRoute
 import com.hmoa.feature_home.screen.PerfumeSearchRoute

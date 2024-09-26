@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.feature_userinfo.ColumnData
+import com.hmoa.core_domain.entity.data.ColumnData
 
 @Composable
 fun MyActivityRoute(

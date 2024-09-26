@@ -29,9 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.PerfumeGender
-import com.hmoa.core_model.Weather
-import com.hmoa.core_model.data.Perfume
+import com.hmoa.core_domain.entity.data.PerfumeGender
+import com.hmoa.core_domain.entity.data.Weather
+import com.hmoa.core_domain.entity.data.Perfume
 import com.hmoa.core_model.response.PerfumeAgeResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.core_model.response.PerfumeGenderResponseDto

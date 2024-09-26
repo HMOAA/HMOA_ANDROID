@@ -1,4 +1,4 @@
-package com.hmoa.core_model.data
+package com.hmoa.core_domain.entity.data
 
 data class MagazineSuccessItem(
     val title : String,

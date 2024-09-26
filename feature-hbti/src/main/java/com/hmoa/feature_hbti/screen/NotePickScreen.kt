@@ -27,7 +27,7 @@ import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteImageView
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.core_model.data.NoteSelect
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.feature_hbti.viewmodel.NotePickUiState
 import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel

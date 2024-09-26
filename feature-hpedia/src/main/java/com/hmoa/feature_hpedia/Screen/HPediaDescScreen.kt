@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_model.data.HpediaType
+import com.hmoa.core_domain.entity.data.HpediaType
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescUiState
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescViewModel
 

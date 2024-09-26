@@ -2,7 +2,7 @@ package com.hmoa.core_domain.usecase
 
 import ResultResponse
 import com.hmoa.core_domain.repository.PerfumeRepository
-import com.hmoa.core_model.Weather
+import com.hmoa.core_domain.entity.data.Weather
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
 import com.hmoa.core_model.response.PerfumeWeatherResponseDto
 import kotlinx.coroutines.flow.Flow

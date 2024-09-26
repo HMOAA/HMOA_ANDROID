@@ -49,7 +49,7 @@ import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.data.MagazineContentItem
+import com.hmoa.core_domain.entity.data.MagazineContentItem
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.feature_magazine.ViewModel.MagazineDescUiState
 import com.hmoa.feature_magazine.ViewModel.MagazineDescViewModel

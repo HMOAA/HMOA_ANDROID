@@ -2,8 +2,8 @@ package com.hmoa.core_domain.usecase
 
 import ResultResponse
 import com.hmoa.core_domain.repository.MagazineRepository
-import com.hmoa.core_model.data.MagazineContentItem
-import com.hmoa.core_model.data.MagazineSuccessItem
+import com.hmoa.core_domain.entity.data.MagazineContentItem
+import com.hmoa.core_domain.entity.data.MagazineSuccessItem
 import javax.inject.Inject
 
 class GetMagazineDescription @Inject constructor(

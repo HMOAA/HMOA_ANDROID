@@ -24,8 +24,8 @@ import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
-import com.hmoa.core_model.data.HbtiQuestionItem
-import com.hmoa.core_model.data.HbtiQuestionItems
+import com.hmoa.core_domain.entity.data.HbtiQuestionItem
+import com.hmoa.core_domain.entity.data.HbtiQuestionItems
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiSurveyViewmodel
 import kotlinx.coroutines.launch

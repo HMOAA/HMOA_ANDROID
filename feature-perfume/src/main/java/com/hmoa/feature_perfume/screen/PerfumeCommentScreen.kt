@@ -31,7 +31,7 @@ import com.hmoa.core_designsystem.component.AppDesignDialog
 import com.hmoa.core_designsystem.component.CommentItem
 import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.data.SortType
+import com.hmoa.core_domain.entity.data.SortType
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.viewmodel.PerfumeCommentViewmodel
 import kotlinx.coroutines.launch

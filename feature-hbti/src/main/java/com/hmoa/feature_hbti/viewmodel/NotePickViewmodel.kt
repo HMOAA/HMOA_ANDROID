@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_model.data.NoteSelect
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel

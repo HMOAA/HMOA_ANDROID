@@ -12,7 +12,7 @@ import com.hmoa.core_model.response.PerfumeNameSearchResponseDto
 import com.hmoa.core_model.response.PerfumeSearchResponseDto
 import com.hmoa.feature_home.PerfumeNameSearchPagingSource
 import com.hmoa.feature_home.PerfumeSearchPagingSource
-import com.hmoa.feature_home.PerfumeSearchViewType
+import com.hmoa.core_domain.entity.data.PerfumeSearchViewType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +26,8 @@ class PerfumeSearchViewmodel @Inject constructor(private val searchRepository: S
     val perfumeNameSearchWordState: StateFlow<String?> = _perfumeNameSearchWordState
     private var _perfumeSearchWordState = MutableStateFlow<String?>(null)
     val perfumeSearchWordState: StateFlow<String?> = _perfumeSearchWordState
-    private var _searchResultViewType = MutableStateFlow<PerfumeSearchViewType>(PerfumeSearchViewType.List)
+    private var _searchResultViewType = MutableStateFlow<PerfumeSearchViewType>(
+        PerfumeSearchViewType.List)
     val searchResultViewType: StateFlow<PerfumeSearchViewType> = _searchResultViewType
 
     fun perfumeNameSearchPagingSource(word: String) = PerfumeNameSearchPagingSource(searchRepository, word)

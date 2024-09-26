@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo
+package com.hmoa.core_domain.entity.data
 
 enum class MyPageCategory {
     향수,

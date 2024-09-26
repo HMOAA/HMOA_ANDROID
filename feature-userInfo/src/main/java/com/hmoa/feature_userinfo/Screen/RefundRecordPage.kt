@@ -15,6 +15,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,21 +26,70 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.ItemSnapshotList
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.toDisplayString
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NoteListItem
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
-import com.hmoa.core_model.response.Note
+import com.hmoa.core_model.response.FinalOrderResponseDto
+import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.feature_userinfo.viewModel.RefundRecordUiState
+import com.hmoa.feature_userinfo.viewModel.RefundRecordViewModel
 
 //환불 / 반품 내역 화면
 @Composable
-fun RefundRecordRoute(){
-
+fun RefundRecordRoute(
+    navBack: () -> Unit,
+    viewModel: RefundRecordViewModel = hiltViewModel()
+){
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    RefundRecordScreen(
+        navBack = navBack,
+        uiState = uiState.value,
+        errState = errState.value
+    )
 }
 
 @Composable
-fun ReturnOrRefundRecordScreen(){
-    val dummyData = listOf(0)
+fun RefundRecordScreen(
+    navBack: () -> Unit,
+    uiState: RefundRecordUiState,
+    errState: ErrorUiState
+){
+    var isOpen by remember{mutableStateOf(true)}
+    when(uiState){
+        RefundRecordUiState.Loading -> AppLoadingScreen()
+        RefundRecordUiState.Error -> {
+            ErrorUiSetView(
+                isOpen = isOpen,
+                onConfirmClick = navBack,
+                errorUiState = errState,
+                onCloseClick = navBack
+            )
+        }
+        is RefundRecordUiState.Success -> {
+            RefundRecordContent(
+                data = uiState.data.collectAsLazyPagingItems().itemSnapshotList,
+                navBack = navBack,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RefundRecordContent(
+    data: ItemSnapshotList<OrderRecordDto>,
+    navBack: () -> Unit,
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,19 +99,26 @@ fun ReturnOrRefundRecordScreen(){
         TopBar(
             title = "환불 / 반품 내역",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = { /** 뒤로가기 navigation */ }
+            onNavClick = navBack
         )
-        LazyColumn{
-            items(dummyData){
-                ReturnOrRefundRecordItem(
-                    status = "취소완료",
-                    requestAt = "2024/07/21"
-                )
-                ReturnOrRefundRecordItem(
-                    status = "반품완료",
-                    requestAt = "2024/07/01"
-                )
+        if (data.isNotEmpty()){
+            LazyColumn{
+                items(data){record ->
+                    if (record != null){
+                        ReturnOrRefundRecordItem(
+                            status = record.orderStatus.toDisplayString(),
+                            requestAt = "",
+                            notes = record.orderProducts
+                        )
+                    }
+                }
             }
+        } else {
+            EmptyDataPage(
+                mainText = "환불/반품 내역이 없습니다.",
+                buttonText = "홈으로 돌아가기",
+                onClick = navBack
+            )
         }
     }
 }
@@ -67,6 +127,7 @@ fun ReturnOrRefundRecordScreen(){
 private fun ReturnOrRefundRecordItem(
     status: String,
     requestAt: String,
+    notes: FinalOrderResponseDto
 ){
     Column(
         modifier = Modifier
@@ -74,7 +135,9 @@ private fun ReturnOrRefundRecordItem(
             .padding(bottom = 24.dp)
     ){
         Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -94,25 +157,25 @@ private fun ReturnOrRefundRecordItem(
             )
         }
         Spacer(Modifier.height(20.dp))
-        NoteListItem(
-            noteUrl = "",
-            productName = "플로럴",
-            notes = listOf(
-                Note(noteName = "네롤리", noteContent = ""),
-                Note(noteName = "화이트로즈", noteContent = ""),
-                Note(noteName = "핑크 로즈", noteContent = ""),
-                Note(noteName = "화이트 로즈", noteContent = ""),
-                Note(noteName = "바이올렛", noteContent = ""),
-                Note(noteName = "피오니", noteContent = ""),
-            ),
-            noteCounts = 6,
-            totalPrice = 1200
-        )
+        notes.productInfo.noteProducts.forEach{ note ->
+            NoteListItem(
+                noteUrl = note.productPhotoUrl,
+                productName = note.productName,
+                notes = note.notes,
+                noteCounts = note.notesCount,
+                totalPrice = note.price
+            )
+            Spacer(Modifier.height(10.dp))
+        }
     }
 }
 
 @Preview
 @Composable
 private fun ReturnOrRefundRecordUITest(){
-    ReturnOrRefundRecordScreen()
+    RefundRecordScreen(
+        uiState = RefundRecordUiState.Loading,
+        errState = ErrorUiState.Loading,
+        navBack = {},
+    )
 }

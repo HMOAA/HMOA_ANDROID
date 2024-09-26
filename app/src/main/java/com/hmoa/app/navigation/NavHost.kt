@@ -4,18 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.feature_userinfo.navigateToBack
-import com.example.feature_userinfo.navigateToEditProfilePage
-import com.example.feature_userinfo.navigateToMyActivity
-import com.example.feature_userinfo.navigateToMyBirth
-import com.example.feature_userinfo.navigateToMyCommentPage
-import com.example.feature_userinfo.navigateToMyFavoriteCommentPage
-import com.example.feature_userinfo.navigateToMyGenderPage
-import com.example.feature_userinfo.navigateToMyInfoPage
-import com.example.feature_userinfo.navigateToMyPostPage
-import com.example.feature_userinfo.navigateToOrderRecord
-import com.example.feature_userinfo.navigateToRefund
-import com.example.feature_userinfo.nestedUserInfoGraph
 import com.hmoa.feature_authentication.navigation.loginScreen
 import com.hmoa.feature_authentication.navigation.navigateToLogin
 import com.hmoa.feature_authentication.navigation.navigateToPickNickname
@@ -82,6 +70,18 @@ import com.hmoa.feature_perfume.navigation.navigateToSpecificPerfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeComment
 import com.hmoa.feature_perfume.navigation.perfumeScreen
 import com.hmoa.feature_perfume.navigation.specificComment
+import com.hmoa.feature_userinfo.navigation.navigateToBack
+import com.hmoa.feature_userinfo.navigation.navigateToEditProfilePage
+import com.hmoa.feature_userinfo.navigation.navigateToMyActivity
+import com.hmoa.feature_userinfo.navigation.navigateToMyBirth
+import com.hmoa.feature_userinfo.navigation.navigateToMyCommentPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyFavoriteCommentPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyGenderPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyInfoPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyPostPage
+import com.hmoa.feature_userinfo.navigation.navigateToOrderRecord
+import com.hmoa.feature_userinfo.navigation.navigateToRefund
+import com.hmoa.feature_userinfo.navigation.nestedUserInfoGraph
 
 @Composable
 fun SetUpNavGraph(

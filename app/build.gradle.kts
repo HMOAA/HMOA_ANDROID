@@ -86,7 +86,6 @@ dependencies {
     implementation(project(":feature-perfume"))
     implementation(project(":feature-brand"))
     implementation(project(":feature-hpedia"))
-    implementation(project(":feature-like"))
     implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
     implementation(project(":feature-hbti"))

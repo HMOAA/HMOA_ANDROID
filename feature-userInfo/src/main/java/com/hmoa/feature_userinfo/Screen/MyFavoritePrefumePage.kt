@@ -44,7 +44,7 @@ import com.hmoa.core_designsystem.component.LikeRowItem
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
-import com.hmoa.feature_userinfo.viewModel.LikeUiState
+import com.hmoa.feature_userinfo.viewModel.MyFavoritePerfumeUiState
 import com.hmoa.feature_userinfo.viewModel.MyFavoritePerfumeViewModel
 
 @Composable
@@ -74,7 +74,7 @@ fun MyFavoritePerfumeRoute(
 @Composable
 fun MyFavoritePerfumeScreen(
     errorUiState: ErrorUiState,
-    uiState: LikeUiState,
+    uiState: MyFavoritePerfumeUiState,
     type: String,
     onTypeChanged: (String) -> Unit,
     navPerfume: (Int) -> Unit,
@@ -84,8 +84,8 @@ fun MyFavoritePerfumeScreen(
     var isOpen by remember { mutableStateOf(true) }
 
     when (uiState) {
-        LikeUiState.Loading -> AppLoadingScreen()
-        is LikeUiState.Like -> {
+        MyFavoritePerfumeUiState.Loading -> AppLoadingScreen()
+        is MyFavoritePerfumeUiState.Like -> {
             if (uiState.perfumes.isNotEmpty()) {
                 MyFavoritePerfumeContent(
                     type = type,
@@ -97,7 +97,7 @@ fun MyFavoritePerfumeScreen(
                 EmptyDataPage(mainText = "좋아요한 향수가 없습니다.")
             }
         }
-        is LikeUiState.Error -> {
+        is MyFavoritePerfumeUiState.Error -> {
             ErrorUiSetView(
                 isOpen = isOpen,
                 onConfirmClick = { onErrorHandleLoginAgain() },

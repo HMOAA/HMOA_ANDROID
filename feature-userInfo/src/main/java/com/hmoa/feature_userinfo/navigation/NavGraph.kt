@@ -146,6 +146,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             OrderRecordRoute(
                 navBack = navBack,
                 navReturnOrRefund = navRefund,
+                navReviewWrite = { /** 리뷰 작성 페이지로 넘어가자 */ }
             )
         }
         composable(

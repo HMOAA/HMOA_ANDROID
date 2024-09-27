@@ -39,7 +39,7 @@ fun LikeRowItem(
     itemNameKo: String,
     itemNameEng: String,
     onClickClose: () -> Unit,
-    navPerfumeDesc: () -> Unit,
+    navPerfume: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -56,9 +56,7 @@ fun LikeRowItem(
                 elevation = 4.dp,
                 spotColor = Color(0x33000000),
                 ambientColor = Color(0x33000000)
-            ).clickable {
-                navPerfumeDesc()
-            },
+            ).clickable {navPerfume()},
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(

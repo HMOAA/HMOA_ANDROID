@@ -1,4 +1,4 @@
-package com.hmoa.feature_like.Screen
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.EmptyDataPage
@@ -45,45 +44,41 @@ import com.hmoa.core_designsystem.component.LikeRowItem
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
-import com.hmoa.feature_like.ViewModel.LikeUiState
-import com.hmoa.feature_like.ViewModel.LikeViewModel
-
-const val LIKE_ROUTE = "Like"
-
-fun NavController.navigateToLike() = navigate(LIKE_ROUTE)
+import com.hmoa.feature_userinfo.viewModel.LikeUiState
+import com.hmoa.feature_userinfo.viewModel.MyFavoritePerfumeViewModel
 
 @Composable
-fun LikeRoute(
-    onNavPerfumeDesc: (Int) -> Unit,
-    onNavHome: () -> Unit,
+fun MyFavoritePerfumeRoute(
+    navPerfume: (Int) -> Unit,
+    navHome: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    viewModel: LikeViewModel = hiltViewModel()
+    viewModel: MyFavoritePerfumeViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     var type by remember { mutableStateOf("ROW") }
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    LikeScreen(
+    MyFavoritePerfumeScreen(
         uiState = uiState.value,
         type = type,
         onTypeChanged = { type = it },
         errorUiState = errorUiState,
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){onNavHome()}
+            if(viewModel.hasToken()){navHome()}
             else {onErrorHandleLoginAgain()}
         },
-        onNavPerfumeDesc = onNavPerfumeDesc,
-        onNavHome = onNavHome,
+        navPerfume = navPerfume,
+        navHome = navHome,
     )
 }
 
 @Composable
-fun LikeScreen(
+fun MyFavoritePerfumeScreen(
     errorUiState: ErrorUiState,
     uiState: LikeUiState,
     type: String,
     onTypeChanged: (String) -> Unit,
-    onNavPerfumeDesc: (Int) -> Unit,
-    onNavHome: () -> Unit,
+    navPerfume: (Int) -> Unit,
+    navHome: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit
 ) {
     var isOpen by remember { mutableStateOf(true) }
@@ -92,11 +87,11 @@ fun LikeScreen(
         LikeUiState.Loading -> AppLoadingScreen()
         is LikeUiState.Like -> {
             if (uiState.perfumes.isNotEmpty()) {
-                LikeContent(
+                MyFavoritePerfumeContent(
                     type = type,
                     onTypeChanged = onTypeChanged,
                     perfumes = uiState.perfumes,
-                    onNavPerfumeDesc = onNavPerfumeDesc
+                    navPerfume = navPerfume
                 )
             } else {
                 EmptyDataPage(mainText = "좋아요한 향수가 없습니다.")
@@ -107,18 +102,18 @@ fun LikeScreen(
                 isOpen = isOpen,
                 onConfirmClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
-                onCloseClick = onNavHome
+                onCloseClick = navHome
             )
         }
     }
 }
 
 @Composable
-private fun LikeContent(
+private fun MyFavoritePerfumeContent(
     type: String,
     onTypeChanged: (String) -> Unit,
     perfumes: List<PerfumeLikeResponseDto>,
-    onNavPerfumeDesc: (Int) -> Unit
+    navPerfume: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -132,12 +127,12 @@ private fun LikeContent(
         if (type == "ROW") {
             LikePerfumeListByRow(
                 perfumes = perfumes,
-                onNavPerfumeDesc = onNavPerfumeDesc
+                navPerfume = navPerfume
             )
         } else if (type == "GRID") {
             LikePerfumeListByGrid(
                 perfumes = perfumes,
-                onNavPerfumeDesc = onNavPerfumeDesc
+                navPerfume = navPerfume
             )
         }
     }
@@ -185,7 +180,7 @@ private fun IconRow(
 @Composable
 private fun LikePerfumeListByRow(
     perfumes: List<PerfumeLikeResponseDto>,
-    onNavPerfumeDesc: (Int) -> Unit
+    navPerfume: (Int) -> Unit
 ) {
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -208,7 +203,7 @@ private fun LikePerfumeListByRow(
                 itemNameKo = perfume.koreanName,
                 itemNameEng = perfume.englishName,
                 onClickClose = {/* event nothing */ },
-                onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) }
+                navPerfumeDesc = { navPerfume(perfume.perfumeId) }
             )
         }
     }
@@ -217,7 +212,7 @@ private fun LikePerfumeListByRow(
 @Composable
 private fun LikePerfumeListByGrid(
     perfumes: List<PerfumeLikeResponseDto>,
-    onNavPerfumeDesc: (Int) -> Unit
+    navPerfume: (Int) -> Unit
 ) {
     var showCard by remember { mutableStateOf(false) }
     var selectedPerfumeIdx by remember { mutableIntStateOf(0) }
@@ -238,7 +233,7 @@ private fun LikePerfumeListByGrid(
                     itemNameKo = perfume.koreanName,
                     itemNameEng = perfume.englishName,
                     onClickClose = { showCard = false },
-                    onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) }
+                    navPerfumeDesc = { navPerfume(perfume.perfumeId) }
                 )
             }
         }

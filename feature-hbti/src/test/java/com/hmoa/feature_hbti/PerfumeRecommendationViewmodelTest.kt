@@ -137,7 +137,7 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
     }
 
     @Test
-    fun `test_handlePriceQuestionAnswerFunction_addOnePriceOption_reflectInSelectedPriceOptionIdsState`() =
+    fun `test_handlePriceQuestionAnswer_addOnePriceOption_reflectInSelectedPriceOptionIdsState`() =
         coroutineRule.runTest {
             viewmodel.getSurveyResult()
             viewmodel.handlePriceQuestionAnswer(0, true)
@@ -145,7 +145,7 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
         }
 
     @Test
-    fun `test_handlePriceQuestionAnswerFunction_substractOnePriceOption_reflectInSelectedPriceOptionIdsState`() =
+    fun `test_handlePriceQuestionAnswer_substractOnePriceOption_reflectInSelectedPriceOptionIdsState`() =
         coroutineRule.runTest {
             viewmodel.getSurveyResult()
             viewmodel.handlePriceQuestionAnswer(0, true)
@@ -181,7 +181,7 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
     }
 
     @Test
-    fun `test_handleNoteQuestionAnswerFunction_addOneNote_reflectInSelectedNoteTagsOptionState`() =
+    fun `test_handleNoteQuestionAnswer_addOneNote_reflectInSelectedNoteTagsOptionState`() =
         coroutineRule.runTest {
             val note = noteCategoryTags[0].note[0] //라임 만다린
             viewmodel.getSurveyResult()
@@ -198,7 +198,26 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
         }
 
     @Test
-    fun `test_handleNoteQuestionAnswerFunction_addOneNoteAndDelete_reflectInSelectedNoteTagsOptionState`() =
+    fun `test_handleNoteQuestionAnswer_addOneNoteAndDelete_reflectInSelectedNoteTagsOptionState`() =
+        coroutineRule.runTest {
+            val note = noteCategoryTags[0].note[0] //라임 만다린
+            viewmodel.getSurveyResult()
+            viewmodel.handleNoteQuestionAnswer(note = note, categoryIndex = 0, noteIndex = 0, isGotoState = true)
+            viewmodel.onDeleteNoteTagOption(noteTag = note)
+            assertEquals(
+                listOf(
+                    NoteCategoryTag(
+                        category = noteCategoryTags[0].category,
+                        note = noteCategoryTags[0].note,
+                        isSelected = listOf(false, false, false, false)
+                    ), noteCategoryTags[1], noteCategoryTags[2]
+                ), viewmodel.noteCategoryTagsState.value
+            )
+            assertEquals(emptyList<Int>(), viewmodel.selectedPriceOptionIdsState.value)
+        }
+
+    @Test
+    fun `test_handleNoteQuestionAnswer_addOneNoteAndCancel_reflectInSelectedNoteTagsOptionState`() =
         coroutineRule.runTest {
             val note = noteCategoryTags[0].note[0] //라임 만다린
             viewmodel.getSurveyResult()

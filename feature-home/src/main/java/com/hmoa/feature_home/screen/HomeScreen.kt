@@ -30,7 +30,6 @@ import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
-import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.feature_home.viewmodel.HomeViewModel
 
 @Composable

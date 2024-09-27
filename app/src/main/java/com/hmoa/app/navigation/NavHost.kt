@@ -3,7 +3,6 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.hmoa.feature_authentication.navigation.loginScreen
 import com.hmoa.feature_authentication.navigation.navigateToLogin
 import com.hmoa.feature_authentication.navigation.navigateToPickNickname
@@ -55,9 +54,6 @@ import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
-import com.hmoa.feature_like.Screen.LIKE_ROUTE
-import com.hmoa.feature_like.Screen.LikeRoute
-import com.hmoa.feature_like.Screen.navigateToLike
 import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
@@ -76,6 +72,7 @@ import com.hmoa.feature_userinfo.navigation.navigateToMyActivity
 import com.hmoa.feature_userinfo.navigation.navigateToMyBirth
 import com.hmoa.feature_userinfo.navigation.navigateToMyCommentPage
 import com.hmoa.feature_userinfo.navigation.navigateToMyFavoriteCommentPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyFavoritePerfume
 import com.hmoa.feature_userinfo.navigation.navigateToMyGenderPage
 import com.hmoa.feature_userinfo.navigation.navigateToMyInfoPage
 import com.hmoa.feature_userinfo.navigation.navigateToMyPostPage
@@ -126,17 +123,9 @@ fun SetUpNavGraph(
             onPickNicknameClick = navController::navigateToPickNickname
         )
 
-        /** like 모듈 */
-        composable(LIKE_ROUTE) {
-            LikeRoute(
-                onNavPerfumeDesc = navController::navigateToPerfume,
-                onNavHome = navController::navigateToHome,
-                onErrorHandleLoginAgain = navController::navigateToLogin
-            )
-        }
-
         /** user info 모듈 */
         this.nestedUserInfoGraph(
+            navHome = navController::navigateToHome,
             navLogin = navController::navigateToLogin,
             navBack = navController::navigateToBack,
             navCommunity = navController::navigateToCommunityDescriptionRoute,
@@ -149,7 +138,7 @@ fun SetUpNavGraph(
             navMyComment = navController::navigateToMyCommentPage,
             navMyBirth = navController::navigateToMyBirth,
             navMyGender = navController::navigateToMyGenderPage,
-            navMyPerfume = navController::navigateToLike,
+            navMyPerfume = navController::navigateToMyFavoritePerfume,
             navPerfume = navController::navigateToPerfume,
             navOrderRecord = navController::navigateToOrderRecord,
             navRefund = navController::navigateToRefund,

@@ -50,7 +50,7 @@ import com.hmoa.feature_fcm.navigateToAlarmScreen
 import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
-import com.hmoa.feature_like.Screen.LIKE_ROUTE
+import com.hmoa.feature_userinfo.screen.LIKE_ROUTE
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import com.hmoa.feature_userinfo.navigation.navigateToUserInfoGraph
 import dagger.hilt.android.AndroidEntryPoint

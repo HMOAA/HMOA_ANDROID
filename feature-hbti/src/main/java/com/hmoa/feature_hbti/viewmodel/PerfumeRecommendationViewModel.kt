@@ -173,7 +173,7 @@ class PerfumeRecommendationViewModel @Inject constructor(
     }
 
     fun handleNoteQuestionAnswer(note: String, categoryIndex: Int, noteIndex: Int, isGotoState: Boolean) {
-        _noteCategoryTagsState.update { handleNoteCategoryTags(categoryIndex, noteIndex, isGotoState) }
+        _noteCategoryTagsState.update { modifyNoteCategoryTags(categoryIndex, noteIndex, isGotoState) }
         if (isGotoState) {
             _selectedNoteTagsOptionState.update { addNoteTagOption(note, _selectedNoteTagsOptionState.value) }
         } else {
@@ -183,7 +183,7 @@ class PerfumeRecommendationViewModel @Inject constructor(
         handleIsNextAvailableState()
     }
 
-    fun handleNoteCategoryTags(categoryIndex: Int, noteIndex: Int, isGotoState: Boolean): List<NoteCategoryTag> {
+    fun modifyNoteCategoryTags(categoryIndex: Int, noteIndex: Int, isGotoState: Boolean): List<NoteCategoryTag> {
         val updatedNoteQuestionAnswer = mutableListOf<NoteCategoryTag>()
         _noteCategoryTagsState.value?.mapIndexed { index, noteCategoryTag ->
             val isSelectedNotes = mutableListOf<Boolean>()
@@ -224,9 +224,34 @@ class PerfumeRecommendationViewModel @Inject constructor(
         return updatedSelectedNoteTagsOption
     }
 
+    fun onDeleteNoteTagOption(noteTag: String) {
+        val noteTagIndexes = findCategoryIndexAndNoteIndex(noteTag, _noteCategoryTagsState.value)
+        handleNoteQuestionAnswer(
+            note = noteTag,
+            categoryIndex = noteTagIndexes.first,
+            noteIndex = noteTagIndexes.second,
+            false
+        )
+    }
+
     fun deleteAllNoteTagOptions() {
         _selectedNoteTagsOptionState.update { listOf() }
     }
+
+    fun findCategoryIndexAndNoteIndex(noteTag: String, noteCategoryTags: List<NoteCategoryTag>?): Pair<Int, Int> {
+        var categoryIndex = 0
+        var noteIndex = 0
+        noteCategoryTags?.mapIndexed { _categoryIndex, noteCategoryTag ->
+            noteCategoryTag.note.mapIndexed { _noteIndex, tag ->
+                if (noteTag == tag) {
+                    categoryIndex = _categoryIndex
+                    noteIndex = _noteIndex
+                }
+            }
+        }
+        return Pair(categoryIndex, noteIndex)
+    }
+
 }
 
 sealed interface PerfumeRecommendationUiState {

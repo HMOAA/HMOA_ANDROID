@@ -79,10 +79,7 @@ fun PerfumeRecommendationRoute(
                 viewModel.handleIsNextAvailableState()
             },
             onDeleteTag = { tag ->
-                viewModel.deleteNoteTagOption(
-                    tag,
-                    (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedNoteTagsOption
-                )
+                viewModel.onDeleteNoteTagOption(tag)
             },
             onDeleteAll = { viewModel.deleteAllNoteTagOptions() },
             onNavBack = onNavBack,
@@ -293,57 +290,57 @@ private fun NoteScreen(
                 onDeleteTag = { tag -> onDeleteTag(tag) },
                 onDeleteAll = { onDeleteAll() })
         }
-        Column {
-            Text(
-                text = "Q. ${noteQuestionTitle}",
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
-                modifier = Modifier.padding(bottom = 16.dp).padding(top = 16.dp)
-            )
-            Spacer(
-                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray1)
-                    .padding(bottom = 16.dp)
-            )
-            LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth(), state = listState) {
-                itemsIndexed(noteCategoryTags) { categoryIndex, item ->
-                    Text(
-                        text = "${noteCategoryTags.get(categoryIndex).category}",
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
-                        modifier = Modifier.padding(bottom = 16.dp).padding(top = 24.dp)
-                    )
-                    FlowRow(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Start),
-                        verticalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Bottom),
-                    ) {
-                        noteCategoryTags.get(categoryIndex).note.forEachIndexed { noteIndex, noteName ->
-                            val isSelected = noteCategoryTags.get(categoryIndex).isSelected.get(noteIndex)
-                            TagBadge(
-                                tag = noteName,
-                                isClickable = true,
-                                isSelected = isSelected,
-                                onClick = { onClickNote(it, categoryIndex, noteIndex, !isSelected) },
-                                height = 32.dp
-                            )
-                        }
+        LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth().padding(bottom = 16.dp), state = listState) {
+            item {
+                Text(
+                    text = "Q. ${noteQuestionTitle}",
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
+                    modifier = Modifier.padding(bottom = 16.dp).padding(top = 16.dp)
+                )
+                Spacer(
+                    modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray1)
+                        .padding(bottom = 16.dp)
+                )
+            }
+            itemsIndexed(noteCategoryTags) { categoryIndex, item ->
+                Text(
+                    text = "${noteCategoryTags.get(categoryIndex).category}",
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
+                    modifier = Modifier.padding(bottom = 16.dp).padding(top = 24.dp)
+                )
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Bottom),
+                ) {
+                    noteCategoryTags.get(categoryIndex).note.forEachIndexed { noteIndex, noteName ->
+                        val isSelected = noteCategoryTags.get(categoryIndex).isSelected.get(noteIndex)
+                        TagBadge(
+                            tag = noteName,
+                            isClickable = true,
+                            isSelected = isSelected,
+                            onClick = { onClickNote(it, categoryIndex, noteIndex, !isSelected) },
+                            height = 32.dp
+                        )
                     }
-                    Spacer(
-                        modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray1)
-                            .padding(bottom = 12.dp)
-                    )
                 }
-                item {
-                    Button(
-                        buttonModifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                        radious = 5,
-                        isEnabled = isEnabledBtn,
-                        btnText = "다음",
-                        onClick = { onClickNext() }
-                    )
-                }
+                Spacer(
+                    modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray1)
+                        .padding(bottom = 12.dp)
+                )
+            }
+            item() {
+                Button(
+                    buttonModifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    radious = 5,
+                    isEnabled = isEnabledBtn,
+                    btnText = "다음",
+                    onClick = { onClickNext() }
+                )
             }
         }
     }

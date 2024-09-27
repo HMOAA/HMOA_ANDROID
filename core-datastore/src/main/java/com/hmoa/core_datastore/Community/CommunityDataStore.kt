@@ -1,7 +1,6 @@
 package com.hmoa.core_datastore.Community
 
 import ResultResponse
-import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.core_model.response.CommunityWithCursorResponseDto

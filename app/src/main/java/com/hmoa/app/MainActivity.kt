@@ -17,11 +17,7 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -50,13 +46,10 @@ import com.hmoa.feature_fcm.navigateToAlarmScreen
 import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
-import com.hmoa.feature_like.Screen.LIKE_ROUTE
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import com.hmoa.feature_userinfo.navigation.navigateToUserInfoGraph
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -84,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         UserInfoRoute.MyActivityRoute.name,
         UserInfoRoute.MyCommentRoute.name,
         UserInfoRoute.MyPostRoute.name,
-        LIKE_ROUTE,
+        UserInfoRoute.MyFavoritePerfumeRoute.name,
         MagazineRoute.Magazine.name
     )
     private val bottomNav = listOf(

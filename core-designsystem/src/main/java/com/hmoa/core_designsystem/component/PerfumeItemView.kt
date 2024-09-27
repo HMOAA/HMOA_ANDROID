@@ -3,7 +3,11 @@ package com.hmoa.core_designsystem.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,7 +17,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun PerfumeItemView(
@@ -44,13 +48,13 @@ fun PerfumeItemView(
         }
         Text(
             text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal,
-                fontFamily = pretendard
+                fontFamily = CustomFont.regular
             ),
             modifier = Modifier.padding(end = 4.dp, top = 8.dp, bottom = 6.dp)
         )
         Text(
             text = perfumeName, style = TextStyle(fontSize = 12.sp,fontWeight = FontWeight.Normal,
-                fontFamily = pretendard),
+                fontFamily = CustomFont.regular),
             modifier = Modifier.padding(end = 4.dp), softWrap = true
         )
     }

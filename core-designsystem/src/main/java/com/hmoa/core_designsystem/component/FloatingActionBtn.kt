@@ -41,7 +41,7 @@ import com.hmoa.core_designsystem.theme.pretendard
 @Composable
 fun FloatingActionBtn(
     onNavRecommend: () -> Unit,
-    onNavPresent: () -> Unit,
+    onNavHbtiReview: () -> Unit,
     onNavFree: () -> Unit,
     isAvailable: Boolean,
 ) {
@@ -111,7 +111,7 @@ fun FloatingActionBtn(
                 },
                 onClick = {
                     isOpen = false
-                    onNavPresent()
+                    onNavHbtiReview()
                 }
             )
             DropdownMenuItem(
@@ -143,7 +143,7 @@ fun TestFAB() {
     ) {
         FloatingActionBtn(
             onNavRecommend = {},
-            onNavPresent = {},
+            onNavHbtiReview = {},
             onNavFree = {},
             isAvailable = true,
         )

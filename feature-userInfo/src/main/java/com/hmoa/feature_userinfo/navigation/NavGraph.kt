@@ -12,6 +12,7 @@ import com.hmoa.feature_userinfo.screen.MyActivityRoute
 import com.hmoa.feature_userinfo.screen.MyBirthRoute
 import com.hmoa.feature_userinfo.screen.MyCommentRoute
 import com.hmoa.feature_userinfo.screen.MyFavoriteCommentRoute
+import com.hmoa.feature_userinfo.screen.MyFavoritePerfumeRoute
 import com.hmoa.feature_userinfo.screen.MyGenderRoute
 import com.hmoa.feature_userinfo.screen.MyInfoRoute
 import com.hmoa.feature_userinfo.screen.MyPageRoute
@@ -50,7 +51,8 @@ fun NavController.navigateToMyBirth() = navigate(UserInfoRoute.MyBirthRoute.name
 
 //내 게시글 페이지
 fun NavController.navigateToMyPostPage() = navigate(UserInfoRoute.MyPostRoute.name)
-
+//내가 좋아요 한 향수 페이지
+fun NavController.navigateToMyFavoritePerfume() = navigate(UserInfoRoute.MyFavoritePerfumeRoute.name)
 //환불 & 반품
 fun NavController.navigateToRefund(type: String, orderId: Int) = navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
 //주문 내역
@@ -61,6 +63,7 @@ fun NavController.navigateToRefundRecord() = navigate(UserInfoRoute.RefundRecord
 fun NavController.navigateToBack() = navigateUp()
 
 fun NavGraphBuilder.nestedUserInfoGraph(
+    navHome: () -> Unit,
     navMyPerfume : () -> Unit,
     navLogin: () -> Unit,
     navBack: () -> Unit,
@@ -139,6 +142,13 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         composable(route = UserInfoRoute.MyGenderRoute.name) {
             MyGenderRoute(navBack = navBack)
         }
+        composable(route = UserInfoRoute.MyFavoritePerfumeRoute.name){
+            MyFavoritePerfumeRoute(
+                navPerfume = navPerfume,
+                navHome = navHome,
+                onErrorHandleLoginAgain = navLogin
+            )
+        }
         composable(route = UserInfoRoute.NoAuthMyPage.name) {
             NoAuthMyPage(navLogin = navLogin)
         }
@@ -146,6 +156,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             OrderRecordRoute(
                 navBack = navBack,
                 navReturnOrRefund = navRefund,
+                navReviewWrite = { /** 리뷰 작성 페이지로 넘어가자 */ }
             )
         }
         composable(

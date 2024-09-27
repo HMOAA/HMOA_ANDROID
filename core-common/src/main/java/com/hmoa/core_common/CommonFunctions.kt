@@ -21,6 +21,8 @@ fun OrderStatus.toDisplayString(): String{
         OrderStatus.PAY_FAILED -> "결제 실패"
         OrderStatus.PAY_CANCEL -> "환불 완료"
         OrderStatus.PAY_COMPLETE -> "결제 완료"
+        OrderStatus.RETURN_PROGRESS -> "반품 진행 중"
+        OrderStatus.RETURN_COMPLETE -> "반품 완료"
         OrderStatus.SHIPPING_COMPLETE -> "배송 완료"
         OrderStatus.SHIPPING_PROGRESS -> "배송 중"
         OrderStatus.PURCHASE_CONFIRMATION -> "구매 확정"

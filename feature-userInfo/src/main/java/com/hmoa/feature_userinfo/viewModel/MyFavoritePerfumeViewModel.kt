@@ -1,4 +1,4 @@
-package com.hmoa.feature_like.ViewModel
+package com.hmoa.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LikeViewModel @Inject constructor(
+class MyFavoritePerfumeViewModel @Inject constructor(
     private val perfumeRepository: PerfumeRepository,
     private val loginRepository: LoginRepository,
 ) : ViewModel() {
@@ -54,7 +54,7 @@ class LikeViewModel @Inject constructor(
 
     init{getAuthToken()}
 
-    val uiState: StateFlow<LikeUiState> = flow {
+    val uiState: StateFlow<MyFavoritePerfumeUiState> = flow {
         if (hasToken()){
             val result = perfumeRepository.getLikePerfumes()
             if (result.errorMessage != null) {
@@ -66,21 +66,21 @@ class LikeViewModel @Inject constructor(
         }
     }.asResult().map { result ->
         when (result) {
-            Result.Loading -> LikeUiState.Loading
-            is Result.Success -> LikeUiState.Like(result.data?.data ?: emptyList())
+            Result.Loading -> MyFavoritePerfumeUiState.Loading
+            is Result.Success -> MyFavoritePerfumeUiState.Like(result.data?.data ?: emptyList())
             is Result.Error -> {
                 when (result.exception.message) {
                     ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
                     ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
                     ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
                     else -> generalErrorState.update { Pair(true, result.exception.message) }                }
-                LikeUiState.Error(result.exception.toString())
+                MyFavoritePerfumeUiState.Error(result.exception.toString())
             }
         }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3_000),
-        initialValue = LikeUiState.Loading
+        initialValue = MyFavoritePerfumeUiState.Loading
     )
 
     //get token
@@ -94,13 +94,13 @@ class LikeViewModel @Inject constructor(
     fun hasToken() = authToken.value != null
 }
 
-sealed interface LikeUiState {
-    data object Loading : LikeUiState
+sealed interface MyFavoritePerfumeUiState {
+    data object Loading : MyFavoritePerfumeUiState
     data class Like(
         val perfumes: List<PerfumeLikeResponseDto>
-    ) : LikeUiState
+    ) : MyFavoritePerfumeUiState
 
     data class Error(
         val message: String
-    ) : LikeUiState
+    ) : MyFavoritePerfumeUiState
 }

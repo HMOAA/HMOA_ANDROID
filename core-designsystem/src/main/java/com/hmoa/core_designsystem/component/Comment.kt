@@ -2,16 +2,7 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -27,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun Comment(
@@ -46,11 +38,7 @@ fun Comment(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White)
-            .clickable {
-                navCommunity()
-            }
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .clickable {navCommunity()}
     ) {
         Spacer(Modifier.height(11.dp))
 
@@ -65,7 +53,8 @@ fun Comment(
                 fontSize = 14.sp,
                 lineHeight = 14.sp,
                 fontWeight = FontWeight(400),
-                color = Color.Black
+                color = Color.Black,
+                fontFamily = CustomFont.regular
             )
             Spacer(Modifier.width(7.dp))
             if (isFirst) {
@@ -85,6 +74,7 @@ fun Comment(
                 fontSize = 12.sp,
                 lineHeight = 19.6.sp,
                 fontWeight = FontWeight(300),
+                fontFamily = CustomFont.regular,
                 color = CustomColor.gray3
             )
             Spacer(Modifier.weight(1f))
@@ -119,7 +109,8 @@ fun Comment(
                 Text(
                     text = if (heartCount <= 999) heartCount.toString() else "999+",
                     color = Color.Black,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    fontFamily = CustomFont.regular
                 )
             }
             if (isEditable) {

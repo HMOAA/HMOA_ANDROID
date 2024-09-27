@@ -24,18 +24,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityHomeUiState
 import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
@@ -112,15 +110,14 @@ fun CommunityTitleBar(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom
     ) {
         Text(
             text = "Community",
             fontSize = 16.sp,
-            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+            fontFamily = CustomFont.regular,
             color = Color.Black
         )
 
@@ -128,7 +125,7 @@ fun CommunityTitleBar(
             modifier = Modifier.clickable { onNavCommunityByCategory() },
             text = "전체보기",
             fontSize = 12.sp,
-            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+            fontFamily = CustomFont.regular,
             color = Color.Black
         )
     }

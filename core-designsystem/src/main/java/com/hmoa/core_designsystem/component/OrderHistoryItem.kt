@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -44,6 +46,7 @@ fun OrderRecordItem(
     trackingNumber: String?,
     onRefundClick: () -> Unit,
     onReturnClick: () -> Unit,
+    onReviewWriteClick: () -> Unit,
 ){
     val shippingStatus = shippingType.toDisplayString()
     val shippingStatusColor = if(shippingType == OrderStatus.SHIPPING_COMPLETE) CustomColor.blue else Color.Black
@@ -124,20 +127,13 @@ fun OrderRecordItem(
             )
         }
         Spacer(Modifier.height(32.dp))
-        OutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(3.dp),
-            onClick = buttonEvent,
-            border = BorderStroke(width = 1.dp, color = CustomColor.gray3),
-            contentPadding = PaddingValues(vertical = 10.dp),
-        ) {
-            Text(
-                text = buttonText,
-                fontSize = 12.sp,
-                color = CustomColor.gray3,
-                fontFamily = CustomFont.semiBold
-            )
-        }
+        Buttons(
+            shippingStatus = shippingType,
+            buttonText = buttonText,
+            buttonEvent = buttonEvent,
+            onReviewWriteClick = onReviewWriteClick
+        )
+
     }
 }
 
@@ -167,7 +163,7 @@ fun ProductView(
                 fontSize = 10.sp,
                 fontFamily = CustomFont.medium
             )
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(6.dp))
             Text(
                 text = "수량 ${product.notesCount}개 ${formatWon(price)}원/개",
                 fontSize = 10.sp,
@@ -184,14 +180,75 @@ fun ProductView(
     }
 }
 
+@Composable
+private fun Buttons(
+    shippingStatus: OrderStatus,
+    buttonText: String,
+    buttonEvent: () -> Unit,
+    onReviewWriteClick: () -> Unit,
+){
+    if (shippingStatus == OrderStatus.SHIPPING_COMPLETE){
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ){
+            OutlinedButton(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(3.dp),
+                onClick = buttonEvent,
+                border = BorderStroke(width = 1.dp, color = CustomColor.gray3),
+                contentPadding = PaddingValues(vertical = 10.dp),
+            ) {
+                Text(
+                    text = buttonText,
+                    fontSize = 12.sp,
+                    color = CustomColor.gray3,
+                    fontFamily = CustomFont.semiBold
+                )
+            }
+            Spacer(Modifier.width(20.dp))
+            OutlinedButton(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(3.dp),
+                onClick = onReviewWriteClick,
+                border = BorderStroke(width = 1.dp, color = CustomColor.gray3),
+                contentPadding = PaddingValues(vertical = 10.dp),
+            ) {
+                Text(
+                    text = "후기 작성",
+                    fontSize = 12.sp,
+                    color = CustomColor.gray3,
+                    fontFamily = CustomFont.semiBold
+                )
+            }
+        }
+    } else {
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(3.dp),
+            onClick = buttonEvent,
+            border = BorderStroke(width = 1.dp, color = CustomColor.gray3),
+            contentPadding = PaddingValues(vertical = 10.dp),
+        ) {
+            Text(
+                text = buttonText,
+                fontSize = 12.sp,
+                color = CustomColor.gray3,
+                fontFamily = CustomFont.semiBold
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun OrderHistoryItemUiTest(){
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
             .padding(horizontal = 16.dp)
+            .verticalScroll(state = scrollState)
     ){
         OrderRecordItem(
             courierCompany = "대한통운(CJ)",
@@ -206,7 +263,7 @@ private fun OrderHistoryItemUiTest(){
                         Note(noteName = "자몽", noteContent = "")
                     ),
                     notesCount = 4,
-                    price = 1200,
+                    price = 4800,
                     productId = 0,
                     productName = "시트러스",
                     productPhotoUrl = ""
@@ -221,7 +278,7 @@ private fun OrderHistoryItemUiTest(){
                         Note(noteName = "피오니", noteContent = "")
                     ),
                     notesCount = 6,
-                    price = 1200,
+                    price = 7200,
                     productId = 0,
                     productName = "플로럴",
                     productPhotoUrl = ""
@@ -230,7 +287,8 @@ private fun OrderHistoryItemUiTest(){
             totalPrice = 15000,
             onRefundClick = {},
             onReturnClick = {},
-            shippingPayment = 3000
+            shippingPayment = 3000,
+            onReviewWriteClick = {}
         )
         OrderRecordItem(
             courierCompany = "대한통운(CJ)",
@@ -269,7 +327,8 @@ private fun OrderHistoryItemUiTest(){
             totalPrice = 15000,
             onRefundClick = {},
             onReturnClick = {},
-            shippingPayment = 3000
+            shippingPayment = 3000,
+            onReviewWriteClick = {}
         )
     }
 }

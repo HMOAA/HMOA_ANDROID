@@ -36,6 +36,7 @@ import com.hmoa.feature_userinfo.viewModel.OrderRecordViewModel
 fun OrderRecordRoute(
     navBack: () -> Unit,
     navReturnOrRefund: (pageType: String, orderId: Int) -> Unit,
+    navReviewWrite: (orderId: Int) -> Unit,
     viewModel: OrderRecordViewModel = hiltViewModel()
 ){
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -44,7 +45,8 @@ fun OrderRecordRoute(
         uiState = uiState.value,
         errState = errState.value,
         navBack = navBack,
-        navReturnOrRefund = navReturnOrRefund
+        navReturnOrRefund = navReturnOrRefund,
+        navReviewWrite = navReviewWrite
     )
 }
 
@@ -53,7 +55,8 @@ fun OrderRecordScreen(
     uiState: OrderRecordUiState,
     errState: ErrorUiState,
     navBack: () -> Unit,
-    navReturnOrRefund: (pageType: String, orderId: Int) -> Unit
+    navReturnOrRefund: (pageType: String, orderId: Int) -> Unit,
+    navReviewWrite: (orderId: Int) -> Unit
 ){
     var isOpen by remember{mutableStateOf(true)}
     when(uiState){
@@ -76,7 +79,8 @@ fun OrderRecordScreen(
             OrderRecordContent(
                 data = uiState.orderRecords.collectAsLazyPagingItems().itemSnapshotList,
                 navBack = navBack,
-                navReturnOrRefund = navReturnOrRefund
+                navReturnOrRefund = navReturnOrRefund,
+                navReviewWrite = navReviewWrite
             )
         }
     }
@@ -86,7 +90,8 @@ fun OrderRecordScreen(
 fun OrderRecordContent(
     data: ItemSnapshotList<OrderRecordDto>,
     navBack: () -> Unit,
-    navReturnOrRefund: (pageType: String, orderId: Int) -> Unit
+    navReturnOrRefund: (pageType: String, orderId: Int) -> Unit,
+    navReviewWrite: (orderId: Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -99,7 +104,9 @@ fun OrderRecordContent(
             onNavClick = navBack
         )
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ){
             if(data.isNotEmpty()){
                 LazyColumn(
@@ -115,7 +122,8 @@ fun OrderRecordContent(
                                 trackingNumber = order.trackingNumber,
                                 onRefundClick = { navReturnOrRefund("refund", order.orderId) },
                                 onReturnClick = { navReturnOrRefund("return", order.orderId) },
-                                shippingPayment = order.orderProducts.shippingAmount
+                                shippingPayment = order.orderProducts.shippingAmount,
+                                onReviewWriteClick = { navReviewWrite(order.orderId) }
                             )
                         }
                     }
@@ -136,6 +144,7 @@ private fun OrderRecordUITest(){
         navBack = {},
         navReturnOrRefund = { a, b ->
 
-        }
+        },
+        navReviewWrite = {}
     )
 }

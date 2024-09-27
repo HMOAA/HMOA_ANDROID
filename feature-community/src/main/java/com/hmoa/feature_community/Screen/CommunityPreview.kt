@@ -33,10 +33,10 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.PostListItem
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.FloatingActionBtn
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -137,7 +137,7 @@ fun CommunityPage(
                 ) {
                     FloatingActionBtn(
                         onNavRecommend = { navPost(Category.추천.name) },
-                        onNavPresent = { navPost(Category.시향기.name) },
+                        onNavHbtiReview = { navPost(Category.시향기.name) },
                         onNavFree = { navPost(Category.자유.name) },
                         isAvailable = !uiState.enableLoginErrorDialog,
                     )

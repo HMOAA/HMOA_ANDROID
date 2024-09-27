@@ -168,8 +168,8 @@ fun NavGraphBuilder.perfumeRecommendationResultRoute() {
     composable(route = com.hmoa.core_domain.entity.navigation.HbtiRoute.PerfumeRecommendationResultRoute.name) {
         PerfumeRecommendationResultRoute(
             /** navigation event 추후 추가 **/
-            onNavBack = { /*TODO*/ },
-            onNavPerfumeDesc = { /*TODO*/ }
+            navBack = { /*TODO*/ },
+            navPerfume = { /*TODO*/ }
         )
     }
 }

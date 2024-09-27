@@ -1,18 +1,7 @@
 package com.hmoa.feature_home.screen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -41,6 +30,7 @@ import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
+import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.feature_home.viewmodel.HomeViewModel
 
 @Composable

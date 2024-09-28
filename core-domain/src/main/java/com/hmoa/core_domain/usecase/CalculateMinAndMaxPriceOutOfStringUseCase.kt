@@ -3,7 +3,7 @@ package com.hmoa.core_domain.usecase
 import javax.inject.Inject
 
 class CalculateMinAndMaxPriceOutOfStringUseCase @Inject constructor() {
-    suspend operator fun invoke(priceRange: String): Pair<Int, Int> {
+    operator fun invoke(priceRange: String): Pair<Int, Int> {
         return when {
             // "50,000원 이하" 같은 패턴 처리
             priceRange.contains("이하") -> {
@@ -21,7 +21,7 @@ class CalculateMinAndMaxPriceOutOfStringUseCase @Inject constructor() {
                 Pair(prices[0], prices[1]) // 최소값과 최대값 모두 있음
             }
 
-            else -> Pair(0, 0) // 해당 사항이 없으면 null 반환
+            else -> Pair(0, 0) // 해당 사항이 없음
         }
     }
 }

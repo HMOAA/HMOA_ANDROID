@@ -496,11 +496,7 @@ private fun UserInfoDesc(
             if (addressInfo != null){
                 Spacer(Modifier.width(8.dp))
                 TagBadge(
-                    tag = addressInfo.addressName,
-                    backgroundColor = CustomColor.gray1,
-                    borderColor = CustomColor.gray1,
-                    textColor = Color.Black,
-                    shape = RoundedCornerShape(5.dp)
+                    tag = addressInfo.addressName
                 )
                 Spacer(Modifier.weight(1f))
                 Text(

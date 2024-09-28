@@ -3,7 +3,6 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.hmoa.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
 import com.hmoa.feature_brand.navigation.brandSearchScreen
@@ -20,20 +19,7 @@ import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
 import com.hmoa.feature_perfume.navigation.*
-import com.hmoa.feature_userinfo.navigation.navigateToBack
-import com.hmoa.feature_userinfo.navigation.navigateToEditProfilePage
-import com.hmoa.feature_userinfo.navigation.navigateToMyActivity
-import com.hmoa.feature_userinfo.navigation.navigateToMyBirth
-import com.hmoa.feature_userinfo.navigation.navigateToMyCommentPage
-import com.hmoa.feature_userinfo.navigation.navigateToMyFavoriteCommentPage
-import com.hmoa.feature_userinfo.navigation.navigateToMyFavoritePerfume
-import com.hmoa.feature_userinfo.navigation.navigateToMyGenderPage
-import com.hmoa.feature_userinfo.navigation.navigateToMyInfoPage
-import com.hmoa.feature_userinfo.navigation.navigateToMyPostPage
-import com.hmoa.feature_userinfo.navigation.navigateToOrderRecord
-import com.hmoa.feature_userinfo.navigation.navigateToRefund
-import com.hmoa.feature_userinfo.navigation.navigateToRefundRecord
-import com.hmoa.feature_userinfo.navigation.nestedUserInfoGraph
+import com.hmoa.feature_userinfo.navigation.*
 
 @Composable
 fun SetUpNavGraph(
@@ -178,7 +164,10 @@ fun SetUpNavGraph(
         )
 
         /** hbti 모듈 */
-        hbtiScreen(onNextClick = navController::navigateToHbtiSurvey)
+        hbtiScreen(
+            onHbtiSurveyClick = navController::navigateToHbtiSurvey,
+            onAfterOrderClick = navController::navigateToPerfumeRecommendation
+        )
         hbtiSurveyScreen(
             onBackClick = navController::navigateToBack,
             onErrorHandleLoginAgain = navController::navigateToLogin,
@@ -216,12 +205,22 @@ fun SetUpNavGraph(
             navAddAddress = navController::navigateToAddAddress,
             navOrderResult = navController::navigateToOrderResult
         )
-        addAddress (
+        addAddress(
             navOrder = navController::navigateToOrder
         )
         orderResult(
             navBack = navController::navigateToBack,
             navHome = navController::navigateToHome
+        )
+        //order()
+        perfumeRecommendationRoute(
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToPerfumeRecommendationResult
+        )
+        perfumeRecommendationResultRoute(
+            onBackClick = navController::navigateToBack,
+            onNavPerfumeDescription = { id -> navController.navigateToPerfume(id) },
+            onNavHome = navController::navigateToHome
         )
     }
 }

@@ -203,7 +203,7 @@ private fun LikePerfumeListByRow(
                 itemNameKo = perfume.koreanName,
                 itemNameEng = perfume.englishName,
                 onClickClose = {/* event nothing */ },
-                navPerfume = { navPerfume(perfume.perfumeId) }
+                onNavPerfumeDesc = { navPerfume(perfume.perfumeId) }
             )
         }
     }
@@ -233,7 +233,7 @@ private fun LikePerfumeListByGrid(
                     itemNameKo = perfume.koreanName,
                     itemNameEng = perfume.englishName,
                     onClickClose = { showCard = false },
-                    navPerfume = { navPerfume(perfume.perfumeId) }
+                    onNavPerfumeDesc = { navPerfume(perfume.perfumeId) }
                 )
             }
         }

@@ -2,13 +2,8 @@ package com.hmoa.core_datastore.Survey
 
 import ResultResponse
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_model.request.ContentRequestDto
-import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.request.SurveySaveAnswerRequestDtos
-import com.hmoa.core_model.request.SurveySaveRequestDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.RecommendNotesResponseDto
-import com.hmoa.core_model.response.SurveyQuestionsResponseDto
+import com.hmoa.core_model.request.*
+import com.hmoa.core_model.response.*
 import com.hmoa.core_network.service.SurveyService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
@@ -39,9 +34,9 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
 
     override suspend fun saveSurvey(dto: SurveySaveRequestDto): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveSurvey(dto).suspendOnSuccess{
+        surveyService.saveSurvey(dto).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
+        }.suspendOnError {
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }
         return result
@@ -49,9 +44,9 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
 
     override suspend fun saveAnswerNote(dto: SurveySaveAnswerRequestDtos): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveAnswerNote(dto).suspendOnSuccess{
+        surveyService.saveAnswerNote(dto).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
+        }.suspendOnError {
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }
         return result
@@ -62,9 +57,9 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
         questionId: Int
     ): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveAnswerByQuestionId(dto, questionId).suspendOnSuccess{
+        surveyService.saveAnswerByQuestionId(dto, questionId).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
+        }.suspendOnError {
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }
         return result
@@ -75,9 +70,32 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
         surveyId: Int
     ): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveQuestionBySurveyId(dto, surveyId).suspendOnSuccess{
+        surveyService.saveQuestionBySurveyId(dto, surveyId).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
+        }.suspendOnError {
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }
+        return result
+    }
+
+    override suspend fun getPerfumeSurvey(): ResultResponse<PerfumeSurveyResponseDto> {
+        val result = ResultResponse<PerfumeSurveyResponseDto>()
+        surveyService.getPerfumeSurvey().suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }
+        return result
+    }
+
+    override suspend fun postPerfumeSurveyAnswers(
+        dto: PerfumeSurveyAnswerRequestDto,
+        isContainAll: Boolean
+    ): ResultResponse<PerfumeRecommendsResponseDto> {
+        val result = ResultResponse<PerfumeRecommendsResponseDto>()
+        surveyService.postPerfumeSurveyAnswer(dto, isContainAll).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }
         return result

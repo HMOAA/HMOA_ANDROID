@@ -35,6 +35,7 @@ fun NoteImageView(
     isSelected: Boolean
 ) {
     val index = if (isRecommanded) "Best!" else index
+    val nonSelectText = if (isRecommanded) "Best!" else ""
     val itemBorderColor = if (isSelected) CustomColor.black else Color.Transparent
     Box(
         contentAlignment = Alignment.Center,
@@ -66,6 +67,17 @@ fun NoteImageView(
                         style = TextStyle(color = Color.White, fontFamily = pretendard, fontWeight = FontWeight.Bold)
                     )
                 }
+            }
+        }
+        else{
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    "${nonSelectText}",
+                    style = TextStyle(color = Color.Black, fontFamily = pretendard, fontWeight = FontWeight.Bold)
+                )
             }
         }
     }

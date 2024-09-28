@@ -39,7 +39,8 @@ fun LikeRowItem(
     itemNameKo: String,
     itemNameEng: String,
     onClickClose: () -> Unit,
-    navPerfume: () -> Unit,
+    onNavPerfumeDesc: () -> Unit,
+    isCloseButtonExist:Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +57,9 @@ fun LikeRowItem(
                 elevation = 4.dp,
                 spotColor = Color(0x33000000),
                 ambientColor = Color(0x33000000)
-            ).clickable {navPerfume()},
+            ).clickable {
+                onNavPerfumeDesc()
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -68,15 +71,17 @@ fun LikeRowItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            IconButton(
-                modifier = Modifier.size(16.dp),
-                onClick = onClickClose
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close Button",
-                    tint = Color.White
-                )
+            if(isCloseButtonExist){
+                IconButton(
+                    modifier = Modifier.size(16.dp),
+                    onClick = onClickClose
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Close Button",
+                        tint = Color.White
+                    )
+                }
             }
 
             Spacer(Modifier.weight(1f))
@@ -96,7 +101,7 @@ fun LikeRowItem(
         }
         Spacer(Modifier.weight(1f))
         Box(
-            modifier = Modifier.size(120.dp)
+            modifier = Modifier.size(120.dp).background(color = Color.White)
         ) {
             ImageView(
                 imageUrl = itemPicture,

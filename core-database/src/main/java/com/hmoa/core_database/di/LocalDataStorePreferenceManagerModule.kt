@@ -1,11 +1,8 @@
-package com.hmoa.core_datastore
+package com.hmoa.core_database.di
 
-import com.hmoa.core_database.AppInfoManager
-import com.hmoa.core_database.AppInfoManagerImpl
-import com.hmoa.core_database.SignupInfoManager
-import com.hmoa.core_database.SignupInfoManagerImpl
-import com.hmoa.core_database.TokenManager
-import com.hmoa.core_database.TokenManagerImpl
+import com.hmoa.core_database.*
+import com.hmoa.core_database.lrucache.PerfumeRecommendCacheManager
+import com.hmoa.core_database.lrucache.PerfumeRecommendCacheManagerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -26,5 +23,9 @@ interface LocalDataStorePreferenceManagerModule {
 
     @Binds
     @Singleton
-    fun bindAppSettingManager(appInfoManagerImpl: AppInfoManagerImpl) : AppInfoManager
+    fun bindAppSettingManager(appInfoManagerImpl: AppInfoManagerImpl): AppInfoManager
+
+    @Binds
+    @Singleton
+    fun bindPerfumeRecommendCacheManager(perfumeRecommendCacheManagerImpl: PerfumeRecommendCacheManagerImpl): PerfumeRecommendCacheManager
 }

@@ -16,11 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.LikeRowItem
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_model.response.PerfumeRecommendResponseDto
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationResultViewModel
 import com.hmoa.feature_hbti.viewmodel.PerfumeResultUiState

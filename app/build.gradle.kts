@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -28,6 +28,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String
         buildConfigField("String", "NATIVE_APP_KEY", localProperties["NATIVE_APP_KEY"] as String)
+        buildConfigField("String", "BOOTPAY_APPLICATION_ID", localProperties["BOOTPAY_APPLICATION_ID"] as String)
     }
 
     signingConfigs {
@@ -85,7 +86,6 @@ dependencies {
     implementation(project(":feature-perfume"))
     implementation(project(":feature-brand"))
     implementation(project(":feature-hpedia"))
-    implementation(project(":feature-like"))
     implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
     implementation(project(":feature-hbti"))
@@ -94,6 +94,8 @@ dependencies {
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))
     implementation(project(":core-common"))
+
+    implementation("io.github.bootpay:android:4.4.0") //boot pay
 
     implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원
     implementation("com.kakao.sdk:v2-user:2.19.0") // 카카오 로그인 API 모듈

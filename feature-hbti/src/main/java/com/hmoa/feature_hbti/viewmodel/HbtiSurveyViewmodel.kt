@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_model.data.HbtiQuestionItem
-import com.hmoa.core_model.data.HbtiQuestionItems
+import com.hmoa.core_domain.entity.data.HbtiQuestionItem
+import com.hmoa.core_domain.entity.data.HbtiQuestionItems
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto

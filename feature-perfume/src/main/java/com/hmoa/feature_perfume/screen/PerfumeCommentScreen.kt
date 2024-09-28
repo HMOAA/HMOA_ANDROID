@@ -25,13 +25,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppDesignDialog
 import com.hmoa.core_designsystem.component.CommentItem
 import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.data.SortType
+import com.hmoa.core_domain.entity.data.SortType
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.feature_perfume.viewmodel.PerfumeCommentViewmodel
 import kotlinx.coroutines.launch

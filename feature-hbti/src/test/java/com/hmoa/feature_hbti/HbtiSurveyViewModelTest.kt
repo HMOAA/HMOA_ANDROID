@@ -4,8 +4,8 @@ import ResultResponse
 import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_model.data.HbtiQuestionItem
-import com.hmoa.core_model.data.HbtiQuestionItems
+import com.hmoa.core_domain.entity.data.HbtiQuestionItem
+import com.hmoa.core_domain.entity.data.HbtiQuestionItems
 import com.hmoa.core_model.response.SurveyOptionResponseDto
 import com.hmoa.core_model.response.SurveyQuestionResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto

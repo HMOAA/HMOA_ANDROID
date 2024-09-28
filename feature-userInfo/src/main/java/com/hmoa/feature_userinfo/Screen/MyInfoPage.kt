@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,28 +22,28 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 
 @Composable
 fun MyInfoRoute(
-    onNavBack : () -> Unit,
-    onNavMyBirth : () -> Unit,
-    onNavMyGender : () -> Unit,
+    navBack : () -> Unit,
+    navMyBirth : () -> Unit,
+    navMyGender : () -> Unit,
 ){
     MyInfoPage(
-        onNavBack = onNavBack,
-        onNavMyBirth = onNavMyBirth,
-        onNavMyGender = onNavMyGender
+        navBack = navBack,
+        navMyBirth = navMyBirth,
+        navMyGender = navMyGender
     )
 }
 
 @Composable
 fun MyInfoPage(
-    onNavBack : () -> Unit,
-    onNavMyBirth : () -> Unit,
-    onNavMyGender : () -> Unit,
+    navBack : () -> Unit,
+    navMyBirth : () -> Unit,
+    navMyGender : () -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -52,7 +52,7 @@ fun MyInfoPage(
     ){
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack, //뒤오 가기
+            onNavClick = navBack, //뒤오 가기
             title = "내 정보"
         )
         Row(
@@ -70,7 +70,7 @@ fun MyInfoPage(
             )
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavMyBirth
+                onClick = navMyBirth
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -96,7 +96,7 @@ fun MyInfoPage(
             )
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavMyGender
+                onClick = navMyGender
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),

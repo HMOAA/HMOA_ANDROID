@@ -7,6 +7,7 @@ import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -23,6 +24,11 @@ interface HshopService {
     @GET("/shop/note/order/{orderId}")
     suspend fun getFinalOrderResult(
         @Path("orderId") orderId: Int
+    ): ApiResponse<FinalOrderResponseDto>
+    @DELETE("/shop/note/order/{orderId}/product/{productId}")
+    suspend fun deleteNoteInOrder(
+        @Path("orderId") orderId: Int,
+        @Path("productId") productId: Int
     ): ApiResponse<FinalOrderResponseDto>
 }
 

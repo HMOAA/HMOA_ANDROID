@@ -1,5 +1,6 @@
 package com.hmoa.feature_hbti
 
+import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.feature_hbti.viewmodel.NoteOrderQuantityPickViewmodel

@@ -41,15 +41,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.data.MagazineContentItem
+import com.hmoa.core_domain.entity.data.MagazineContentItem
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.feature_magazine.ViewModel.MagazineDescUiState
 import com.hmoa.feature_magazine.ViewModel.MagazineDescViewModel
@@ -57,9 +57,9 @@ import com.hmoa.feature_magazine.ViewModel.MagazineDescViewModel
 @Composable
 fun MagazineDescRoute(
     id : Int?,
-    onNavBack: () -> Unit,
-    onNavLogin: () -> Unit,
-    onNavDesc : (Int) -> Unit,
+    navBack: () -> Unit,
+    navLogin: () -> Unit,
+    navDesc : (Int) -> Unit,
     viewModel : MagazineDescViewModel = hiltViewModel()
 ){
     viewModel.setId(id)
@@ -73,9 +73,9 @@ fun MagazineDescRoute(
         isLiked = isLiked.value,
         updateMagazineLike = { viewModel.updateMagazineLike() },
         errState = errState.value,
-        onNavBack = onNavBack,
-        onNavLogin = onNavLogin,
-        onNavDesc = onNavDesc
+        navBack = navBack,
+        navLogin = navLogin,
+        navDesc = navDesc
     )
 }
 
@@ -86,9 +86,9 @@ fun MagazineDescScreen(
     isLiked : Boolean?,
     updateMagazineLike : () -> Unit,
     errState : ErrorUiState,
-    onNavBack: () -> Unit,
-    onNavLogin: () -> Unit,
-    onNavDesc : (Int) -> Unit,
+    navBack: () -> Unit,
+    navLogin: () -> Unit,
+    navDesc : (Int) -> Unit,
 ){
     var isOpen by remember { mutableStateOf(true) }
 
@@ -108,16 +108,16 @@ fun MagazineDescScreen(
                 contentList = uiState.magazine.contents,
                 tagList = uiState.magazine.tags,
                 magazineList = recentMagazines,
-                onNavBack = onNavBack,
-                onNavDesc = onNavDesc
+                navBack = navBack,
+                navDesc = navDesc
             )
         }
         is MagazineDescUiState.Error -> {
             ErrorUiSetView(
                 isOpen = isOpen,
-                onConfirmClick = onNavLogin,
+                onConfirmClick = navLogin,
                 errorUiState = errState,
-                onCloseClick = onNavBack
+                onCloseClick = navBack
             )
         }
     }
@@ -136,8 +136,8 @@ private fun MagazineDescContent(
     contentList : List<MagazineContentItem>,
     tagList : List<String>,
     magazineList : LazyPagingItems<MagazineSummaryResponseDto>,
-    onNavBack : () -> Unit,
-    onNavDesc: (Int) -> Unit,
+    navBack : () -> Unit,
+    navDesc: (Int) -> Unit,
 ){
     LazyColumn(
         modifier = Modifier
@@ -148,7 +148,7 @@ private fun MagazineDescContent(
             TopBar(
                 title = "",
                 navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = onNavBack,
+                onNavClick = navBack,
                 menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_share),
                 onMenuClick = {
                     /** share 이벤트 처리 */
@@ -193,7 +193,7 @@ private fun MagazineDescContent(
             )
             RecentMagazines(
                 magazineList=magazineList.itemSnapshotList,
-                onNavDesc=onNavDesc
+                navDesc=navDesc
             )
         }
     }
@@ -395,7 +395,7 @@ private fun MagazineFooter(
 @Composable
 private fun RecentMagazines(
     magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
-    onNavDesc: (Int) -> Unit
+    navDesc: (Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -428,7 +428,7 @@ private fun RecentMagazines(
                     RecentMagazineItem(
                         previewImageUrl = magazine.previewImgUrl,
                         title = magazine.title,
-                        onNavDesc = {onNavDesc(magazine.magazineId)}
+                        navDesc = {navDesc(magazine.magazineId)}
                     )
                 }
             }
@@ -440,13 +440,13 @@ private fun RecentMagazines(
 private fun RecentMagazineItem(
     previewImageUrl : String,
     title : String,
-    onNavDesc: () -> Unit,
+    navDesc: () -> Unit,
 ){
     Column(
         modifier = Modifier
             .width(132.dp)
             .wrapContentHeight()
-            .clickable{onNavDesc()}
+            .clickable{navDesc()}
     ){
         Box(
             modifier = Modifier

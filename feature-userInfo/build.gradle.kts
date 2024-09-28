@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("com.android.library")
@@ -22,6 +22,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_CHAT_PROFILE", localProperties.getProperty("KAKAO_CHAT_PROFILE"))
         buildConfigField("String", "PRIVACY_POLICY_URI", localProperties.getProperty("PRIVACY_POLICY_URI"))
+        buildConfigField("String", "TERMS_OF_SERVICE", localProperties.getProperty("TERMS_OF_SERVICE"))
     }
 
     buildTypes {
@@ -59,7 +60,6 @@ dependencies {
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
-    implementation(project(":feature-like"))
 
     //material3
     implementation("androidx.compose.material3:material3:1.2.0")

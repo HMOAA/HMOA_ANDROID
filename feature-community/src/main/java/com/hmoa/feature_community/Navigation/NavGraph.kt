@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
 import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
 import com.hmoa.feature_community.Screen.CommunityEditRoute
@@ -45,17 +46,17 @@ fun NavController.navigateToCommunityCommentEditRoute(commentId: Int) =
     navigate("${CommunityRoute.CommunityCommentEditRoute.name}/${commentId}")
 
 fun NavGraphBuilder.nestedCommunityGraph(
-    onNavBack: () -> Unit,
-    onNavCommunityPage: () -> Unit,
-    onNavCommunityPost: (String) -> Unit,
-    onNavCommunityEdit: (Int) -> Unit,
-    onNavCommunityDescription: (Int) -> Unit,
-    onNavCommunitySearch: () -> Unit,
-    onNavCommunityCommentEdit: (Int) -> Unit,
+    navBack: () -> Unit,
+    navCommunityPage: () -> Unit,
+    navCommunityPost: (String) -> Unit,
+    navCommunityEdit: (Int) -> Unit,
+    navCommunityDescription: (Int) -> Unit,
+    navCommunitySearch: () -> Unit,
+    navCommunityCommentEdit: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    onNavLogin : () -> Unit,
-    onNavHome : () -> Unit,
-    onNavHPedia : () -> Unit,
+    navLogin : () -> Unit,
+    navHome : () -> Unit,
+    navHPedia : () -> Unit,
 ) {
     navigation(
         startDestination = CommunityRoute.CommunityPreviewRoute.name,
@@ -63,27 +64,27 @@ fun NavGraphBuilder.nestedCommunityGraph(
     ) {
         composable(route = CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
-                onNavCommunityDescription = onNavCommunityDescription,
-                onNavCommunityGraph = onNavCommunityPage,
+                navCommunityDescription = navCommunityDescription,
+                navCommunityGraph = navCommunityPage,
                 onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-                onNavHome = onNavHome
+                navHome = navHome
             )
         }
         composable(route = CommunityRoute.CommunityPreviewRoute.name) {
             CommunityPreviewRoute(
-                onNavBack = onNavBack,
-                onNavSearch = onNavCommunitySearch,
-                onNavCommunityDescription = onNavCommunityDescription,
-                onNavPost = onNavCommunityPost,
-                onNavLogin = onErrorHandleLoginAgain,
-                onNavHPedia = onNavHPedia,
+                navBack = navBack,
+                navSearch = navCommunitySearch,
+                navCommunityDescription = navCommunityDescription,
+                navPost = navCommunityPost,
+                navLogin = onErrorHandleLoginAgain,
+                navHPedia = navHPedia,
             )
         }
         composable(route = "${CommunityRoute.CommunityPostRoute.name}/{type}") {
             val type = it.arguments?.getString("type")
 
             CommunityPostRoute(
-                onNavBack = onNavBack,
+                navBack = navBack,
                 _category = type
             )
         }
@@ -92,8 +93,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
 
             CommunityEditRoute(
                 id = id?.toInt(),
-                onNavBack = onNavBack,
-                onNavCommunityDesc = onNavCommunityDescription
+                navBack = navBack,
+                navCommunityDesc = navCommunityDescription
             )
         }
         composable(
@@ -105,24 +106,24 @@ fun NavGraphBuilder.nestedCommunityGraph(
 
             CommunityDescriptionRoute(
                 id = id,
-                onNavCommunityEdit = onNavCommunityEdit,
-                onNavCommentEdit = onNavCommunityCommentEdit,
-                onNavLogin = onNavLogin,
-                onNavBack = onNavBack,
-                onNavHPedia = onNavHPedia
+                navCommunityEdit = navCommunityEdit,
+                navCommentEdit = navCommunityCommentEdit,
+                navLogin = navLogin,
+                navBack = navBack,
+                navHPedia = navHPedia
             )
         }
         composable(route = CommunityRoute.CommunitySearchRoute.name) {
             CommunitySearchRoute(
-                onNavBack = onNavBack,
-                onNavCommunityDesc = onNavCommunityDescription
+                navBack = navBack,
+                navCommunityDesc = navCommunityDescription
             )
         }
         composable(route = "${CommunityRoute.CommunityCommentEditRoute.name}/{commentId}") {
             val id = it.arguments?.getString("commentId")?.toInt()
             CommunityCommentEditRoute(
                 _commentId = id,
-                onNavBack = onNavBack
+                navBack = navBack
             )
         }
     }

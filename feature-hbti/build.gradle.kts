@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -5,6 +7,10 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
+}
+
+val localProperties = Properties().apply {
+    load(project.rootProject.file("./feature-hbti/local.properties").inputStream())
 }
 
 android {
@@ -16,6 +22,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "PRIVACY_CONSENT_URL", localProperties.getProperty("PRIVACY_CONSENT_URL"))
+        buildConfigField("String", "ADDRESS_SEARCH_URL", localProperties.getProperty("ADDRESS_SEARCH_URL"))
+        buildConfigField("String", "BOOTPAY_APPLICATION_ID", localProperties.getProperty("BOOTPAY_APPLICATION_ID") as String)
+        buildConfigField("String", "SHIPPING_REFUND_URL", localProperties.getProperty("SHIPPING_REFUND_URL") as String)
     }
 
     buildTypes {
@@ -36,6 +46,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {
@@ -57,11 +68,13 @@ dependencies {
     implementation(project(":core-common"))
     implementation(project(":core-repository"))
 
+    implementation("io.github.bootpay:android:4.4.0") //boot pay
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
     implementation("com.google.code.gson:gson:2.9.0")
 
     implementation("androidx.compose.ui:ui:1.1.0")
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.navigation:navigation-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")

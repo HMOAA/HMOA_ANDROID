@@ -21,7 +21,8 @@ import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.data.Consonant
+import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.data.Consonant
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import com.hmoa.feature_brand.viewmodel.BrandSearchViewmodel
 
@@ -84,7 +85,7 @@ fun BrandSearchContent(
                 onChangeWord = { onChangedWord(it) },
                 onClearWord = { onClearWord() },
                 onClickSearch = { onClickSearch(searchWord) },
-                onNavBack = { onBackClick() }
+                navBack = { onBackClick() }
             )
         }
 
@@ -180,7 +181,8 @@ fun BrandItem(brand: BrandDefaultResponseDto?, onBrandClick: (brandId: Int) -> U
                 fontWeight = FontWeight.Light,
                 fontSize = 14.sp,
                 color = Color.Black,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                fontFamily = CustomFont.regular
             ),
             modifier = Modifier.width(size),
             overflow = TextOverflow.Ellipsis,

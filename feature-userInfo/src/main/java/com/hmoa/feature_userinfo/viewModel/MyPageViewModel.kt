@@ -1,4 +1,4 @@
-package com.example.feature_userinfo.viewModel
+package com.hmoa.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

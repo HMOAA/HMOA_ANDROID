@@ -1,4 +1,4 @@
-package com.hmoa.component
+package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun TopBar(
@@ -61,7 +61,7 @@ fun TopBar(
             fontSize = 20.sp,
             color = titleColor,
             fontWeight = FontWeight.Normal,
-            fontFamily = pretendard
+            fontFamily = CustomFont.regular
         )
 
         Spacer(Modifier.weight(1f))

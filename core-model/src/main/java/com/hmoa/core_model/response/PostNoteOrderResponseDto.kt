@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PostNoteOrderResponseDto(
-    val existMemberAddress: Boolean,
-    val existMemberInfo: Boolean,
+    val isExistMemberAddress: Boolean,
+    val isExistMemberInfo: Boolean,
     val orderId: Int,
     val orderStatus: String
 )

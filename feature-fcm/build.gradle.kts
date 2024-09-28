@@ -50,7 +50,6 @@ dependencies {
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
-    implementation(project(":feature-like"))
 
     //material3
     implementation("androidx.compose.material3:material3:1.2.0")

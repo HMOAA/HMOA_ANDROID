@@ -3,7 +3,7 @@ package com.hmoa.feature_hbti.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.feature_hbti.NoteOrderQuantity
+import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

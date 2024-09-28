@@ -3,8 +3,7 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.feature_userinfo.*
+import com.hmoa.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
 import com.hmoa.feature_brand.navigation.brandSearchScreen
@@ -17,13 +16,24 @@ import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
-import com.hmoa.feature_like.Screen.LIKE_ROUTE
-import com.hmoa.feature_like.Screen.LikeRoute
-import com.hmoa.feature_like.Screen.navigateToLike
 import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
 import com.hmoa.feature_perfume.navigation.*
+import com.hmoa.feature_userinfo.navigation.navigateToBack
+import com.hmoa.feature_userinfo.navigation.navigateToEditProfilePage
+import com.hmoa.feature_userinfo.navigation.navigateToMyActivity
+import com.hmoa.feature_userinfo.navigation.navigateToMyBirth
+import com.hmoa.feature_userinfo.navigation.navigateToMyCommentPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyFavoriteCommentPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyFavoritePerfume
+import com.hmoa.feature_userinfo.navigation.navigateToMyGenderPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyInfoPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyPostPage
+import com.hmoa.feature_userinfo.navigation.navigateToOrderRecord
+import com.hmoa.feature_userinfo.navigation.navigateToRefund
+import com.hmoa.feature_userinfo.navigation.navigateToRefundRecord
+import com.hmoa.feature_userinfo.navigation.nestedUserInfoGraph
 
 @Composable
 fun SetUpNavGraph(
@@ -67,55 +77,50 @@ fun SetUpNavGraph(
             onPickNicknameClick = navController::navigateToPickNickname
         )
 
-        /** like 모듈 */
-        composable(LIKE_ROUTE) {
-            LikeRoute(
-                onNavPerfumeDesc = navController::navigateToPerfume,
-                onNavHome = navController::navigateToHome,
-                onErrorHandleLoginAgain = navController::navigateToLogin
-            )
-        }
-
         /** user info 모듈 */
         this.nestedUserInfoGraph(
-            onNavLogin = navController::navigateToLogin,
-            onNavBack = navController::navigateToBack,
-            onNavCommunity = navController::navigateToCommunityDescriptionRoute,
-            onNavEditPost = navController::navigateToCommunityEditRoute,
-            onNavEditProfile = navController::navigateToEditProfilePage,
-            onNavManageMyInfo = navController::navigateToMyInfoPage,
-            onNavMyActivity = navController::navigateToMyActivity,
-            onNavMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
-            onNavMyPost = navController::navigateToMyPostPage,
-            onNavMyComment = navController::navigateToMyCommentPage,
-            onNavMyBirth = navController::navigateToMyBirth,
-            onNavMyGender = navController::navigateToMyGenderPage,
-            onNavMyPerfume = navController::navigateToLike,
-            onNavPerfume = navController::navigateToPerfume
+            navHome = navController::navigateToHome,
+            navLogin = navController::navigateToLogin,
+            navBack = navController::navigateToBack,
+            navCommunity = navController::navigateToCommunityDescriptionRoute,
+            navEditPost = navController::navigateToCommunityEditRoute,
+            navEditProfile = navController::navigateToEditProfilePage,
+            navManageMyInfo = navController::navigateToMyInfoPage,
+            navMyActivity = navController::navigateToMyActivity,
+            navMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
+            navMyPost = navController::navigateToMyPostPage,
+            navMyComment = navController::navigateToMyCommentPage,
+            navMyBirth = navController::navigateToMyBirth,
+            navMyGender = navController::navigateToMyGenderPage,
+            navMyPerfume = navController::navigateToMyFavoritePerfume,
+            navPerfume = navController::navigateToPerfume,
+            navOrderRecord = navController::navigateToOrderRecord,
+            navRefund = navController::navigateToRefund,
+            navRefundRecord = navController::navigateToRefundRecord
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */
         this.nestedHPediaGraph(
-            onNavBack = navController::navigateToBack,
-            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunityGraph = navController::navigateToCommunityRoute,
-            onNavHPediaDesc = navController::navigateToHPediaDescRoute,
-            onNavHPediaSearch = navController::navigateToHPediaSearchRoute,
-            onNavLogin = navController::navigateToLogin,
-            onNavHome = navController::navigateToHome,
+            navBack = navController::navigateToBack,
+            navCommunityDesc = navController::navigateToCommunityDescriptionRoute,
+            navCommunityGraph = navController::navigateToCommunityRoute,
+            navHPediaDesc = navController::navigateToHPediaDescRoute,
+            navHPediaSearch = navController::navigateToHPediaSearchRoute,
+            navLogin = navController::navigateToLogin,
+            navHome = navController::navigateToHome,
         )
         this.nestedCommunityGraph(
-            onNavBack = navController::navigateToBack,
-            onNavCommunityPage = navController::navigateToCommunityPage,
-            onNavCommunityPost = navController::navigateToCommunityPostRoute,
-            onNavCommunityEdit = navController::navigateToCommunityEditRoute,
-            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
-            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
+            navBack = navController::navigateToBack,
+            navCommunityPage = navController::navigateToCommunityPage,
+            navCommunityPost = navController::navigateToCommunityPostRoute,
+            navCommunityEdit = navController::navigateToCommunityEditRoute,
+            navCommunityDescription = navController::navigateToCommunityDescriptionRoute,
+            navCommunitySearch = navController::navigateToCommunitySearchRoute,
+            navCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
             onErrorHandleLoginAgain = navController::navigateToLogin,
-            onNavLogin = navController::navigateToLogin,
-            onNavHome = navController::navigateToHome,
-            onNavHPedia = navController::navigateToHPedia
+            navLogin = navController::navigateToLogin,
+            navHome = navController::navigateToHome,
+            navHPedia = navController::navigateToHPedia
         )
 
         /** perfume 모듈 */
@@ -167,9 +172,9 @@ fun SetUpNavGraph(
             onNavMagazineDesc = navController::navigateToMagazineDesc
         )
         magazineDesc(
-            onNavBack = navController::navigateToBack,
-            onNavLogin = navController::navigateToLogin,
-            onNavDesc = navController::navigateToMagazineDesc
+            navBack = navController::navigateToBack,
+            navLogin = navController::navigateToLogin,
+            navDesc = navController::navigateToMagazineDesc
         )
 
         /** hbti 모듈 */
@@ -208,6 +213,18 @@ fun SetUpNavGraph(
             onBackClick = navController::navigateToBack,
             onNextClick = navController::navigateToOrder,
             onBackToHbtiScreen = navController::navigateToHbti
+        )
+        order(
+            navBack = navController::navigateToBack,
+            navAddAddress = navController::navigateToAddAddress,
+            navOrderResult = navController::navigateToOrderResult
+        )
+        addAddress (
+            navOrder = navController::navigateToOrder
+        )
+        orderResult(
+            navBack = navController::navigateToBack,
+            navHome = navController::navigateToHome
         )
         order()
         perfumeRecommendationRoute(

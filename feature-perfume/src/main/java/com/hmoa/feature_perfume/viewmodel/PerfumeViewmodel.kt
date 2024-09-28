@@ -11,9 +11,9 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_domain.usecase.*
-import com.hmoa.core_model.PerfumeGender
-import com.hmoa.core_model.Weather
-import com.hmoa.core_model.data.Perfume
+import com.hmoa.core_domain.entity.data.PerfumeGender
+import com.hmoa.core_domain.entity.data.Weather
+import com.hmoa.core_domain.entity.data.Perfume
 import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.PerfumeAgeResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto

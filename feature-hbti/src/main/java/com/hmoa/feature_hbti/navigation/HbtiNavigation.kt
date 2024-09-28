@@ -6,32 +6,58 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.gson.GsonBuilder
+import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.feature_hbti.NoteOrderQuantity
-import com.hmoa.feature_hbti.screen.*
+import com.hmoa.feature_hbti.screen.AddAddressRoute
+import com.hmoa.feature_hbti.screen.HbtiProcessRoute
+import com.hmoa.feature_hbti.screen.HbtiRoute
+import com.hmoa.feature_hbti.screen.HbtiSurveyResultLoading
+import com.hmoa.feature_hbti.screen.HbtiSurveyResultRoute
+import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
+import com.hmoa.feature_hbti.screen.NoteOrderQuantityPickRoute
+import com.hmoa.feature_hbti.screen.NotePickResultRoute
+import com.hmoa.feature_hbti.screen.NotePickRoute
+import com.hmoa.feature_hbti.screen.OrderResultRoute
+import com.hmoa.feature_hbti.screen.OrderRoute
+import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
+import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
+import com.hmoa.feature_hbti.screen.SelectSpiceRoute
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 
-fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}")
-fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}")
+fun NavController.navigateToHbti() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.Hbti}")
+fun NavController.navigateToHbtiSurvey() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.HbtiSurvey}")
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}")
 
 fun NavController.navigateToHbtiSurveyLoading() =
     navigate("${HbtiRoute.HbtiSurveyLoading}")
-
-fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}")
-fun NavController.navigateToNoteOrderQuantityPick() = navigate("${HbtiRoute.NoteOrderQuantityPick}")
+fun NavController.navigateToHbtiProcess() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.HbtiProcess}")
+fun NavController.navigateToNoteOrderQuantityPick() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.NoteOrderQuantityPick}")
 fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
     navigate("${HbtiRoute.NotePick}/${noteOrderQuantity.number}")
 
 fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
+fun NavController.navigateToPerfumeRecommendation() = navigate(com.hmoa.core_domain.entity.navigation.HbtiRoute.PerfumeRecommendationRoute.name)
+fun NavController.navigateToPerfumeRecommendationResult() = navigate(com.hmoa.core_domain.entity.navigation.HbtiRoute.PerfumeRecommendationResultRoute.name)
+fun NavController.navigateToSelectSpice() = navigate(com.hmoa.core_domain.entity.navigation.HbtiRoute.SelectSpiceRoute.name)
 fun NavController.navigateToNotePickResult(productIdsToJson: String) =
     navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}")
-
-fun NavController.navigateToOrder(productIdsToJson: String) =
-    navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
-
-fun NavController.navigateToAddAddress() = navigate(HbtiRoute.AddAddressRoute.name)
+fun NavController.navigateToOrder(fromRoute: String, productIdsToJson: String) =
+    if (fromRoute == HbtiRoute.NotePickResultRoute.name){
+        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
+    } else{
+        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}"){
+            popUpTo("${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}"){inclusive = true}
+        }
+    }
+fun NavController.navigateToAddAddress(addressJson: String, productIds: String) = navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}/${productIds}"){
+    popUpTo("${HbtiRoute.OrderRoute.name}/{productIdsToJson}"){inclusive = true}
+    launchSingleTop = true
+}
+fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name)
 
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -117,7 +143,7 @@ fun NavGraphBuilder.notePickScreen(
 
 fun NavGraphBuilder.notePickResult(
     onBackClick: () -> Unit,
-    onNextClick: (String) -> Unit,
+    onNextClick: (String, String) -> Unit,
     onBackToHbtiScreen: () -> Unit,
 ) {
     composable(route = "${HbtiRoute.NotePickResultRoute.name}/{productIdsToJson}") {
@@ -158,22 +184,53 @@ fun NavGraphBuilder.perfumeRecommendationResultRoute(
 }
 
 
-fun NavGraphBuilder.order() {
+fun NavGraphBuilder.order(
+    navBack: () -> Unit,
+    navAddAddress: (String, String) -> Unit,
+    navOrderResult: () -> Unit,
+) {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
-        val gson = GsonBuilder().create()
-        val productIdsToJson = it.arguments?.getString("productIdsToJson")
-        val productIds = gson.fromJson(productIdsToJson, NoteProductIds::class.java)
+        val productIdsToJson = it.arguments?.getString("productIdsToJson") ?: ""
+        val productIds = Json.decodeFromString<NoteProductIds>(productIdsToJson)
         OrderRoute(
             productIds = productIds.productIds,
-            onNavBack = {}
+            onNavBack = navBack,
+            navAddAddress = navAddAddress,
+            navOrderResult = navOrderResult
         )
     }
 }
 
-fun NavGraphBuilder.addAddress() {
-    composable(route = HbtiRoute.AddAddressRoute.name) {
+fun NavGraphBuilder.addAddress(
+    navOrder: (String, String) -> Unit
+) {
+    composable(
+        route = "${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}",
+        arguments = listOf(
+            navArgument("addressJson"){type = NavType.StringType},
+            navArgument("productIds"){type = NavType.StringType}
+        )
+    ) {
+        val addressJson = it.arguments?.getString("addressJson")
+        val productIds = it.arguments?.getString("productIds")
         AddAddressRoute(
-            onNavBack = {}
+            addressJson = addressJson,
+            productIds = productIds,
+            navOrder = navOrder
+        )
+    }
+}
+
+fun NavGraphBuilder.orderResult(
+    navBack: () -> Unit,
+    navHome: () -> Unit
+){
+    composable(
+        route = HbtiRoute.OrderResultRoute.name
+    ){
+        OrderResultRoute(
+            navBack = navBack,
+            navHome = navHome
         )
     }
 }

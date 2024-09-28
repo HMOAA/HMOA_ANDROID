@@ -1,4 +1,4 @@
-package com.example.feature_userinfo
+package com.hmoa.feature_userinfo.screen
 
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -34,19 +34,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.AppDefaultDialog
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.NicknameInput
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.feature_userinfo.R
 import com.hmoa.feature_userinfo.viewModel.EditProfileUiState
 import com.hmoa.feature_userinfo.viewModel.EditProfileViewModel
 
 @Composable
 fun EditProfileRoute(
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsState()
@@ -71,7 +70,7 @@ fun EditProfileRoute(
         onChangeInfo = {viewModel.saveInfo()},
         checkDuplication = {viewModel.checkNicknameDup(it)},
         onUpdateNickname = {viewModel.updateNickname(it)},
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -86,7 +85,7 @@ fun EditProfilePage(
     onChangeInfo : () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
 ) {
     when (uiState) {
         EditProfileUiState.Loading -> AppLoadingScreen()
@@ -100,7 +99,7 @@ fun EditProfilePage(
                 onChangeInfo = onChangeInfo,
                 checkDuplication = checkDuplication,
                 onUpdateNickname = onUpdateNickname,
-                onNavBack = onNavBack
+                navBack = navBack
             )
         }
         is EditProfileUiState.Error -> {
@@ -112,7 +111,7 @@ fun EditProfilePage(
                 content = uiState.message,
                 onDismiss = {
                     showDialog = false
-                    onNavBack()
+                    navBack()
                 }
             )
         }
@@ -129,7 +128,7 @@ private fun EditProfileContent(
     onChangeInfo : () -> Unit,
     checkDuplication : (String) -> Unit,
     onUpdateNickname : (String) -> Unit,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
 ){
     Column(
         modifier = Modifier
@@ -138,7 +137,7 @@ private fun EditProfileContent(
     ) {
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack,
+            onNavClick = navBack,
             title = "프로필 수정",
         )
         Spacer(Modifier.height(38.dp))
@@ -189,7 +188,7 @@ private fun EditProfileContent(
             btnText = "변경",
             onClick = {
                 onChangeInfo()
-                onNavBack()
+                navBack()
             }
         )
     }
@@ -213,7 +212,7 @@ private fun EditProfileButton(
         ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),
-                painter = painterResource(R.drawable.profile_edit_btn),
+                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_comment_input),
                 contentDescription = "Profile Edit Button",
                 tint = CustomColor.gray2
             )

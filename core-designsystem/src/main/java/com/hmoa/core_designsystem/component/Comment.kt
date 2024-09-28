@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun Comment(
@@ -32,17 +32,13 @@ fun Comment(
     onChangeSelect: () -> Unit,
     heartCount: Int,
     onOpenBottomDialog: () -> Unit,
-    onNavCommunity: () -> Unit,
+    navCommunity: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White)
-            .clickable {
-                onNavCommunity()
-            }
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .clickable {navCommunity()}
     ) {
         Spacer(Modifier.height(11.dp))
 
@@ -57,7 +53,8 @@ fun Comment(
                 fontSize = 14.sp,
                 lineHeight = 14.sp,
                 fontWeight = FontWeight(400),
-                color = Color.Black
+                color = Color.Black,
+                fontFamily = CustomFont.regular
             )
             Spacer(Modifier.width(7.dp))
             if (isFirst) {
@@ -77,6 +74,7 @@ fun Comment(
                 fontSize = 12.sp,
                 lineHeight = 19.6.sp,
                 fontWeight = FontWeight(300),
+                fontFamily = CustomFont.regular,
                 color = CustomColor.gray3
             )
             Spacer(Modifier.weight(1f))
@@ -111,7 +109,8 @@ fun Comment(
                 Text(
                     text = if (heartCount <= 999) heartCount.toString() else "999+",
                     color = Color.Black,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    fontFamily = CustomFont.regular
                 )
             }
             if (isEditable) {
@@ -156,6 +155,6 @@ fun TestComment() {
         onChangeSelect = {},
         heartCount = 10,
         onOpenBottomDialog = {},
-        onNavCommunity = {},
+        navCommunity = {},
     )
 }

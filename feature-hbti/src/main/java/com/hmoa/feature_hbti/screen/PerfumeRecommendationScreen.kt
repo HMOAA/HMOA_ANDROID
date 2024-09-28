@@ -85,10 +85,8 @@ fun PerfumeRecommendationRoute(
             onDeleteAll = { viewModel.deleteAllNoteTagOptions() },
             onNavBack = onNavBack,
             onClickNext = {
-                scope.launch {
-                    launch { viewModel.postSurveyResult() }.join()
-                    onNavNext()
-                }
+                viewModel.postSurveyResult()
+                onNavNext()
             },
             isMultipleAnswerAvailable = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isPriceMultipleChoice
                 ?: false,

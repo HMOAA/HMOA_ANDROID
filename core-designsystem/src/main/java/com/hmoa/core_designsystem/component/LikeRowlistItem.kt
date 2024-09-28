@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.pretendard
@@ -32,6 +30,7 @@ fun LikeRowItem(
     itemNameEng: String,
     onClickClose: () -> Unit,
     onNavPerfumeDesc: () -> Unit,
+    isCloseButtonExist:Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -62,15 +61,17 @@ fun LikeRowItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            IconButton(
-                modifier = Modifier.size(16.dp),
-                onClick = onClickClose
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close Button",
-                    tint = Color.White
-                )
+            if(isCloseButtonExist){
+                IconButton(
+                    modifier = Modifier.size(16.dp),
+                    onClick = onClickClose
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Close Button",
+                        tint = Color.White
+                    )
+                }
             }
 
             Spacer(Modifier.weight(1f))

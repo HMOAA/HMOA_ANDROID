@@ -173,7 +173,10 @@ fun SetUpNavGraph(
         )
 
         /** hbti 모듈 */
-        hbtiScreen(onHbtiSurveyClick = navController::navigateToHbtiSurvey, onAfterOrderClick = navController::navigateToPerfumeRecommendation)
+        hbtiScreen(
+            onHbtiSurveyClick = navController::navigateToHbtiSurvey,
+            onAfterOrderClick = navController::navigateToPerfumeRecommendation
+        )
         hbtiSurveyScreen(
             onBackClick = navController::navigateToBack,
             onErrorHandleLoginAgain = navController::navigateToLogin,
@@ -207,7 +210,14 @@ fun SetUpNavGraph(
             onBackToHbtiScreen = navController::navigateToHbti
         )
         order()
-        perfumeRecommendationRoute(onBackClick = navController::navigateToBack, onNextClick = navController::navigateToPerfumeRecommendationResult)
-        perfumeRecommendationResultRoute(onBackClick = navController::navigateToBack, onNavPerfumeDescription = {})
+        perfumeRecommendationRoute(
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToPerfumeRecommendationResult
+        )
+        perfumeRecommendationResultRoute(
+            onBackClick = navController::navigateToBack,
+            onNavPerfumeDescription = { id -> navController.navigateToPerfume(id) },
+            onNavHome = navController::navigateToHome
+        )
     }
 }

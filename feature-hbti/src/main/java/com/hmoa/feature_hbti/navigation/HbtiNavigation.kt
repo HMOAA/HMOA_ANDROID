@@ -143,11 +143,16 @@ fun NavGraphBuilder.perfumeRecommendationRoute(onBackClick: () -> Unit, onNextCl
     }
 }
 
-fun NavGraphBuilder.perfumeRecommendationResultRoute(onBackClick: () -> Unit, onNavPerfumeDescription: () -> Unit) {
+fun NavGraphBuilder.perfumeRecommendationResultRoute(
+    onBackClick: () -> Unit,
+    onNavPerfumeDescription: (id: Int) -> Unit,
+    onNavHome: () -> Unit
+) {
     composable(route = HbtiRoute.PerfumeRecommendationResultRoute.name) {
         PerfumeRecommendationResultRoute(
             onNavBack = { onBackClick() },
-            onNavPerfumeDesc = { onNavPerfumeDescription() }
+            onNavPerfumeDesc = { id -> onNavPerfumeDescription(id) },
+            onNavHome = { onNavHome() }
         )
     }
 }

@@ -496,8 +496,7 @@ private fun UserInfoDesc(
             if (addressInfo != null){
                 Spacer(Modifier.width(8.dp))
                 TagBadge(
-                    tag = addressInfo.addressName,
-                    isClickable = true
+                    tag = addressInfo.addressName
                 )
                 Spacer(Modifier.weight(1f))
                 Text(

@@ -1,6 +1,5 @@
 package com.hmoa.core_database.lrucache
 
-import android.util.Log
 import android.util.LruCache
 import com.hmoa.core_model.response.PerfumeRecommendsResponseDto
 import javax.inject.Inject
@@ -17,7 +16,6 @@ class PerfumeRecommendCacheManagerImpl @Inject constructor() : PerfumeRecommendC
 
     // 캐시에서 데이터 가져오기
     override fun getPerfumeRecommendsResult(): PerfumeRecommendsResponseDto? {
-        val result = perfumeRecommendsResultCache.get(CacheKey.PerfumeRecommendsResult.name)
-        return result
+        return perfumeRecommendsResultCache.get(CacheKey.PerfumeRecommendsResult.name)
     }
 }

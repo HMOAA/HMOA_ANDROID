@@ -38,30 +38,37 @@ fun PerfumeRecommendationRoute(
     onNavBack: () -> Unit,
     viewModel: PerfumeRecommendationViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isPostCompleted by viewModel.isPostCompleted.collectAsStateWithLifecycle()
     LaunchedEffect(true) {
         viewModel.getSurveyResult()
     }
-    when (uiState.value) {
+
+    LaunchedEffect(isPostCompleted) {
+        if (isPostCompleted) {
+            onNavNext()
+        }
+    }
+
+    when (uiState) {
         PerfumeRecommendationUiState.Error -> {}
         PerfumeRecommendationUiState.Loading -> AppLoadingScreen()
         is PerfumeRecommendationUiState.PerfumeRecommendationData -> PerfumeRecommendationScreen(
-            selectedOptionIds = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedPriceOptionIds
+            selectedOptionIds = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedPriceOptionIds
                 ?: listOf(),
-            surveyQuestionTitle = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionTitle
+            surveyQuestionTitle = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionTitle
                 ?: "",
-            surveyOptions = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptions
+            surveyOptions = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptions
                 ?: listOf(),
-            surveyOptionIds = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptionIds
+            surveyOptionIds = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.priceQuestionOptionIds
                 ?: listOf(),
-            noteQuestionTitle = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.noteQuestionTitle
+            noteQuestionTitle = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.noteQuestionTitle
                 ?: "",
-            noteCategoryTags = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).noteCategoryTags
+            noteCategoryTags = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).noteCategoryTags
                 ?: listOf(),
-            selectedNotes = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedNoteTagsOption
+            selectedNotes = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).selectedNoteTagsOption
                 ?: listOf(),
-            isEnabledBtn = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).isNextButtonAvailable
+            isEnabledBtn = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).isNextButtonAvailable
                 ?: listOf(),
             onChangePriceOption = { optionIndex, isGoToSelectedState ->
                 viewModel.handlePriceQuestionAnswer(
@@ -86,9 +93,8 @@ fun PerfumeRecommendationRoute(
             onNavBack = onNavBack,
             onClickNext = {
                 viewModel.postSurveyResult()
-                onNavNext()
             },
-            isMultipleAnswerAvailable = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isPriceMultipleChoice
+            isMultipleAnswerAvailable = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isPriceMultipleChoice
                 ?: false,
         )
     }

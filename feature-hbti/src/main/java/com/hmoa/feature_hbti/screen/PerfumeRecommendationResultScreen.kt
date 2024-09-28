@@ -82,29 +82,34 @@ private fun PerfumeCommentResultContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
-                .padding(top = 20.dp)
+                .padding(top = 20.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "고객님에게 어울릴 향수는",
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
-            )
-            /** 임시 더미 데이터 */
-            PerfumeResult(
-                perfumes = perfumes,
-                onNavPerfumeDesc = onNavPerfumeDesc
-            )
-            Spacer(Modifier.height(30.dp))
-            Button(
-                buttonModifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                isEnabled = true,
-                btnText = "홈으로 돌아가기",
-                onClick = { onClickButton() },
-                radious = 5
-            )
-            Spacer(Modifier.height(40.dp))
+            Column(verticalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = "고객님에게 어울릴 향수는",
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
+                )
+                /** 임시 더미 데이터 */
+                PerfumeResult(
+                    perfumes = perfumes,
+                    onNavPerfumeDesc = onNavPerfumeDesc
+                )
+                Spacer(Modifier.height(30.dp))
+            }
+            Column {
+                Button(
+                    buttonModifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    isEnabled = true,
+                    btnText = "홈으로 돌아가기",
+                    onClick = { onClickButton() },
+                    radious = 5
+                )
+                Spacer(Modifier.height(40.dp))
+            }
         }
     }
 }
@@ -117,25 +122,29 @@ private fun PerfumeResult(
 ) {
     val pagerState = rememberPagerState(pageCount = { perfumes.size })
     Column(
-        modifier = Modifier.padding(top = 20.dp).wrapContentHeight()
+        modifier = Modifier.padding(top = 20.dp).fillMaxHeight(0.7f).fillMaxWidth().background(Color.White),
+        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(20.dp))
         HorizontalPager(
             modifier = Modifier
-                .padding(horizontal = 25.dp),
-            state = pagerState
+                .padding(horizontal = 25.dp).fillMaxWidth(),
+            state = pagerState,
+            contentPadding = PaddingValues(end = 80.dp)
         ) { page ->
             val perfume = perfumes[page]
-            LikeRowItem(
-                brand = perfume.brandname,
-                itemPicture = perfume.perfumeImageUrl,
-                price = perfume.price.toString(),
-                itemNameKo = perfume.perfumeName,
-                itemNameEng = perfume.perfumeEnglishName,
-                onClickClose = { /** 아무 이벤트도 실행하지 않음 */ },
-                onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) },
-                isCloseButtonExist = true
-            )
+            Column(modifier = Modifier.padding(end = 15.dp)) {
+                LikeRowItem(
+                    brand = perfume.brandname ?: "",
+                    itemPicture = perfume.perfumeImageUrl ?: "",
+                    price = perfume.price.toString(),
+                    itemNameKo = perfume.perfumeName ?: "",
+                    itemNameEng = perfume.perfumeEnglishName ?: "",
+                    onClickClose = { /** 아무 이벤트도 실행하지 않음 */ },
+                    onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId ?: 0) },
+                    isCloseButtonExist = false
+                )
+            }
         }
     }
 }

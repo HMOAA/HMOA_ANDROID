@@ -91,7 +91,7 @@ fun LikeRowItem(
         }
         Spacer(Modifier.weight(1f))
         Box(
-            modifier = Modifier.size(120.dp)
+            modifier = Modifier.size(120.dp).background(color = Color.White)
         ) {
             ImageView(
                 imageUrl = itemPicture,

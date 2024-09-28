@@ -251,4 +251,31 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
             viewmodel.handleNoteQuestionAnswer(note = note, categoryIndex = 0, noteIndex = 0, isGotoState = true)
             assertEquals(listOf(true, true), viewmodel.isNextButtonAvailableState.value)
         }
+
+    @Test
+    fun `test_mapOptionIdAndSelectedNoteTag_ToSurveyAnswerRequestDto`() = coroutineRule.runTest {
+        Mockito.`when`(calculateMinAndMaxPriceOutOfStringUseCase.invoke("50,000 ~ 100,000원"))
+            .thenReturn(Pair(50000, 100000))
+        val expectedSurveyAnswerRequestDto =
+            PerfumeSurveyAnswerRequestDto(maxPrice = 100000, minPrice = 50000, notes = listOf("라임 만다린"))
+        viewmodel.getSurveyResult()
+        viewmodel.handlePriceQuestionAnswer(1, true) //50,000원 이하 100,000원 이상
+        viewmodel.handleNoteQuestionAnswer(
+            note = noteCategoryTags[0].note[0],
+            categoryIndex = 0,
+            noteIndex = 0,
+            isGotoState = true
+        ) //라임 만다린
+//        viewmodel.handleNoteQuestionAnswer(
+//            note = noteCategoryTags[0].note[1],
+//            categoryIndex = 0,
+//            noteIndex = 0,
+//            isGotoState = true
+//        ) //베르가뭇
+        val result = viewmodel.mapOptionIdAndNoteTagsToChangePostSurveyAnswer(
+            selectedPriceOptionIds = viewmodel.selectedPriceOptionIdsState.value,
+            perfumeSurveyContents = viewmodel.perfumeSurveyContentsState.value
+        )
+        assertEquals(expectedSurveyAnswerRequestDto, result)
+    }
 }

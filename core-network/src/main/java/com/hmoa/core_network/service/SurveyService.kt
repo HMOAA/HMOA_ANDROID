@@ -3,10 +3,7 @@ package com.hmoa.core_network.service
 import com.hmoa.core_model.request.*
 import com.hmoa.core_model.response.*
 import com.skydoves.sandwich.ApiResponse
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface SurveyService {
     @GET("/survey/note")
@@ -39,6 +36,6 @@ interface SurveyService {
     @POST("/survey/perfume/respond")
     suspend fun postPerfumeSurveyAnswer(
         @Body dto: PerfumeSurveyAnswerRequestDto,
-        @Path("isContainAll") isContainAll: Boolean
+        @Query("isContainAll") isContainAll: Boolean
     ): ApiResponse<PerfumeRecommendsResponseDto>
 }

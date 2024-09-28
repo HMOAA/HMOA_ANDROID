@@ -25,4 +25,7 @@ interface SurveyRepository {
         dto: PerfumeSurveyAnswerRequestDto,
         isContainAll: Boolean
     ): ResultResponse<PerfumeRecommendsResponseDto>
+
+    fun savePerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
+    fun getPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
 }

@@ -56,4 +56,12 @@ class SurveyRepositoryImpl @Inject constructor(
         return surveyRemoteDataStore.postPerfumeSurveyAnswers(dto, isContainAll)
     }
 
+    override fun savePerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {
+        surveyLocalDataStore.savePerfumeRecommendsResult(dto)
+    }
+
+    override fun getPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
+        return surveyLocalDataStore.getPerfumeRecommendsResult()
+    }
+
 }

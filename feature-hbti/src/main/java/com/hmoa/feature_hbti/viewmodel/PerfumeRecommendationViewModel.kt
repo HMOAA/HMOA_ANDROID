@@ -14,7 +14,6 @@ import com.hmoa.core_model.data.PerfumeSurveyContents
 import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -97,18 +96,30 @@ class PerfumeRecommendationViewModel @Inject constructor(
         }
     }
 
-    fun postSurveyResult() {
-        viewModelScope.launch {
-            val index = _selectedPriceOptionIdsState.value?.indexOf(0)!!
-            val priceRange = _perfumeSurveyContentsState.value?.priceQuestionOptions?.get(index) ?: ""
-            val minAndMaxPrice = calculateMinAndMaxPriceOutOfStringUseCase.invoke(priceRange)
-            val dto = PerfumeSurveyAnswerRequestDto(
-                maxPrice = minAndMaxPrice.first,
-                minPrice = minAndMaxPrice.second,
-                notes = selectedNoteTagsOptionState.value
-            )
-            surveyRepository.postPerfumeSurveyAnswers(dto = dto, isContainAll = true)
-        }
+    suspend fun postSurveyResult() {
+        val index = _selectedPriceOptionIdsState.value?.indexOf(0)!!
+        val priceRange = _perfumeSurveyContentsState.value?.priceQuestionOptions?.get(index) ?: ""
+        val minAndMaxPrice = calculateMinAndMaxPriceOutOfStringUseCase.invoke(priceRange)
+        val dto = PerfumeSurveyAnswerRequestDto(
+            maxPrice = minAndMaxPrice.first,
+            minPrice = minAndMaxPrice.second,
+            notes = selectedNoteTagsOptionState.value
+        )
+        flow {
+            val result = surveyRepository.postPerfumeSurveyAnswers(dto = dto, isContainAll = true)
+            result.emitOrThrow { emit(it) }
+        }.asResult()
+            .collectLatest { result ->
+                when (result) {
+                    is Result.Error -> {}
+                    Result.Loading -> {}
+                    is Result.Success -> {
+                        if (result.data.data != null) {
+                            surveyRepository.savePerfumeRecommendsResult(result.data.data!!)
+                        }
+                    }
+                }
+            }
     }
 
     fun handlePriceQuestionAnswer(optionIndex: Int, isGoToSelectedState: Boolean) {

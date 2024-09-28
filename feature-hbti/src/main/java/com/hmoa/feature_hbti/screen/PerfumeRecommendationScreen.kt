@@ -39,6 +39,7 @@ fun PerfumeRecommendationRoute(
     viewModel: PerfumeRecommendationViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
     LaunchedEffect(true) {
         viewModel.getSurveyResult()
     }
@@ -84,8 +85,10 @@ fun PerfumeRecommendationRoute(
             onDeleteAll = { viewModel.deleteAllNoteTagOptions() },
             onNavBack = onNavBack,
             onClickNext = {
-                viewModel.postSurveyResult()
-                onNavNext()
+                scope.launch {
+                    launch { viewModel.postSurveyResult() }.join()
+                    onNavNext()
+                }
             },
             isMultipleAnswerAvailable = (uiState.value as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isPriceMultipleChoice
                 ?: false,
@@ -228,22 +231,27 @@ private fun PriceScreen(
     onChangedValue: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit,
     onClickNext: () -> Unit
 ) {
-    Column(modifier = Modifier.background(color = Color.White).wrapContentSize(unbounded = false)) {
-        Text(
-            text = "Q. ${surveyQuestionTitle}",
-            fontSize = 20.sp,
-            fontFamily = FontFamily(Font(R.font.pretendard_semi_bold))
-        )
-        Spacer(Modifier.height(32.dp))
-        SurveyOptionList(
-            isMutipleAnswerAvailable = isMultipleAnswerAvailable,
-            surveyOptions = surveyOptions,
-            onButtonClick = { optionIndex, isGoToSelectedState ->
-                onChangedValue(optionIndex, isGoToSelectedState)
-            },
-            answerIds = answerIds,
-            surveyOptionIds = surveyOptionsId,
-        )
+    Column(
+        modifier = Modifier.background(color = Color.White).fillMaxHeight(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Text(
+                text = "Q. ${surveyQuestionTitle}",
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_semi_bold))
+            )
+            Spacer(Modifier.height(32.dp))
+            SurveyOptionList(
+                isMutipleAnswerAvailable = isMultipleAnswerAvailable,
+                surveyOptions = surveyOptions,
+                onButtonClick = { optionIndex, isGoToSelectedState ->
+                    onChangedValue(optionIndex, isGoToSelectedState)
+                },
+                answerIds = answerIds,
+                surveyOptionIds = surveyOptionsId,
+            )
+        }
         Button(
             buttonModifier = Modifier
                 .fillMaxWidth()
@@ -285,10 +293,13 @@ private fun NoteScreen(
 
     Column(modifier = Modifier.fillMaxHeight()) {
         if (selectedNotes.isNotEmpty()) {
-            DeletableTagBadgeScroller(
-                tags = selectedNotes,
-                onDeleteTag = { tag -> onDeleteTag(tag) },
-                onDeleteAll = { onDeleteAll() })
+            Column(modifier = Modifier.padding(bottom = 16.dp)) {
+                DeletableTagBadgeScroller(
+                    tags = selectedNotes,
+                    onDeleteTag = { tag -> onDeleteTag(tag) },
+                    onDeleteAll = { onDeleteAll() }
+                )
+            }
         }
         LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth().padding(bottom = 16.dp), state = listState) {
             item {
@@ -296,7 +307,7 @@ private fun NoteScreen(
                     text = "Q. ${noteQuestionTitle}",
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_semi_bold)),
-                    modifier = Modifier.padding(bottom = 16.dp).padding(top = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Spacer(
                     modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray1)

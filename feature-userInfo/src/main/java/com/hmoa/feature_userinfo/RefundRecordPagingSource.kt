@@ -3,7 +3,10 @@ package com.hmoa.feature_userinfo
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hmoa.core_domain.repository.MemberRepository
+import com.hmoa.core_model.data.OrderStatus
 import com.hmoa.core_model.response.GetRefundRecordResponseDto
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class RefundRecordPagingSource(
     private val memberRepository: MemberRepository
@@ -25,7 +28,7 @@ class RefundRecordPagingSource(
         val nextKey = if (result.lastPage) null else pageNumber + 1
 
         return LoadResult.Page(
-            data = result.data,
+            data = sortData(result.data),
             prevKey = prevKey,
             nextKey = nextKey
         )
@@ -36,5 +39,17 @@ class RefundRecordPagingSource(
             state.closestPageToPosition(it)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(it)?.nextKey?.minus(1)
         }
+    }
+
+    private fun sortData(data: List<GetRefundRecordResponseDto>): List<GetRefundRecordResponseDto>{
+        val result = data.toMutableList()
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+        val statusPriority = listOf(OrderStatus.PAY_CANCEL, OrderStatus.RETURN_PROGRESS, OrderStatus.RETURN_COMPLETE)
+        result.sortWith(compareBy<GetRefundRecordResponseDto>{
+            LocalDate.parse(it.createdAt, dateFormatter)
+        }.thenBy{
+            statusPriority.indexOf(it.orderStatus)
+        })
+        return result
     }
 }

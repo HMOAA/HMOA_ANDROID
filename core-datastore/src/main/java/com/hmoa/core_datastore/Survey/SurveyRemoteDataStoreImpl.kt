@@ -1,6 +1,7 @@
 package com.hmoa.core_datastore.Survey
 
 import ResultResponse
+import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.*
 import com.hmoa.core_model.response.*
@@ -90,10 +91,10 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
 
     override suspend fun postPerfumeSurveyAnswers(
         dto: PerfumeSurveyAnswerRequestDto,
-        isContainAll: Boolean
+        recommendType: PerfumeRecommendType
     ): ResultResponse<PerfumeRecommendsResponseDto> {
         val result = ResultResponse<PerfumeRecommendsResponseDto>()
-        surveyService.postPerfumeSurveyAnswer(dto, isContainAll).suspendOnSuccess {
+        surveyService.postPerfumeSurveyAnswer(dto, recommendType.name).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())

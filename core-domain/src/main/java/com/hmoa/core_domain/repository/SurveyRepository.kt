@@ -1,6 +1,7 @@
 package com.hmoa.core_domain.repository
 
 import ResultResponse
+import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
@@ -23,9 +24,12 @@ interface SurveyRepository {
 
     suspend fun postPerfumeSurveyAnswers(
         dto: PerfumeSurveyAnswerRequestDto,
-        isContainAll: Boolean
+        recommendType: PerfumeRecommendType
     ): ResultResponse<PerfumeRecommendsResponseDto>
 
-    fun savePerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
-    fun getPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
+    fun saveNoteSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
+    fun getNoteSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
+
+    fun savePriceSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
+    fun getPriceSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
 }

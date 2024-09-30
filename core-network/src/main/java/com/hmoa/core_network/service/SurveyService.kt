@@ -36,6 +36,6 @@ interface SurveyService {
     @POST("/survey/perfume/respond")
     suspend fun postPerfumeSurveyAnswer(
         @Body dto: PerfumeSurveyAnswerRequestDto,
-        @Query("isContainAll") isContainAll: Boolean
+        @Query("recommendType") recommendType: String
     ): ApiResponse<PerfumeRecommendsResponseDto>
 }

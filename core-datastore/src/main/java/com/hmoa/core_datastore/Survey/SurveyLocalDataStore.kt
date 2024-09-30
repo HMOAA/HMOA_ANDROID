@@ -12,6 +12,9 @@ interface SurveyLocalDataStore {
     suspend fun updateSurveyResult(note: NoteResponseDto)
     suspend fun deleteSurveyResult(note: NoteResponseDto)
     suspend fun deleteAllNotes()
-    fun savePerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
-    fun getPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
+    fun saveNoteSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
+    fun getNoteSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
+
+    fun savePriceSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
+    fun getPriceSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
 }

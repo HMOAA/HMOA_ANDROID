@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +31,7 @@ fun LikeRowItem(
     itemNameEng: String,
     onClickClose: () -> Unit,
     onNavPerfumeDesc: () -> Unit,
-    isCloseButtonExist:Boolean = true
+    isCloseButtonExist: Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -40,16 +39,7 @@ fun LikeRowItem(
             .width(280.dp)
             .background(color = Color.White, shape = RoundedCornerShape(size = 5.dp))
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(size = 5.dp))
-            .shadow(
-                elevation = 8.dp,
-                spotColor = Color(0x26000000),
-                ambientColor = Color(0x26000000)
-            )
-            .shadow(
-                elevation = 4.dp,
-                spotColor = Color(0x33000000),
-                ambientColor = Color(0x33000000)
-            ).clickable {
+            .clickable {
                 onNavPerfumeDesc()
             },
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,7 +54,7 @@ fun LikeRowItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            if(isCloseButtonExist){
+            if (isCloseButtonExist) {
                 IconButton(
                     modifier = Modifier.size(16.dp),
                     onClick = onClickClose
@@ -92,7 +82,11 @@ fun LikeRowItem(
 
             Spacer(Modifier.width(16.dp))
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f).background(color = Color.White)) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f).background(color = Color.White)
+        ) {
             Box(
                 modifier = Modifier.fillMaxSize(0.6f).background(color = Color.White)
             ) {
@@ -105,7 +99,10 @@ fun LikeRowItem(
                 )
             }
             Spacer(Modifier.height(20.dp))
-            Column(horizontalAlignment = Alignment.Start, modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
+            Column(
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+            ) {
                 Text(
                     text = itemNameKo,
                     fontSize = 14.sp,
@@ -166,8 +163,8 @@ fun LikeRowItem(
 
 @Preview
 @Composable
-fun LikeRowItemPreview(){
-    Row(verticalAlignment = Alignment.CenterVertically){
+fun LikeRowItemPreview() {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         LikeRowItem(
             brand = "조말론",
             itemPicture = "?",

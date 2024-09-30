@@ -2,6 +2,7 @@ package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,11 +13,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeRecommendResponseDto
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationResultViewModel
 import com.hmoa.feature_hbti.viewmodel.PerfumeResultUiState
@@ -39,9 +42,13 @@ fun PerfumeRecommendationResultRoute(
         is PerfumeResultUiState.Success -> {
             PerfumeCommentResultContent(
                 perfumes = (uiState as PerfumeResultUiState.Success).perfumes ?: emptyList(),
+                isPriceSortedSelected = (uiState as PerfumeResultUiState.Success).isPriceSortedSelected,
+                isNoteSortedSelected = (uiState as PerfumeResultUiState.Success).isNoteSortedSelected,
                 onNavBack = onNavBack,
                 onNavPerfumeDesc = onNavPerfumeDesc,
-                onClickButton = { onNavHome() }
+                onClickButton = { onNavHome() },
+                onClickPriceSorted = { viewModel.insertPriceSortedPerfumes() },
+                onClickNoteSorted = { viewModel.insertNoteSortedPerfumes() }
             )
         }
 
@@ -60,9 +67,13 @@ fun PerfumeRecommendationResultRoute(
 @Composable
 private fun PerfumeCommentResultContent(
     perfumes: List<PerfumeRecommendResponseDto>,
+    isPriceSortedSelected: Boolean,
+    isNoteSortedSelected: Boolean,
     onNavBack: () -> Unit,
     onNavPerfumeDesc: (Int) -> Unit,
-    onClickButton: () -> Unit
+    onClickButton: () -> Unit,
+    onClickPriceSorted: () -> Unit,
+    onClickNoteSorted: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -87,6 +98,22 @@ private fun PerfumeCommentResultContent(
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
                 )
+                Row(modifier = Modifier.fillMaxWidth().padding(end = 16.dp).padding(top = 50.dp), horizontalArrangement = Arrangement.End) {
+                    Text(
+                        text = "가격대 우선",
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
+                        color = if (isPriceSortedSelected) Color.Black else CustomColor.gray3,
+                        modifier = Modifier.clickable { onClickPriceSorted() }
+                    )
+                    Text(
+                        text = "향료 우선",
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
+                        color = if (isNoteSortedSelected) Color.Black else CustomColor.gray3,
+                        modifier = Modifier.clickable { onClickNoteSorted() }.padding(start = 7.dp)
+                    )
+                }
                 /** 임시 더미 데이터 */
                 PerfumeResult(
                     perfumes = perfumes,
@@ -143,4 +170,29 @@ private fun PerfumeResult(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PerfumeRecommendationsResultPreview() {
+    val perfumes = listOf(
+        PerfumeRecommendResponseDto(
+            brandname = "디올",
+            perfumeId = 0,
+            perfumeImageUrl = "dd",
+            perfumeName = "디올 어쩌구",
+            perfumeEnglishName = "diol",
+            price = 100000
+        )
+    )
+    PerfumeCommentResultContent(
+        perfumes = perfumes,
+        isPriceSortedSelected = true,
+        isNoteSortedSelected = false,
+        onNavBack = {},
+        onNavPerfumeDesc = {},
+        onClickButton = {},
+        onClickPriceSorted = {},
+        onClickNoteSorted = {}
+    )
 }

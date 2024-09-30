@@ -13,7 +13,7 @@ class PerfumeRecommendCacheManagerImpl @Inject constructor() : PerfumeRecommendC
     }
 
     override fun getNoteSortedPerfumeRecommendsResult(): PerfumeRecommendsResponseDto? {
-        return perfumeRecommendsResultCache.get(CacheKey.PriceSortedPerfumeRecommendsResult.name)
+        return perfumeRecommendsResultCache.get(CacheKey.NoteSortedPerfumeRecommendsResult.name)
     }
 
     override fun savePriceSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {

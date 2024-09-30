@@ -14,7 +14,8 @@ class PerfumeRecommendationResultViewModel @Inject constructor(
     private val surveyRepository: SurveyRepository,
 ) : ViewModel() {
     private var _perfumesState = MutableStateFlow<List<PerfumeRecommendResponseDto>>(listOf())
-    val perfumesState: StateFlow<List<PerfumeRecommendResponseDto>> = _perfumesState
+    private var _isPriceSortedSelectedState = MutableStateFlow<Boolean>(true)
+    private var _isNoteSortedSelectedState = MutableStateFlow<Boolean>(false)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -34,27 +35,48 @@ class PerfumeRecommendationResultViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<PerfumeResultUiState> = perfumesState.map {
-        PerfumeResultUiState.Success(it)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = PerfumeResultUiState.Loading
-    )
+    val uiState: StateFlow<PerfumeResultUiState> =
+        combine(
+            _perfumesState,
+            _isPriceSortedSelectedState,
+            _isNoteSortedSelectedState
+        ) { perfumes, isPriceSortedSelected, isNoteSortedSelected ->
+            PerfumeResultUiState.Success(
+                perfumes, isPriceSortedSelected, isNoteSortedSelected
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = PerfumeResultUiState.Loading
+        )
 
     init {
-        getPerfumeRecommendationResult()
+        insertPriceSortedPerfumes()
     }
 
-    fun getPerfumeRecommendationResult() {
-        _perfumesState.update { surveyRepository.getPerfumeRecommendsResult().data?.recommendPerfumes ?: listOf() }
+    fun insertPriceSortedPerfumes() {
+        _isPriceSortedSelectedState.update { true }
+        _isNoteSortedSelectedState.update { false }
+        _perfumesState.update {
+            surveyRepository.getPriceSortedPerfumeRecommendsResult().data?.recommendPerfumes ?: listOf()
+        }
+    }
+
+    fun insertNoteSortedPerfumes() {
+        _isPriceSortedSelectedState.update { false }
+        _isNoteSortedSelectedState.update { true }
+        _perfumesState.update {
+            surveyRepository.getNoteSortedPerfumeRecommendsResult().data?.recommendPerfumes ?: listOf()
+        }
     }
 }
 
 sealed interface PerfumeResultUiState {
     data object Loading : PerfumeResultUiState
     data class Success(
-        val perfumes: List<PerfumeRecommendResponseDto>?
+        val perfumes: List<PerfumeRecommendResponseDto>?,
+        val isPriceSortedSelected: Boolean,
+        val isNoteSortedSelected: Boolean
     ) : PerfumeResultUiState
 
     data object Error : PerfumeResultUiState

@@ -85,7 +85,7 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
             Mockito.`when`(getPerfumeSurveyUseCase.invoke()).thenReturn(perfumeSurveyQuestions)
             Mockito.`when`(
                 surveyRepository.postPerfumeSurveyAnswers(
-                    dto = fakeSurveyAnswerDto, isContainAll = true
+                    dto = fakeSurveyAnswerDto, recommendType = true
                 )
             ).thenReturn(fakeSurveyAnswerResponse)
             viewmodel = PerfumeRecommendationViewModel(

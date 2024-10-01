@@ -3,7 +3,7 @@ name: Android develop CD
 on:
   push:
     branches:
-      - release
+      - "release"
 
 jobs:
   cd:

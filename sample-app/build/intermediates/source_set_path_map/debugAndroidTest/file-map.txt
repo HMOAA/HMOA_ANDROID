@@ -1,6 +1,0 @@
-com.hmoa.sample_app.test.sample-app-core-1.5.0-0 C:\Users\seoho\.gradle\caches\transforms-3\0cb7bcd28f60060bf1ba99cfd9a8e2e9\transformed\core-1.5.0\res
-com.hmoa.sample_app.test.sample-app-annotation-experimental-1.3.0-1 C:\Users\seoho\.gradle\caches\transforms-3\21a045321c0a9830e17180e2ee3cb56a\transformed\annotation-experimental-1.3.0\res
-com.hmoa.sample_app.test.sample-app-androidTest-2 C:\Users\seoho\AndroidStudioProjects\Clone\HMOA_ANDROID\sample-app\build\generated\res\resValues\androidTest\debug
-com.hmoa.sample_app.test.sample-app-mergeDebugAndroidTestResources-3 C:\Users\seoho\AndroidStudioProjects\Clone\HMOA_ANDROID\sample-app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
-com.hmoa.sample_app.test.sample-app-mergeDebugAndroidTestResources-4 C:\Users\seoho\AndroidStudioProjects\Clone\HMOA_ANDROID\sample-app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
-com.hmoa.sample_app.test.sample-app-merged_res-5 C:\Users\seoho\AndroidStudioProjects\Clone\HMOA_ANDROID\sample-app\build\intermediates\merged_res\debugAndroidTest

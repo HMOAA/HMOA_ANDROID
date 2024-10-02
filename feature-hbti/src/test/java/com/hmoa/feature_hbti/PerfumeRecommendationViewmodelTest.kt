@@ -4,6 +4,7 @@ import ResultResponse
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_domain.usecase.CalculateMinAndMaxPriceOutOfStringUseCase
 import com.hmoa.core_domain.usecase.GetPerfumeSurveyUseCase
+import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.data.NoteCategoryTag
 import com.hmoa.core_model.data.PerfumeSurveyContents
 import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
@@ -85,7 +86,7 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
             Mockito.`when`(getPerfumeSurveyUseCase.invoke()).thenReturn(perfumeSurveyQuestions)
             Mockito.`when`(
                 surveyRepository.postPerfumeSurveyAnswers(
-                    dto = fakeSurveyAnswerDto, isContainAll = true
+                    dto = fakeSurveyAnswerDto, recommendType = PerfumeRecommendType.PRICE
                 )
             ).thenReturn(fakeSurveyAnswerResponse)
             viewmodel = PerfumeRecommendationViewModel(

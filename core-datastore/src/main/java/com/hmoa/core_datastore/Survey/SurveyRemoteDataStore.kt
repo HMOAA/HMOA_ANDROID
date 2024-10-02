@@ -1,6 +1,7 @@
 package com.hmoa.core_datastore.Survey
 
 import ResultResponse
+import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.request.*
 import com.hmoa.core_model.response.*
 
@@ -15,6 +16,6 @@ interface SurveyRemoteDataStore {
     suspend fun getPerfumeSurvey(): ResultResponse<PerfumeSurveyResponseDto>
     suspend fun postPerfumeSurveyAnswers(
         dto: PerfumeSurveyAnswerRequestDto,
-        isContainAll: Boolean
+        recommendType: PerfumeRecommendType
     ): ResultResponse<PerfumeRecommendsResponseDto>
 }

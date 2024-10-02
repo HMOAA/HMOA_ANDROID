@@ -9,6 +9,7 @@ import com.hmoa.core_common.emitOrThrow
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_domain.usecase.CalculateMinAndMaxPriceOutOfStringUseCase
 import com.hmoa.core_domain.usecase.GetPerfumeSurveyUseCase
+import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.data.NoteCategoryTag
 import com.hmoa.core_model.data.PerfumeSurveyContents
 import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
@@ -105,23 +106,47 @@ class PerfumeRecommendationViewModel @Inject constructor(
                 selectedPriceOptionIds = _selectedPriceOptionIdsState.value,
                 perfumeSurveyContents = _perfumeSurveyContentsState.value
             )
-            flow {
-                val result = surveyRepository.postPerfumeSurveyAnswers(dto = dto, isContainAll = true)
-                result.emitOrThrow { emit(it) }
-            }.asResult()
-                .collectLatest { result ->
-                    when (result) {
-                        is Result.Error -> {}
-                        Result.Loading -> {}
-                        is Result.Success -> {
-                            if (result.data.data != null) {
-                                surveyRepository.savePerfumeRecommendsResult(result.data.data!!)
-                                _isPostCompleted.update { true }
-                            }
+            postSurveyPriceSortedResult(dto)
+            postSurveyNoteSortedResult(dto)
+            _isPostCompleted.update { true }
+        }
+    }
+
+    suspend fun postSurveyPriceSortedResult(dto: PerfumeSurveyAnswerRequestDto) {
+        flow {
+            val result =
+                surveyRepository.postPerfumeSurveyAnswers(dto = dto, recommendType = PerfumeRecommendType.PRICE)
+            result.emitOrThrow { emit(it) }
+        }.asResult()
+            .collectLatest { result ->
+                when (result) {
+                    is Result.Error -> {}
+                    Result.Loading -> {}
+                    is Result.Success -> {
+                        if (result.data.data != null) {
+                            surveyRepository.savePriceSortedPerfumeRecommendsResult(result.data.data!!)
                         }
                     }
                 }
-        }
+            }
+    }
+
+    suspend fun postSurveyNoteSortedResult(dto: PerfumeSurveyAnswerRequestDto) {
+        flow {
+            val result = surveyRepository.postPerfumeSurveyAnswers(dto = dto, recommendType = PerfumeRecommendType.NOTE)
+            result.emitOrThrow { emit(it) }
+        }.asResult()
+            .collectLatest { result ->
+                when (result) {
+                    is Result.Error -> {}
+                    Result.Loading -> {}
+                    is Result.Success -> {
+                        if (result.data.data != null) {
+                            surveyRepository.saveNoteSortedPerfumeRecommendsResult(result.data.data!!)
+                        }
+                    }
+                }
+            }
     }
 
     fun mapOptionIdAndNoteTagsToChangePostSurveyAnswer(

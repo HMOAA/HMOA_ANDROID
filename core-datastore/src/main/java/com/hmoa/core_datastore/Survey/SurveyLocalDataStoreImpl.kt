@@ -33,13 +33,26 @@ class SurveyLocalDataStoreImpl @Inject constructor(
         noteDao.deleteAllNotes()
     }
 
-    override fun savePerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {
-        perfumeRecommendCacheManager.savePerfumeRecommendsResult(dto)
+    override fun saveNoteSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {
+        perfumeRecommendCacheManager.saveNoteSortedPerfumeRecommendsResult(dto)
     }
 
-    override fun getPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
+    override fun getNoteSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
         var result = ResultResponse<PerfumeRecommendsResponseDto>()
-        val data = perfumeRecommendCacheManager.getPerfumeRecommendsResult()
+        val data = perfumeRecommendCacheManager.getNoteSortedPerfumeRecommendsResult()
+        if (data != null) {
+            result.data = data
+        }
+        return result
+    }
+
+    override fun savePriceSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {
+        perfumeRecommendCacheManager.savePriceSortedPerfumeRecommendsResult(dto)
+    }
+
+    override fun getPriceSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
+        var result = ResultResponse<PerfumeRecommendsResponseDto>()
+        val data = perfumeRecommendCacheManager.getPriceSortedPerfumeRecommendsResult()
         if (data != null) {
             result.data = data
         }

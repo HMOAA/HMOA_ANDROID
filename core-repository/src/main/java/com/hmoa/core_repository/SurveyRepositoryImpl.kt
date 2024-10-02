@@ -4,6 +4,7 @@ import ResultResponse
 import com.hmoa.core_datastore.Survey.SurveyLocalDataStore
 import com.hmoa.core_datastore.Survey.SurveyRemoteDataStore
 import com.hmoa.core_domain.repository.SurveyRepository
+import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
@@ -51,17 +52,24 @@ class SurveyRepositoryImpl @Inject constructor(
 
     override suspend fun postPerfumeSurveyAnswers(
         dto: PerfumeSurveyAnswerRequestDto,
-        isContainAll: Boolean
+        recommendType: PerfumeRecommendType
     ): ResultResponse<PerfumeRecommendsResponseDto> {
-        return surveyRemoteDataStore.postPerfumeSurveyAnswers(dto, isContainAll)
+        return surveyRemoteDataStore.postPerfumeSurveyAnswers(dto, recommendType)
     }
 
-    override fun savePerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {
-        surveyLocalDataStore.savePerfumeRecommendsResult(dto)
+    override fun saveNoteSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {
+        surveyLocalDataStore.saveNoteSortedPerfumeRecommendsResult(dto)
     }
 
-    override fun getPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
-        return surveyLocalDataStore.getPerfumeRecommendsResult()
+    override fun getNoteSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
+        return surveyLocalDataStore.getNoteSortedPerfumeRecommendsResult()
     }
 
+    override fun savePriceSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto) {
+        surveyLocalDataStore.savePriceSortedPerfumeRecommendsResult(dto)
+    }
+
+    override fun getPriceSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
+        return surveyLocalDataStore.getPriceSortedPerfumeRecommendsResult()
+    }
 }

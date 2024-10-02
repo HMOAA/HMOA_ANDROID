@@ -3,7 +3,7 @@ name: Android develop CD
 on:
   push:
     branches:
-      - "release"
+      - "master"
 
 jobs:
   cd:
@@ -58,5 +58,4 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: com.hmoa.app
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          track: internal
           whatsNewDirectory: ./.github/workflows/whatsnew-ko-KR.txt

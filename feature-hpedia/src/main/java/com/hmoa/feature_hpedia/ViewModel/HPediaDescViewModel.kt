@@ -27,14 +27,34 @@ class HPediaDescViewModel @Inject constructor(
     private var _id = MutableStateFlow<Int?>(null)
     private var _type = MutableStateFlow<HpediaType>(HpediaType.TERM)
     val type get() = _type.asStateFlow()
-    private var termDesc = MutableStateFlow<TermDescResponseDto?>(null)
-    private var noteDesc = MutableStateFlow<NoteDescResponseDto?>(null)
-    private var perfumerDesc = MutableStateFlow<PerfumerDescResponseDto?>(null)
-    val uiState: StateFlow<HPediaDescUiState> = combine(
-        _id, _type, termDesc, noteDesc, perfumerDesc
-    ) { id, type, term, note, perfumer ->
-        if (id == null) {
-            throw NullPointerException("Id is NULL")
+
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
+
+    val uiState: StateFlow<HPediaDescUiState> = _id.filterNotNull().map{ id ->
+        val result = when(type.value){
+            HpediaType.TERM -> termRepository.getTerm(id)
+            HpediaType.NOTE -> noteRepository.getNote(id)
+            HpediaType.PERFUMER -> perfumerRepository.getPerfumer(id)
         }
         when (type) {
             HpediaType.TERM -> {

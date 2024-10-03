@@ -96,27 +96,27 @@ fun SetUpNavGraph(
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */
         this.nestedHPediaGraph(
-            onNavBack = navController::navigateToBack,
-            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunityGraph = navController::navigateToCommunityRoute,
-            onNavHPediaDesc = navController::navigateToHPediaDescRoute,
-            onNavHPediaSearch = navController::navigateToHPediaSearchRoute,
-            onNavLogin = navController::navigateToLogin,
-            onNavHome = navController::navigateToHome,
+            navBack = navController::navigateToBack,
+            navCommunityDesc = navController::navigateToCommunityDescriptionRoute,
+            navCommunityGraph = navController::navigateToCommunityRoute,
+            navHPediaDesc = navController::navigateToHPediaDescRoute,
+            navHPediaSearch = navController::navigateToHPediaSearchRoute,
+            navLogin = navController::navigateToLogin,
+            navHome = navController::navigateToHome,
         )
         this.nestedCommunityGraph(
-            onNavBack = navController::navigateToBack,
-            onNavCommunityPage = navController::navigateToCommunityPage,
-            onNavCommunityPost = navController::navigateToCommunityPostRoute,
-            onNavCommunityEdit = navController::navigateToCommunityEditRoute,
-            onNavCommunityDescription = navController::navigateToCommunityDescriptionRoute,
-            onNavCommunitySearch = navController::navigateToCommunitySearchRoute,
-            onNavCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
+            navBack = navController::navigateToBack,
+            navCommunityPage = navController::navigateToCommunityPage,
+            navCommunityPost = navController::navigateToCommunityPostRoute,
+            navCommunityEdit = navController::navigateToCommunityEditRoute,
+            navCommunityDescription = navController::navigateToCommunityDescriptionRoute,
+            navCommunitySearch = navController::navigateToCommunitySearchRoute,
+            navCommunityCommentEdit = navController::navigateToCommunityCommentEditRoute,
             onErrorHandleLoginAgain = navController::navigateToLogin,
-            onNavLogin = navController::navigateToLogin,
-            onNavHome = navController::navigateToHome,
-            onNavHPedia = navController::navigateToHPedia,
-            onNavPopStack = { navController.popBackStack() }
+            navLogin = navController::navigateToLogin,
+            navHome = navController::navigateToHome,
+            navHPedia = navController::navigateToHPedia,
+            popStack = { navController.popBackStack() }
         )
 
         /** perfume 모듈 */

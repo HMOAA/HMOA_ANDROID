@@ -20,13 +20,13 @@ fun NavController.navigateToHPediaDescRoute(id: Int, type: String) =
 fun NavController.navigateToHPediaSearchRoute(type: String) = navigate("${HPediaRoute.HPediaSearchRoute.name}/${type}")
 
 fun NavGraphBuilder.nestedHPediaGraph(
-    onNavBack: () -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavCommunityGraph: () -> Unit,
-    onNavHPediaSearch: (String) -> Unit,
-    onNavHPediaDesc: (Int, String) -> Unit,
-    onNavLogin: () -> Unit,
-    onNavHome : () -> Unit,
+    navBack: () -> Unit,
+    navCommunityDesc: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
+     navHPediaSearch: (String) -> Unit,
+    navHPediaDesc: (Int, String) -> Unit,
+    navLogin: () -> Unit,
+    navHome : () -> Unit,
 ) {
     navigation(
         startDestination = HPediaRoute.HPedia.name,
@@ -36,8 +36,8 @@ fun NavGraphBuilder.nestedHPediaGraph(
             val type = it.arguments?.getString("type")
             HPediaSearchRoute(
                 type = type,
-                onNavBack = onNavBack,
-                onNavHPediaDesc = onNavHPediaDesc
+                navBack = navBack,
+                navHPediaDesc = navHPediaDesc
             )
         }
 
@@ -54,17 +54,17 @@ fun NavGraphBuilder.nestedHPediaGraph(
             HPediaDescRoute(
                 id = id,
                 type = type,
-                onNavBack = onNavBack,
+                navBack = navBack,
             )
         }
 
         composable(HPediaRoute.HPedia.name) {
             HPediaRoute(
-                onNavHPediaSearch = onNavHPediaSearch,
-                onNavCommunityDesc = onNavCommunityDesc,
-                onNavCommunityGraph = onNavCommunityGraph,
-                onNavLogin = onNavLogin,
-                onNavHome = onNavHome,
+                navHPediaSearch = navHPediaSearch,
+                navCommunityDesc = navCommunityDesc,
+                navCommunityGraph = navCommunityGraph,
+                navLogin = navLogin,
+                navHome = navHome,
             )
         }
     }

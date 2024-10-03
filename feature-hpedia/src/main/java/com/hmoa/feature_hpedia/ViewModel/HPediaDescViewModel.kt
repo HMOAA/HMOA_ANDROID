@@ -56,34 +56,52 @@ class HPediaDescViewModel @Inject constructor(
             HpediaType.NOTE -> noteRepository.getNote(id)
             HpediaType.PERFUMER -> perfumerRepository.getPerfumer(id)
         }
-        when (type) {
-            HpediaType.TERM -> {
-                HPediaDescUiState.HPediaDesc(
-                    title = term?.termTitle ?: "",
-                    subTitle = term?.termEnglishTitle ?: "",
-                    content = term?.content ?: ""
+        result
+    }.asResult().map{result ->
+        when(result){
+            Result.Loading -> HPediaDescUiState.Loading
+            is Result.Error -> {
+                handleErrorType(
+                    error = result.exception,
+                    onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                    onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                    onUnknownError = { unLoginedErrorState.update { true } },
+                    onGeneralError = {generalErrorState.update {Pair(true,result.exception.message)}}
                 )
+                HPediaDescUiState.Error
             }
-
-            HpediaType.NOTE -> {
-                HPediaDescUiState.HPediaDesc(
-                    title = note?.noteTitle ?: "",
-                    subTitle = note?.noteSubtitle ?: "",
-                    content = note?.content ?: ""
-                )
-            }
-
-            HpediaType.PERFUMER -> {
-                HPediaDescUiState.HPediaDesc(
-                    title = perfumer?.perfumerTitle ?: "",
-                    subTitle = perfumer?.perfumerSubTitle ?: "",
-                    content = perfumer?.content ?: ""
-                )
+            is Result.Success -> {
+                when(type.value){
+                    HpediaType.TERM -> {
+                        val data = result.data.data!!.data as TermDescResponseDto
+                        HPediaDescUiState.HPediaDesc(
+                            title = data.termTitle,
+                            subTitle = data.termEnglishTitle,
+                            content = data.content
+                        )
+                    }
+                    HpediaType.NOTE -> {
+                        val data = result.data.data!!.data as NoteDescResponseDto
+                        HPediaDescUiState.HPediaDesc(
+                            title = data.noteTitle,
+                            subTitle = data.noteSubtitle,
+                            content = data.content
+                        )
+                    }
+                    HpediaType.PERFUMER -> {
+                        val data = result.data.data!!.data as PerfumerDescResponseDto
+                        HPediaDescUiState.HPediaDesc(
+                            title = data.perfumerTitle,
+                            subTitle = data.perfumerSubTitle,
+                            content = data.content
+                        )
+                    }
+                }
             }
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(3_000),
+        started = SharingStarted.WhileSubscribed(5_000),
         initialValue = HPediaDescUiState.Loading
     )
 

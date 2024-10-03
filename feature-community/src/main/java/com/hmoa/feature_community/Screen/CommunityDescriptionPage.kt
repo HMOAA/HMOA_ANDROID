@@ -57,12 +57,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommunityDescriptionRoute(
     id: Int?,
-    onNavCommunityEdit: (Int) -> Unit,
-    onNavCommentEdit : (Int) -> Unit,
-    onNavLogin : () -> Unit,
-    onNavBack : () -> Unit,
-    onNavHPedia : () -> Unit,
-    onNavPopStack: () -> Unit,
+    navCommunityEdit: (Int) -> Unit,
+    navCommentEdit : (Int) -> Unit,
+    navLogin : () -> Unit,
+    navBack : () -> Unit,
+    navHPedia : () -> Unit,
+    popStack: () -> Unit,
     viewModel : CommunityDescViewModel = hiltViewModel()
 ){
     viewModel.setId(id)
@@ -81,7 +81,7 @@ fun CommunityDescriptionRoute(
         onChangeLike = {viewModel.updateLike()},
         uiState = uiState.value,
         commentList = comments,
-        onNavBack = onNavBack,
+        navBack = navBack,
         onReportCommunity = {
             viewModel.reportCommunity()
             if(reportState.value){
@@ -104,7 +104,7 @@ fun CommunityDescriptionRoute(
         },
         onDeleteCommunity = {
             viewModel.delCommunity()
-            onNavBack()
+            navBack()
             Toast.makeText(context, "게시글 삭제 완료", Toast.LENGTH_SHORT).show()
         },
         onDeleteComment = { commentId ->
@@ -112,13 +112,13 @@ fun CommunityDescriptionRoute(
             comments.refresh()
             Toast.makeText(context, "댓글 삭제", Toast.LENGTH_SHORT).show()
         },
-        onNavCommunityEdit = {onNavCommunityEdit(id!!)},
-        onNavCommentEdit = onNavCommentEdit,
+        navCommunityEdit = {navCommunityEdit(id!!)},
+        navCommentEdit = navCommentEdit,
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){onNavHPedia()}
-            else {onNavLogin()}
+            if(viewModel.hasToken()){navHPedia()}
+            else {navLogin()}
         },
-        onNavPopStack = onNavPopStack
+        popStack = popStack
     )
 }
 
@@ -135,11 +135,11 @@ fun CommunityDescriptionPage(
     onChangeCommentLike : (Int, Boolean) -> Unit,
     onDeleteCommunity : () -> Unit,
     onDeleteComment : (Int) -> Unit,
-    onNavBack : () -> Unit,
-    onNavCommunityEdit : () -> Unit,
-    onNavCommentEdit : (Int) -> Unit,
+    navBack : () -> Unit,
+    navCommunityEdit : () -> Unit,
+    navCommentEdit : (Int) -> Unit,
     onErrorHandleLoginAgain : () -> Unit,
-    onNavPopStack: () -> Unit,
+    popStack: () -> Unit,
 ){
     when (uiState) {
         CommunityDescUiState.Loading -> AppLoadingScreen()
@@ -156,17 +156,17 @@ fun CommunityDescriptionPage(
                 onChangeCommentLike = onChangeCommentLike,
                 onDeleteCommunity = onDeleteCommunity,
                 onDeleteComment = onDeleteComment,
-                onNavBack = onNavBack,
-                onNavCommunityEdit = onNavCommunityEdit,
-                onNavCommentEdit = onNavCommentEdit,
-                onNavPopStack = onNavPopStack
+                navBack = navBack,
+                navCommunityEdit = navCommunityEdit,
+                navCommentEdit = navCommentEdit,
+                popStack = popStack
             )
         }
         CommunityDescUiState.Error -> {
             ErrorUiSetView(
                 onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
-                onCloseClick = onNavBack,
+                onCloseClick = navBack,
             )
         }
     }
@@ -186,10 +186,10 @@ private fun CommunityDescContent(
     onChangeCommentLike : (Int, Boolean) -> Unit,
     onDeleteCommunity : () -> Unit,
     onDeleteComment : (Int) -> Unit,
-    onNavBack : () -> Unit,
-    onNavCommunityEdit : () -> Unit,
-    onNavCommentEdit : (Int) -> Unit,
-    onNavPopStack: () -> Unit
+    navBack : () -> Unit,
+    navCommunityEdit : () -> Unit,
+    navCommentEdit : (Int) -> Unit,
+    popStack: () -> Unit
 ){
     var type by remember{mutableStateOf("post")}
     val onChangeType : (String) -> Unit = { type = it }
@@ -201,7 +201,7 @@ private fun CommunityDescContent(
     val dialogOpen = { scope.launch { modalSheetState.show() } }
     val dialogClose = {
         scope.launch { modalSheetState.hide() }
-        onNavPopStack()
+        popStack()
     }
 
     ModalBottomSheetLayout(
@@ -211,13 +211,13 @@ private fun CommunityDescContent(
             if (type == "post" && community.writed){
                 EditModal(
                     onDeleteClick = onDeleteCommunity,
-                    onEditClick = onNavCommunityEdit,
+                    onEditClick = navCommunityEdit,
                     onCancelClick = {dialogClose()}
                 )
             } else if (type == "comment" && comment != null && comment!!.writed){
                 EditModal(
                     onDeleteClick = { onDeleteComment(comment!!.commentId) },
-                    onEditClick = { onNavCommentEdit(comment!!.commentId) },
+                    onEditClick = { navCommentEdit(comment!!.commentId) },
                     onCancelClick = { dialogClose() }
                 )
             }
@@ -251,7 +251,7 @@ private fun CommunityDescContent(
             onChangeType = onChangeType,
             onPostComment = onPostComment,
             setComment = { comment = it },
-            onNavBack = onNavBack,
+            navBack = navBack,
         )
     }
 }
@@ -268,7 +268,7 @@ private fun CommunityDescMainContent(
     onPostComment: (String) -> Unit,
     setComment: (CommunityCommentWithLikedResponseDto) -> Unit,
     onDialogOpen : () -> Unit,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
 ){
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
@@ -281,7 +281,7 @@ private fun CommunityDescMainContent(
         TopBar(
             title = "Community",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack
+            onNavClick = navBack
         )
 
         Column(

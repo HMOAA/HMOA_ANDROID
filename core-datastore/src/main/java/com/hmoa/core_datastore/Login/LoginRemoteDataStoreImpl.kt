@@ -10,6 +10,7 @@ import com.hmoa.core_model.response.GoogleAccessTokenResponseDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
 import com.hmoa.core_network.authentication.GoogleServerAuthCodeService
+import com.hmoa.core_network.authentication.RefreshTokenManager
 import com.hmoa.core_network.service.LoginService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 class LoginRemoteDataStoreImpl @Inject constructor(
     private val loginService: LoginService,
-    private val googleServerAuthCodeService: GoogleServerAuthCodeService
+    private val googleServerAuthCodeService: GoogleServerAuthCodeService,
+    private val refreshTokenManager: RefreshTokenManager
 ) : LoginRemoteDataStore {
 
 
@@ -50,5 +52,9 @@ class LoginRemoteDataStoreImpl @Inject constructor(
 
     override suspend fun postGoogleServerAuthCode(dto: GoogleAccessTokenRequestDto): ResultResponse<GoogleAccessTokenResponseDto> {
         return googleServerAuthCodeService.postGoogleServerAuthCodeServiceImpl(dto)
+    }
+
+    override suspend fun refreshToken() {
+        refreshTokenManager.refreshTokenEvery50Minutes()
     }
 }

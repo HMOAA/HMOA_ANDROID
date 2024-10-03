@@ -2,26 +2,36 @@ package com.hmoa.feature_hpedia.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
-import com.hmoa.core_domain.usecase.GetNoteUseCase
-import com.hmoa.core_domain.usecase.GetPerfumerUseCase
-import com.hmoa.core_domain.usecase.GetTermUseCase
+import com.hmoa.core_common.handleErrorType
+import com.hmoa.core_domain.repository.NoteRepository
+import com.hmoa.core_domain.repository.PerfumerRepository
+import com.hmoa.core_domain.repository.TermRepository
 import com.hmoa.core_model.data.HpediaType
 import com.hmoa.core_model.response.NoteDescResponseDto
 import com.hmoa.core_model.response.PerfumerDescResponseDto
 import com.hmoa.core_model.response.TermDescResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HPediaDescViewModel @Inject constructor(
-    private val getTermUseCase: GetTermUseCase,
-    private val getNoteUseCase: GetNoteUseCase,
-    private val perfumerUseCase: GetPerfumerUseCase
+    private val termRepository: TermRepository,
+    private val noteRepository: NoteRepository,
+    private val perfumerRepository: PerfumerRepository
 ) : ViewModel() {
 
     private var _id = MutableStateFlow<Int?>(null)
@@ -108,59 +118,17 @@ class HPediaDescViewModel @Inject constructor(
     fun setInfo(type: String?, id: Int?) {
         viewModelScope.launch(Dispatchers.IO) {
             _id.update { id }
-
-            if (id != null) {
-                when (type) {
-                    HpediaType.TERM.title -> {
-                        _type.update { HpediaType.TERM }
-                        getTermDesc(id)
-                    }
-
-                    HpediaType.NOTE.title -> {
-                        _type.update { HpediaType.NOTE }
-                        getNote(id)
-                    }
-
-                    HpediaType.PERFUMER.title -> {
-                        _type.update { HpediaType.PERFUMER }
-                        getPerfumer(id)
-                    }
+            when (type) {
+                HpediaType.TERM.title -> {
+                    _type.update { HpediaType.TERM }
                 }
-            }
-        }
-    }
 
-    suspend fun getTermDesc(id: Int) {
-        getTermUseCase(id).asResult().collectLatest { result ->
-            when (result) {
-                is Result.Error -> HPediaDescUiState.Error
-                Result.Loading -> HPediaDescUiState.Loading
-                is Result.Success -> {
-                    termDesc.update { result.data }
+                HpediaType.NOTE.title -> {
+                    _type.update { HpediaType.NOTE }
                 }
-            }
-        }
-    }
 
-    suspend fun getNote(id: Int) {
-        getNoteUseCase(id).asResult().collectLatest { result ->
-            when (result) {
-                is Result.Error -> HPediaDescUiState.Error
-                Result.Loading -> HPediaDescUiState.Loading
-                is Result.Success -> {
-                    noteDesc.update { result.data }
-                }
-            }
-        }
-    }
-
-    suspend fun getPerfumer(id: Int) {
-        perfumerUseCase(id).asResult().collectLatest { result ->
-            when (result) {
-                is Result.Error -> HPediaDescUiState.Error
-                Result.Loading -> HPediaDescUiState.Loading
-                is Result.Success -> {
-                    perfumerDesc.update { result.data }
+                HpediaType.PERFUMER.title -> {
+                    _type.update { HpediaType.PERFUMER }
                 }
             }
         }

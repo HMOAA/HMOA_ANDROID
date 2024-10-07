@@ -1,4 +1,4 @@
-package com.hmoa.core_datastore
+package com.hmoa.core_database.di
 
 import android.content.Context
 import androidx.room.Room

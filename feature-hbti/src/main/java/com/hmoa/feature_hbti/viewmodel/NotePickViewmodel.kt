@@ -117,23 +117,13 @@ class NotePickViewmodel @Inject constructor(
                 }
 
                 is com.hmoa.core_common.Result.Error -> {
-                    when (result.exception.message) {
-                        ErrorMessageType.EXPIRED_TOKEN.message -> {
-                            expiredTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                            wrongTypeTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.UNKNOWN_ERROR.message -> {
-                            unLoginedErrorState.update { true }
-                        }
-
-                        else -> {
-                            generalErrorState.update { Pair(true, result.exception.message) }
-                        }
-                    }
+                    handleErrorType(
+                        error = result.exception,
+                        onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                        onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                        onUnknownError = { unLoginedErrorState.update { true } },
+                        onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                    )
                 }
 
                 is com.hmoa.core_common.Result.Loading -> {

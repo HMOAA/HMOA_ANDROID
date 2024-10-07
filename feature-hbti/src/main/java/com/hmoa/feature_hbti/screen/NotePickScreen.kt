@@ -127,7 +127,7 @@ fun NoteContent(
                     .weight(1f)
             ) {
                 Text(
-                    "추천받은 카테고리는 '${topRecommendedNote}'입니다.\n원하는 카테고리 배송 수량을\n선택해주세요",
+                    "추천받은 카테고리는 '${topRecommendedNote}'입니다.\n그 외에 원하는 시향카드 카테고리를\n선택해주세요",
                     modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
                     style = TextStyle(
                         fontSize = 20.sp,

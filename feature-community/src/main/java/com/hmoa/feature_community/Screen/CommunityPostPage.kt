@@ -64,7 +64,7 @@ fun CommunityPostRoute(
     val category = when(category){
         Category.추천.name -> Category.추천
         Category.자유.name -> Category.자유
-        Category.향BTI_시향기.name -> Category.향BTI_시향기
+        Category.시향기.name -> Category.시향기
         else -> Category.자유
     }
     val pictures = viewModel.pictures.collectAsStateWithLifecycle()

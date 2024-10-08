@@ -2,6 +2,7 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,12 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
@@ -55,12 +59,14 @@ fun ReviewItem(
     category: String,
     onHeartClick: () -> Unit,
     onMenuClick: () -> Unit,
+    onItemClick: () -> Unit,
 ){
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .background(color = CustomColor.gray5, shape = RoundedCornerShape(size = 5.dp))
+            .clickable { onItemClick() }
             .padding(top = 20.dp, start = 20.dp, end = 8.dp, bottom = 8.dp),
     ){
         Row(
@@ -151,15 +157,21 @@ private fun Images(images: List<String>){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExpandableImage(
     picture : String
 ){
     var showDialog by remember{mutableStateOf(false)}
+    val configuration = LocalConfiguration.current
 
     if (showDialog) {
-        Dialog(
-            onDismissRequest = { showDialog = false }
+        BasicAlertDialog(
+            modifier = Modifier
+                .height(configuration.screenHeightDp.dp)
+                .width(configuration.screenWidthDp.dp),
+            onDismissRequest = { showDialog = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -220,16 +232,32 @@ private fun ExpandableImage(
 @Preview
 private fun ReviewItemUITest(){
     var isLiked by remember{mutableStateOf(false)}
-    ReviewItem(
-        profileImg = "",
-        nickname = "향수 러버",
-        writtenAt = "10일 전",
-        isLiked = isLiked,
-        heartNumber = 12,
-        content = "평소에 선호하는 향이 있었는데 그 향의 이름을 몰랐는데 향료 배송받고 시향해보니 통카 빈?이더라구요 제가 좋아했던 향수들은 다 통카 빈이 들어가있네요 ㅎ 저같은 분들한테 추천합니다",
-        images = listOf("","","","",""),
-        category = "시트러스",
-        onHeartClick = {isLiked = !isLiked},
-        onMenuClick = {}
-    )
+    var text by remember{mutableStateOf("")}
+    var curN by remember{mutableStateOf(0)}
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ){
+        ReviewItem(
+            profileImg = "",
+            nickname = "향수 러버",
+            writtenAt = "10일 전",
+            isLiked = isLiked,
+            heartNumber = 12,
+            content = "평소에 선호하는 향이 있었는데 그 향의 이름을 몰랐는데 향료 배송받고 시향해보니 통카 빈?이더라구요 제가 좋아했던 향수들은 다 통카 빈이 들어가있네요 ㅎ 저같은 분들한테 추천합니다",
+            images = listOf("","","","",""),
+            category = "시트러스",
+            onHeartClick = {isLiked = !isLiked},
+            onMenuClick = {},
+            onItemClick = {
+                curN += 1
+                text = "item click : ${curN}"
+            }
+        )
+        Text(
+            text = text,
+            fontSize = 30.sp
+        )
+    }
 }

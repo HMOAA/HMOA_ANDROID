@@ -2,6 +2,7 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -28,12 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
@@ -139,19 +144,75 @@ private fun Images(images: List<String>){
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ){
         items(images){ image ->
+            ExpandableImage(
+                picture = image
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExpandableImage(
+    picture : String
+){
+    var showDialog by remember{mutableStateOf(false)}
+
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = { showDialog = false }
+        ) {
             Box(
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ){
                 ImageView(
-                    imageUrl = image,
+                    imageUrl = picture,
                     width = 1f,
                     height = 1f,
-                    backgroundColor = CustomColor.gray6,
-                    contentScale = ContentScale.Fit,
-                    alpha = 1f
+                    backgroundColor = Color.Black,
+                    contentScale = ContentScale.FillWidth
                 )
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 16.dp, top = 19.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.Start
+                ){
+                    IconButton(
+                        modifier = Modifier.size(24.dp),
+                        onClick = {showDialog = false}
+                    ){
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Dialog",
+                            tint = Color.White
+                        )
+                    }
+                }
             }
         }
+    }
+
+    Box(
+        modifier = Modifier
+            .size(80.dp)
+            .background(color = CustomColor.gray1)
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    showDialog = !showDialog
+                }
+            },
+        contentAlignment = Alignment.Center
+    ){
+        //image view
+        ImageView(
+            imageUrl = picture,
+            width = 1f,
+            height = 1f,
+            backgroundColor = CustomColor.gray1,
+            contentScale = ContentScale.FillWidth
+        )
     }
 }
 

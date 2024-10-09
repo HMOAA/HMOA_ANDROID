@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,26 +37,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.feature_hbti.viewmodel.WriteReviewViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteReviewRoute(){
-
+fun WriteReviewRoute(
+    orderId: Int?,
+    navBack: () -> Unit,
+    viewModel: WriteReviewViewModel = hiltViewModel()
+){
+    LaunchedEffect(Unit){viewModel.setId(orderId)}
+    val isDone by viewModel.isDone.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    WriteReviewScreen(
+        onCancelClick = navBack,
+        onOkClick = { images, content ->
+            viewModel.postReview(
+                context = context,
+                images = images,
+                content = content
+            )
+        }
+    )
+    LaunchedEffect(isDone){
+        if (isDone) navBack()
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WriteReviewScreen(
-    navBack: () -> Unit,
-    onOkClick: () -> Unit,
+    onCancelClick: () -> Unit,
+    onOkClick: (List<Uri>, String) -> Unit,
 ){
     val pictures = remember{ mutableStateListOf<Uri>() }
     val state = rememberPagerState(initialPage = 0, pageCount = {pictures.size})
@@ -69,8 +93,8 @@ fun WriteReviewScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         TextTopBar(
-            onCancelClick  = navBack,
-            onOkClick = onOkClick
+            onCancelClick  = onCancelClick,
+            onOkClick = { onOkClick(pictures, content) }
         )
         Spacer(Modifier.height(24.dp))
         BasicTextField(
@@ -229,7 +253,7 @@ private fun TextTopBar(
 @Preview
 private fun WriteReviewScreenUITest(){
     WriteReviewScreen(
-        navBack = {},
-        onOkClick = {},
+        onCancelClick = {},
+        onOkClick = { a, b -> },
     )
 }

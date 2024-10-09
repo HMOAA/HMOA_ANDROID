@@ -40,14 +40,12 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun FloatingActionBtn(
-    onNavRecommend: () -> Unit,
-    onNavHbtiReview: () -> Unit,
-    onNavFree: () -> Unit,
+    options: List<String>,
+    events: List<() -> Unit>,
     isAvailable: Boolean,
 ) {
-
     var isOpen by remember { mutableStateOf(false) }
-
+    val height = options.size * 46
     val textStyle = TextStyle(
         color = Color.White,
         fontSize = 16.sp,
@@ -79,7 +77,7 @@ fun FloatingActionBtn(
 
         DropdownMenu(
             modifier = Modifier
-                .height(138.dp)
+                .height(height.dp)
                 .width(135.dp)
                 .background(color = Color.Black, shape = RoundedCornerShape(10.dp)),
             expanded = isOpen,
@@ -88,48 +86,23 @@ fun FloatingActionBtn(
             },
             offset = DpOffset(x = 0.dp, y = (-204).dp)
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        modifier = Modifier.height(46.dp),
-                        text = "추천",
-                        style = textStyle
-                    )
-                },
-                onClick = {
-                    isOpen = false
-                    onNavRecommend()
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        modifier = Modifier.height(46.dp),
-                        text = "시향기",
-                        style = textStyle
-                    )
-                },
-                onClick = {
-                    isOpen = false
-                    onNavHbtiReview()
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        modifier = Modifier.height(46.dp),
-                        text = "자유",
-                        style = textStyle
-                    )
-                },
-                onClick = {
-                    isOpen = false
-                    onNavFree()
-                }
-            )
+            repeat(options.size){ idx ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            modifier = Modifier.height(46.dp),
+                            text = options[idx],
+                            style = textStyle
+                        )
+                    },
+                    onClick = {
+                        isOpen = false
+                        events[idx]()
+                    }
+                )
+            }
         }
     }
-
 }
 
 @Preview(showBackground = true)
@@ -142,9 +115,12 @@ fun TestFAB() {
         contentAlignment = Alignment.Center
     ) {
         FloatingActionBtn(
-            onNavRecommend = {},
-            onNavHbtiReview = {},
-            onNavFree = {},
+            options = listOf("추천", "시향기", "자유"),
+            events = listOf(
+                {},
+                {},
+                {}
+            ),
             isAvailable = true,
         )
     }

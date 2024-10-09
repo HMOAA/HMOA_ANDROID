@@ -123,10 +123,17 @@ fun CommunityPage(
                     horizontalAlignment = Alignment.End
                 ) {
                     FloatingActionBtn(
-                        onNavRecommend = { navPost(Category.추천.name) },
-                        onNavHbtiReview = { navPost(Category.시향기.name) },
-                        onNavFree = { navPost(Category.자유.name) },
-                        isAvailable = !uiState.enableLoginErrorDialog,
+                        options = listOf(
+                            Category.추천.name,
+                            Category.시향기.name,
+                            Category.자유.name,
+                        ),
+                        events = listOf(
+                            {navPost(Category.추천.name)},
+                            {navPost(Category.시향기.name)},
+                            {navPost(Category.자유.name)}
+                        ),
+                        isAvailable = true,
                     )
                 }
             }

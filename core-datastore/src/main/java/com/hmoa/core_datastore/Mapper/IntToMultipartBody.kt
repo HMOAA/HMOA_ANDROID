@@ -25,3 +25,7 @@ fun Int.transformMultipartBody() : MultipartBody.Part {
     val result = this.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
     return MultipartBody.Part.createFormData("deleteCommunityPhotoIds", null, result)
 }
+
+fun Int.transformRequestBody(): RequestBody{
+    return this.toString().transformRequestBody()
+}

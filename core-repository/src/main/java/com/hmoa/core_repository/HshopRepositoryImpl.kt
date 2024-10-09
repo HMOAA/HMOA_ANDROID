@@ -5,6 +5,7 @@ import com.hmoa.core_datastore.Hshop.HshopRemoteDataStore
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.FinalOrderResponseDto
+import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PostNoteOrderResponseDto
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
@@ -34,5 +35,9 @@ class HshopRepositoryImpl @Inject constructor(private val hshopRemoteDataStore: 
         productId: Int
     ): ResultResponse<FinalOrderResponseDto> {
         return hshopRemoteDataStore.deleteNoteInOrder(orderId, productId)
+    }
+
+    override suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>> {
+        return hshopRemoteDataStore.getMyOrders()
     }
 }

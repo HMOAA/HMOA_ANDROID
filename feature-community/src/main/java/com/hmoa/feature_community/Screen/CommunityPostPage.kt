@@ -134,7 +134,7 @@ fun PostCommunityPage(
             onDeletePictures = onDeletePictures
         )
 
-        BottomCameraBtn(onUpdatePictures)
+        BottomCameraBtn(onUpdatePictures = onUpdatePictures)
     }
 }
 

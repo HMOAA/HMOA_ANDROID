@@ -49,6 +49,7 @@ import com.hmoa.feature_hbti.navigation.order
 import com.hmoa.feature_hbti.navigation.orderResult
 import com.hmoa.feature_hbti.navigation.perfumeRecommendationResultRoute
 import com.hmoa.feature_hbti.navigation.perfumeRecommendationRoute
+import com.hmoa.feature_hbti.navigation.writeReview
 import com.hmoa.feature_home.navigation.allPerfumeScreen
 import com.hmoa.feature_home.navigation.homeScreen
 import com.hmoa.feature_home.navigation.navigateToAllPerfume
@@ -276,7 +277,6 @@ fun SetUpNavGraph(
             navBack = navController::navigateToBack,
             navHome = navController::navigateToHome
         )
-        //order()
         perfumeRecommendationRoute(
             onBackClick = navController::navigateToBack,
             onNextClick = navController::navigateToPerfumeRecommendationResult
@@ -286,5 +286,6 @@ fun SetUpNavGraph(
             navPerfumeDescription = { id -> navController.navigateToPerfume(id) },
             navHome = navController::navigateToHome
         )
+        writeReview(navBack = navController::navigateToBack)
     }
 }

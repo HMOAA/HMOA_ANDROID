@@ -22,6 +22,7 @@ import com.hmoa.feature_hbti.screen.OrderResultRoute
 import com.hmoa.feature_hbti.screen.OrderRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
 import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
+import com.hmoa.feature_hbti.screen.WriteReviewRoute
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -54,7 +55,8 @@ fun NavController.navigateToAddAddress(addressJson: String, productIds: String) 
     launchSingleTop = true
 }
 fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name)
-
+//주문 리뷰 작성
+fun NavController.navigateToWriteReview(orderId: Int) = navigate(HbtiRoute.WriteReviewRoute.name)
 fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
     composable(route = "${HbtiRoute.Hbti}") {
         HbtiRoute(onAfterOrderClick = onAfterOrderClick, onHbtiSurveyClick = onHbtiSurveyClick)
@@ -225,6 +227,23 @@ fun NavGraphBuilder.orderResult(
         OrderResultRoute(
             navBack = navBack,
             navHome = navHome
+        )
+    }
+}
+
+fun NavGraphBuilder.writeReview(
+    navBack: () -> Unit
+){
+    composable(
+        route = "${HbtiRoute.WriteReviewRoute.name}/{orderId}",
+        arguments = listOf(
+            navArgument("orderId"){type = NavType.IntType}
+        )
+    ){
+        val orderId = it.arguments?.getInt("orderId")
+        WriteReviewRoute(
+            orderId = orderId,
+            navBack = navBack
         )
     }
 }

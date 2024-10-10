@@ -136,9 +136,10 @@ fun ReviewItem(
             horizontalArrangement = Arrangement.End
         ){
             Text(
-                text = "향BTI 시향카드 [${category}]",
+                text = category,
                 fontSize = 9.sp,
-                fontFamily = CustomFont.regular
+                fontFamily = CustomFont.regular,
+                color = Color.White
             )
         }
     }

@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
@@ -141,7 +142,10 @@ private fun ReviewContent(
         ){
             FloatingActionBtn(
                 options = orderRecords.map{it.orderInfo},
-                events = orderRecords.map{onFABClick(it.orderId)},
+                events = orderRecords.map{ { onFABClick(it.orderId) }},
+                width = 208.dp,
+                fontSize = 12.sp,
+                verticalPadding = 24,
                 isAvailable = true
             )
         }

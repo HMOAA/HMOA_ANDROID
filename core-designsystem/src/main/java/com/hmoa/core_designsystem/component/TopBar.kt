@@ -32,6 +32,7 @@ fun TopBar(
     iconSize : Dp = 20.dp, //icon 크기
     navIcon : Painter ?= null, //navigation 버튼
     onNavClick : () -> Unit = {}, //navigation click 이벤트
+    navIconColor: Color = Color.Black,
     menuIcon : Painter ?= null, //menu 버튼
     onMenuClick : () -> Unit = {}, //menu click 이벤트,
     menuIconColor: Color = CustomColor.black,

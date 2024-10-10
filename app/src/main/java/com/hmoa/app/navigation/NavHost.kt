@@ -42,6 +42,7 @@ import com.hmoa.feature_hbti.navigation.navigateToOrder
 import com.hmoa.feature_hbti.navigation.navigateToOrderResult
 import com.hmoa.feature_hbti.navigation.navigateToPerfumeRecommendation
 import com.hmoa.feature_hbti.navigation.navigateToPerfumeRecommendationResult
+import com.hmoa.feature_hbti.navigation.navigateToWriteReview
 import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
 import com.hmoa.feature_hbti.navigation.notePickResult
 import com.hmoa.feature_hbti.navigation.notePickScreen
@@ -49,6 +50,7 @@ import com.hmoa.feature_hbti.navigation.order
 import com.hmoa.feature_hbti.navigation.orderResult
 import com.hmoa.feature_hbti.navigation.perfumeRecommendationResultRoute
 import com.hmoa.feature_hbti.navigation.perfumeRecommendationRoute
+import com.hmoa.feature_hbti.navigation.review
 import com.hmoa.feature_hbti.navigation.writeReview
 import com.hmoa.feature_home.navigation.allPerfumeScreen
 import com.hmoa.feature_home.navigation.homeScreen
@@ -287,5 +289,6 @@ fun SetUpNavGraph(
             navHome = navController::navigateToHome
         )
         writeReview(navBack = navController::navigateToBack)
+        review(navBack = navController::navigateToBack, navWriteReview = navController::navigateToWriteReview)
     }
 }

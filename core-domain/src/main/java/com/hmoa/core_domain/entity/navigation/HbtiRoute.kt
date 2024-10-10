@@ -15,4 +15,5 @@ enum class HbtiRoute {
     OrderResultRoute,
     AddAddressRoute,
     WriteReviewRoute,
+    ReviewRoute,
 }

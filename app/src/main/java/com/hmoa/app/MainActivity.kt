@@ -6,8 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -298,20 +296,5 @@ class MainActivity : AppCompatActivity() {
         } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             lifecycleScope.launch { viewModel.saveNotificationEnabled(true) }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //30분 마다 토큰 재발급하는 임시대책
-        val handler = Handler(Looper.getMainLooper())
-        val runnable = object : java.lang.Runnable {
-            override fun run() {
-                // 작업 실행
-                Log.d("HandlerTest", "another shot in 1 minute")
-                viewModel.refreshToken()
-                handler.postDelayed(this, 30 * 60 * 1000) // 30분 후에 다시 실행
-            }
-        }
-        handler.post(runnable)
     }
 }

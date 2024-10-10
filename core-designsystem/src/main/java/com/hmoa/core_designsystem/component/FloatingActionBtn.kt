@@ -41,7 +41,7 @@ import com.hmoa.core_designsystem.theme.pretendard
 @Composable
 fun FloatingActionBtn(
     options: List<String>,
-    events: List<() -> Unit>,
+    events: List<Unit>,
     isAvailable: Boolean,
 ) {
     var isOpen by remember { mutableStateOf(false) }
@@ -97,7 +97,7 @@ fun FloatingActionBtn(
                     },
                     onClick = {
                         isOpen = false
-                        events[idx]()
+                        events[idx]
                     }
                 )
             }
@@ -116,11 +116,7 @@ fun TestFAB() {
     ) {
         FloatingActionBtn(
             options = listOf("추천", "시향기", "자유"),
-            events = listOf(
-                {},
-                {},
-                {}
-            ),
+            events = listOf(),
             isAvailable = true,
         )
     }

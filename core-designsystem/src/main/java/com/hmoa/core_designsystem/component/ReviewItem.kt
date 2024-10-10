@@ -49,6 +49,7 @@ import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun ReviewItem(
+    isItemClickable: Boolean,
     profileImg: String,
     nickname: String,
     writtenAt: String,
@@ -66,7 +67,7 @@ fun ReviewItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .background(color = CustomColor.gray5, shape = RoundedCornerShape(size = 5.dp))
-            .clickable { onItemClick() }
+            .clickable { if(isItemClickable) onItemClick() }
             .padding(top = 20.dp, start = 20.dp, end = 8.dp, bottom = 8.dp),
     ){
         Row(
@@ -240,6 +241,7 @@ private fun ReviewItemUITest(){
             .background(color = Color.White)
     ){
         ReviewItem(
+            isItemClickable = false,
             profileImg = "",
             nickname = "향수 러버",
             writtenAt = "10일 전",

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -31,8 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
@@ -40,25 +44,29 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun FloatingActionBtn(
+    width: Dp,
+    fontSize: TextUnit,
+    verticalPadding: Int,
     options: List<String>,
-    events: List<Unit>,
+    events: List<() -> Unit>,
     isAvailable: Boolean,
 ) {
     var isOpen by remember { mutableStateOf(false) }
-    val height = options.size * 46
+    val height = options.size * 46 + verticalPadding * options.size * 2
     val textStyle = TextStyle(
         color = Color.White,
-        fontSize = 16.sp,
+        fontSize = fontSize,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     )
 
     Column(
-        modifier = Modifier.width(135.dp)
+        modifier = Modifier.width(width)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(color = Color.Transparent)
                 .padding(end = 8.dp),
             horizontalArrangement = Arrangement.End
         ) {
@@ -77,22 +85,24 @@ fun FloatingActionBtn(
 
         DropdownMenu(
             modifier = Modifier
-                .height(height.dp)
-                .width(135.dp)
-                .background(color = Color.Black, shape = RoundedCornerShape(10.dp)),
+                .wrapContentHeight()
+                .width(width)
+                .background(color = Color.Black),
             expanded = isOpen,
             onDismissRequest = {
                 isOpen = false
             },
-            offset = DpOffset(x = 0.dp, y = (-204).dp)
+            offset = DpOffset(x = 0.dp, y = (-(80 + height)).dp)
         ) {
             repeat(options.size){ idx ->
                 DropdownMenuItem(
+                    contentPadding = PaddingValues(vertical = verticalPadding.dp),
                     text = {
                         Text(
-                            modifier = Modifier.height(46.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             text = options[idx],
-                            style = textStyle
+                            style = textStyle,
+                            textAlign = TextAlign.Center
                         )
                     },
                     onClick = {
@@ -111,13 +121,18 @@ fun TestFAB() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White),
+            .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
         FloatingActionBtn(
             options = listOf("추천", "시향기", "자유"),
+//            options = listOf("후기 작성하기 (시트러스 24.10.08)"),
+//            options = listOf("추천", "시향기"),
             events = listOf(),
             isAvailable = true,
+            width = 135.dp,
+            fontSize = 16.sp,
+            verticalPadding = 6
         )
     }
 }

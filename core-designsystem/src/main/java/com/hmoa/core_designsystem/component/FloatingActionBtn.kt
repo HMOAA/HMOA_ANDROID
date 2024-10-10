@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,13 +45,17 @@ import com.hmoa.core_designsystem.theme.pretendard
 fun FloatingActionBtn(
     width: Dp,
     fontSize: TextUnit,
-    verticalPadding: Int,
     options: List<String>,
     events: List<() -> Unit>,
     isAvailable: Boolean,
 ) {
     var isOpen by remember { mutableStateOf(false) }
-    val height = options.size * 46 + verticalPadding * options.size * 2
+    val itemHeight = when(fontSize){
+        16.sp -> 40
+        12.sp -> 35
+        else -> 30
+    }
+    val height = options.size * itemHeight
     val textStyle = TextStyle(
         color = Color.White,
         fontSize = fontSize,
@@ -92,24 +95,28 @@ fun FloatingActionBtn(
             onDismissRequest = {
                 isOpen = false
             },
-            offset = DpOffset(x = 0.dp, y = (-(80 + height)).dp)
+            offset = DpOffset(x = 0.dp, y = (-(90 + height)).dp)
         ) {
             repeat(options.size){ idx ->
-                DropdownMenuItem(
-                    contentPadding = PaddingValues(vertical = verticalPadding.dp),
-                    text = {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = options[idx],
-                            style = textStyle,
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    onClick = {
-                        isOpen = false
-                        events[idx]
-                    }
-                )
+                Row(
+                    modifier = Modifier.height(itemHeight.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = options[idx],
+                                style = textStyle,
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        onClick = {
+                            isOpen = false
+                            events[idx]
+                        }
+                    )
+                }
             }
         }
     }
@@ -131,8 +138,7 @@ fun TestFAB() {
             events = listOf(),
             isAvailable = true,
             width = 135.dp,
-            fontSize = 16.sp,
-            verticalPadding = 6
+            fontSize = 16.sp
         )
     }
 }

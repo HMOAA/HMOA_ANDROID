@@ -5,14 +5,8 @@ import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.request.PerfumeWeatherRequestDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.PerfumeAgeResponseDto
-import com.hmoa.core_model.response.PerfumeDetailResponseDto
-import com.hmoa.core_model.response.PerfumeDetailSecondResponseDto
-import com.hmoa.core_model.response.PerfumeGenderResponseDto
-import com.hmoa.core_model.response.PerfumeLikeResponseDto
-import com.hmoa.core_model.response.PerfumeWeatherResponseDto
-import com.hmoa.core_model.response.RecentPerfumeResponseDto
+import com.hmoa.core_model.response.*
+import com.hmoa.core_network.authentication.AuthenticatorImpl
 import com.hmoa.core_network.service.PerfumeService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
@@ -21,17 +15,27 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
-class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: PerfumeService) : PerfumeDataStore {
+class PerfumeDataStoreImpl @Inject constructor(
+    private val perfumeService: PerfumeService,
+    private val authenticator: AuthenticatorImpl
+) : PerfumeDataStore {
     override suspend fun getPerfumeTopDetail(perfumeId: String): ResultResponse<PerfumeDetailResponseDto> {
         var result = ResultResponse<PerfumeDetailResponseDto>()
-        perfumeService.getPerfumeTopDetail(perfumeId).suspendOnSuccess {
-            result.data = this.data
-        }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
-        }
+        perfumeService.getPerfumeTopDetail(perfumeId)
+            .suspendOnSuccess {
+                result.data = this.data
+            }
+            .suspendOnError {
+                authenticator.handleApiError(
+                    rawMessage = this.message(),
+                    handleErrorMesssage = { result.errorMessage = it },
+                    handleApiCallAfterTokenRefresh = {
+                        perfumeService.getPerfumeTopDetail(perfumeId).suspendOnSuccess { result.data = this.data }
+                    })
+            }
         return result
     }
+
 
     override suspend fun getPerfumeBottomDetail(perfumeId: String): ResultResponse<PerfumeDetailSecondResponseDto> {
         var result = ResultResponse<PerfumeDetailSecondResponseDto>()
@@ -113,11 +117,12 @@ class PerfumeDataStoreImpl @Inject constructor(private val perfumeService: Perfu
         }
         return result
     }
+
     override suspend fun getRecentPerfumes(): ResultResponse<RecentPerfumeResponseDto> {
         val result = ResultResponse<RecentPerfumeResponseDto>()
-        perfumeService.getRecentPerfumes().suspendOnSuccess{
+        perfumeService.getRecentPerfumes().suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
+        }.suspendOnError {
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }
         return result

@@ -145,7 +145,6 @@ private fun ReviewContent(
                 events = orderRecords.map{ { onFABClick(it.orderId) }},
                 width = 208.dp,
                 fontSize = 12.sp,
-                verticalPadding = 24,
                 isAvailable = true
             )
         }

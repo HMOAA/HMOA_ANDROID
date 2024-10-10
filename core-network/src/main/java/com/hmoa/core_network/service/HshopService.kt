@@ -2,7 +2,6 @@ package com.hmoa.core_network.service
 
 import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.FinalOrderResponseDto
-import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PostNoteOrderResponseDto
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
@@ -31,6 +30,4 @@ interface HshopService {
         @Path("orderId") orderId: Int,
         @Path("productId") productId: Int
     ): ApiResponse<FinalOrderResponseDto>
-    @GET("/shop/order/me")
-    suspend fun getMyOrders(): ApiResponse<List<GetMyOrderResponseDto>>
 }

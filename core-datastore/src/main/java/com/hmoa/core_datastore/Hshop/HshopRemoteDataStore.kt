@@ -3,7 +3,6 @@ package com.hmoa.core_datastore.Hshop
 import ResultResponse
 import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.FinalOrderResponseDto
-import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PostNoteOrderResponseDto
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
@@ -15,5 +14,4 @@ interface HshopRemoteDataStore {
     suspend fun postNotesSelected(dto: ProductListRequestDto): ResultResponse<PostNoteSelectedResponseDto>
     suspend fun getFinalOrderResult(orderId: Int): ResultResponse<FinalOrderResponseDto>
     suspend fun deleteNoteInOrder(orderId: Int, productId: Int): ResultResponse<FinalOrderResponseDto>
-    suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>>
 }

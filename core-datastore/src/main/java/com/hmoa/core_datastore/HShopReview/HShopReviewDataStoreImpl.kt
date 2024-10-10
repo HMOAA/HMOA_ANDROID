@@ -4,6 +4,7 @@ import ResultResponse
 import com.hmoa.core_datastore.Mapper.transformRequestBody
 import com.hmoa.core_datastore.Mapper.transformToMultipartBody
 import com.hmoa.core_model.data.ErrorMessage
+import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.core_network.service.HShopReviewService
@@ -59,6 +60,16 @@ class HShopReviewDataStoreImpl @Inject constructor(
     override suspend fun deleteReviewLike(reviewId: Int): ResultResponse<Any> {
         val result = ResultResponse<Any>()
         hShopReviewService.deleteReviewLike(reviewId).suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnSuccess{
+            result.data = this.data
+        }
+        return result
+    }
+
+    override suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>> {
+        val result = ResultResponse<List<GetMyOrderResponseDto>>()
+        hShopReviewService.getMyOrders().suspendOnError{
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }.suspendOnSuccess{
             result.data = this.data

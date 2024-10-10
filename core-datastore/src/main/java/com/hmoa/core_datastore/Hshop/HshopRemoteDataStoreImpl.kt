@@ -79,14 +79,4 @@ class HshopRemoteDataStoreImpl @Inject constructor(private val hshopService: Hsh
         }
         return result
     }
-
-    override suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>> {
-        val result = ResultResponse<List<GetMyOrderResponseDto>>()
-        hshopService.getMyOrders().suspendOnError{
-            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-        }.suspendOnSuccess{
-            result.data = this.data
-        }
-        return result
-    }
 }

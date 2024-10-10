@@ -115,6 +115,7 @@ fun ReviewItem(
             ){
                 Icon(
                     painter = painterResource(R.drawable.three_dot_menu_vertical),
+                    tint = CustomColor.gray2,
                     contentDescription = "Menu Button"
                 )
             }

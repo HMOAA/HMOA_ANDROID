@@ -119,13 +119,13 @@ fun CommunityPage(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                        .padding(end = 8.dp),
                     horizontalAlignment = Alignment.End
                 ) {
                     FloatingActionBtn(
                         width = 135.dp,
                         fontSize = 16.sp,
-                        verticalPadding = 24,
                         options = listOf(
                             Category.추천.name,
                             Category.시향기.name,

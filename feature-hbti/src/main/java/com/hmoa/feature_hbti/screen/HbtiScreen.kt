@@ -5,36 +5,113 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.core_designsystem.component.TopBar
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
-import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.component.ReviewItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_model.response.Photo
+import com.hmoa.core_model.response.ReviewResponseDto
+import com.hmoa.feature_hbti.viewmodel.HbtiHomeUiState
+import com.hmoa.feature_hbti.viewmodel.HbtiHomeViewModel
 
 @Composable
-fun HbtiRoute(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
-    HbtiScreen(onHbtiSurveyClick = { onHbtiSurveyClick() }, onAfterOrderClick = { onAfterOrderClick() })
+fun HbtiRoute(
+    navHome: () -> Unit,
+    navReview: () -> Unit,
+    navBack: () -> Unit,
+    onHbtiSurveyClick: () -> Unit,
+    onAfterOrderClick: () -> Unit,
+    viewModel: HbtiHomeViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
+    HbtiScreen(
+        onHbtiSurveyClick = { onHbtiSurveyClick() },
+        onAfterOrderClick = { onAfterOrderClick() },
+        navHome = navHome,
+        navReview = navReview,
+        navBack = navBack,
+        uiState = uiState,
+        errState = errState,
+    )
 }
 
 @Composable
-fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
-    val scrollState = rememberScrollState()
+fun HbtiScreen(
+    onHbtiSurveyClick: () -> Unit,
+    onAfterOrderClick: () -> Unit,
+    navBack: () -> Unit,
+    navHome: () -> Unit,
+    navReview: () -> Unit,
+    uiState: HbtiHomeUiState,
+    errState: ErrorUiState,
+) {
+    var isOpen by remember{mutableStateOf(true)}
+    when(uiState){
+        HbtiHomeUiState.Loading -> AppLoadingScreen()
+        HbtiHomeUiState.Error -> {
+            ErrorUiSetView(
+                isOpen = isOpen,
+                onConfirmClick = navHome,
+                errorUiState = errState,
+                onCloseClick = navHome
+            )
+        }
+        is HbtiHomeUiState.Success -> {
+            HbtiHomeContent(
+                reviews = uiState.reviews,
+                onHbtiSurveyClick = onHbtiSurveyClick,
+                onAfterOrderClick = onAfterOrderClick,
+                onReviewItemClick = navReview,
+                onBackClick = navBack
+            )
+        }
+    }
+}
+
+@Composable
+private fun HbtiHomeContent(
+    reviews: List<ReviewResponseDto>,
+    onHbtiSurveyClick: () -> Unit,
+    onAfterOrderClick: () -> Unit,
+    onReviewItemClick: () -> Unit,
+    onBackClick: () -> Unit,
+){
     Column(
-        modifier = Modifier.background(color = Color.Black).fillMaxSize().padding(horizontal = 16.dp)
-            .verticalScroll(scrollState)
+        modifier = Modifier
+            .background(color = Color.Black)
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
-        TopBar(title = "향BTI", titleColor = Color.White)
+        TopBar(
+            title = "향BTI",
+            titleColor = Color.White,
+            color = Color.Black,
+            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            onNavClick = onBackClick
+        )
         Text(
             "당신의 향BTI는 무엇일까요?",
             style = TextStyle(
@@ -56,8 +133,13 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
         )
 
         Row(modifier = Modifier.padding(top = 20.dp, bottom = 32.dp)) {
-            Box(Modifier.padding(end = 15.dp).fillMaxWidth(0.5f).height(107.dp).clickable { onHbtiSurveyClick() }
-                .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp))) {
+            Box(
+                Modifier
+                    .padding(end = 15.dp)
+                    .fillMaxWidth(0.5f)
+                    .height(107.dp)
+                    .clickable { onHbtiSurveyClick() }
+                    .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp))) {
                 ImageView(
                     imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/122bc5b1-1cc1-44b3-a468-1b56f9998994",
                     width = 1f,
@@ -65,7 +147,9 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
                     backgroundColor = Color.Transparent,
                     contentScale = ContentScale.FillBounds
                 )
-                Column(modifier = Modifier.fillMaxWidth(1f).height(107.dp)) {
+                Column(modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(107.dp)) {
                     Text(
                         "향BTI\n검사하러 가기",
                         style = TextStyle(
@@ -79,7 +163,9 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
                 }
             }
             Box(
-                modifier = Modifier.fillMaxWidth(1f).height(107.dp)
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(107.dp)
                     .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp))
                     .clickable { onAfterOrderClick() }
                     .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp))
@@ -91,7 +177,9 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
                     backgroundColor = Color.Transparent,
                     contentScale = ContentScale.FillBounds
                 )
-                Column(modifier = Modifier.fillMaxWidth(1f).height(107.dp)) {
+                Column(modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(107.dp)) {
                     Text(
                         "향료 입력하기\n(주문 후)",
                         style = TextStyle(
@@ -107,7 +195,8 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 12.dp).height(30.dp)
+            modifier = Modifier
+                .height(30.dp)
                 .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp))
         ) {
             ImageView(
@@ -117,8 +206,9 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
                 backgroundColor = Color.Transparent,
                 contentScale = ContentScale.FillHeight
             )
+            Spacer(Modifier.width(9.dp))
             Text(
-                "향BTI란?",
+                "향BTI 후기",
                 style = TextStyle(
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
@@ -127,90 +217,48 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
                 )
             )
         }
-        Text(
-            "공감되는 상황을 통해 알아보는 기능",
-            style = TextStyle(
-                color = Color.White,
-                fontWeight = FontWeight.Normal,
-                fontFamily = pretendard,
-                fontSize = 14.sp
-            ),
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-        Column(
-            modifier = Modifier.fillMaxWidth(1f).padding(bottom = 20.dp)
-                .background(color = CustomColor.gray5, shape = RoundedCornerShape(5.dp))
-        ) {
-            Text(
-                "\"엇?!\"저 향기 뭐지?",
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = pretendard,
-                    fontSize = 14.sp
-                ),
-                modifier = Modifier.padding(horizontal = 20.dp).padding(top = 20.dp).padding(bottom = 8.dp)
-            )
-            Text(
-                "했던 경험 많이들 있으시지 않나요?\n보통 우리는 특정 향수를 선호하기도 하지만, 그 향수를 구성하고\n있는 '향료'에 이끌려 이런 현상을 경험하게 됩니다.",
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = pretendard,
-                    fontSize = 12.sp
-                ),
-                modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 20.dp)
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+            horizontalArrangement = Arrangement.End
+        ){
+            TextButton(
+                onClick = onReviewItemClick
+            ){
+                Text(
+                    "전체보기",
+                    style = TextStyle(
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = pretendard,
+                        fontSize = 12.sp
+                    ),
+                )
+            }
         }
-        Column(
-            modifier = Modifier.fillMaxWidth(1f).padding(bottom = 20.dp)
-                .background(color = CustomColor.gray5, shape = RoundedCornerShape(5.dp))
-        ) {
-            Text(
-                "하지만.. 이게 어떤 향이야?",
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = pretendard,
-                    fontSize = 14.sp
-                ),
-                modifier = Modifier.padding(horizontal = 20.dp).padding(top = 20.dp).padding(bottom = 8.dp)
-            )
-            Text(
-                "향료들은 시더우드, 피오니, 베르가못과 같이 우리에게 친숙하지\n않은 단어들이 대부분입니다.\n향BTI는 향료들을 소비자에게 직접 배송해서 소비자가 선호하고\n원하는 향료를 찾아낼 수 있도록 도움을 제공합니다.",
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = pretendard,
-                    fontSize = 12.sp
-                ),
-                modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 20.dp)
-            )
-        }
-        Column(
-            modifier = Modifier.fillMaxWidth(1f).padding(bottom = 20.dp)
-                .background(color = CustomColor.gray5, shape = RoundedCornerShape(5.dp))
-        ) {
-            Text(
-                "그래서 이 향이 들어간 향수가 뭔데?",
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = pretendard,
-                    fontSize = 14.sp
-                ),
-                modifier = Modifier.padding(horizontal = 20.dp).padding(top = 20.dp).padding(bottom = 8.dp)
-            )
-            Text(
-                "소비자가 선호하는 향료 데이터를 수집한 후, 그 향료가 들어간\n향수를 종합적으로 추천합니다.",
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = pretendard,
-                    fontSize = 12.sp
-                ),
-                modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 20.dp)
-            )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ){
+            items(reviews){ review ->
+                ReviewItem(
+                    isItemClickable = true,
+                    profileImg = review.profileImgUrl,
+                    nickname = review.author,
+                    writtenAt = review.createdAt,
+                    isLiked = review.isLiked,
+                    heartNumber = review.heartCount,
+                    content = review.content,
+                    images = review.hbtiPhotos.map{it.photoUrl},
+                    category = review.orderTitle,
+                    onHeartClick = onReviewItemClick,
+                    onMenuClick = onReviewItemClick,
+                    onItemClick = onReviewItemClick
+                )
+            }
         }
     }
 }
@@ -218,5 +266,70 @@ fun HbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
 @Preview
 @Composable
 fun HbtiScreenPreview() {
-    HbtiScreen({}, {})
+    HbtiScreen({}, {}, errState = ErrorUiState.Loading, uiState = HbtiHomeUiState.Success(listOf(
+        ReviewResponseDto(
+            hbtiReviewId = 0,
+            profileImgUrl = "",
+            author = "향수 러버",
+            content = "향수를 1회도 구매하지 않은 사람인데 향모아에서 인생향수 찾았어요!",
+            imagesCount = 4,
+            hbtiPhotos = listOf(
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+            ),
+            createdAt = "10일 전",
+            isWrited = false,
+            heartCount = 12,
+            isLiked = false,
+            orderTitle = "시트러스"
+        ),
+        ReviewResponseDto(
+            hbtiReviewId = 0,
+            profileImgUrl = "",
+            author = "향수 러버",
+            content = "평소에 선호하는 향이 있었는데 그 향의 이름을 몰랐는데 향료 배송받고 시향해본 통카 빈? 이더라구요 제가 좋아했던 향수들은 다 통카 빈이 들어가있네요 ㅎ 저 같은 분들에게 추천해요",
+            imagesCount = 4,
+            hbtiPhotos = listOf(
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+                Photo(
+                    photoUrl = "",
+                    photoId = 0
+                ),
+            ),
+            createdAt = "10일 전",
+            isWrited = false,
+            heartCount = 12,
+            isLiked = true,
+            orderTitle = "시트러스"
+        ),
+    )),
+        navBack = {},
+        navHome = {},
+        navReview = {}
+    )
 }

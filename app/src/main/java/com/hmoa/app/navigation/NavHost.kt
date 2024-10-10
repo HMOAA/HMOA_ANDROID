@@ -42,6 +42,7 @@ import com.hmoa.feature_hbti.navigation.navigateToOrder
 import com.hmoa.feature_hbti.navigation.navigateToOrderResult
 import com.hmoa.feature_hbti.navigation.navigateToPerfumeRecommendation
 import com.hmoa.feature_hbti.navigation.navigateToPerfumeRecommendationResult
+import com.hmoa.feature_hbti.navigation.navigateToReview
 import com.hmoa.feature_hbti.navigation.navigateToWriteReview
 import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
 import com.hmoa.feature_hbti.navigation.notePickResult
@@ -232,6 +233,9 @@ fun SetUpNavGraph(
 
         /** hbti 모듈 */
         hbtiScreen(
+            navBack = navController::navigateToBack,
+            navHome = navController::navigateToHome,
+            navReview = navController::navigateToReview,
             onHbtiSurveyClick = navController::navigateToHbtiSurvey,
             onAfterOrderClick = navController::navigateToPerfumeRecommendation
         )

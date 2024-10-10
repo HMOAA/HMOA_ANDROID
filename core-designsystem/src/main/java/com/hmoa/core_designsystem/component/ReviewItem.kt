@@ -67,7 +67,7 @@ fun ReviewItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .background(color = CustomColor.gray5, shape = RoundedCornerShape(size = 5.dp))
-            .clickable { if(isItemClickable) onItemClick() }
+            .clickable { if (isItemClickable) onItemClick() }
             .padding(top = 20.dp, start = 20.dp, end = 8.dp, bottom = 8.dp),
     ){
         Row(
@@ -137,7 +137,7 @@ fun ReviewItem(
             horizontalArrangement = Arrangement.End
         ){
             Text(
-                text = category,
+                text = "향BTI 시향카드 [${category}]",
                 fontSize = 9.sp,
                 fontFamily = CustomFont.regular,
                 color = Color.White

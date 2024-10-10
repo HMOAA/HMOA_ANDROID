@@ -105,8 +105,10 @@ private fun ReviewContent(
             TopBar(
                 color = Color.Black,
                 title = "향BTI 후기",
+                titleColor = Color.White,
                 navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = onBackClick
+                onNavClick = onBackClick,
+                navIconColor = Color.White,
             )
             LazyColumn(
                 modifier = Modifier

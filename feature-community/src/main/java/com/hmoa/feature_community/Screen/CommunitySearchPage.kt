@@ -26,8 +26,8 @@ import com.hmoa.feature_community.ViewModel.CommunitySearchViewModel
 
 @Composable
 fun CommunitySearchRoute(
-    onNavBack : () -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
+    navBack : () -> Unit,
+    navCommunityDesc: (Int) -> Unit,
     viewModel : CommunitySearchViewModel = hiltViewModel()
 ){
     val searchWord = viewModel.searchWord.collectAsStateWithLifecycle()
@@ -41,8 +41,8 @@ fun CommunitySearchRoute(
         onSearchWordChanged = { viewModel.updateSearchWord(it) },
         onClearSearchWord = { viewModel.clearSearchWord() },
         onClickSearch = { viewModel.updateFlag() },
-        onNavBack = onNavBack,
-        onNavCommunityDesc = onNavCommunityDesc
+        navBack = navBack,
+        navCommunityDesc = navCommunityDesc
     )
 }
 
@@ -54,8 +54,8 @@ fun CommunitySearchPage(
     onSearchWordChanged : (String) -> Unit,
     onClearSearchWord : () -> Unit,
     onClickSearch : () -> Unit,
-    onNavBack : () -> Unit,
-    onNavCommunityDesc : (Int) -> Unit
+    navBack : () -> Unit,
+    navCommunityDesc : (Int) -> Unit
 ){
     when(uiState){
         CommunitySearchUiState.Loading ->  AppLoadingScreen()
@@ -66,15 +66,15 @@ fun CommunitySearchPage(
                 onSearchWordChanged = onSearchWordChanged,
                 onClearSearchWord = onClearSearchWord,
                 onClickSearch = onClickSearch,
-                onNavBack = onNavBack,
-                onNavCommunityDesc = onNavCommunityDesc
+                navBack = navBack,
+                navCommunityDesc = navCommunityDesc
             )
         }
         CommunitySearchUiState.Error -> {
             ErrorUiSetView(
-                onLoginClick = onNavBack,
+                onLoginClick = navBack,
                 errorUiState = errState,
-                onCloseClick = onNavBack
+                onCloseClick = navBack
             )
         }
     }
@@ -87,8 +87,8 @@ private fun SearchContent(
     onSearchWordChanged: (String) -> Unit,
     onClearSearchWord: () -> Unit,
     onClickSearch: () -> Unit,
-    onNavBack: () -> Unit,
-    onNavCommunityDesc: (Int) -> Unit
+    navBack: () -> Unit,
+    navCommunityDesc: (Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -100,7 +100,7 @@ private fun SearchContent(
             onChangeWord = onSearchWordChanged,
             onClearWord = onClearSearchWord,
             onClickSearch = onClickSearch,
-            onNavBack = onNavBack
+            navBack = navBack
         )
         HorizontalDivider(thickness = 1.dp, color = CustomColor.gray3)
         LazyColumn(
@@ -111,7 +111,7 @@ private fun SearchContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    onPostClick = { onNavCommunityDesc(community.communityId) },
+                    onPostClick = { navCommunityDesc(community.communityId) },
                     postType = community.category,
                     postTitle = community.title,
                     heartCount = community.heartCount,

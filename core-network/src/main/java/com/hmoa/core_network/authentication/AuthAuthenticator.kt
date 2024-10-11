@@ -32,7 +32,7 @@ class AuthAuthenticator @Inject constructor(
         runBlocking {
             refreshTokenManager.refreshTokens(RememberedLoginRequestDto(rememberedToken))
                 .suspendOnError {
-                    if (this.response.code() == 401) {
+                    if (this.response.code() == 404) {
                         Log.e("AuthAuthenticator", "토큰 리프레싱 실패")
                     }
                 }

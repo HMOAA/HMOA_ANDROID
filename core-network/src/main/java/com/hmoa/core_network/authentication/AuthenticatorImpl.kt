@@ -49,14 +49,14 @@ class AuthenticatorImpl @Inject constructor(
             refreshTokenManager.refreshTokens(RememberedLoginRequestDto(rememberedToken))
                 .suspendOnError {
                     if (this.response.code() == 404) {
-                        Log.e("AuthAuthenticator", "토큰 리프레싱 실패")
+                        Log.e("Authenticator", "토큰 리프레싱 실패")
                         onRefreshFail(Json.decodeFromString<ErrorMessage>(this.message()))
                     }
                 }
                 .suspendOnSuccess {
                     val responseBody = this.response.body()
                     if (responseBody != null) {
-                        Log.d("AuthAuthenticator", "토큰 리프레싱 성공")
+                        Log.d("Authenticator", "토큰 리프레싱 성공")
                         updateAllTokens(
                             authToken = responseBody.authToken,
                             rememberToken = responseBody.rememberedToken

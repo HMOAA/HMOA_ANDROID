@@ -1,28 +1,40 @@
 name: Conditional Workflows
 
 on:
-  push:
-    branches:
-      - develop
-      - release
-      - master
-
-jobs:
-  ci-workflow:
-    runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, '[CI]')
-    steps:
-      - name: Run CI workflow
-        run: |
-          gh workflow run ciWorkflow.yml
-
-  cd-workflow:
-    runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, '[CD]')
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run CD workflow
-        run: |
-          gh workflow run cdWorkflow.yml
+  workflow_dispatch:
+#on:
+#  push:
+#    branches:
+#      - develop
+#      - release
+#      - master
+#
+#jobs:
+#  ci-workflow:
+#    runs-on: ubuntu-latest
+#    if: contains(github.event.head_commit.message, '[CI]')
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Setup JDK
+#        uses: ./.github/workflows/setup-jdk.yml
+#
+#      - name: Run CI workflow
+#        run: |
+#          gh workflow run ciWorkflow.yml
+#
+#  cd-workflow:
+#    runs-on: ubuntu-latest
+#    if: contains(github.event.head_commit.message, '[CD]')
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Setup JDK
+#        uses: ./.github/workflows/setup-jdk.yml
+#
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Run CD workflow
+#        run: |
+#          gh workflow run cdWorkflow.yml

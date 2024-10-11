@@ -18,14 +18,9 @@ jobs:
       SERVICE_ACCOUNT_JSON: ${{ SERVICE_ACCOUNT_JSON }}
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: ./.github/workflows/setup-jdk.yml
-
       - name: Grant execute permissions for scripts
         run: |
-          chmod +x copy-hmoa-android-secrets.sh
+          chmod +x ./copy-hmoa-android-secrets.sh
 
       - name: Generate release.keystore
         run: echo '${{ secrets.RELEASE_KEYSTORE }}' | base64 --d > ./app/release.keystore

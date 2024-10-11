@@ -5,7 +5,6 @@ on:
     branches:
       - "feature/hbti"
       - "release"
-      - "master"
 
 jobs:
   build:

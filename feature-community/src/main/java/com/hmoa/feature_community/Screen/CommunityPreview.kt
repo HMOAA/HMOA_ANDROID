@@ -70,8 +70,7 @@ fun CommunityPreviewRoute(
             else {viewModel.updateLoginError()}
         },
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){onNavHPedia()}
-            else {onNavLogin()}
+            onNavLogin()
         }
     )
 }

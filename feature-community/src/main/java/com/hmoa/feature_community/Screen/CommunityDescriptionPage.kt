@@ -115,8 +115,7 @@ fun CommunityDescriptionRoute(
         onNavCommunityEdit = {onNavCommunityEdit(id!!)},
         onNavCommentEdit = onNavCommentEdit,
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){onNavHPedia()}
-            else {onNavLogin()}
+            onNavLogin()
         },
         onNavPopStack = onNavPopStack
     )

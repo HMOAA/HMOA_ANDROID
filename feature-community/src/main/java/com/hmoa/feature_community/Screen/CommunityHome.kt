@@ -56,11 +56,7 @@ fun CommunityHomeRoute(
         onNavCommunityGraph = onNavCommunityGraph,
         onNavCommunityDescription = onNavCommunityDescription,
         onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()){
-                onNavHome()
-            } else {
-                onErrorHandleLoginAgain()
-            }
+            onErrorHandleLoginAgain()
         },
     )
 }

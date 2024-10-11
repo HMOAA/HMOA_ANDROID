@@ -24,16 +24,16 @@ class AuthenticatorImpl @Inject constructor(
         onCompleteTokenRefresh: suspend () -> Unit
     ) {
         Json.decodeFromString<ErrorMessage>(rawMessage).apply {
-            onTokenRefresh {
+            onTokenRefresh { refreshTokenErrorMessage ->
                 onRefreshToken(
                     onRefreshSuccess = {
                         onCompleteTokenRefresh()
                     },
-                    onRefreshFail = { handleErrorMesssage(this) }
+                    onRefreshFail = { handleErrorMesssage(refreshTokenErrorMessage) }
                 )
             }
-            onHandleError {
-                handleErrorMesssage(this)
+            onHandleError { message ->
+                handleErrorMesssage(message)
             }
         }
     }
@@ -74,7 +74,7 @@ class AuthenticatorImpl @Inject constructor(
     }
 
     suspend inline fun ErrorMessage.onTokenRefresh(
-        crossinline onResult: suspend ErrorMessage.() -> Unit,
+        crossinline onResult: suspend ErrorMessage.(message: ErrorMessage) -> Unit,
     ): ErrorMessage {
         if (this.message == ErrorMessageType.EXPIRED_TOKEN.message) {
             onResult(this)
@@ -83,7 +83,7 @@ class AuthenticatorImpl @Inject constructor(
     }
 
     suspend inline fun ErrorMessage.onHandleError(
-        crossinline onResult: suspend ErrorMessage.() -> Unit,
+        crossinline onResult: suspend ErrorMessage.(message: ErrorMessage) -> Unit,
     ): ErrorMessage {
         if (this.message != ErrorMessageType.EXPIRED_TOKEN.message) {
             onResult(this)

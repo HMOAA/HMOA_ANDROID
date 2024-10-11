@@ -10,7 +10,6 @@ import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
-import java.io.File
 import javax.inject.Inject
 
 class BrandDataStoreImpl @Inject constructor(
@@ -39,18 +38,6 @@ class BrandDataStoreImpl @Inject constructor(
 
     override suspend fun deleteBrandLike(brandId: Int): DataResponseDto<Any> {
         return brandService.deleteBrandLike(brandId)
-    }
-
-    override suspend fun postBrandTestSave(image: File, brandId: Int): DataResponseDto<Any> {
-        return brandService.postBrandTestSave(image = image, brandId = brandId)
-    }
-
-    override suspend fun postBrand(
-        image: File,
-        brandName: String,
-        englishName: String
-    ): DataResponseDto<Any> {
-        return brandService.postBrand(image, brandName, englishName)
     }
 
     override suspend fun getPerfumesSortedChar(

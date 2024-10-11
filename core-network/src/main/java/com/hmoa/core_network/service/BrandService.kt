@@ -5,7 +5,6 @@ import com.hmoa.core_model.response.BrandPerfumeBriefPagingResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
-import java.io.File
 
 interface BrandService {
     @GET("/brand/{brandId}")
@@ -16,20 +15,6 @@ interface BrandService {
 
     @DELETE("/brand/{brandId}/like")
     suspend fun deleteBrandLike(@Path(value = "brandId") brandId: Int): DataResponseDto<Any>
-
-    @FormUrlEncoded
-    @POST("/brand/{brandId}/testSave")
-    suspend fun postBrandTestSave(
-        @Path(value = "brandId") brandId: Int, @Field("image") image: File
-    ): DataResponseDto<Any> //임시?
-
-    @FormUrlEncoded
-    @POST("/brand/new")
-    suspend fun postBrand(
-        @Field("image") image: File,
-        @Field("brandName") brandName: String,
-        @Field("englishName") englishName: String
-    ): DataResponseDto<Any>
 
     @GET("/brand/perfumes/{brandId}")
     suspend fun getPerfumesSortedChar(

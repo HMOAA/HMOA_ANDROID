@@ -7,7 +7,7 @@ interface Authenticator {
     suspend fun handleApiError(
         rawMessage: String,
         handleErrorMesssage: (i: ErrorMessage) -> Unit,
-        handleApiCallAfterTokenRefresh: suspend () -> Unit
+        onCompleteTokenRefresh: suspend () -> Unit
     )
 
     // 토큰 갱신 처리 함수

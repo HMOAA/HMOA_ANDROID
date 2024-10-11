@@ -21,13 +21,13 @@ class AuthenticatorImpl @Inject constructor(
     override suspend fun handleApiError(
         rawMessage: String,
         handleErrorMesssage: (i: ErrorMessage) -> Unit,
-        handleApiCallAfterTokenRefresh: suspend () -> Unit
+        onCompleteTokenRefresh: suspend () -> Unit
     ) {
         Json.decodeFromString<ErrorMessage>(rawMessage).apply {
             onTokenRefresh {
                 onRefreshToken(
                     onRefreshSuccess = {
-                        handleApiCallAfterTokenRefresh()
+                        onCompleteTokenRefresh()
                     },
                     onRefreshFail = { handleErrorMesssage(this) }
                 )

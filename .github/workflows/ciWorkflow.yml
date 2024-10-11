@@ -14,11 +14,6 @@ jobs:
       HMOA_ANDROID_SECRET_TOKEN: ${{secrets.HMOA_ANDROID_SECRET_TOKEN}}
       RELEASE_KEYSTORE: ${{secrets.RELEASE_KEYSTORE}}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: ./.github/workflows/setup-jdk.yml
-
       - name: Grant execute permissions for scripts
         run: |
           chmod +x copy-hmoa-android-secrets.sh
@@ -37,4 +32,3 @@ jobs:
 
       - name: Build for debug with Gradle
         run: ./gradlew assembleDebug
-

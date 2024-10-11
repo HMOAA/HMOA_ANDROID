@@ -38,7 +38,7 @@ fun MagazineTag(
 
 @Preview
 @Composable
-fun TestMagazineTag(){
+fun MagazineTagTest(){
     Row(
         modifier = Modifier.fillMaxSize().background(color = Color.White)
     ){

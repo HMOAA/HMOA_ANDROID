@@ -52,6 +52,7 @@ fun TopBar(
             Icon(
                 modifier = Modifier.size(iconSize).clickable { onNavClick() },
                 painter = navIcon,
+                tint = navIconColor,
                 contentDescription = "Navigation Button"
             )
         } else {

@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Grant execute permissions for scripts
         run: |
-          chmod +x copy-hmoa-android-secrets.sh
+          chmod +x ./copy-hmoa-android-secrets.sh
 
       - name: Generate release.keystore
         run: echo '${{ secrets.RELEASE_KEYSTORE }}' | base64 --d > ./app/release.keystore

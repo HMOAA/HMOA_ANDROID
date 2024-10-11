@@ -43,13 +43,14 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun FloatingActionBtn(
+    isFabOpen: Boolean,
+    onFabClick: (Boolean) -> Unit,
     width: Dp,
     fontSize: TextUnit,
     options: List<String>,
     events: List<() -> Unit>,
     isAvailable: Boolean,
 ) {
-    var isOpen by remember { mutableStateOf(false) }
     val itemHeight = when(fontSize){
         16.sp -> 40
         12.sp -> 35
@@ -77,9 +78,9 @@ fun FloatingActionBtn(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(CircleShape)
-                    .clickable { if (isAvailable) isOpen = !isOpen }
+                    .clickable { if (isAvailable) onFabClick(!isFabOpen) }
                     .background(color = Color.White, shape = CircleShape),
-                painter = painterResource(if (isOpen) R.drawable.ic_fab_open else R.drawable.ic_fab),
+                painter = painterResource(if (isFabOpen) R.drawable.ic_fab_open else R.drawable.ic_fab),
                 contentDescription = "FAB"
             )
         }
@@ -91,10 +92,8 @@ fun FloatingActionBtn(
                 .wrapContentHeight()
                 .width(width)
                 .background(color = Color.Black),
-            expanded = isOpen,
-            onDismissRequest = {
-                isOpen = false
-            },
+            expanded = isFabOpen,
+            onDismissRequest = {onFabClick(false)},
             offset = DpOffset(x = 0.dp, y = (-(90 + height)).dp)
         ) {
             repeat(options.size){ idx ->
@@ -112,7 +111,7 @@ fun FloatingActionBtn(
                             )
                         },
                         onClick = {
-                            isOpen = false
+                            onFabClick(false)
                             events[idx]
                         }
                     )
@@ -125,6 +124,7 @@ fun FloatingActionBtn(
 @Preview(showBackground = true)
 @Composable
 fun TestFAB() {
+    var isFabOpen by remember{mutableStateOf(false)}
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -138,7 +138,9 @@ fun TestFAB() {
             events = listOf(),
             isAvailable = true,
             width = 135.dp,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            isFabOpen = isFabOpen,
+            onFabClick = {isFabOpen = it}
         )
     }
 }

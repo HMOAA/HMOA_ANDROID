@@ -1,5 +1,6 @@
 package com.hmoa.feature_hbti.screen
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -94,13 +96,17 @@ private fun ReviewContent(
     onHeartClick: (ReviewResponseDto) -> Unit,
     onFABClick: (orderId: Int) -> Unit,
 ){
+    var isFabOpen by remember{mutableStateOf(false)}
+    val animatedAlpha by animateFloatAsState(
+        targetValue = if(isFabOpen) 0.4f else 1.0f, label = "fab open animation"
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black),
+            .background(color = Color.Black)
     ){
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().alpha(animatedAlpha),
         ){
             TopBar(
                 color = Color.Black,
@@ -147,7 +153,9 @@ private fun ReviewContent(
                 events = orderRecords.map{ { onFABClick(it.orderId) }},
                 width = 208.dp,
                 fontSize = 12.sp,
-                isAvailable = true
+                isAvailable = true,
+                isFabOpen = isFabOpen,
+                onFabClick = {isFabOpen = it}
             )
         }
     }

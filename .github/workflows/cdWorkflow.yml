@@ -18,11 +18,6 @@ jobs:
       SERVICE_ACCOUNT_JSON: ${{ SERVICE_ACCOUNT_JSON }}
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: ./.github/workflows/setup-jdk.yml
-
       - name: Grant execute permissions for scripts
         run: |
           chmod +x copy-hmoa-android-secrets.sh

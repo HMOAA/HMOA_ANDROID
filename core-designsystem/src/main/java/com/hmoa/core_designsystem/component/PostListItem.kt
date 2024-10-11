@@ -24,12 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun PostListItem(
@@ -63,7 +66,8 @@ fun PostListItem(
                 Text(
                     text = postType,
                     fontSize = 14.sp,
-                    color = CustomColor.gray2
+                    color = CustomColor.gray2,
+                    style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard)
                 )
 
                 Spacer(Modifier.weight(1f))
@@ -76,6 +80,7 @@ fun PostListItem(
                     Spacer(Modifier.width(8.dp))
                 }
                 if (commentCount > 0) {
+                    Spacer(Modifier.width(8.dp))
                     CountBadge(
                         icon = R.drawable.ic_kakao,
                         count = commentCount
@@ -94,40 +99,6 @@ fun PostListItem(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun TestPostListItem(){
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        PostListItem (
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
-            onPostClick = {},
-            postType = "추천해주세요",
-            postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
-            heartCount = 10,
-            commentCount = 10
-        )
-        Spacer(Modifier.height(10.dp))
-        PostListItem (
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
-            onPostClick = {},
-            postType = "추천해주세요",
-            postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
-            heartCount = 10,
-            commentCount = 0
-        )
-
-    }
-}
-
 @Composable
 fun CountBadge(
     icon : Int,
@@ -155,5 +126,47 @@ fun CountBadge(
             fontSize = 12.sp,
             color = Color.Black,
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TestPostListItem(){
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .height(200.dp)
+        ){
+            PostListItem (
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
+                onPostClick = {},
+                postType = "추천해주세요",
+                postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
+                heartCount = 10,
+                commentCount = 10
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .height(200.dp)
+        ){
+            PostListItem (
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .border(width = 1.dp, color = CustomColor.gray2, shape = RoundedCornerShape(10.dp)),
+                onPostClick = {},
+                postType = "추천해주세요",
+                postTitle = "여자친구한테 선물할 향수 뭐가 좋을까요?",
+                heartCount = 0,
+                commentCount = 10
+            )
+        }
     }
 }

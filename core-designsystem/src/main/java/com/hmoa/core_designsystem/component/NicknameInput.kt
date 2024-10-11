@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun NicknameInput(
@@ -73,7 +74,8 @@ fun NicknameInput(
                                     style = TextStyle(
                                         color = CustomColor.gray3,
                                         fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
+                                        fontWeight = FontWeight.Normal,
+                                        fontFamily = pretendard
                                     )
                                 )
                             }
@@ -108,7 +110,8 @@ fun NicknameInput(
                 Text(
                     descriptionText,
                     modifier = Modifier.padding(top = 8.dp),
-                    style = TextStyle(color = descriptionTextColor, fontSize = 14.sp, fontWeight = FontWeight.Light)
+                    style = TextStyle(color = descriptionTextColor, fontSize = 14.sp, fontWeight = FontWeight.Normal,
+                        fontFamily = pretendard)
                 )
             }
         }

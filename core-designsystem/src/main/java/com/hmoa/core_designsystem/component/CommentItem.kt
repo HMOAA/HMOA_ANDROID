@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun CommentItem(
@@ -51,12 +52,12 @@ fun CommentItem(
                     }
                     Text(
                         text = userName,
-                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal),
+                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, fontFamily = pretendard),
                         modifier = Modifier.padding(start = 8.dp)
                     )
                     Text(
                         text = "${createdDate}",
-                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = CustomColor.gray3),
+                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, fontFamily = pretendard,color = CustomColor.gray3),
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }
@@ -81,7 +82,7 @@ fun CommentItem(
             }
             Text(
                 content,
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, fontFamily = pretendard),
                 modifier = Modifier.padding(top = 8.dp),
                 overflow = TextOverflow.Clip
             )

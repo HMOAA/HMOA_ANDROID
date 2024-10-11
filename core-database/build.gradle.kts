@@ -46,23 +46,18 @@ android {
 dependencies {
     val hilt_version = "2.48.1"
     val datastore_version = "1.0.0"
+    val room_version = "2.6.1"
 
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     implementation("androidx.datastore:datastore-preferences:$datastore_version")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
-
-//    testImplementation("junit:junit:4.13.2")
-//    testImplementation("androidx.test:core-ktx:1.6.1")
-//    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
-//    implementation("androidx.test.ext:junit-ktx:1.2.1")
-//    kaptTest("com.google.dagger:hilt-android-compiler:$hilt_version") // ...with Kotlin.
-//    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-//    testImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
-//    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
+    
+    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
 
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.test.ext:junit-ktx:1.2.1")

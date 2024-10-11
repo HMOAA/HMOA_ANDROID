@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun AppDesignDialog(
@@ -53,14 +54,17 @@ fun AppDesignDialog(
                 Text(
                     text = title,
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = pretendard
                 )
 
                 Spacer(Modifier.height(8.dp))
 
                 Text(
                     text = content,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = pretendard
                 )
 
                 Spacer(Modifier.height(22.dp))
@@ -79,9 +83,10 @@ fun AppDesignDialog(
                 ) {
                     Text(
                         text = buttonTitle,
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         color = Color.White,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Normal,
+                        fontFamily = pretendard
                     )
                 }
             }

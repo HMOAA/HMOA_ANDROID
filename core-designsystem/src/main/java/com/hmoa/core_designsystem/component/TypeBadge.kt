@@ -13,12 +13,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 //여기 Component가 자세히 나와 있지 않아서 일단 감으로 합니다
 @Composable
@@ -37,7 +39,9 @@ fun TypeBadge(
 ) {
     val fontStyle = TextStyle(
         fontSize = fontSize,
-        color = fontColor
+        color = fontColor,
+        fontWeight = FontWeight.Normal,
+        fontFamily = pretendard
     )
     val backgroundColor = if (selected != null && selected) selectedColor else unSelectedColor
     val icon = if (selected != null && selected) selectedIcon else unSelectedIcon

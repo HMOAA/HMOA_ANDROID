@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,7 +26,7 @@ import com.hmoa.feature_community.ViewModel.CommunityCommentEditViewModel
 @Composable
 fun CommunityCommentEditRoute(
     _commentId : Int?,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
     viewModel : CommunityCommentEditViewModel = hiltViewModel()
 ){
     viewModel.setId(_commentId)
@@ -40,9 +42,9 @@ fun CommunityCommentEditRoute(
         },
         onEditDone = {
             viewModel.editComment()
-            onNavBack()
+            navBack()
         },
-        onNavBack = onNavBack
+        navBack = navBack
     )
 }
 
@@ -52,7 +54,7 @@ fun CommunityCommentEditScreen(
     comment : String,
     onCommentChange : (String) -> Unit,
     onEditDone : () -> Unit,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
 ){
     when(uiState){
         CommunityCommentEditUiState.Loading -> {
@@ -65,7 +67,7 @@ fun CommunityCommentEditScreen(
                     .background(color = Color.White)
             ){
                 TopBarWithEvent(
-                    onCancelClick = onNavBack,
+                    onCancelClick = navBack,
                     onConfirmClick = onEditDone,
                     title = "댓글"
                 )
@@ -82,7 +84,8 @@ fun CommunityCommentEditScreen(
                     },
                     textStyle = TextStyle(
                         fontSize = 14.sp,
-                        color = Color.Black
+                        color = Color.Black,
+                        fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular))
                     )
                 )
             }

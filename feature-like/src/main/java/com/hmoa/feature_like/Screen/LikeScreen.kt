@@ -51,11 +51,8 @@ fun LikeRoute(
         onTypeChanged = { type = it },
         errorUiState = errorUiState,
         onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()) {
-                onNavHome()
-            } else {
-                onErrorHandleLoginAgain()
-            }
+            if(viewModel.hasToken()){onNavHome()}
+            else {onErrorHandleLoginAgain()}
         },
         onNavPerfumeDesc = onNavPerfumeDesc,
         onNavHome = onNavHome,

@@ -12,7 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 
 @Composable
-fun ImageView(imageUrl: String?, width: Float, height: Float, backgroundColor: Color, contentScale: ContentScale, alpha : Float = 1f) {
+fun ImageView(
+    imageUrl: String?,
+    width: Float,
+    height: Float,
+    backgroundColor: Color,
+    contentScale: ContentScale,
+    alpha: Float = 1f
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         com.skydoves.landscapist.glide.GlideImage(
             imageModel = imageUrl ?: "",
@@ -22,4 +29,3 @@ fun ImageView(imageUrl: String?, width: Float, height: Float, backgroundColor: C
         )
     }
 }
-

@@ -13,4 +13,5 @@ interface LoginRemoteDataStore {
     suspend fun postOAuth(accessToken: OauthLoginRequestDto, provider: Provider): ResultResponse<MemberLoginResponseDto>
     suspend fun postRemembered(dto: RememberedLoginRequestDto): ResultResponse<TokenResponseDto>
     suspend fun postGoogleServerAuthCode(dto: GoogleAccessTokenRequestDto): ResultResponse<GoogleAccessTokenResponseDto>
+    suspend fun refreshToken()
 }

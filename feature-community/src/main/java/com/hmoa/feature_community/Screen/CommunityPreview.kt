@@ -39,18 +39,17 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityMainUiState
-import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
-
+import com.hmoa.feature_community.ViewModel.CommunityPreviewViewModel
 
 @Composable
 fun CommunityPreviewRoute(
-    onNavBack: () -> Unit,
-    onNavSearch: () -> Unit,
-    onNavCommunityDescription: (Int) -> Unit,
-    onNavPost: (String) -> Unit,
-    onNavLogin: () -> Unit,
-    onNavHPedia : () -> Unit,
-    viewModel: CommunityMainViewModel = hiltViewModel()
+    navBack: () -> Unit,
+    navSearch: () -> Unit,
+    navCommunityDescription: (Int) -> Unit,
+    navPost: (String) -> Unit,
+    navLogin: () -> Unit,
+    navHPedia : () -> Unit,
+    viewModel: CommunityPreviewViewModel = hiltViewModel()
 ) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,16 +62,16 @@ fun CommunityPreviewRoute(
         communities = viewModel.communityPagingSource().collectAsLazyPagingItems(),
         type = type,
         onTypeChanged = {viewModel.updateCategory(it)},
-        onNavBack = onNavBack,
-        onNavSearch = onNavSearch,
-        onNavCommunityDescription = onNavCommunityDescription,
-        onNavPost = {
-            if (viewModel.hasToken()){onNavPost(it)}
+        navBack = navBack,
+        navSearch = navSearch,
+        navCommunityDescription = navCommunityDescription,
+        navPost = {
+            if (viewModel.hasToken()){navPost(it)}
             else {viewModel.updateLoginError()}
         },
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){onNavHPedia()}
-            else {onNavLogin()}
+            if(viewModel.hasToken()){navHPedia()}
+            else {navLogin()}
         }
     )
 }
@@ -84,10 +83,10 @@ fun CommunityPage(
     communities: LazyPagingItems<CommunityByCategoryResponseDto>,
     type: Category,
     onTypeChanged: (Category) -> Unit,
-    onNavBack: () -> Unit,
-    onNavSearch: () -> Unit,
-    onNavCommunityDescription: (Int) -> Unit,
-    onNavPost: (String) -> Unit,
+    navBack: () -> Unit,
+    navSearch: () -> Unit,
+    navCommunityDescription: (Int) -> Unit,
+    navPost: (String) -> Unit,
     onErrorHandleLoginAgain : () -> Unit,
 ) {
     when (uiState) {
@@ -103,9 +102,9 @@ fun CommunityPage(
                     TopBar(
                         title = "Community",
                         navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                        onNavClick = onNavBack,
+                        onNavClick = navBack,
                         menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
-                        onMenuClick = onNavSearch
+                        onMenuClick = navSearch
                     )
                     ContentDivider()
                     CommunityMainTypes(
@@ -115,7 +114,7 @@ fun CommunityPage(
                     ContentDivider()
                     CommunityPagePostList(
                         communities = communities.itemSnapshotList,
-                        onNavCommunityDescription = onNavCommunityDescription
+                        navCommunityDescription = navCommunityDescription
                     )
                 }
                 Column(
@@ -125,9 +124,9 @@ fun CommunityPage(
                     horizontalAlignment = Alignment.End
                 ) {
                     FloatingActionBtn(
-                        onNavRecommend = { onNavPost(Category.추천.name) },
-                        onNavPresent = { onNavPost(Category.시향기.name) },
-                        onNavFree = { onNavPost(Category.자유.name) },
+                        onNavRecommend = { navPost(Category.추천.name) },
+                        onNavPresent = { navPost(Category.시향기.name) },
+                        onNavFree = { navPost(Category.자유.name) },
                         isAvailable = !uiState.enableLoginErrorDialog,
                     )
                 }
@@ -156,9 +155,7 @@ fun CommunityMainTypes(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TypeBadge(
-            onClickItem = {
-                onTypeChanged(Category.추천)
-            },
+            onClickItem = {onTypeChanged(Category.추천)},
             roundedCorner = 20.dp,
             type = Category.추천.name,
             fontSize = 14.sp,
@@ -182,9 +179,7 @@ fun CommunityMainTypes(
         Spacer(Modifier.width(8.dp))
 
         TypeBadge(
-            onClickItem = {
-                onTypeChanged(Category.자유)
-            },
+            onClickItem = {onTypeChanged(Category.자유)},
             roundedCorner = 20.dp,
             type = Category.자유.name,
             fontSize = 14.sp,
@@ -197,7 +192,7 @@ fun CommunityMainTypes(
 @Composable
 fun CommunityPagePostList(
     communities: ItemSnapshotList<CommunityByCategoryResponseDto>,
-    onNavCommunityDescription: (Int) -> Unit
+    navCommunityDescription: (Int) -> Unit
 ) {
     LazyColumn {
         items(communities) { community ->
@@ -207,10 +202,7 @@ fun CommunityPagePostList(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .border(width = 1.dp, color = CustomColor.gray2),
-                    onPostClick = {
-                        // 여기서 Description으로 이동
-                        onNavCommunityDescription(community.communityId)
-                    },
+                    onPostClick = {navCommunityDescription(community.communityId)},
                     postType = community.category,
                     postTitle = community.title,
                     heartCount = community.heartCount,

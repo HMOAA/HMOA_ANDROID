@@ -11,11 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun LikeCountButton(
@@ -30,7 +32,9 @@ fun LikeCountButton(
 ) {
     val fontStyle = TextStyle(
         fontSize = fontSize,
-        color = fontColor
+        color = fontColor,
+        fontWeight = FontWeight.Normal,
+        fontFamily = pretendard,
     )
     val backgroundColor = if (selected) selectedColor else unSelectedColor
 

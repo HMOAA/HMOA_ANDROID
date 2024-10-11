@@ -21,6 +21,8 @@
             <option value="$PROJECT_DIR$/feature-authentication" />
             <option value="$PROJECT_DIR$/feature-brand" />
             <option value="$PROJECT_DIR$/feature-community" />
+            <option value="$PROJECT_DIR$/feature-fcm" />
+            <option value="$PROJECT_DIR$/feature-hbti" />
             <option value="$PROJECT_DIR$/feature-home" />
             <option value="$PROJECT_DIR$/feature-hpedia" />
             <option value="$PROJECT_DIR$/feature-like" />
@@ -28,8 +30,6 @@
             <option value="$PROJECT_DIR$/feature-main" />
             <option value="$PROJECT_DIR$/feature-perfume" />
             <option value="$PROJECT_DIR$/feature-userInfo" />
-            <option value="$PROJECT_DIR$/mylibrary" />
-            <option value="$PROJECT_DIR$/sample-app" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

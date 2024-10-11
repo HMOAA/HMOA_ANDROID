@@ -21,12 +21,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -36,10 +39,10 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 
 @Composable
 fun CommunityHomeRoute(
-    onNavCommunityGraph: () -> Unit,
-    onNavCommunityDescription: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
+    navCommunityDescription: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    onNavHome : () -> Unit,
+    navHome : () -> Unit,
     viewModel: CommunityHomeViewModel = hiltViewModel(),
 ) {
 
@@ -50,11 +53,11 @@ fun CommunityHomeRoute(
     CommunityHome(
         errorUiState = errorUiState,
         uiState = uiState,
-        onNavCommunityGraph = onNavCommunityGraph,
-        onNavCommunityDescription = onNavCommunityDescription,
+        navCommunityGraph = navCommunityGraph,
+        navCommunityDescription = navCommunityDescription,
         onErrorHandleLoginAgain = {
             if (viewModel.hasToken()){
-                onNavHome()
+                navHome()
             } else {
                 onErrorHandleLoginAgain()
             }
@@ -66,21 +69,21 @@ fun CommunityHomeRoute(
 fun CommunityHome(
     errorUiState: ErrorUiState,
     uiState: CommunityHomeUiState,
-    onNavCommunityGraph: () -> Unit,
-    onNavCommunityDescription: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
+    navCommunityDescription: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
     Column(modifier = Modifier
         .padding(horizontal = 16.dp)
         .fillMaxSize()) {
-        CommunityTitleBar(onNavCommunityByCategory = onNavCommunityGraph)
+        CommunityTitleBar(navCommunityByCategory = navCommunityGraph)
 
         when (uiState) {
-            is CommunityHomeUiState.Loading -> {AppLoadingScreen()}
+            is CommunityHomeUiState.Loading -> AppLoadingScreen()
             is CommunityHomeUiState.Community -> {
                 CommunityHomeContent(
                     communities = uiState.communities,
-                    onNavCommunityDescription = onNavCommunityDescription
+                    navCommunityDescription = navCommunityDescription
                 )
             }
             is CommunityHomeUiState.Error -> {
@@ -96,7 +99,7 @@ fun CommunityHome(
 
 @Composable
 fun CommunityTitleBar(
-    onNavCommunityByCategory: () -> Unit,
+    navCommunityByCategory: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -108,15 +111,15 @@ fun CommunityTitleBar(
         Text(
             text = "Community",
             fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
 
         Text(
-            modifier = Modifier.clickable {
-                onNavCommunityByCategory()
-            },
+            modifier = Modifier.clickable {navCommunityByCategory()},
             text = "전체보기",
             fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
     }
@@ -126,11 +129,11 @@ fun CommunityTitleBar(
 @Composable
 fun CommunityHomeContent(
     communities: List<CommunityByCategoryResponseDto>,
-    onNavCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (Int) -> Unit,
 ) {
     PostList(
         communities = communities,
-        onNavCommunityDescription = onNavCommunityDescription
+        onNavCommunityDescription = navCommunityDescription
     )
 }
 

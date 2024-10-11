@@ -1,5 +1,6 @@
 package com.example.userinfo
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -24,6 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +37,8 @@ import com.example.feature_userinfo.viewModel.UserInfoUiState
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.hmoa.component.TopBar
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.checkPermission
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
@@ -44,10 +50,9 @@ import com.hmoa.feature_userinfo.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
 import kotlinx.coroutines.launch
 
-const val APP_VERSION = "1.1.0"
-
 @Composable
 internal fun MyPageRoute(
+    appVersion: String,
     onNavEditProfile: () -> Unit,
     onNavMyActivity: () -> Unit,
     onNavManageMyInfo: () -> Unit,
@@ -56,10 +61,18 @@ internal fun MyPageRoute(
     onNavBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
+    val isEnabledAlarm = viewModel.isEnabled.collectAsStateWithLifecycle()
+    val onChangeAlarm: (Boolean) -> Unit = {
+        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {
+            viewModel.changeAlarmSetting(it)
+        } else {
+            Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()
+        }
+    }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val navKakao = {
         TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
             if (err != null) {
@@ -67,8 +80,8 @@ internal fun MyPageRoute(
             }
         }
     }
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-    }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {}
+
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
     val termsOfServiceIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_OF_SERVICE)) }
     val scope = rememberCoroutineScope()
@@ -77,6 +90,9 @@ internal fun MyPageRoute(
         MyPage(
             uiState = uiState.value,
             errorUiState = errorUiState,
+            appVersion = appVersion,
+            isEnabledAlarm = isEnabledAlarm.value,
+            onChangeAlarm = onChangeAlarm,
             logoutEvent = {
                 scope.launch {
                     launch { viewModel.logout() }.join()
@@ -90,10 +106,8 @@ internal fun MyPageRoute(
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
             openTermsOfServiceLink = { context.startActivity(termsOfServiceIntent) },
             onDelAccount = {
-                scope.launch {
-                    launch { viewModel.delAccount() }.join()
-                    onNavLogin()
-                }
+                viewModel.delAccount()
+                onNavLogin()
             },
             onNavKakaoChat = navKakao,
             onNavMyPerfume = onNavMyPerfume,
@@ -116,6 +130,9 @@ internal fun MyPageRoute(
 fun MyPage(
     uiState: UserInfoUiState,
     errorUiState: ErrorUiState,
+    appVersion: String,
+    isEnabledAlarm: Boolean,
+    onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
@@ -130,15 +147,15 @@ fun MyPage(
     onBackClick: () -> Unit
 ) {
     when (uiState) {
-        UserInfoUiState.Loading -> {
-            AppLoadingScreen()
-        }
-
+        UserInfoUiState.Loading -> AppLoadingScreen()
         is UserInfoUiState.User -> {
             MyPageContent(
                 profile = uiState.profile,
                 nickname = uiState.nickname,
                 provider = uiState.provider,
+                appVersion = appVersion,
+                isEnabledAlarm = isEnabledAlarm,
+                onChangeAlarm = onChangeAlarm,
                 logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
                 openPrivacyPolicyLink = openPrivacyPolicyLink,
@@ -169,6 +186,9 @@ private fun MyPageContent(
     profile: String,
     nickname: String,
     provider: String,
+    appVersion: String,
+    isEnabledAlarm: Boolean,
+    onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
@@ -187,7 +207,7 @@ private fun MyPageContent(
         ColumnData("오픈소스라이센스") { doOpenLicense() },
         ColumnData("이용 약관") { openTermsOfServiceLink() },
         ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
-        ColumnData("버전 정보 ${APP_VERSION}") {},
+        ColumnData("버전 정보 ${appVersion}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
         ColumnData("로그아웃") { logoutEvent() },
         ColumnData("계정삭제") { onDelAccount() }
@@ -206,7 +226,7 @@ private fun MyPageContent(
                 provider = provider,
                 onNavEditProfile = onNavEditProfile
             )
-            //ServiceAlarm()
+            ServiceAlarm(isEnabledAlarm = isEnabledAlarm, onChangeAlarm = onChangeAlarm)
             HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
         }
 
@@ -219,8 +239,11 @@ private fun MyPageContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = it.title, fontSize = 16.sp)
-
+                Text(
+                    text = it.title,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                )
                 IconButton(
                     modifier = Modifier.size(20.dp),
                     onClick = it.onNavClick
@@ -260,7 +283,8 @@ private fun UserProfileInfo(
             Text(
                 modifier = Modifier.padding(start = 12.dp),
                 text = nickname,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             )
             Spacer(Modifier.weight(1f))
             // 로그인 방식
@@ -268,6 +292,7 @@ private fun UserProfileInfo(
                 modifier = Modifier.padding(start = 12.dp),
                 text = provider,
                 fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             )
         }
         Spacer(Modifier.weight(1f))
@@ -287,7 +312,8 @@ private fun UserProfileInfo(
 
 @Composable
 private fun ServiceAlarm(
-
+    isEnabledAlarm: Boolean,
+    onChangeAlarm: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -299,10 +325,38 @@ private fun ServiceAlarm(
     ) {
         Text(
             text = "서비스 알림",
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
         )
 
         /** service alarm 토글 버튼 */
-        OnAndOffBtn()
+        OnAndOffBtn(
+            isChecked = isEnabledAlarm,
+            onChangeChecked = onChangeAlarm
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TestUiMyPage() {
+    MyPage(
+        uiState = UserInfoUiState.User("", "안드 호준", "Kakao"),
+        errorUiState = ErrorUiState.Loading,
+        appVersion = "1.1.0",
+        isEnabledAlarm = false,
+        onChangeAlarm = {},
+        logoutEvent = { /*TODO*/ },
+        doOpenLicense = { /*TODO*/ },
+        onDelAccount = { /*TODO*/ },
+        openPrivacyPolicyLink = { /*TODO*/ },
+        onNavKakaoChat = { /*TODO*/ },
+        onNavMyPerfume = { /*TODO*/ },
+        onNavEditProfile = { /*TODO*/ },
+        onNavMyActivity = { /*TODO*/ },
+        onNavManageMyInfo = { /*TODO*/ },
+        onErrorHandleLoginAgain = { /*TODO*/ },
+        openTermsOfServiceLink = {}) {
+
     }
 }

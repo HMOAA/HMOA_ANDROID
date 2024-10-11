@@ -32,7 +32,6 @@ object ServiceModule {
 
     @Provides
     fun provideOkHttpClient(headerInterceptor: Interceptor): OkHttpClient {
-
         val okHttpClientBuilder = OkHttpClient().newBuilder()
         okHttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS)
         okHttpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
@@ -42,9 +41,9 @@ object ServiceModule {
 
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
-        val token = tokenManager.getAuthTokenForHeader()
         return Interceptor { chain ->
             with(chain) {
+                val token = tokenManager.getAuthTokenForHeader()
                 val newRequest = request().newBuilder()
                     .header("X-AUTH-TOKEN", "${token}")
                     .build()
@@ -75,12 +74,6 @@ object ServiceModule {
     @Provides
     fun providerFcmService(retrofit: Retrofit): FcmService {
         return retrofit.create(FcmService::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun providerAdminService(retrofit: Retrofit): AdminService {
-        return retrofit.create(AdminService::class.java)
     }
 
     @Singleton

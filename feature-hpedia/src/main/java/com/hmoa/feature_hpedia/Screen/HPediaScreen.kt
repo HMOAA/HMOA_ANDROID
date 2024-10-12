@@ -67,10 +67,10 @@ fun HPediaScreen(
         }
         Spacer(Modifier.height(27.dp))
         CommunityHomeRoute(
-            navCommunityGraph = navCommunityGraph,
-            navCommunityDescription = navCommunityDesc,
+            onNavCommunityGraph = navCommunityGraph,
+            onNavCommunityDescription = navCommunityDesc,
             onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-            navHome = navHome
+            onNavHome = navHome
         )
     }
 }

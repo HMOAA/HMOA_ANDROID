@@ -9,6 +9,4 @@ interface RefreshTokenManager {
     suspend fun refreshTokens(dto: RememberedLoginRequestDto): ApiResponse<TokenResponseDto>
 
     suspend fun saveRefreshTokens(authToken: String, rememberedToken: String)
-
-    suspend fun refreshTokenEvery50Minutes()
 }

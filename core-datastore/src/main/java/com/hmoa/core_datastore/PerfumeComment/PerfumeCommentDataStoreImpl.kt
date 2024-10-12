@@ -1,17 +1,19 @@
 package com.hmoa.core_datastore.PerfumeComment
 
 import ResultResponse
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.PerfumeCommentRequestDto
 import com.hmoa.core_model.response.*
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.service.PerfumeCommentService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeCommentService: PerfumeCommentService) :
+class PerfumeCommentDataStoreImpl @Inject constructor(
+    private val perfumeCommentService: PerfumeCommentService,
+    private val authenticator: Authenticator
+) :
     PerfumeCommentDataStore {
     override suspend fun getPerfumeComment(commentId: Int): PerfumeCommentResponseDto {
         return perfumeCommentService.getPerfumeComment(commentId)
@@ -42,8 +44,13 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         perfumeCommentService.putPerfumeCommentLike(commentId).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    perfumeCommentService.putPerfumeCommentLike(commentId).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -53,8 +60,14 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         perfumeCommentService.deletePerfumeCommentLike(commentId).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    perfumeCommentService.deletePerfumeCommentLike(commentId)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -73,8 +86,14 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         perfumeCommentService.getPerfumeCommentsWithHeart(cursor).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    perfumeCommentService.getPerfumeCommentsWithHeart(cursor)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -86,8 +105,14 @@ class PerfumeCommentDataStoreImpl @Inject constructor(private val perfumeComment
         perfumeCommentService.getMyPerfumeComments(cursor).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    perfumeCommentService.getMyPerfumeComments(cursor)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }

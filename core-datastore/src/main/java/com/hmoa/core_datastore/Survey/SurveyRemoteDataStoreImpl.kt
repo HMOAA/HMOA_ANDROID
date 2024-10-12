@@ -1,7 +1,6 @@
 package com.hmoa.core_datastore.Survey
 
 import ResultResponse
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.ContentRequestDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
 import com.hmoa.core_model.request.SurveySaveAnswerRequestDtos
@@ -9,20 +8,29 @@ import com.hmoa.core_model.request.SurveySaveRequestDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.RecommendNotesResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.service.SurveyService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: SurveyService) : SurveyRemoteDataStore {
+class SurveyRemoteDataStoreImpl @Inject constructor(
+    private val surveyService: SurveyService,
+    private val authenticator: Authenticator
+) : SurveyRemoteDataStore {
     override suspend fun getSurveyQuestions(): ResultResponse<SurveyQuestionsResponseDto> {
         val result = ResultResponse<SurveyQuestionsResponseDto>()
         surveyService.getSurveyQuestions().suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    surveyService.getSurveyQuestions().suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -32,27 +40,45 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
         surveyService.postSurveyResponds(dto).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    surveyService.postSurveyResponds(dto).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
 
     override suspend fun saveSurvey(dto: SurveySaveRequestDto): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveSurvey(dto).suspendOnSuccess{
+        surveyService.saveSurvey(dto).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnError {
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    surveyService.saveSurvey(dto).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
 
     override suspend fun saveAnswerNote(dto: SurveySaveAnswerRequestDtos): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveAnswerNote(dto).suspendOnSuccess{
+        surveyService.saveAnswerNote(dto).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnError {
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    surveyService.saveAnswerNote(dto).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -62,10 +88,16 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
         questionId: Int
     ): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveAnswerByQuestionId(dto, questionId).suspendOnSuccess{
+        surveyService.saveAnswerByQuestionId(dto, questionId).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnError {
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    surveyService.saveAnswerByQuestionId(dto, questionId).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -75,10 +107,16 @@ class SurveyRemoteDataStoreImpl @Inject constructor(private val surveyService: S
         surveyId: Int
     ): ResultResponse<DataResponseDto<Any>> {
         val result = ResultResponse<DataResponseDto<Any>>()
-        surveyService.saveQuestionBySurveyId(dto, surveyId).suspendOnSuccess{
+        surveyService.saveQuestionBySurveyId(dto, surveyId).suspendOnSuccess {
             result.data = this.data
-        }.suspendOnError{
-            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnError {
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    surveyService.saveQuestionBySurveyId(dto, surveyId).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }

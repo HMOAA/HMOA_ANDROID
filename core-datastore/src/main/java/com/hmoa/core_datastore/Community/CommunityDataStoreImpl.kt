@@ -4,26 +4,33 @@ import ResultResponse
 import com.hmoa.core_datastore.Mapper.transformMultipartBody
 import com.hmoa.core_datastore.Mapper.transformRequestBody
 import com.hmoa.core_datastore.Mapper.transformToMultipartBody
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.*
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.service.CommunityService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
-import kotlinx.serialization.json.Json
 import java.io.File
 import javax.inject.Inject
 
-class CommunityDataStoreImpl @Inject constructor(private val communityService: CommunityService) :
+class CommunityDataStoreImpl @Inject constructor(
+    private val communityService: CommunityService,
+    private val authenticator: Authenticator
+) :
     CommunityDataStore {
     override suspend fun getCommunity(communityId: Int): ResultResponse<CommunityDefaultResponseDto> {
         val result = ResultResponse<CommunityDefaultResponseDto>()
         communityService.getCommunity(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.getCommunity(communityId).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -45,8 +52,19 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         ).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.postCommunityUpdate(
+                        images.transformToMultipartBody(),
+                        deleteCommunityPhotoIds.transformRequestBody(),
+                        title.transformRequestBody(),
+                        content.transformRequestBody(),
+                        communityId
+                    ).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -56,8 +74,13 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.deleteCommunity(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.deleteCommunity(communityId).suspendMapSuccess { result.data = this }
+                }
+            )
         }
         return result
     }
@@ -67,8 +90,13 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.putCommunityLike(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.putCommunityLike(communityId).suspendMapSuccess { result.data = this }
+                }
+            )
         }
         return result
     }
@@ -78,8 +106,13 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.deleteCommunityLike(communityId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.deleteCommunityLike(communityId).suspendMapSuccess { result.data = this }
+                }
+            )
         }
         return result
     }
@@ -96,8 +129,13 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getCommunitiesHome().suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.getCommunitiesHome().suspendMapSuccess { result.data = this }
+                }
+            )
         }
         return result
     }
@@ -117,8 +155,18 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         ).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.postCommunitySave(
+                        images.transformToMultipartBody(),
+                        category.transformMultipartBody("category"),
+                        title.transformMultipartBody("title"),
+                        content.transformMultipartBody("content")
+                    ).suspendMapSuccess { result.data = this }
+                }
+            )
         }
         return result
     }
@@ -128,8 +176,13 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getMyCommunitiesByHeart(cursor).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.getMyCommunitiesByHeart(cursor).suspendMapSuccess { result.data = this }
+                }
+            )
         }
         return result
     }
@@ -139,8 +192,13 @@ class CommunityDataStoreImpl @Inject constructor(private val communityService: C
         communityService.getMyCommunities(cursor).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityService.getMyCommunities(cursor).suspendMapSuccess { result.data = this }
+                }
+            )
         }
         return result
     }

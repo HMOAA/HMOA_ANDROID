@@ -26,5 +26,4 @@ interface LoginRepository {
     suspend fun deleteRememberedToken()
     suspend fun deleteKakaoAccessToken()
     suspend fun deleteGoogleAccessToken()
-    suspend fun refreshToken()
 }

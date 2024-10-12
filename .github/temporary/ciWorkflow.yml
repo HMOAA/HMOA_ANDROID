@@ -32,4 +32,3 @@ jobs:
 
       - name: Build for debug with Gradle
         run: ./gradlew assembleDebug
-

@@ -20,8 +20,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.TopBar
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_model.data.HpediaType
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescUiState
 import com.hmoa.feature_hpedia.ViewModel.HPediaDescViewModel
@@ -30,22 +32,29 @@ import com.hmoa.feature_hpedia.ViewModel.HPediaDescViewModel
 fun HPediaDescRoute(
     id : Int?,
     type : String?,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
     viewModel : HPediaDescViewModel = hiltViewModel()
 ){
-    LaunchedEffect(true){
+    LaunchedEffect(Unit){
         viewModel.setInfo(
             type = type,
             id = id
         )
     }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val type = viewModel.type.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val type = when(type){
+        HpediaType.TERM.title -> HpediaType.TERM
+        HpediaType.NOTE.title -> HpediaType.NOTE
+        HpediaType.PERFUMER.title -> HpediaType.PERFUMER
+        else -> HpediaType.TERM
+    }
 
     HPediaDescScreen(
-        type = type.value,
+        type = type,
         uiState = uiState.value,
-        onNavBack = onNavBack,
+        errState = errState.value,
+        navBack = navBack,
     )
 }
 
@@ -53,10 +62,17 @@ fun HPediaDescRoute(
 fun HPediaDescScreen(
     type : HpediaType,
     uiState : HPediaDescUiState,
-    onNavBack : () -> Unit,
+    errState: ErrorUiState,
+    navBack : () -> Unit,
 ){
     when(uiState){
-        HPediaDescUiState.Error -> {}
+        HPediaDescUiState.Error -> {
+            ErrorUiSetView(
+                onLoginClick = navBack,
+                errorUiState = errState,
+                onCloseClick = navBack
+            )
+        }
         HPediaDescUiState.Loading -> AppLoadingScreen()
         is HPediaDescUiState.HPediaDesc -> {
             Column(
@@ -67,7 +83,7 @@ fun HPediaDescScreen(
                 TopBar(
                     title = type.title,
                     navIcon = painterResource(R.drawable.ic_back),
-                    onNavClick = onNavBack
+                    onNavClick = navBack
                 )
                 Column(
                     modifier = Modifier

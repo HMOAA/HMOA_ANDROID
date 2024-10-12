@@ -59,7 +59,7 @@ import com.hmoa.feature_community.ViewModel.CommunityPostViewModel
 @Composable
 fun CommunityPostRoute(
     _category : String?,
-    onNavBack : () -> Unit,
+    navBack : () -> Unit,
     viewModel : CommunityPostViewModel = hiltViewModel()
 ){
     viewModel.setCategory(_category ?: "")
@@ -80,7 +80,7 @@ fun CommunityPostRoute(
         pictures = pictures.value,
         onUpdatePictures = {viewModel.updatePictures(it)},
         onDeletePictures = {viewModel.deletePicture(it)},
-        onNavBack = onNavBack,
+        navBack = navBack,
         onPostCommunity = {viewModel.postCommunity()}
     )
 }
@@ -96,7 +96,7 @@ fun PostCommunityPage(
     pictures : List<Uri>,
     onUpdatePictures : (List<Uri>) -> Unit,
     onDeletePictures : (Int) -> Unit,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     onPostCommunity: () -> Unit,
 ) {
     val scrollableState = rememberScrollState()
@@ -112,9 +112,9 @@ fun PostCommunityPage(
     //오류가 없다면
     if (errState is ErrorUiState.ErrorData && errState.generalError.first){
         ErrorUiSetView(
-            onLoginClick = onNavBack,
+            onLoginClick = navBack,
             errorUiState = errState,
-            onCloseClick = onNavBack
+            onCloseClick = navBack
         )
     } else {
         Column(
@@ -126,7 +126,7 @@ fun PostCommunityPage(
                 title = category.name,
                 isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
                 onPostCommunity = onPostCommunity,
-                onNavBack = onNavBack
+                navBack = navBack
             )
 
             HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
@@ -171,7 +171,7 @@ fun CommunityPostTopBar(
     title : String,
     isDataEmpty : Boolean,
     onPostCommunity : () -> Unit,
-    onNavBack : () -> Unit
+    navBack : () -> Unit
 ){
     val sideTopBarTextStyle = TextStyle(
         fontSize = 16.sp,
@@ -192,9 +192,7 @@ fun CommunityPostTopBar(
         verticalAlignment = Alignment.CenterVertically
     ){
         Text(
-            modifier = Modifier.clickable{
-                onNavBack()
-            },
+            modifier = Modifier.clickable{navBack()},
             text = "취소",
             style = sideTopBarTextStyle
         )
@@ -212,7 +210,7 @@ fun CommunityPostTopBar(
             modifier = Modifier.clickable{
                 if (isDataEmpty){
                     onPostCommunity()
-                    onNavBack()
+                    navBack()
                 } else {
                     Toast.makeText(context, "제목이나 내용을 빈 칸 없이 채워주세요",Toast.LENGTH_SHORT).show()
                 }

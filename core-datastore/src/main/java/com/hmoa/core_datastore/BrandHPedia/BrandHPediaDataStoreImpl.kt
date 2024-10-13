@@ -25,16 +25,4 @@ class BrandHPediaDataStoreImpl @Inject constructor(
     ): DataResponseDto<Any> {
         return brandHPediaService.updateBrandStory(brandStoryId, content)
     }
-
-    override suspend fun postBrandStory(
-        brandStorySubtitle: String,
-        brandStoryTitle: String,
-        content: String
-    ): DataResponseDto<Any> {
-        return brandHPediaService.postBrandStory(brandStorySubtitle, brandStoryTitle, content)
-    }
-
-    override suspend fun postTestSave(): DataResponseDto<Any> {
-        return brandHPediaService.postTestSave()
-    }
 }

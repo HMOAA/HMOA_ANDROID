@@ -5,16 +5,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Authenticator
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface AuthenticatorModule {
-
+interface AuthenticationModule {
     @Binds
     @Singleton
-    fun bindAuthenticatorImpl(authAuthenticator: AuthAuthenticator): Authenticator
+    fun bindAuthenticator(authenticatorImpl: AuthenticatorImpl): Authenticator
 
     @Binds
     @Singleton

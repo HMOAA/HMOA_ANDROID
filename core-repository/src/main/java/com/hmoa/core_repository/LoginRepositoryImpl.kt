@@ -87,7 +87,4 @@ class LoginRepositoryImpl @Inject constructor(
         loginLocalDataStore.deleteGoogleAccessToken()
     }
 
-    override suspend fun refreshToken() {
-        loginRemoteDataStore.refreshToken()
-    }
 }

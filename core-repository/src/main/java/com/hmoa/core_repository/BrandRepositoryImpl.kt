@@ -5,7 +5,6 @@ import com.hmoa.core_datastore.Brand.BrandDataStore
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import com.hmoa.core_model.response.BrandPerfumeBriefPagingResponseDto
 import com.hmoa.core_model.response.DataResponseDto
-import java.io.File
 import javax.inject.Inject
 
 class BrandRepositoryImpl @Inject constructor(
@@ -22,18 +21,6 @@ class BrandRepositoryImpl @Inject constructor(
 
     override suspend fun deleteBrandLike(brandId: Int): DataResponseDto<Any> {
         return brandDataStore.deleteBrandLike(brandId)
-    }
-
-    override suspend fun postBrandTestSave(image: File, brandId: Int): DataResponseDto<Any> {
-        return brandDataStore.postBrandTestSave(image, brandId)
-    }
-
-    override suspend fun postBrand(
-        image: File,
-        brandName: String,
-        englishName: String
-    ): DataResponseDto<Any> {
-        return brandDataStore.postBrand(image, brandName, englishName)
     }
 
     override suspend fun getPerfumesSortedChar(

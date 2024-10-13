@@ -92,6 +92,7 @@ fun ErrorUiSetView(onLoginClick: () -> Unit, errorUiState: ErrorUiState, onClose
                         ?: "서비스 정상화를 위해 노력하고 있습니다 :)",
                     onDismiss = {
                         isOpen = false
+                        onCloseClick()
                     },
                     modifier = Modifier.wrapContentHeight()
                         .width(screenWidth - 88.dp)

@@ -1,22 +1,20 @@
 package com.hmoa.core_datastore.CommunityComment
 
 import ResultResponse
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
-import com.hmoa.core_model.response.CommunityCommentAllResponseDto
-import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
-import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.PagingData
+import com.hmoa.core_model.response.*
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.service.CommunityCommentService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class CommunityCommentDataStoreImpl @Inject constructor(private val communityCommentService: CommunityCommentService) :
+class CommunityCommentDataStoreImpl @Inject constructor(
+    private val communityCommentService: CommunityCommentService,
+    private val authenticator: Authenticator
+) :
     CommunityCommentDataStore {
     override suspend fun getCommunityComment(
         commentId: Int
@@ -25,8 +23,13 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.getCommunityComment(commentId).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.getCommunityComment(commentId).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -39,8 +42,14 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.putCommunityComment(commentId, dto).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.putCommunityComment(commentId, dto)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -50,8 +59,14 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.deleteCommunityComment(commentId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.deleteCommunityComment(commentId)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -63,8 +78,14 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.putCommunityCommentLiked(commentId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.putCommunityCommentLiked(commentId)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -74,8 +95,14 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.deleteCommunityCommentLiked(commentId).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.deleteCommunityCommentLiked(commentId)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -95,8 +122,14 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.postCommunityComment(communityId, dto).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.postCommunityComment(communityId, dto)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -106,8 +139,14 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.getMyCommunityCommentsByHeart(cursor).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.getMyCommunityCommentsByHeart(cursor)
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -117,8 +156,13 @@ class CommunityCommentDataStoreImpl @Inject constructor(private val communityCom
         communityCommentService.getMyCommunityComments(cursor).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    communityCommentService.getMyCommunityComments(cursor).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }

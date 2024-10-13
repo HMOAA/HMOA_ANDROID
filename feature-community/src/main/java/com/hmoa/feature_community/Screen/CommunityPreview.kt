@@ -43,12 +43,12 @@ import com.hmoa.feature_community.ViewModel.CommunityPreviewViewModel
 
 @Composable
 fun CommunityPreviewRoute(
-    navBack: () -> Unit,
-    navSearch: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
-    navPost: (String) -> Unit,
-    navLogin: () -> Unit,
-    navHPedia : () -> Unit,
+    onNavBack: () -> Unit,
+    onNavSearch: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
+    onNavPost: (String) -> Unit,
+    onNavLogin: () -> Unit,
+    onNavHPedia : () -> Unit,
     viewModel: CommunityPreviewViewModel = hiltViewModel()
 ) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
@@ -62,16 +62,15 @@ fun CommunityPreviewRoute(
         communities = viewModel.communityPagingSource().collectAsLazyPagingItems(),
         type = type,
         onTypeChanged = {viewModel.updateCategory(it)},
-        navBack = navBack,
-        navSearch = navSearch,
-        navCommunityDescription = navCommunityDescription,
-        navPost = {
-            if (viewModel.hasToken()){navPost(it)}
+        onNavBack = onNavBack,
+        onNavSearch = onNavSearch,
+        onNavCommunityDescription = onNavCommunityDescription,
+        onNavPost = {
+            if (viewModel.hasToken()){onNavPost(it)}
             else {viewModel.updateLoginError()}
         },
         onErrorHandleLoginAgain = {
-            if(viewModel.hasToken()){navHPedia()}
-            else {navLogin()}
+            onNavLogin()
         }
     )
 }
@@ -83,10 +82,10 @@ fun CommunityPage(
     communities: LazyPagingItems<CommunityByCategoryResponseDto>,
     type: Category,
     onTypeChanged: (Category) -> Unit,
-    navBack: () -> Unit,
-    navSearch: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
-    navPost: (String) -> Unit,
+    onNavBack: () -> Unit,
+    onNavSearch: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
+    onNavPost: (String) -> Unit,
     onErrorHandleLoginAgain : () -> Unit,
 ) {
     when (uiState) {
@@ -102,9 +101,9 @@ fun CommunityPage(
                     TopBar(
                         title = "Community",
                         navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                        onNavClick = navBack,
+                        onNavClick = onNavBack,
                         menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
-                        onMenuClick = navSearch
+                        onMenuClick = onNavSearch
                     )
                     ContentDivider()
                     CommunityMainTypes(
@@ -114,7 +113,7 @@ fun CommunityPage(
                     ContentDivider()
                     CommunityPagePostList(
                         communities = communities.itemSnapshotList,
-                        navCommunityDescription = navCommunityDescription
+                        onNavCommunityDescription = onNavCommunityDescription
                     )
                 }
                 Column(
@@ -124,9 +123,9 @@ fun CommunityPage(
                     horizontalAlignment = Alignment.End
                 ) {
                     FloatingActionBtn(
-                        onNavRecommend = { navPost(Category.추천.name) },
-                        onNavPresent = { navPost(Category.시향기.name) },
-                        onNavFree = { navPost(Category.자유.name) },
+                        onNavRecommend = { onNavPost(Category.추천.name) },
+                        onNavPresent = { onNavPost(Category.시향기.name) },
+                        onNavFree = { onNavPost(Category.자유.name) },
                         isAvailable = !uiState.enableLoginErrorDialog,
                     )
                 }
@@ -192,7 +191,7 @@ fun CommunityMainTypes(
 @Composable
 fun CommunityPagePostList(
     communities: ItemSnapshotList<CommunityByCategoryResponseDto>,
-    navCommunityDescription: (Int) -> Unit
+    onNavCommunityDescription: (Int) -> Unit
 ) {
     LazyColumn {
         items(communities) { community ->
@@ -202,7 +201,10 @@ fun CommunityPagePostList(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .border(width = 1.dp, color = CustomColor.gray2),
-                    onPostClick = {navCommunityDescription(community.communityId)},
+                    onPostClick = {
+                        // 여기서 Description으로 이동
+                        onNavCommunityDescription(community.communityId)
+                    },
                     postType = community.category,
                     postTitle = community.title,
                     heartCount = community.heartCount,

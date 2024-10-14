@@ -39,10 +39,10 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 
 @Composable
 fun CommunityHomeRoute(
-    navCommunityGraph: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    onNavCommunityGraph: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    navHome : () -> Unit,
+    onNavHome : () -> Unit,
     viewModel: CommunityHomeViewModel = hiltViewModel(),
 ) {
 
@@ -53,14 +53,10 @@ fun CommunityHomeRoute(
     CommunityHome(
         errorUiState = errorUiState,
         uiState = uiState,
-        navCommunityGraph = navCommunityGraph,
-        navCommunityDescription = navCommunityDescription,
+        onNavCommunityGraph = onNavCommunityGraph,
+        onNavCommunityDescription = onNavCommunityDescription,
         onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()){
-                navHome()
-            } else {
-                onErrorHandleLoginAgain()
-            }
+            onErrorHandleLoginAgain()
         },
     )
 }
@@ -69,21 +65,21 @@ fun CommunityHomeRoute(
 fun CommunityHome(
     errorUiState: ErrorUiState,
     uiState: CommunityHomeUiState,
-    navCommunityGraph: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    onNavCommunityGraph: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
     Column(modifier = Modifier
         .padding(horizontal = 16.dp)
         .fillMaxSize()) {
-        CommunityTitleBar(navCommunityByCategory = navCommunityGraph)
+        CommunityTitleBar(onNavCommunityByCategory = onNavCommunityGraph)
 
         when (uiState) {
             is CommunityHomeUiState.Loading -> AppLoadingScreen()
             is CommunityHomeUiState.Community -> {
                 CommunityHomeContent(
                     communities = uiState.communities,
-                    navCommunityDescription = navCommunityDescription
+                    onNavCommunityDescription = onNavCommunityDescription
                 )
             }
             is CommunityHomeUiState.Error -> {
@@ -99,7 +95,7 @@ fun CommunityHome(
 
 @Composable
 fun CommunityTitleBar(
-    navCommunityByCategory: () -> Unit,
+    onNavCommunityByCategory: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -116,7 +112,7 @@ fun CommunityTitleBar(
         )
 
         Text(
-            modifier = Modifier.clickable {navCommunityByCategory()},
+            modifier = Modifier.clickable {onNavCommunityByCategory()},
             text = "전체보기",
             fontSize = 12.sp,
             fontFamily = FontFamily(Font(R.font.pretendard_regular)),
@@ -129,11 +125,11 @@ fun CommunityTitleBar(
 @Composable
 fun CommunityHomeContent(
     communities: List<CommunityByCategoryResponseDto>,
-    navCommunityDescription: (Int) -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
 ) {
     PostList(
         communities = communities,
-        onNavCommunityDescription = navCommunityDescription
+        onNavCommunityDescription = onNavCommunityDescription
     )
 }
 

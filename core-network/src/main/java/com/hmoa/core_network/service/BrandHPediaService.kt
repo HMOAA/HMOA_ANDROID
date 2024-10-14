@@ -18,15 +18,4 @@ interface BrandHPediaService {
         @Path(value = "brandStoryId") brandStoryId: Int,
         @Field("content") content: String
     ): DataResponseDto<Any>
-
-    @FormUrlEncoded
-    @POST("/brandstory/new")
-    suspend fun postBrandStory(
-        @Field("brandStorySubtitle") brandStorySubtitle: String,
-        @Field("brandStoryTitle") brandStoryTitle: String,
-        @Field("content") content: String
-    ): DataResponseDto<Any>
-
-    @POST("/brandstory/testSave")
-    suspend fun postTestSave(): DataResponseDto<Any> //Test
 }

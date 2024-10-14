@@ -81,7 +81,6 @@ fun ReviewScreen(
     onReportClick: (reviewId: Int) -> Unit,
     handleNoDateError: () -> Unit,
 ){
-    var isOpen by remember{ mutableStateOf(true) }
     when(uiState){
         ReviewUiState.Loading -> AppLoadingScreen()
         is ReviewUiState.Success -> {

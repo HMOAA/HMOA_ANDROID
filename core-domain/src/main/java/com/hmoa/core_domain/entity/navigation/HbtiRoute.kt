@@ -16,4 +16,5 @@ enum class HbtiRoute {
     AddAddressRoute,
     WriteReviewRoute,
     ReviewRoute,
+    EditReviewRoute,
 }

@@ -10,6 +10,7 @@ import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.screen.AddAddressRoute
+import com.hmoa.feature_hbti.screen.EditReviewRoute
 import com.hmoa.feature_hbti.screen.HbtiProcessRoute
 import com.hmoa.feature_hbti.screen.HbtiRoute
 import com.hmoa.feature_hbti.screen.HbtiSurveyResultLoading
@@ -60,6 +61,8 @@ fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.
 fun NavController.navigateToWriteReview(orderId: Int) = navigate("${HbtiRoute.WriteReviewRoute.name}/${orderId}")
 //리뷰 모음 화면
 fun NavController.navigateToReview() = navigate(HbtiRoute.ReviewRoute.name)
+//리뷰 수정 화면
+fun NavController.navigateToEditReview(reviewId: Int) = navigate("${HbtiRoute.EditReviewRoute.name}/${reviewId}")
 fun NavGraphBuilder.hbtiScreen(
     onHbtiSurveyClick: () -> Unit,
     onAfterOrderClick: () -> Unit,
@@ -73,7 +76,8 @@ fun NavGraphBuilder.hbtiScreen(
             onHbtiSurveyClick = onHbtiSurveyClick,
             navBack = navBack,
             navHome = navHome,
-            navReview = navReview
+            navReview = navReview,
+            navEditReview = {}
         )
     }
 }
@@ -274,6 +278,19 @@ fun NavGraphBuilder.review(
             navBack = navBack,
             navEditReview = {},
             navWriteReview = navWriteReview
+        )
+    }
+}
+
+fun NavGraphBuilder.editReview(navBack: () -> Unit){
+    composable(
+        route = "${HbtiRoute.EditReviewRoute.name}/{reviewId}",
+        arguments = listOf(navArgument("reviewId"){type = NavType.IntType})
+    ){
+        val reviewId = it.arguments?.getInt("reviewId")
+        EditReviewRoute(
+            reviewId = reviewId,
+            navBack = navBack
         )
     }
 }

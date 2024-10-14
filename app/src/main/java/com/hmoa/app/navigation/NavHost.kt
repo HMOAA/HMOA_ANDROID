@@ -24,6 +24,7 @@ import com.hmoa.feature_community.Navigation.navigateToCommunitySearchRoute
 import com.hmoa.feature_community.Navigation.nestedCommunityGraph
 import com.hmoa.feature_fcm.alarmRoute
 import com.hmoa.feature_hbti.navigation.addAddress
+import com.hmoa.feature_hbti.navigation.editReview
 import com.hmoa.feature_hbti.navigation.hbtiProcessScreen
 import com.hmoa.feature_hbti.navigation.hbtiScreen
 import com.hmoa.feature_hbti.navigation.hbtiSurveyLoadingScreen
@@ -294,5 +295,6 @@ fun SetUpNavGraph(
         )
         writeReview(navBack = navController::navigateToBack)
         review(navBack = navController::navigateToBack, navWriteReview = navController::navigateToWriteReview)
+        editReview(navBack = navController::navigateToBack)
     }
 }

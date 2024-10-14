@@ -272,6 +272,7 @@ fun NavGraphBuilder.review(
     ){
         ReviewRoute(
             navBack = navBack,
+            navEditReview = {},
             navWriteReview = navWriteReview
         )
     }

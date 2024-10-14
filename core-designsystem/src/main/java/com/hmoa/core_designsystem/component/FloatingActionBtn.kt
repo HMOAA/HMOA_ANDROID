@@ -1,6 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -79,7 +80,8 @@ fun FloatingActionBtn(
                     .size(56.dp)
                     .clip(CircleShape)
                     .clickable { if (isAvailable) onFabClick(!isFabOpen) }
-                    .background(color = Color.White, shape = CircleShape),
+                    .background(color = Color.White, shape = CircleShape)
+                    .border(width = 1.dp, color = Color.Black, shape = CircleShape),
                 painter = painterResource(if (isFabOpen) R.drawable.ic_fab_open else R.drawable.ic_fab),
                 contentDescription = "FAB"
             )

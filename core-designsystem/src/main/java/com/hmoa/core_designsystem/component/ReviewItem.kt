@@ -62,6 +62,8 @@ fun ReviewItem(
     onMenuClick: () -> Unit,
     onItemClick: () -> Unit,
 ){
+    var isLiked by remember{mutableStateOf(isLiked)}
+    var heartNumber by remember{mutableStateOf(heartNumber)}
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,7 +98,11 @@ fun ReviewItem(
             Spacer(Modifier.weight(1f))
             IconButton(
                 modifier = Modifier.size(16.dp),
-                onClick = onHeartClick
+                onClick = {
+                    if (isLiked) heartNumber-- else heartNumber++
+                    isLiked = !isLiked
+                    onHeartClick()
+                }
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),

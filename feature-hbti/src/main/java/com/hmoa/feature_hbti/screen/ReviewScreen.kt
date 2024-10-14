@@ -87,7 +87,8 @@ fun ReviewScreen(
         is ReviewUiState.Success -> {
             ReviewContent(
                 reviews = uiState.reviews.collectAsLazyPagingItems().itemSnapshotList,
-                orderRecords = uiState.myOrders,
+                orderIds = uiState.myOrderIds,
+                orderInfos = uiState.myOrderInfos,
                 onBackClick = navBack,
                 onHeartClick = onHeartClick,
                 onDeleteClick = onDeleteClick,
@@ -112,7 +113,8 @@ fun ReviewScreen(
 @Composable
 private fun ReviewContent(
     reviews: ItemSnapshotList<ReviewResponseDto>,
-    orderRecords: List<GetMyOrderResponseDto>,
+    orderIds: List<Int>,
+    orderInfos: List<String>,
     onBackClick: () -> Unit,
     onHeartClick: (ReviewResponseDto) -> Unit,
     onDeleteClick: (reviewId: Int) -> Unit,

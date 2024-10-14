@@ -12,7 +12,7 @@ data class ReviewResponseDto(
     val hbtiPhotos: List<Photo>,
     val createdAt: String,
     val isWrited: Boolean,
-    var heartCount: Int,
-    var isLiked: Boolean,
+    val heartCount: Int,
+    val isLiked: Boolean,
     val orderTitle: String
 )

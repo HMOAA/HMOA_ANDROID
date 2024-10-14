@@ -99,7 +99,7 @@ fun ReviewScreen(
         }
         ReviewUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
+                isOpen = true,
                 onConfirmClick = navBack,
                 errorUiState = errState,
                 onCloseClick = navBack

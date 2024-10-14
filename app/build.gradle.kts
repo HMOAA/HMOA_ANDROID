@@ -22,8 +22,8 @@ android {
         applicationId = "com.hmoa.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 24
-        versionName = "1.1.3"
+        versionCode = 23
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String

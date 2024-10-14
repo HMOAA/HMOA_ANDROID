@@ -77,6 +77,7 @@ fun PostListItem(
                         icon = R.drawable.ic_heart_filled,
                         count = heartCount
                     )
+                    Spacer(Modifier.width(8.dp))
                 }
                 if (commentCount > 0) {
                     Spacer(Modifier.width(8.dp))

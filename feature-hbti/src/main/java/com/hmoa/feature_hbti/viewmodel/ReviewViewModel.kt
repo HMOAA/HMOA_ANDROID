@@ -104,14 +104,20 @@ class ReviewViewModel @Inject constructor(
                     ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
                     else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                 }
-                if(review.isLiked) review.heartCount++ else review.heartCount--
-                Log.d("TAG TEST", "fail to update reviw : ${review}")
             }
-            if(review.isLiked) review.heartCount-- else review.heartCount++
-            Log.d("TAG TEST", "heart number update reviw : ${review}")
-            review.isLiked = !review.isLiked
-            Log.d("TAG TEST", "is liked changed reviw : ${review}")
         }
+    }
+    fun handleNoDateError() = generalErrorState.update{Pair(true, "주문 후 이용 가능한 서비스 입니다.")}
+
+    /** 신고 기능은 아직 */
+    fun reportReview(reviewId: Int){
+        viewModelScope.launch{
+        }
+    }
+
+    /** 삭제도 아직 */
+    fun deleteReview(reviewId: Int){
+
     }
 }
 

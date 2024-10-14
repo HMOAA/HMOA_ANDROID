@@ -1,6 +1,5 @@
 package com.hmoa.feature_hbti.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -13,7 +12,6 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.HShopReviewRepository
-import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_hbti.paging.ReviewPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,7 +60,11 @@ class ReviewViewModel @Inject constructor(
         when(result){
             Result.Loading -> ReviewUiState.Loading
             is Result.Success -> {
-                ReviewUiState.Success(reviewPagingSource(), result.data.data!!)
+                ReviewUiState.Success(
+                    reviews = reviewPagingSource(),
+                    myOrderIds = result.data.data!!.map{it.orderId},
+                    myOrderInfos = result.data.data!!.map{it.orderInfo}
+                )
             }
             is Result.Error -> {
                 if (result.exception.message != ""){
@@ -118,6 +120,7 @@ sealed interface ReviewUiState{
     data object Error: ReviewUiState
     data class Success(
         val reviews: Flow<PagingData<ReviewResponseDto>>,
-        val myOrders: List<GetMyOrderResponseDto>
+        val myOrderIds: List<Int>,
+        val myOrderInfos: List<String>
     ): ReviewUiState
 }

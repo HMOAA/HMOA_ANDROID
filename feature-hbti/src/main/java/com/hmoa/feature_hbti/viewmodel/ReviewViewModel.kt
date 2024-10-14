@@ -85,7 +85,7 @@ class ReviewViewModel @Inject constructor(
         initialValue = ReviewUiState.Loading
     )
 
-    fun reviewPagingSource(): Flow<PagingData<ReviewResponseDto>> = Pager(
+    private fun reviewPagingSource(): Flow<PagingData<ReviewResponseDto>> = Pager(
         config = PagingConfig(pageSize = 8), //page size 8
         pagingSourceFactory = {getReviewPaging()}
     ).flow.cachedIn(viewModelScope)

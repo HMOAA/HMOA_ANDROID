@@ -2,6 +2,7 @@ package com.hmoa.feature_hbti.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -75,6 +77,22 @@ class HbtiHomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = HbtiHomeUiState.Loading
     )
+
+    fun onHeartClick(review: ReviewResponseDto){
+        viewModelScope.launch{
+            val result = if (review.isLiked) hShopReviewRepository.deleteReviewLike(review.hbtiReviewId) else hShopReviewRepository.putReviewLike(review.hbtiReviewId)
+            if(result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
+                    else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
+                }
+            }
+        }
+    }
+
+
 }
 
 sealed interface HbtiHomeUiState{

@@ -2,8 +2,18 @@ package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,6 +65,7 @@ fun HbtiRoute(
         navBack = navBack,
         uiState = uiState,
         errState = errState,
+        onHeartClick = viewModel::onHeartClick
     )
 }
 
@@ -67,6 +78,7 @@ fun HbtiScreen(
     navReview: () -> Unit,
     uiState: HbtiHomeUiState,
     errState: ErrorUiState,
+    onHeartClick: (ReviewResponseDto) -> Unit,
 ) {
     var isOpen by remember{mutableStateOf(true)}
     when(uiState){
@@ -85,6 +97,7 @@ fun HbtiScreen(
                 onHbtiSurveyClick = onHbtiSurveyClick,
                 onAfterOrderClick = onAfterOrderClick,
                 onReviewItemClick = navReview,
+                onHeartClick = onHeartClick,
                 onBackClick = navBack
             )
         }
@@ -97,6 +110,7 @@ private fun HbtiHomeContent(
     onHbtiSurveyClick: () -> Unit,
     onAfterOrderClick: () -> Unit,
     onReviewItemClick: () -> Unit,
+    onHeartClick: (ReviewResponseDto) -> Unit,
     onBackClick: () -> Unit,
 ){
     Column(
@@ -244,6 +258,7 @@ private fun HbtiHomeContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ){
             items(reviews){ review ->
+                val images = remember(review.hbtiPhotos){review.hbtiPhotos.map{it.photoUrl}}
                 ReviewItem(
                     isItemClickable = true,
                     profileImg = review.profileImgUrl,
@@ -252,10 +267,10 @@ private fun HbtiHomeContent(
                     isLiked = review.isLiked,
                     heartNumber = review.heartCount,
                     content = review.content,
-                    images = review.hbtiPhotos.map{it.photoUrl},
+                    images = images,
                     category = review.orderTitle,
-                    onHeartClick = onReviewItemClick,
-                    onMenuClick = onReviewItemClick,
+                    onHeartClick = { onHeartClick(review) },
+                    onMenuClick = {  },
                     onItemClick = onReviewItemClick
                 )
             }
@@ -330,6 +345,7 @@ fun HbtiScreenPreview() {
     )),
         navBack = {},
         navHome = {},
-        navReview = {}
+        navReview = {},
+        onHeartClick = {}
     )
 }

@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,21 +33,25 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EditModal
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.FloatingActionBtn
+import com.hmoa.core_designsystem.component.ReportModal
 import com.hmoa.core_designsystem.component.ReviewItem
 import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_model.response.GetMyOrderResponseDto
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.Photo
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_hbti.viewmodel.ReviewUiState
 import com.hmoa.feature_hbti.viewmodel.ReviewViewModel
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 @Composable
 fun ReviewRoute(
     navBack: () -> Unit,
     navWriteReview: (orderId: Int) -> Unit,
+    navEditReview: (reviewId: Int) -> Unit,
     viewModel: ReviewViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,7 +61,11 @@ fun ReviewRoute(
         errState = errState,
         navBack = navBack,
         navWriteReview = navWriteReview,
-        onHeartClick = {viewModel.onHeartClick(it)}
+        onHeartClick = viewModel::onHeartClick,
+        onDeleteClick = viewModel::deleteReview,
+        onEditClick = navEditReview,
+        onReportClick = viewModel::reportReview,
+        handleNoDateError = viewModel::handleNoDateError
     )
 }
 
@@ -64,6 +76,10 @@ fun ReviewScreen(
     navBack: () -> Unit,
     navWriteReview: (orderId: Int) -> Unit,
     onHeartClick: (ReviewResponseDto) -> Unit,
+    onDeleteClick: (reviewId: Int) -> Unit,
+    onEditClick: (reviewId: Int) -> Unit,
+    onReportClick: (reviewId: Int) -> Unit,
+    handleNoDateError: () -> Unit,
 ){
     var isOpen by remember{ mutableStateOf(true) }
     when(uiState){
@@ -74,7 +90,11 @@ fun ReviewScreen(
                 orderRecords = uiState.myOrders,
                 onBackClick = navBack,
                 onHeartClick = onHeartClick,
-                onFABClick = navWriteReview
+                onDeleteClick = onDeleteClick,
+                onEditClick = onEditClick,
+                onReportClick = onReportClick,
+                onFABClick = navWriteReview,
+                handleNoDateError = handleNoDateError
             )
         }
         ReviewUiState.Error -> {
@@ -88,75 +108,127 @@ fun ReviewScreen(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ReviewContent(
     reviews: ItemSnapshotList<ReviewResponseDto>,
     orderRecords: List<GetMyOrderResponseDto>,
     onBackClick: () -> Unit,
     onHeartClick: (ReviewResponseDto) -> Unit,
+    onDeleteClick: (reviewId: Int) -> Unit,
+    onEditClick: (reviewId: Int) -> Unit,
+    onReportClick: (reviewId: Int) -> Unit,
     onFABClick: (orderId: Int) -> Unit,
+    handleNoDateError: () -> Unit
 ){
     var isFabOpen by remember{mutableStateOf(false)}
-    val animatedAlpha by animateFloatAsState(
-        targetValue = if(isFabOpen) 0.4f else 1.0f, label = "fab open animation"
+    val modalSheetState = androidx.compose.material.rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Black)
-    ){
-        Column(
-            modifier = Modifier.fillMaxSize().alpha(animatedAlpha),
-        ){
-            TopBar(
-                color = Color.Black,
-                title = "향BTI 후기",
-                titleColor = Color.White,
-                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = onBackClick,
-                navIconColor = Color.White,
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ){
-                items(reviews){review ->
-                    if (review != null){
-                        ReviewItem(
-                            isItemClickable = false,
-                            profileImg = review.profileImgUrl,
-                            nickname = review.author,
-                            writtenAt = review.createdAt,
-                            isLiked = review.isLiked,
-                            heartNumber = review.heartCount,
-                            content = review.content,
-                            images = review.hbtiPhotos.map{it.photoUrl},
-                            category = review.orderTitle,
-                            onHeartClick = { onHeartClick(review) },
-                            onMenuClick = { /*TODO*/ },
-                            onItemClick = { /* 미사용 */}
-                        )
-                    }
+    val animatedAlpha by animateFloatAsState(targetValue = if(isFabOpen) 0.4f else 1.0f, label = "fab open animation")
+    val scope = rememberCoroutineScope()
+    val dialogOpen = {scope.launch { modalSheetState.show() }}
+    val dialogClose = { scope.launch { modalSheetState.hide() } }
+    var selectedReview by remember{mutableStateOf<ReviewResponseDto?>(null)}
+    val onFabItemClick = orderIds.map{{onFABClick(it)}}
+
+    ModalBottomSheetLayout(
+        modifier = Modifier.fillMaxSize(),
+        sheetState = modalSheetState,
+        sheetContent = {
+            if(selectedReview != null){
+                if (selectedReview!!.isWrited) {
+                    EditModal(
+                        onDeleteClick = { onDeleteClick(selectedReview!!.hbtiReviewId) },
+                        onEditClick = { onEditClick(selectedReview!!.hbtiReviewId) },
+                        onCancelClick = { dialogClose() }
+                    )
+                } else {
+                    ReportModal(
+                        onOkClick = {
+                            onReportClick(selectedReview!!.hbtiReviewId)
+                            dialogClose()
+                        },
+                        onCancelClick = { dialogClose() },
+                    )
                 }
             }
-        }
+        },
+        sheetBackgroundColor = CustomColor.gray2,
+        sheetContentColor = Color.Transparent
+    ){
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(end = 24.dp, bottom = 18.dp),
-            contentAlignment = Alignment.BottomEnd
+                .background(color = Color.Black)
         ){
-            FloatingActionBtn(
-                options = orderRecords.map{it.orderInfo},
-                events = orderRecords.map{ { onFABClick(it.orderId) }},
-                width = 208.dp,
-                fontSize = 12.sp,
-                isAvailable = true,
-                isFabOpen = isFabOpen,
-                onFabClick = {isFabOpen = it}
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(animatedAlpha),
+            ){
+                TopBar(
+                    color = Color.Black,
+                    title = "향BTI 후기",
+                    titleColor = Color.White,
+                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                    onNavClick = onBackClick,
+                    navIconColor = Color.White,
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ){
+                    items(
+                        key = {review -> review!!.hbtiReviewId},
+                        items = reviews,
+                        contentType = { _ -> ReviewResponseDto }
+                    ){review ->
+                        if (review != null){
+                            val images = remember(review.hbtiPhotos){review.hbtiPhotos.map{it.photoUrl}}
+                            ReviewItem(
+                                isItemClickable = false,
+                                profileImg = review.profileImgUrl,
+                                nickname = review.author,
+                                writtenAt = review.createdAt,
+                                isLiked = review.isLiked,
+                                heartNumber = review.heartCount,
+                                content = review.content,
+                                images = images,
+                                category = review.orderTitle,
+                                onHeartClick = { onHeartClick(review) },
+                                onMenuClick = {
+                                    selectedReview = review
+                                    dialogOpen()
+                                },
+                                onItemClick = { /* 미사용 */}
+                            )
+                        }
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 24.dp, bottom = 18.dp),
+                contentAlignment = Alignment.BottomEnd
+            ){
+                FloatingActionBtn(
+                    options = orderInfos,
+                    events = onFabItemClick,
+                    width = 208.dp,
+                    fontSize = 12.sp,
+                    isAvailable = true,
+                    isFabOpen = isFabOpen,
+                    onFabClick = {
+                        if (orderInfos.isEmpty()){handleNoDateError()}
+                        else {isFabOpen = it}
+                    }
+                )
+            }
         }
     }
 }
@@ -213,13 +285,16 @@ private fun ReviewUiTest(){
                     )
                 )
             },
-            myOrders = listOf(
-                GetMyOrderResponseDto(orderId = 0, orderInfo = "테스트 1")
-            )
+            myOrderIds = listOf(0),
+            myOrderInfos = listOf("테스트 1")
         ),
         errState = ErrorUiState.Loading,
         navBack = {},
         onHeartClick = {},
-        navWriteReview = {}
+        navWriteReview = {},
+        handleNoDateError = {},
+        onReportClick = {},
+        onDeleteClick = {},
+        onEditClick = {}
     )
 }

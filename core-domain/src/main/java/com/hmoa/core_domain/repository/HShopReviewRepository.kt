@@ -13,6 +13,12 @@ interface HShopReviewRepository {
         orderId: Int,
         content: String,
     ): ResultResponse<ReviewResponseDto>
+    suspend fun postEditReview(
+        image: Array<File>,
+        deleteReviewPhotoIds: Array<Int>,
+        content: String,
+        reviewId: Int
+    ): ResultResponse<ReviewResponseDto>
     suspend fun putReviewLike(reviewId: Int): ResultResponse<Any>
     suspend fun deleteReviewLike(reviewId: Int): ResultResponse<Any>
     suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>>

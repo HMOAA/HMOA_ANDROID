@@ -47,6 +47,26 @@ class HShopReviewDataStoreImpl @Inject constructor(
         return result
     }
 
+    override suspend fun postEditReview(
+        image: Array<File>,
+        deleteReviewPhotoIds: Array<Int>,
+        content: String,
+        reviewId: Int
+    ): ResultResponse<ReviewResponseDto> {
+        val result = ResultResponse<ReviewResponseDto>()
+        hShopReviewService.postEditReview(
+            image.transformToMultipartBody(),
+            deleteReviewPhotoIds.transformRequestBody(),
+            content.transformRequestBody(),
+            reviewId
+        ).suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnSuccess{
+            result.data = this.data
+        }
+        return result
+    }
+
     override suspend fun putReviewLike(reviewId: Int): ResultResponse<Any> {
         val result = ResultResponse<Any>()
         hShopReviewService.putReviewLike(reviewId).suspendOnError{

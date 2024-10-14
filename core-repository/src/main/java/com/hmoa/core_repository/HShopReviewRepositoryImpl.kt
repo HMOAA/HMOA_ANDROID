@@ -24,6 +24,15 @@ class HShopReviewRepositoryImpl @Inject constructor(
         return hShopReviewDataStore.postReview(image, orderId, content)
     }
 
+    override suspend fun postEditReview(
+        image: Array<File>,
+        deleteReviewPhotoIds: Array<Int>,
+        content: String,
+        reviewId: Int
+    ): ResultResponse<ReviewResponseDto> {
+        return hShopReviewDataStore.postEditReview(image, deleteReviewPhotoIds, content, reviewId)
+    }
+
     override suspend fun putReviewLike(reviewId: Int): ResultResponse<Any> {
         return hShopReviewDataStore.putReviewLike(reviewId)
     }

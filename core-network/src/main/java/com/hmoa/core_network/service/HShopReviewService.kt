@@ -27,6 +27,14 @@ interface HShopReviewService {
         @Part orderId: RequestBody,
         @Part content: RequestBody
     ): ApiResponse<ReviewResponseDto>
+    @Multipart
+    @POST("/shop/review/{reviewId}")
+    suspend fun postEditReview(
+        @Part images: Array<MultipartBody.Part>,
+        @Part deleteReviewPhotoIds: Array<RequestBody>,
+        @Part content: RequestBody,
+        @Path("reviewId") reviewId: Int
+    ): ApiResponse<ReviewResponseDto>
     @PUT("/shop/review/{reviewId}/like")
     suspend fun putReviewLike(@Path("reviewId") reviewId: Int)
         : ApiResponse<DataResponseDto<Any>>

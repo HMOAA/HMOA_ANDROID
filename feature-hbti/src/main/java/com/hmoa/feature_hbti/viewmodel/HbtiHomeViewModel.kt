@@ -91,8 +91,16 @@ class HbtiHomeViewModel @Inject constructor(
             }
         }
     }
+    /** 신고 기능은 아직 */
+    fun reportReview(reviewId: Int){
+        viewModelScope.launch{
+        }
+    }
 
+    /** 삭제도 아직 */
+    fun deleteReview(reviewId: Int){
 
+    }
 }
 
 sealed interface HbtiHomeUiState{

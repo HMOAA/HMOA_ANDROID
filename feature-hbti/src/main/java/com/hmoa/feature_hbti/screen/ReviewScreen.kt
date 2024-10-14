@@ -1,5 +1,6 @@
 package com.hmoa.feature_hbti.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -133,6 +134,15 @@ private fun ReviewContent(
     val dialogClose = { scope.launch { modalSheetState.hide() } }
     var selectedReview by remember{mutableStateOf<ReviewResponseDto?>(null)}
     val onFabItemClick = orderIds.map{{onFABClick(it)}}
+
+    BackHandler(
+        enabled = true,
+        onBack = {
+            if (modalSheetState.currentValue == ModalBottomSheetValue.Expanded){
+                dialogClose()
+            } else onBackClick()
+        }
+    )
 
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),

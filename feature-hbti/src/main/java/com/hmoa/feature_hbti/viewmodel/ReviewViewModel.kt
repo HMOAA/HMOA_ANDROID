@@ -53,7 +53,7 @@ class ReviewViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<ReviewUiState> = errorUiState.map{errState ->
+    val uiState: StateFlow<ReviewUiState> = combine(flag, errorUiState){flag, errState ->
         if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("")
         hShopReviewRepository.getMyOrders()
     }.asResult().map{ result ->
@@ -94,9 +94,9 @@ class ReviewViewModel @Inject constructor(
         hShopReviewRepository = hShopReviewRepository,
     )
 
-    fun onHeartClick(review: ReviewResponseDto){
+    fun onHeartClick(reviewId: Int, isLiked: Boolean){
         viewModelScope.launch{
-            val result = if (review.isLiked) hShopReviewRepository.deleteReviewLike(review.hbtiReviewId) else hShopReviewRepository.putReviewLike(review.hbtiReviewId)
+            val result = if (isLiked) hShopReviewRepository.deleteReviewLike(reviewId) else hShopReviewRepository.putReviewLike(reviewId)
             if(result.errorMessage != null){
                 when(result.errorMessage!!.message){
                     ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}

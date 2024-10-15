@@ -48,6 +48,7 @@ import com.hmoa.core_designsystem.component.ReviewItem
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.response.Photo
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_hbti.viewmodel.HbtiHomeUiState
@@ -57,7 +58,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HbtiRoute(
     navHome: () -> Unit,
-    navReview: () -> Unit,
+    navReview: (befRoute: HbtiRoute) -> Unit,
     navBack: () -> Unit,
     navEditReview: (reviewId: Int) -> Unit,
     onHbtiSurveyClick: () -> Unit,
@@ -70,7 +71,7 @@ fun HbtiRoute(
         onHbtiSurveyClick = { onHbtiSurveyClick() },
         onAfterOrderClick = { onAfterOrderClick() },
         navHome = navHome,
-        navReview = navReview,
+        navReview = { navReview(HbtiRoute.Hbti) },
         navBack = navBack,
         navEditReview = navEditReview,
         onDeleteClick = viewModel::deleteReview,
@@ -93,7 +94,7 @@ fun HbtiScreen(
     onReportClick: (reviewId: Int) -> Unit,
     uiState: HbtiHomeUiState,
     errState: ErrorUiState,
-    onHeartClick: (ReviewResponseDto) -> Unit,
+    onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
 ) {
     var isOpen by remember{mutableStateOf(true)}
     when(uiState){
@@ -129,7 +130,7 @@ private fun HbtiHomeContent(
     onHbtiSurveyClick: () -> Unit,
     onAfterOrderClick: () -> Unit,
     onReviewItemClick: () -> Unit,
-    onHeartClick: (ReviewResponseDto) -> Unit,
+    onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
     onBackClick: () -> Unit,
     onEditClick: (reviewId: Int) -> Unit,
     onDeleteClick: (reviewId: Int) -> Unit,
@@ -318,6 +319,7 @@ private fun HbtiHomeContent(
                     val images = remember(review.hbtiPhotos){review.hbtiPhotos.map{it.photoUrl}}
                     ReviewItem(
                         isItemClickable = true,
+                        reviewId = review.hbtiReviewId,
                         profileImg = review.profileImgUrl,
                         nickname = review.author,
                         writtenAt = review.createdAt,
@@ -326,7 +328,7 @@ private fun HbtiHomeContent(
                         content = review.content,
                         images = images,
                         category = review.orderTitle,
-                        onHeartClick = { onHeartClick(review) },
+                        onHeartClick = onHeartClick,
                         onMenuClick = {
                             selectedReview = review
                             dialogOpen()
@@ -407,7 +409,7 @@ fun HbtiScreenPreview() {
         navBack = {},
         navHome = {},
         navReview = {},
-        onHeartClick = {},
+        onHeartClick = {a,b ->},
         onReportClick = {},
         onDeleteClick = {},
         navEditReview = {}

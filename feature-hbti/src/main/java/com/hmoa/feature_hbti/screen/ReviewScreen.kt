@@ -76,7 +76,7 @@ fun ReviewScreen(
     errState: ErrorUiState,
     navBack: () -> Unit,
     navWriteReview: (orderId: Int) -> Unit,
-    onHeartClick: (ReviewResponseDto) -> Unit,
+    onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
     onDeleteClick: (reviewId: Int) -> Unit,
     onEditClick: (reviewId: Int) -> Unit,
     onReportClick: (reviewId: Int) -> Unit,
@@ -116,7 +116,7 @@ private fun ReviewContent(
     orderIds: List<Int>,
     orderInfos: List<String>,
     onBackClick: () -> Unit,
-    onHeartClick: (ReviewResponseDto) -> Unit,
+    onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
     onDeleteClick: (reviewId: Int) -> Unit,
     onEditClick: (reviewId: Int) -> Unit,
     onReportClick: (reviewId: Int) -> Unit,
@@ -151,7 +151,10 @@ private fun ReviewContent(
             if(selectedReview != null){
                 if (selectedReview!!.isWrited) {
                     EditModal(
-                        onDeleteClick = { onDeleteClick(selectedReview!!.hbtiReviewId) },
+                        onDeleteClick = {
+                            onDeleteClick(selectedReview!!.hbtiReviewId)
+                            dialogClose()
+                        },
                         onEditClick = { onEditClick(selectedReview!!.hbtiReviewId) },
                         onCancelClick = { dialogClose() }
                     )
@@ -202,6 +205,7 @@ private fun ReviewContent(
                             val images = remember(review.hbtiPhotos){review.hbtiPhotos.map{it.photoUrl}}
                             ReviewItem(
                                 isItemClickable = false,
+                                reviewId = review.hbtiReviewId,
                                 profileImg = review.profileImgUrl,
                                 nickname = review.author,
                                 writtenAt = review.createdAt,
@@ -210,7 +214,7 @@ private fun ReviewContent(
                                 content = review.content,
                                 images = images,
                                 category = review.orderTitle,
-                                onHeartClick = { onHeartClick(review) },
+                                onHeartClick = onHeartClick,
                                 onMenuClick = {
                                     selectedReview = review
                                     dialogOpen()
@@ -301,7 +305,7 @@ private fun ReviewUiTest(){
         ),
         errState = ErrorUiState.Loading,
         navBack = {},
-        onHeartClick = {},
+        onHeartClick = {a,b -> },
         navWriteReview = {},
         handleNoDateError = {},
         onReportClick = {},

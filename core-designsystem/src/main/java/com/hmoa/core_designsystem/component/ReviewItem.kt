@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,10 +48,12 @@ import androidx.compose.ui.window.DialogProperties
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import kotlinx.coroutines.delay
 
 @Composable
 fun ReviewItem(
     isItemClickable: Boolean,
+    reviewId: Int,
     profileImg: String,
     nickname: String,
     writtenAt: String,
@@ -58,12 +62,13 @@ fun ReviewItem(
     content: String,
     images: List<String>,
     category: String,
-    onHeartClick: () -> Unit,
+    onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
     onMenuClick: () -> Unit,
     onItemClick: () -> Unit,
 ){
     var isLiked by remember{mutableStateOf(isLiked)}
     var heartNumber by remember{mutableStateOf(heartNumber)}
+    var isDelayed by remember{mutableStateOf(true)}
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,9 +105,11 @@ fun ReviewItem(
                 modifier = Modifier.size(16.dp),
                 onClick = {
                     if (isLiked) heartNumber-- else heartNumber++
+                    onHeartClick(reviewId, isLiked)
                     isLiked = !isLiked
-                    onHeartClick()
-                }
+                    isDelayed = false
+                },
+                enabled = isDelayed
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
@@ -150,6 +157,13 @@ fun ReviewItem(
             )
         }
     }
+    LaunchedEffect(isDelayed){
+        Log.d("TAG TEST", "delay : ${isDelayed}")
+        if(!isDelayed){
+            delay(500)
+            isDelayed = true
+        }
+    }
 }
 
 @Composable
@@ -158,11 +172,7 @@ private fun Images(images: List<String>){
         modifier = Modifier.padding(bottom = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ){
-        items(images){ image ->
-            ExpandableImage(
-                picture = image
-            )
-        }
+        items(images){ image -> ExpandableImage(picture = image)}
     }
 }
 
@@ -250,6 +260,7 @@ private fun ReviewItemUITest(){
     ){
         ReviewItem(
             isItemClickable = false,
+            reviewId = 0,
             profileImg = "",
             nickname = "향수 러버",
             writtenAt = "10일 전",
@@ -258,7 +269,7 @@ private fun ReviewItemUITest(){
             content = "평소에 선호하는 향이 있었는데 그 향의 이름을 몰랐는데 향료 배송받고 시향해보니 통카 빈?이더라구요 제가 좋아했던 향수들은 다 통카 빈이 들어가있네요 ㅎ 저같은 분들한테 추천합니다",
             images = listOf("","","","",""),
             category = "시트러스",
-            onHeartClick = {isLiked = !isLiked},
+            onHeartClick = {a,b -> },
             onMenuClick = {},
             onItemClick = {
                 curN += 1

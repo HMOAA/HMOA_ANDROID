@@ -31,6 +31,7 @@ class ReviewViewModel @Inject constructor(
     private val hShopReviewRepository: HShopReviewRepository
 ): ViewModel(){
 
+    private val flag = MutableStateFlow<Boolean>(false)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -125,7 +126,9 @@ class ReviewViewModel @Inject constructor(
                     ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
                     else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
+                return@launch
             }
+            flag.update{!flag.value}
         }
     }
 }

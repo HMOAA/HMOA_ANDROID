@@ -63,7 +63,7 @@ class ReviewViewModel @Inject constructor(
                 ReviewUiState.Success(
                     reviews = reviewPagingSource(),
                     myOrderIds = result.data.data!!.map{it.orderId},
-                    myOrderInfos = result.data.data!!.map{it.orderInfo}
+                    myOrderInfos = result.data.data!!.map{"후기 작성하기 (${it.orderInfo})"}
                 )
             }
             is Result.Error -> {

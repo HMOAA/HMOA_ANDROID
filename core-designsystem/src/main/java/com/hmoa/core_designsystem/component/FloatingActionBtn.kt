@@ -114,7 +114,7 @@ fun FloatingActionBtn(
                         },
                         onClick = {
                             onFabClick(false)
-                            events[idx]
+                            events[idx]()
                         }
                     )
                 }

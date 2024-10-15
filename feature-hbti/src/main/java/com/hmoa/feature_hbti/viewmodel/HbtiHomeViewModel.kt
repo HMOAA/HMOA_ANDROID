@@ -78,9 +78,9 @@ class HbtiHomeViewModel @Inject constructor(
         initialValue = HbtiHomeUiState.Loading
     )
 
-    fun onHeartClick(review: ReviewResponseDto){
+    fun onHeartClick(reviewId: Int, isLiked: Boolean){
         viewModelScope.launch{
-            val result = if (review.isLiked) hShopReviewRepository.deleteReviewLike(review.hbtiReviewId) else hShopReviewRepository.putReviewLike(review.hbtiReviewId)
+            val result = if (isLiked) hShopReviewRepository.deleteReviewLike(reviewId) else hShopReviewRepository.putReviewLike(reviewId)
             if(result.errorMessage != null){
                 when(result.errorMessage!!.message){
                     ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}

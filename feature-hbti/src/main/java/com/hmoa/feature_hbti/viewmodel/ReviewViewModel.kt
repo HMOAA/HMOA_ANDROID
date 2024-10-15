@@ -115,9 +115,18 @@ class ReviewViewModel @Inject constructor(
         }
     }
 
-    /** 삭제도 아직 */
     fun deleteReview(reviewId: Int){
-
+        viewModelScope.launch{
+            val result = hShopReviewRepository.deleteReview(reviewId)
+            if(result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
+                }
+            }
+        }
     }
 }
 

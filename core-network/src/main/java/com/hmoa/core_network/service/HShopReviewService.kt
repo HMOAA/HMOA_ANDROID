@@ -24,8 +24,8 @@ interface HShopReviewService {
     @POST("/shop/review")
     suspend fun postReview(
         @Part images: Array<MultipartBody.Part>,
-        @Part orderId: RequestBody,
-        @Part content: RequestBody
+        @Part("orderId") orderId: RequestBody,
+        @Part("content") content: RequestBody
     ): ApiResponse<ReviewResponseDto>
     @GET("/shop/review/{reviewId}")
     suspend fun getReview(

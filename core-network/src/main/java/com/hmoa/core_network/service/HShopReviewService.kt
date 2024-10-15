@@ -27,6 +27,10 @@ interface HShopReviewService {
         @Part orderId: RequestBody,
         @Part content: RequestBody
     ): ApiResponse<ReviewResponseDto>
+    @GET("/shop/review/{reviewId}")
+    suspend fun getReview(
+        @Path("reviewId") reviewId: Int
+    ): ApiResponse<ReviewResponseDto>
     @Multipart
     @POST("/shop/review/{reviewId}")
     suspend fun postEditReview(
@@ -35,6 +39,10 @@ interface HShopReviewService {
         @Part content: RequestBody,
         @Path("reviewId") reviewId: Int
     ): ApiResponse<ReviewResponseDto>
+    @DELETE("/shop/review/{reviewId}")
+    suspend fun deleteReview(
+        @Path("reviewId") reviewId: Int
+    ): ApiResponse<Any>
     @PUT("/shop/review/{reviewId}/like")
     suspend fun putReviewLike(@Path("reviewId") reviewId: Int)
         : ApiResponse<DataResponseDto<Any>>

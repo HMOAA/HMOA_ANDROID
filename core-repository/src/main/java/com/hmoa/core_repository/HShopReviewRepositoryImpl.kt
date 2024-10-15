@@ -15,7 +15,6 @@ class HShopReviewRepositoryImpl @Inject constructor(
     override suspend fun getReviews(page: Int): ResultResponse<PagingData<ReviewResponseDto>> {
         return hShopReviewDataStore.getReviews(page)
     }
-
     override suspend fun postReview(
         image: Array<File>,
         orderId: Int,
@@ -24,6 +23,9 @@ class HShopReviewRepositoryImpl @Inject constructor(
         return hShopReviewDataStore.postReview(image, orderId, content)
     }
 
+    override suspend fun getReview(reviewId: Int): ResultResponse<ReviewResponseDto> {
+        return hShopReviewDataStore.getReview(reviewId)
+    }
     override suspend fun postEditReview(
         image: Array<File>,
         deleteReviewPhotoIds: Array<Int>,
@@ -31,6 +33,10 @@ class HShopReviewRepositoryImpl @Inject constructor(
         reviewId: Int
     ): ResultResponse<ReviewResponseDto> {
         return hShopReviewDataStore.postEditReview(image, deleteReviewPhotoIds, content, reviewId)
+    }
+
+    override suspend fun deleteReview(reviewId: Int): ResultResponse<Any> {
+        return hShopReviewDataStore.deleteReview(reviewId)
     }
 
     override suspend fun putReviewLike(reviewId: Int): ResultResponse<Any> {

@@ -47,6 +47,16 @@ class HShopReviewDataStoreImpl @Inject constructor(
         return result
     }
 
+    override suspend fun getReview(reviewId: Int): ResultResponse<ReviewResponseDto> {
+        val result = ResultResponse<ReviewResponseDto>()
+        hShopReviewService.getReview(reviewId).suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnSuccess{
+            result.data = this.data
+        }
+        return result
+    }
+
     override suspend fun postEditReview(
         image: Array<File>,
         deleteReviewPhotoIds: Array<Int>,
@@ -60,6 +70,16 @@ class HShopReviewDataStoreImpl @Inject constructor(
             content.transformRequestBody(),
             reviewId
         ).suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnSuccess{
+            result.data = this.data
+        }
+        return result
+    }
+
+    override suspend fun deleteReview(reviewId: Int): ResultResponse<Any> {
+        val result = ResultResponse<Any>()
+        hShopReviewService.deleteReview(reviewId).suspendOnError{
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }.suspendOnSuccess{
             result.data = this.data

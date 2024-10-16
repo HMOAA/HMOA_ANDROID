@@ -1,6 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -163,7 +162,6 @@ fun ReviewItem(
         }
     }
     LaunchedEffect(isDelayed){
-        Log.d("TAG TEST", "delay : ${isDelayed}")
         if(!isDelayed){
             delay(200)
             isDelayed = true

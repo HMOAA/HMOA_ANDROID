@@ -10,7 +10,7 @@ interface ReportService {
     @POST("/report/community")
     suspend fun postReportCommunity(
         @Body dto: TargetRequestDto
-    ): DataResponseDto<Any?>
+    ): ApiResponse<DataResponseDto<Any>>
 
     @POST("/report/communityComment")
     suspend fun postReportCommunityComment(

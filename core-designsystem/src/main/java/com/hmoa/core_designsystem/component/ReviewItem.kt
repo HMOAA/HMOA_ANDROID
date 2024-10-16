@@ -131,7 +131,7 @@ fun ReviewItem(
                 onClick = onMenuClick
             ){
                 Icon(
-                    painter = painterResource(R.drawable.three_dot_menu_vertical),
+                    painter = painterResource(R.drawable.ic_vertical_three_dot_menu),
                     tint = CustomColor.gray2,
                     contentDescription = "Menu Button"
                 )

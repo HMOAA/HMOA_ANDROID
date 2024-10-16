@@ -72,6 +72,14 @@ fun CommunityDescriptionRoute(
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     val reportState = viewModel.reportState.collectAsStateWithLifecycle()
+    val onHeartClick = remember<(commentId: Int, isLiked: Boolean) -> Unit>{
+        { commentId, isLiked ->
+            viewModel.updateCommentLike(
+                commentId,
+                isLiked
+            )
+        }
+    }
 
     val context = LocalContext.current
 
@@ -98,10 +106,7 @@ fun CommunityDescriptionRoute(
             viewModel.postComment(it)
             comments.refresh()
         },
-        onChangeCommentLike = { commentId , isSelected ->
-            viewModel.updateCommentLike(commentId, isSelected)
-            comments.refresh()
-        },
+        onChangeCommentLike = onHeartClick,
         onDeleteCommunity = {
             viewModel.delCommunity()
             onNavBack()
@@ -378,9 +383,9 @@ private fun Comments(
                     comment = comment.content,
                     isFirst = false,
                     isSelected = comment.liked,
-                    onChangeSelect = {onChangeCommentLike(comment.commentId, !comment.liked)},
+                    onHeartClick = {onChangeCommentLike(comment.commentId, it)},
                     heartCount = comment.heartCount,
-                    onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
+                    onNavCommunity = {/* 여기서는 아무 event도 없이 처리 */},
                     onOpenBottomDialog = {
                         setComment(comment)
                         changeBottomOptionState(true)

@@ -14,7 +14,6 @@ import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.ReportRepository
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
@@ -26,10 +25,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,7 +39,6 @@ class CommunityDescViewModel @Inject constructor(
     private val reportRepository: ReportRepository,
     private val loginRepository : LoginRepository,
 ) : ViewModel() {
-    private val authToken = MutableStateFlow<String?>(null)
     //community id
     private val _id = MutableStateFlow(-1)
     val id get() = _id.asStateFlow()
@@ -77,7 +73,6 @@ class CommunityDescViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ErrorUiState.Loading
     )
-    init{getAuthToken()}
     //ui state
     val uiState: StateFlow<CommunityDescUiState> = combine(_flag, _id) { flag, id ->
         fetchLike(isLiked.value)
@@ -109,16 +104,6 @@ class CommunityDescViewModel @Inject constructor(
         initialValue = CommunityDescUiState.Loading
     )
 
-    // get token
-    private fun getAuthToken() {
-        viewModelScope.launch {
-            loginRepository.getAuthToken().onEmpty { }.collectLatest {
-                authToken.value = it
-            }
-        }
-    }
-    //token 보유 여부 return
-    fun hasToken() : Boolean = authToken.value != null
     //커뮤니티 삭제
     fun delCommunity() {
         viewModelScope.launch {
@@ -131,27 +116,20 @@ class CommunityDescViewModel @Inject constructor(
     }
     //커뮤니티 신고하기
     fun reportCommunity() {
-        if(authToken.value == null){
-            unLoginedErrorState.update{ true }
-        } else {
-            viewModelScope.launch {
-                try {
-                    val requestDto = TargetRequestDto(targetId = id.value.toString())
-                    reportRepository.reportCommunity(requestDto)
-                    _reportState.update{true}
-                } catch (e: Exception) {
-                    generalErrorState.update{ Pair(true, e.message) }
-                    _flag.update{ null }
-                    _reportState.update{false}
-                }
+        viewModelScope.launch {
+            try {
+                val requestDto = TargetRequestDto(targetId = id.value.toString())
+                reportRepository.reportCommunity(requestDto)
+                _reportState.update{true}
+            } catch (e: Exception) {
+                generalErrorState.update{ Pair(true, e.message) }
+                _flag.update{ null }
+                _reportState.update{false}
             }
         }
     }
     //커뮤니티 좋아요
-    fun updateLike() {
-        if(authToken.value == null){unLoginedErrorState.update{ true }}
-        else {_flag.update { true }}
-    }
+    fun updateLike() {_flag.update { true }}
     //댓글 Paging
     fun commentPagingSource(): Flow<PagingData<CommunityCommentWithLikedResponseDto>> = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
@@ -161,50 +139,44 @@ class CommunityDescViewModel @Inject constructor(
     ).flow.cachedIn(viewModelScope)
     //댓글 작성
     fun postComment(comment: String) {
-        if(authToken.value == null){
-            unLoginedErrorState.update{ true }
-        } else {
-            viewModelScope.launch {
-                val requestDto = CommunityCommentDefaultRequestDto(content = comment)
-                try {
-                    communityCommentRepository.postCommunityComment(communityId = id.value,dto = requestDto)
-                } catch (e: Exception) {
-                    generalErrorState.update{ Pair(true, e.message) }
+        viewModelScope.launch {
+            val requestDto = CommunityCommentDefaultRequestDto(content = comment)
+            val result = communityCommentRepository.postCommunityComment(communityId = id.value,dto = requestDto)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
             }
         }
     }
     //댓글 삭제
-    fun delComment(id: Int?) {
-        if(authToken.value == null){
-            unLoginedErrorState.update{ true }
-        } else {
-            viewModelScope.launch {
-                if (id == null) {
-                    generalErrorState.update{ Pair(true, "해당 댓글을 찾을 수 없습니다.")}
-                    return@launch
-                }
-                val result = communityCommentRepository.deleteCommunityComment(id)
-                if (result.errorMessage is ErrorMessage) {
-                    generalErrorState.update { Pair(true, result.errorMessage?.message) }
-                    return@launch
+    fun delComment(id: Int) {
+        viewModelScope.launch {
+            val result = communityCommentRepository.deleteCommunityComment(id)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
             }
         }
     }
     //댓글 신고하기
     fun reportComment(id: Int) {
-        if(authToken.value == null){
-            unLoginedErrorState.update{ true }
-        } else {
-            viewModelScope.launch {
-                val requestDto = TargetRequestDto(id.toString())
-                try {
-                    reportRepository.reportCommunityComment(requestDto)
-                    _reportState.update{ true }
-                } catch (e: Exception) {
-                    generalErrorState.update { Pair(true, e.message) }
-                    _reportState.update{ false }
+        viewModelScope.launch {
+            val requestDto = TargetRequestDto(id.toString())
+            val result = reportRepository.reportCommunityComment(requestDto)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
             }
         }
@@ -214,22 +186,14 @@ class CommunityDescViewModel @Inject constructor(
         id: Int,
         liked: Boolean
     ) {
-        if(authToken.value == null){
-            unLoginedErrorState.update{ true }
-        } else {
-            viewModelScope.launch {
-                if (liked) {
-                    val result = communityCommentRepository.putCommunityCommentLiked(id)
-                    if (result.errorMessage != null) {
-                        generalErrorState.update { Pair(true, result.errorMessage?.message) }
-                        return@launch
-                    }
-                } else {
-                    val result = communityCommentRepository.deleteCommunityCommentLiked(id)
-                    if (result.errorMessage != null) {
-                        generalErrorState.update { Pair(true, result.errorMessage?.message) }
-                        return@launch
-                    }
+        viewModelScope.launch {
+            val result = if(liked) communityCommentRepository.deleteCommunityCommentLiked(id) else communityCommentRepository.putCommunityCommentLiked(id)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
             }
         }

@@ -60,7 +60,11 @@ fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.
 //주문 리뷰 작성
 fun NavController.navigateToWriteReview(orderId: Int) = navigate("${HbtiRoute.WriteReviewRoute.name}/${orderId}")
 //리뷰 모음 화면
-fun NavController.navigateToReview() = navigate(HbtiRoute.ReviewRoute.name)
+fun NavController.navigateToReview(befRoute: HbtiRoute) = navigate(HbtiRoute.ReviewRoute.name){
+    if(befRoute == HbtiRoute.WriteReviewRoute){
+        popUpTo("${HbtiRoute.WriteReviewRoute.name}/{orderId}"){inclusive = true}
+    }
+}
 //리뷰 수정 화면
 fun NavController.navigateToEditReview(reviewId: Int) = navigate("${HbtiRoute.EditReviewRoute.name}/${reviewId}")
 fun NavGraphBuilder.hbtiScreen(
@@ -68,7 +72,7 @@ fun NavGraphBuilder.hbtiScreen(
     onAfterOrderClick: () -> Unit,
     navBack: () -> Unit,
     navHome: () -> Unit,
-    navReview: () -> Unit
+    navReview: (befRoute: HbtiRoute) -> Unit
 ) {
     composable(route = "${HbtiRoute.Hbti}") {
         HbtiRoute(

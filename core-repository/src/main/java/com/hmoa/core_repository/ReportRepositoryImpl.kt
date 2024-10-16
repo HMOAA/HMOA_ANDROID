@@ -16,8 +16,11 @@ class ReportRepositoryImpl @Inject constructor(private val reportDataStore: Repo
         return reportDataStore.reportCommunityComment(dto)
     }
 
-    suspend override fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {
+    override suspend fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {
         return reportDataStore.reportPerfumeComment(dto)
     }
 
+    override suspend fun reportReview(reviewId: Int): ResultResponse<DataResponseDto<Any>> {
+        return reportDataStore.reportReview(reviewId)
+    }
 }

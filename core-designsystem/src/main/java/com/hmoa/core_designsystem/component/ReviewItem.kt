@@ -101,28 +101,33 @@ fun ReviewItem(
                 fontFamily = CustomFont.medium
             )
             Spacer(Modifier.weight(1f))
-            IconButton(
-                modifier = Modifier.size(16.dp),
-                onClick = {
-                    if (isLiked) heartNumber-- else heartNumber++
-                    onHeartClick(reviewId, isLiked)
-                    isLiked = !isLiked
-                    isDelayed = false
-                },
-                enabled = isDelayed
-            ) {
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(if(isLiked) R.drawable.ic_heart_selectable_selected else R.drawable.ic_heart_selectable_not_selected),
-                    contentDescription = "Heart Icon"
+            Row(
+                modifier = Modifier.width(50.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                IconButton(
+                    modifier = Modifier.size(16.dp),
+                    onClick = {
+                        if (isLiked) heartNumber-- else heartNumber++
+                        onHeartClick(reviewId, isLiked)
+                        isLiked = !isLiked
+                        isDelayed = false
+                    },
+                    enabled = isDelayed
+                ) {
+                    Image(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(if(isLiked) R.drawable.ic_heart_selectable_selected else R.drawable.ic_heart_selectable_not_selected),
+                        contentDescription = "Heart Icon"
+                    )
+                }
+                Text(
+                    text = heartNumber.toString(),
+                    fontSize = 14.sp,
+                    fontFamily = CustomFont.regular
                 )
             }
-            Spacer(Modifier.width(4.dp))
-            Text(
-                text = heartNumber.toString(),
-                fontSize = 14.sp,
-                fontFamily = CustomFont.regular
-            )
             IconButton(
                 onClick = onMenuClick
             ){
@@ -160,7 +165,7 @@ fun ReviewItem(
     LaunchedEffect(isDelayed){
         Log.d("TAG TEST", "delay : ${isDelayed}")
         if(!isDelayed){
-            delay(500)
+            delay(200)
             isDelayed = true
         }
     }

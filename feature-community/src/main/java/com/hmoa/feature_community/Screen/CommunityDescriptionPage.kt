@@ -85,8 +85,7 @@ fun CommunityDescriptionRoute(
 
     CommunityDescriptionPage(
         errState = errState.value,
-        isLiked = isLiked.value,
-        onChangeLike = {viewModel.updateLike()},
+        onChangeLike = viewModel::updateLike,
         uiState = uiState.value,
         commentList = comments,
         onNavBack = onNavBack,
@@ -131,8 +130,7 @@ fun CommunityDescriptionPage(
     errState : ErrorUiState,
     uiState : CommunityDescUiState,
     commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
-    isLiked : Boolean,
-    onChangeLike : () -> Unit,
+    onChangeLike : (isLiked: Boolean) -> Unit,
     onReportCommunity : () -> Unit,
     onReportComment: (Int) -> Unit,
     onPostComment : (String) -> Unit,
@@ -151,7 +149,6 @@ fun CommunityDescriptionPage(
             CommunityDescContent(
                 community = uiState.community,
                 commentList = commentList,
-                isLiked = isLiked,
                 photoList = uiState.photoList,
                 onChangeLike = onChangeLike,
                 onReportCommunity = onReportCommunity,
@@ -182,8 +179,7 @@ private fun CommunityDescContent(
     community : CommunityDefaultResponseDto,
     commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     photoList : List<String>,
-    isLiked : Boolean,
-    onChangeLike : () -> Unit,
+    onChangeLike : (isLiked: Boolean) -> Unit,
     onReportCommunity : () -> Unit,
     onReportComment: (Int) -> Unit,
     onPostComment : (String) -> Unit,
@@ -247,7 +243,6 @@ private fun CommunityDescContent(
                 dialogOpen()
                 onChangeType("post")
             },
-            isLiked = isLiked,
             onChangeLike = onChangeLike,
             photoList = photoList,
             commentList = commentList,
@@ -263,8 +258,7 @@ private fun CommunityDescContent(
 @Composable
 private fun CommunityDescMainContent(
     community: CommunityDefaultResponseDto,
-    isLiked: Boolean,
-    onChangeLike: () -> Unit,
+    onChangeLike: (Boolean) -> Unit,
     photoList: List<String>,
     commentList: LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     onChangeType: (String) -> Unit,
@@ -313,8 +307,8 @@ private fun CommunityDescMainContent(
                 dateDiff = community.time,
                 title = community.title,
                 content = community.content,
-                heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
-                isLiked = isLiked,
+                heartCount = community.heartCount,
+                isLiked = community.liked,
                 onChangeLike = onChangeLike,
                 pictures = photoList
             )

@@ -18,8 +18,20 @@ class ReportDataStoreImpl @Inject constructor(
         return reportService.postReportCommunity(dto)
     }
 
-    override suspend fun reportCommunityComment(dto: TargetRequestDto): DataResponseDto<Any> {
-        return reportService.postReportCommunityComment(dto)
+    override suspend fun reportCommunityComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        reportService.postReportCommunityComment(dto).suspendOnError{
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    reportService.postReportCommunityComment(dto).suspendOnSuccess { result.data = this.data }
+                }
+            )
+        }.suspendOnSuccess{
+            result.data = this.data
+        }
+        return result
     }
 
     suspend override fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {

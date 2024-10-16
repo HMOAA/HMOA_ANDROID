@@ -4,7 +4,18 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -13,7 +24,11 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,9 +59,9 @@ fun PostContent(
     dateDiff: String,
     title: String,
     content: String,
-    heartCount: String,
+    heartCount: Int,
     isLiked: Boolean,
-    onChangeLike: () -> Unit,
+    onChangeLike: (isLiked: Boolean) -> Unit,
     pictures: List<String>
 ) {
     //pager state
@@ -58,6 +73,9 @@ fun PostContent(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.toFloat()
     val screenHeight = configuration.screenHeightDp.toFloat()
+
+    var isLiked by remember{mutableStateOf(isLiked)}
+    var heartCount by remember{mutableStateOf(heartCount)}
 
     val nicknameTextStyle = TextStyle(
         fontSize = 14.sp,
@@ -133,7 +151,49 @@ fun PostContent(
             Text(text = title, style = titleTextStyle)
         }
 
+        Spacer(Modifier.height(15.dp))
+
+        Text(text = content,style = contentTextStyle)
+
+        if(pictures.isNotEmpty()){
+            Spacer(Modifier.height(17.dp))
+
+            HorizontalPager(
+                modifier = Modifier
+                    .width(274.dp)
+                    .height(304.dp)
+                    .align(Alignment.CenterHorizontally),
+                state = state
+            ) {
+                Column(modifier = Modifier.fillMaxSize()){
+                    ExpandableImage(
+                        modifier = Modifier.requiredWidth(width),
+                        picture = pictures[it],
+                        width = screenWidth,
+                        height = screenHeight
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally)
+            ){
+                for(i in pictures.indices){
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(color = if (i == state.currentPage) Color.Black else CustomColor.blackTrans30, shape = CircleShape)
+                            .clip(CircleShape)
+                    )
+                }
+            }
+        }
+
         Spacer(Modifier.height(17.dp))
+
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -142,7 +202,9 @@ fun PostContent(
         ) {
             IconButton(
                 onClick = {
-                    onChangeLike()
+                    if(isLiked) heartCount-- else heartCount++
+                    onChangeLike(isLiked)
+                    isLiked = !isLiked
                 }
             ) {
                 Icon(
@@ -153,7 +215,7 @@ fun PostContent(
                 )
             }
 
-            Text(text = heartCount, style = viewNumberTextStyle)
+            Text(text = if (heartCount > 999) "999+" else heartCount.toString(), style = viewNumberTextStyle)
         }
 
         Spacer(Modifier.height(14.dp))
@@ -174,7 +236,8 @@ private fun ExpandableImage(
             onDismissRequest = { showDialog = false }
         ) {
             Box(
-                modifier = modifier.width(width.dp)
+                modifier = modifier
+                    .width(width.dp)
                     .height(height.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -186,7 +249,8 @@ private fun ExpandableImage(
                     contentScale = ContentScale.FillWidth
                 )
                 Row(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(start = 16.dp, top = 19.dp),
                     verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.Start
@@ -239,7 +303,7 @@ fun PostContentPreview() {
         dateDiff = "76",
         title = "안녕하셈",
         content = "반갑습니다 ㅎㅎ",
-        heartCount = "3",
+        heartCount = 3,
         isLiked = false,
         onChangeLike = {},
         pictures = emptyList()

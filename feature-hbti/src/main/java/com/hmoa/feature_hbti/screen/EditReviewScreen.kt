@@ -50,6 +50,7 @@ import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.EditReviewUiState
 import com.hmoa.feature_hbti.viewmodel.EditReviewViewModel
 import kotlinx.coroutines.launch
@@ -57,9 +58,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditReviewRoute(
     reviewId: Int?,
-    navBack: () -> Unit,
+    navReview: (befRoute: HbtiRoute) -> Unit,
     viewModel: EditReviewViewModel = hiltViewModel()
 ){
+    LaunchedEffect(Unit){viewModel.setId(reviewId)}
     val isDone by viewModel.isDone.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
@@ -73,12 +75,12 @@ fun EditReviewRoute(
     EditReviewScreen(
         uiState = uiState,
         errState = errorUiState,
-        navBack = navBack,
+        navBack = {navReview(HbtiRoute.EditReviewRoute)},
         uriToString = uriToString,
-        onCancelClick = navBack,
+        onCancelClick = {navReview(HbtiRoute.EditReviewRoute)},
         onOkClick = onOkClick
     )
-    LaunchedEffect(isDone){if(isDone) navBack()}
+    LaunchedEffect(isDone){if(isDone) {navReview(HbtiRoute.EditReviewRoute)}}
 }
 
 @Composable

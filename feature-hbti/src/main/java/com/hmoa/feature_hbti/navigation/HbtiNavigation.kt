@@ -63,6 +63,8 @@ fun NavController.navigateToWriteReview(orderId: Int) = navigate("${HbtiRoute.Wr
 fun NavController.navigateToReview(befRoute: HbtiRoute) = navigate(HbtiRoute.ReviewRoute.name){
     if(befRoute == HbtiRoute.WriteReviewRoute){
         popUpTo("${HbtiRoute.WriteReviewRoute.name}/{orderId}"){inclusive = true}
+    } else if (befRoute == HbtiRoute.EditReviewRoute){
+        popUpTo("${HbtiRoute.EditReviewRoute.name}/{reviewId}") {inclusive = true}
     }
 }
 //리뷰 수정 화면
@@ -273,6 +275,7 @@ fun NavGraphBuilder.writeReview(
 
 fun NavGraphBuilder.review(
     navBack: () -> Unit,
+    navEditReview: (Int) -> Unit,
     navWriteReview: (reviewId: Int) -> Unit
 ){
     composable(
@@ -280,13 +283,13 @@ fun NavGraphBuilder.review(
     ){
         ReviewRoute(
             navBack = navBack,
-            navEditReview = {},
+            navEditReview = navEditReview,
             navWriteReview = navWriteReview
         )
     }
 }
 
-fun NavGraphBuilder.editReview(navBack: () -> Unit){
+fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit){
     composable(
         route = "${HbtiRoute.EditReviewRoute.name}/{reviewId}",
         arguments = listOf(navArgument("reviewId"){type = NavType.IntType})
@@ -294,7 +297,7 @@ fun NavGraphBuilder.editReview(navBack: () -> Unit){
         val reviewId = it.arguments?.getInt("reviewId")
         EditReviewRoute(
             reviewId = reviewId,
-            navBack = navBack
+            navReview = navReview
         )
     }
 }

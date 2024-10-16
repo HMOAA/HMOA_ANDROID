@@ -31,6 +31,7 @@ import com.hmoa.feature_hbti.navigation.hbtiSurveyLoadingScreen
 import com.hmoa.feature_hbti.navigation.hbtiSurveyResultScreen
 import com.hmoa.feature_hbti.navigation.hbtiSurveyScreen
 import com.hmoa.feature_hbti.navigation.navigateToAddAddress
+import com.hmoa.feature_hbti.navigation.navigateToEditReview
 import com.hmoa.feature_hbti.navigation.navigateToHbti
 import com.hmoa.feature_hbti.navigation.navigateToHbtiProcess
 import com.hmoa.feature_hbti.navigation.navigateToHbtiSurvey
@@ -294,7 +295,11 @@ fun SetUpNavGraph(
             navHome = navController::navigateToHome
         )
         writeReview(navBack = navController::navigateToBack)
-        review(navBack = navController::navigateToBack, navWriteReview = navController::navigateToWriteReview)
-        editReview(navBack = navController::navigateToBack)
+        review(
+            navBack = navController::navigateToBack,
+            navWriteReview = navController::navigateToWriteReview,
+            navEditReview = navController::navigateToEditReview
+        )
+        editReview(navReview = navController::navigateToReview)
     }
 }

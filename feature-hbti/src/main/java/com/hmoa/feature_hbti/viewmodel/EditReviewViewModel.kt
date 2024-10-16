@@ -2,6 +2,7 @@ package com.hmoa.feature_hbti.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorMessageType
@@ -57,15 +58,16 @@ class EditReviewViewModel @Inject constructor(
 
     val uiState: StateFlow<EditReviewUiState> = errorUiState.map{errState ->
         if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("")
-        hShopReviewRepository.getMyOrders()
+        hShopReviewRepository.getReview(id.value!!)
     }.asResult().map{ result ->
         when(result){
             Result.Loading -> EditReviewUiState.Loading
             is Result.Success -> {
+                val data = result.data.data!!
                 EditReviewUiState.Success(
-                    photoUris = emptyList(),
-                    photoIds = emptyList(),
-                    content = ""
+                    photoUris = data.hbtiPhotos.map{it.photoUrl},
+                    photoIds = data.hbtiPhotos.map{it.photoId},
+                    content = data.content
                 )
             }
             is Result.Error -> {
@@ -110,6 +112,7 @@ class EditReviewViewModel @Inject constructor(
                 content = content,
                 reviewId = id.value!!,
             )
+            Log.d("TAG TEST", "result : ${result}")
             if(result.errorMessage != null){
                 when(result.errorMessage!!.message){
                     ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}

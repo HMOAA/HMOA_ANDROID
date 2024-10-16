@@ -8,13 +8,13 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.HShopReviewRepository
+import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.response.ReviewResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -24,8 +24,10 @@ import javax.inject.Inject
 @HiltViewModel
 class HbtiHomeViewModel @Inject constructor(
     private val hShopReviewRepository: HShopReviewRepository,
+    private val reportRepository: ReportRepository,
 ): ViewModel() {
 
+    private val flag = MutableStateFlow<Boolean>(false)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -48,12 +50,12 @@ class HbtiHomeViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState = flow {
+    val uiState = flag.map{
         val response = hShopReviewRepository.getReviews(0)
         if (response.errorMessage != null){
             throw Exception(response.errorMessage!!.message)
         }
-        emit(response.data)
+        response.data
     }.asResult().map{ result ->
         when(result){
             Result.Loading -> HbtiHomeUiState.Loading
@@ -91,15 +93,34 @@ class HbtiHomeViewModel @Inject constructor(
             }
         }
     }
-    /** 신고 기능은 아직 */
     fun reportReview(reviewId: Int){
         viewModelScope.launch{
+            val result = reportRepository.reportReview(reviewId)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
+                }
+            }
         }
     }
 
-    /** 삭제도 아직 */
     fun deleteReview(reviewId: Int){
-
+        viewModelScope.launch{
+            val result = hShopReviewRepository.deleteReview(reviewId)
+            if(result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
+                }
+                return@launch
+            }
+            flag.update{!flag.value}
+        }
     }
 }
 

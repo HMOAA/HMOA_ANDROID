@@ -12,6 +12,7 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.HShopReviewRepository
+import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_hbti.paging.ReviewPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
-    private val hShopReviewRepository: HShopReviewRepository
+    private val hShopReviewRepository: HShopReviewRepository,
+    private val reportRepository: ReportRepository
 ): ViewModel(){
 
     private val flag = MutableStateFlow<Boolean>(false)
@@ -110,9 +112,17 @@ class ReviewViewModel @Inject constructor(
     }
     fun handleNoDateError() = generalErrorState.update{Pair(true, "주문 후 이용 가능한 서비스 입니다.")}
 
-    /** 신고 기능은 아직 */
     fun reportReview(reviewId: Int){
         viewModelScope.launch{
+            val result = reportRepository.reportReview(reviewId)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
+                }
+            }
         }
     }
 

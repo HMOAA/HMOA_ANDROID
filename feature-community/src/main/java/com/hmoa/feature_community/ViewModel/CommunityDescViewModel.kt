@@ -12,7 +12,6 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.CommunityRepository
-import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.request.TargetRequestDto
@@ -37,7 +36,6 @@ class CommunityDescViewModel @Inject constructor(
     private val communityRepository: CommunityRepository,
     private val communityCommentRepository: CommunityCommentRepository,
     private val reportRepository: ReportRepository,
-    private val loginRepository : LoginRepository,
 ) : ViewModel() {
     //community id
     private val _id = MutableStateFlow(-1)
@@ -49,7 +47,7 @@ class CommunityDescViewModel @Inject constructor(
     private val _reportState = MutableStateFlow<Boolean>(false)
     val reportState get() = _reportState.asStateFlow()
 
-    private val _flag = MutableStateFlow<Boolean?>(false)
+    private val flag = MutableStateFlow<Boolean>(false)
 
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
@@ -61,7 +59,6 @@ class CommunityDescViewModel @Inject constructor(
         unLoginedErrorState,
         generalErrorState
     ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
-        if(expiredTokenError || wrongTypeTokenError || unknownError || generalError.first) {_flag.update { null }}
         ErrorUiState.ErrorData(
             expiredTokenError = expiredTokenError,
             wrongTypeTokenError = wrongTypeTokenError,
@@ -74,20 +71,19 @@ class CommunityDescViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
     //ui state
-    val uiState: StateFlow<CommunityDescUiState> = combine(_flag, _id) { flag, id ->
-        fetchLike(isLiked.value)
-        if(flag == null) throw Exception("Something Wrong")
+    val uiState: StateFlow<CommunityDescUiState> = combine(errorUiState, _id) { errState, id ->
+        if (errState is ErrorUiState.ErrorData &&
+            (errState.expiredTokenError || errState.wrongTypeTokenError || errState.unknownError || errState.generalError.first)){
+            throw Exception("")
+        }
         val result = communityRepository.getCommunity(id)
-        if (result.errorMessage != null) throw Exception(result.errorMessage!!.message)
-        _isLiked.update { result.data!!.liked }
-        _flag.update { false }
-        result.data!!
+        result
     }.asResult().map{ communityResult ->
         when(communityResult) {
             is Result.Loading -> CommunityDescUiState.Loading
-            is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data)
+            is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data.data!!)
             is Result.Error -> {
-                if(!generalErrorState.value.first) {
+                if(communityResult.exception.message != "") {
                     when (communityResult.exception.message) {
                         ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
                         ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
@@ -117,19 +113,32 @@ class CommunityDescViewModel @Inject constructor(
     //커뮤니티 신고하기
     fun reportCommunity() {
         viewModelScope.launch {
-            try {
-                val requestDto = TargetRequestDto(targetId = id.value.toString())
-                reportRepository.reportCommunity(requestDto)
-                _reportState.update{true}
-            } catch (e: Exception) {
-                generalErrorState.update{ Pair(true, e.message) }
-                _flag.update{ null }
-                _reportState.update{false}
+            val requestDto = TargetRequestDto(targetId = id.value.toString())
+            val result = reportRepository.reportCommunity(requestDto)
+            if(result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
+                }
             }
         }
     }
     //커뮤니티 좋아요
-    fun updateLike() {_flag.update { true }}
+    fun updateLike(liked: Boolean) {
+        viewModelScope.launch{
+            val result = if(liked) communityRepository.deleteCommunityLike(id.value) else communityRepository.putCommunityLike(id.value)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update{true}}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update{true}}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
+                    else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
+                }
+            }
+        }
+    }
     //댓글 Paging
     fun commentPagingSource(): Flow<PagingData<CommunityCommentWithLikedResponseDto>> = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
@@ -149,7 +158,9 @@ class CommunityDescViewModel @Inject constructor(
                     ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
                     else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
+                return@launch
             }
+            flag.update{!flag.value}
         }
     }
     //댓글 삭제
@@ -163,7 +174,9 @@ class CommunityDescViewModel @Inject constructor(
                     ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
                     else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
+                return@launch
             }
+            flag.update{!flag.value}
         }
     }
     //댓글 신고하기
@@ -208,29 +221,6 @@ class CommunityDescViewModel @Inject constructor(
             return
         }
         _id.update { id }
-    }
-    //좋아요 remote update
-    private suspend fun fetchLike(liked: Boolean) {
-        viewModelScope.launch {
-            if (_flag.value != null && _flag.value!!) {
-                if (liked) {
-                    val result = communityRepository.deleteCommunityLike(id.value)
-                    if (result.errorMessage != null) {
-                        generalErrorState.update{ Pair(true, result.errorMessage?.message) }
-                        _flag.update { false }
-                        return@launch
-                    }
-                } else {
-                    val result = communityRepository.putCommunityLike(id.value)
-                    if (result.errorMessage != null) {
-                        generalErrorState.update{ Pair(true, result.errorMessage?.message) }
-                        _flag.update { false }
-                        return@launch
-                    }
-                }
-                _isLiked.update { !liked }
-            }
-        }
     }
     private fun getCommentPaging(id: Int) : CommunityCommentPagingSource {
         return CommunityCommentPagingSource(

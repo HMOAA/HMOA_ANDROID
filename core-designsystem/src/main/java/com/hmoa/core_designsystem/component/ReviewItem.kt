@@ -74,7 +74,7 @@ fun ReviewItem(
             .wrapContentHeight()
             .background(color = CustomColor.gray5, shape = RoundedCornerShape(size = 5.dp))
             .clickable { if (isItemClickable) onItemClick() }
-            .padding(top = 20.dp, start = 20.dp, end = 8.dp, bottom = 8.dp),
+            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 10.dp),
     ){
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -100,34 +100,31 @@ fun ReviewItem(
                 fontFamily = CustomFont.medium
             )
             Spacer(Modifier.weight(1f))
-            Row(
-                modifier = Modifier.width(50.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                IconButton(
-                    modifier = Modifier.size(16.dp),
-                    onClick = {
-                        if (isLiked) heartNumber-- else heartNumber++
-                        onHeartClick(reviewId, isLiked)
-                        isLiked = !isLiked
-                        isDelayed = false
-                    },
-                    enabled = isDelayed
-                ) {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(if(isLiked) R.drawable.ic_heart_selectable_selected else R.drawable.ic_heart_selectable_not_selected),
-                        contentDescription = "Heart Icon"
-                    )
-                }
-                Text(
-                    text = heartNumber.toString(),
-                    fontSize = 14.sp,
-                    fontFamily = CustomFont.regular
+            IconButton(
+                modifier = Modifier.size(16.dp),
+                onClick = {
+                    if (isLiked) heartNumber-- else heartNumber++
+                    onHeartClick(reviewId, isLiked)
+                    isLiked = !isLiked
+                    isDelayed = false
+                },
+                enabled = isDelayed
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(if(isLiked) R.drawable.ic_heart_selectable_selected else R.drawable.ic_heart_selectable_not_selected),
+                    contentDescription = "Heart Icon"
                 )
             }
+            Spacer(Modifier.width(5.dp))
+            Text(
+                text = heartNumber.toString(),
+                fontSize = 14.sp,
+                fontFamily = CustomFont.regular
+            )
+            Spacer(Modifier.width(10.dp))
             IconButton(
+                modifier = Modifier.width(10.dp),
                 onClick = onMenuClick
             ){
                 Icon(
@@ -145,7 +142,8 @@ fun ReviewItem(
             fontFamily = CustomFont.regular,
             color = Color.White,
             maxLines = 3,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            lineHeight = 17.sp,
         )
         Spacer(Modifier.height(20.dp))
         if (images.isNotEmpty()){Images(images = images)}
@@ -155,7 +153,7 @@ fun ReviewItem(
         ){
             Text(
                 text = "향BTI 시향카드 [${category}]",
-                fontSize = 9.sp,
+                fontSize = 12.sp,
                 fontFamily = CustomFont.regular,
                 color = Color.White
             )

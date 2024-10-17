@@ -1,6 +1,7 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,26 +35,30 @@ fun MyActivityRoute(
     navMyComment : () -> Unit,
     navMyPost : () -> Unit,
     navBack : () -> Unit,
+    navMyReview: () -> Unit,
 ){
     MyActivityPage(
         navMyFavoriteComment = navMyFavoriteComment,
         navMyComment = navMyComment,
         navMyPost = navMyPost,
-        navBack = navBack
+        navBack = navBack,
+        navMyReview = navMyReview
     )
 }
 
 @Composable
 fun MyActivityPage(
-    navMyFavoriteComment : () -> Unit,
-    navMyComment : () -> Unit,
-    navMyPost : () -> Unit,
-    navBack : () -> Unit
+    navMyFavoriteComment: () -> Unit,
+    navMyComment: () -> Unit,
+    navMyPost: () -> Unit,
+    navBack: () -> Unit,
+    navMyReview: () -> Unit,
 ){
     val columnData = listOf(
         ColumnData("좋아요 누른 댓글"){navMyFavoriteComment()},
         ColumnData("작성한 댓글"){navMyComment()},
-        ColumnData("작성한 게시글"){navMyPost()}
+        ColumnData("작성한 게시글"){navMyPost()},
+        ColumnData("작성한 리뷰"){navMyReview()}
     )
     Column(
         modifier = Modifier
@@ -72,6 +76,7 @@ fun MyActivityPage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
+                        .clickable{data.onNavClick()}
                         .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -82,17 +87,12 @@ fun MyActivityPage(
                         fontSize = 16.sp
                     )
 
-                    IconButton(
+                    Icon(
                         modifier = Modifier.size(20.dp),
-                        onClick = data.onNavClick
-                    ) {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
-                            contentDescription = "Nav Button",
-                            tint = CustomColor.gray2
-                        )
-                    }
+                        painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
+                        contentDescription = "Nav Button",
+                        tint = CustomColor.gray2
+                    )
                 }
                 if (idx != columnData.lastIndex){
                     HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
@@ -109,6 +109,7 @@ fun TestMyActivity(){
         navMyFavoriteComment = {},
         navMyComment = {},
         navMyPost = {},
-        navBack = {}
+        navBack = {},
+        navMyReview = {}
     )
 }

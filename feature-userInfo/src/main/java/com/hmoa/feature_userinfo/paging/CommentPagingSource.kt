@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo
+package com.hmoa.feature_userinfo.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -6,7 +6,7 @@ import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 
-class FavoriteCommentPagingSource(
+class CommentPagingSource(
     private val communityCommentRepository: CommunityCommentRepository,
     private val perfumeCommentRepository: PerfumeCommentRepository,
     private val type: String,
@@ -18,9 +18,9 @@ class FavoriteCommentPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CommunityCommentDefaultResponseDto> {
         val pageNumber = params.key ?: 0
         val response = if (type == "향수") {
-            perfumeCommentRepository.getPerfumeCommentsWithHeart(cursor)
+            perfumeCommentRepository.getMyPerfumeComments(cursor)
         } else {
-            communityCommentRepository.getMyCommunityCommentsByHeart(cursor)
+            communityCommentRepository.getMyCommunityComments(cursor)
         }
         if (response.errorMessage != null) {
             return LoadResult.Error(Exception(response.errorMessage!!.message))

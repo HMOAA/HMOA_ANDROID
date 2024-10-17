@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo
+package com.hmoa.feature_userinfo.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

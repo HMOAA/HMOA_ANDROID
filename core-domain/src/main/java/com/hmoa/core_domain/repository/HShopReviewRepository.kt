@@ -1,7 +1,6 @@
 package com.hmoa.core_domain.repository
 
 import ResultResponse
-import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_model.response.ReviewResponseDto
 import java.io.File
@@ -23,4 +22,5 @@ interface HShopReviewRepository {
     suspend fun deleteReview(reviewId: Int): ResultResponse<Any>
     suspend fun putReviewLike(reviewId: Int): ResultResponse<Any>
     suspend fun deleteReviewLike(reviewId: Int): ResultResponse<Any>
+    suspend fun getMyReviews(cursor: Int): ResultResponse<PagingData<ReviewResponseDto>>
 }

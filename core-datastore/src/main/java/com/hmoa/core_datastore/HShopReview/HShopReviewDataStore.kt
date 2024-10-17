@@ -22,4 +22,5 @@ interface HShopReviewDataStore {
     suspend fun deleteReview(reviewId: Int): ResultResponse<Any>
     suspend fun putReviewLike(reviewId: Int): ResultResponse<Any>
     suspend fun deleteReviewLike(reviewId: Int): ResultResponse<Any>
+    suspend fun getMyReviews(cursor: Int): ResultResponse<PagingData<ReviewResponseDto>>
 }

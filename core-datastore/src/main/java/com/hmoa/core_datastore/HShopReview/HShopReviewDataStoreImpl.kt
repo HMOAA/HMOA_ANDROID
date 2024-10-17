@@ -105,4 +105,13 @@ class HShopReviewDataStoreImpl @Inject constructor(
         }
         return result
     }
+    override suspend fun getMyReviews(cursor: Int): ResultResponse<PagingData<ReviewResponseDto>> {
+        val result = ResultResponse<PagingData<ReviewResponseDto>>()
+        hShopReviewService.getMyReviews(cursor).suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnSuccess{
+            result.data = this.data
+        }
+        return result
+    }
 }

@@ -48,5 +48,6 @@ interface HShopReviewService {
     @DELETE("/shop/review/{reviewId}/like")
     suspend fun deleteReviewLike(@Path("reviewId") reviewId: Int)
         : ApiResponse<DataResponseDto<Any>>
-
+    @GET("/shop/review/me")
+    suspend fun getMyReviews(@Query("cursor") cursor: Int): ApiResponse<PagingData<ReviewResponseDto>>
 }

@@ -3,7 +3,6 @@ package com.hmoa.core_repository
 import ResultResponse
 import com.hmoa.core_datastore.HShopReview.HShopReviewDataStore
 import com.hmoa.core_domain.repository.HShopReviewRepository
-import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_model.response.ReviewResponseDto
 import java.io.File
@@ -45,5 +44,9 @@ class HShopReviewRepositoryImpl @Inject constructor(
 
     override suspend fun deleteReviewLike(reviewId: Int): ResultResponse<Any> {
         return hShopReviewDataStore.deleteReviewLike(reviewId)
+    }
+
+    override suspend fun getMyReviews(cursor: Int): ResultResponse<PagingData<ReviewResponseDto>> {
+        return hShopReviewDataStore.getMyReviews(cursor)
     }
 }

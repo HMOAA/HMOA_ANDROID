@@ -34,7 +34,7 @@ interface HShopReviewService {
     @Multipart
     @POST("/shop/review/{reviewId}")
     suspend fun postEditReview(
-        @Part images: Array<MultipartBody.Part>,
+        @Part image: Array<MultipartBody.Part>,
         @Part("deleteReviewPhotoIds") deleteReviewPhotoIds: Array<RequestBody>,
         @Part("content") content: RequestBody,
         @Path("reviewId") reviewId: Int

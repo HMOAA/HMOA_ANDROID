@@ -1,7 +1,15 @@
 package com.hmoa.feature_userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -132,7 +140,7 @@ fun FavoriteCommentContent(
                                 onNavCommunity = { onNavParent(comment.parentId) },
                                 onOpenBottomDialog = { /** 여기도 Bottom Dialog 사용하려면 사용합시다 */ },
                                 isSelected = comment.liked,
-                                onChangeSelect = {}
+                                onHeartClick = {}
                             )
                             if (index < commentCount - 1) {
                                 Spacer(

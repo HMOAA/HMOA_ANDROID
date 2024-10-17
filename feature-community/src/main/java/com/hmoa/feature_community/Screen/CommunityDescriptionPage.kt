@@ -72,13 +72,20 @@ fun CommunityDescriptionRoute(
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     val reportState = viewModel.reportState.collectAsStateWithLifecycle()
+    val onHeartClick = remember<(commentId: Int, isLiked: Boolean) -> Unit>{
+        { commentId, isLiked ->
+            viewModel.updateCommentLike(
+                commentId,
+                isLiked
+            )
+        }
+    }
 
     val context = LocalContext.current
 
     CommunityDescriptionPage(
         errState = errState.value,
-        isLiked = isLiked.value,
-        onChangeLike = {viewModel.updateLike()},
+        onChangeLike = viewModel::updateLike,
         uiState = uiState.value,
         commentList = comments,
         onNavBack = onNavBack,
@@ -98,10 +105,7 @@ fun CommunityDescriptionRoute(
             viewModel.postComment(it)
             comments.refresh()
         },
-        onChangeCommentLike = { commentId , isSelected ->
-            viewModel.updateCommentLike(commentId, isSelected)
-            comments.refresh()
-        },
+        onChangeCommentLike = onHeartClick,
         onDeleteCommunity = {
             viewModel.delCommunity()
             onNavBack()
@@ -126,8 +130,7 @@ fun CommunityDescriptionPage(
     errState : ErrorUiState,
     uiState : CommunityDescUiState,
     commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
-    isLiked : Boolean,
-    onChangeLike : () -> Unit,
+    onChangeLike : (isLiked: Boolean) -> Unit,
     onReportCommunity : () -> Unit,
     onReportComment: (Int) -> Unit,
     onPostComment : (String) -> Unit,
@@ -146,7 +149,6 @@ fun CommunityDescriptionPage(
             CommunityDescContent(
                 community = uiState.community,
                 commentList = commentList,
-                isLiked = isLiked,
                 photoList = uiState.photoList,
                 onChangeLike = onChangeLike,
                 onReportCommunity = onReportCommunity,
@@ -177,8 +179,7 @@ private fun CommunityDescContent(
     community : CommunityDefaultResponseDto,
     commentList : LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     photoList : List<String>,
-    isLiked : Boolean,
-    onChangeLike : () -> Unit,
+    onChangeLike : (isLiked: Boolean) -> Unit,
     onReportCommunity : () -> Unit,
     onReportComment: (Int) -> Unit,
     onPostComment : (String) -> Unit,
@@ -242,7 +243,6 @@ private fun CommunityDescContent(
                 dialogOpen()
                 onChangeType("post")
             },
-            isLiked = isLiked,
             onChangeLike = onChangeLike,
             photoList = photoList,
             commentList = commentList,
@@ -258,8 +258,7 @@ private fun CommunityDescContent(
 @Composable
 private fun CommunityDescMainContent(
     community: CommunityDefaultResponseDto,
-    isLiked: Boolean,
-    onChangeLike: () -> Unit,
+    onChangeLike: (Boolean) -> Unit,
     photoList: List<String>,
     commentList: LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     onChangeType: (String) -> Unit,
@@ -308,8 +307,8 @@ private fun CommunityDescMainContent(
                 dateDiff = community.time,
                 title = community.title,
                 content = community.content,
-                heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
-                isLiked = isLiked,
+                heartCount = community.heartCount,
+                isLiked = community.liked,
                 onChangeLike = onChangeLike,
                 pictures = photoList
             )
@@ -378,9 +377,9 @@ private fun Comments(
                     comment = comment.content,
                     isFirst = false,
                     isSelected = comment.liked,
-                    onChangeSelect = {onChangeCommentLike(comment.commentId, !comment.liked)},
+                    onHeartClick = {onChangeCommentLike(comment.commentId, it)},
                     heartCount = comment.heartCount,
-                    onNavCommunity = {/** 여기서는 아무 event도 없이 처리 */},
+                    onNavCommunity = {/* 여기서는 아무 event도 없이 처리 */},
                     onOpenBottomDialog = {
                         setComment(comment)
                         changeBottomOptionState(true)

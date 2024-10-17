@@ -23,5 +23,4 @@ interface HShopReviewRepository {
     suspend fun deleteReview(reviewId: Int): ResultResponse<Any>
     suspend fun putReviewLike(reviewId: Int): ResultResponse<Any>
     suspend fun deleteReviewLike(reviewId: Int): ResultResponse<Any>
-    suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>>
 }

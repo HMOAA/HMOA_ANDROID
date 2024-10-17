@@ -1,7 +1,6 @@
 package com.hmoa.core_network.service
 
 import com.hmoa.core_model.response.DataResponseDto
-import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PagingData
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.skydoves.sandwich.ApiResponse
@@ -49,6 +48,5 @@ interface HShopReviewService {
     @DELETE("/shop/review/{reviewId}/like")
     suspend fun deleteReviewLike(@Path("reviewId") reviewId: Int)
         : ApiResponse<DataResponseDto<Any>>
-    @GET("/shop/order/me")
-    suspend fun getMyOrders(): ApiResponse<List<GetMyOrderResponseDto>>
+
 }

@@ -46,7 +46,4 @@ class HShopReviewRepositoryImpl @Inject constructor(
     override suspend fun deleteReviewLike(reviewId: Int): ResultResponse<Any> {
         return hShopReviewDataStore.deleteReviewLike(reviewId)
     }
-    override suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>> {
-        return hShopReviewDataStore.getMyOrders()
-    }
 }

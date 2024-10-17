@@ -12,6 +12,7 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.HShopReviewRepository
+import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_hbti.paging.ReviewPagingSource
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val hShopReviewRepository: HShopReviewRepository,
+    private val hShopRepository: HshopRepository,
     private val reportRepository: ReportRepository
 ): ViewModel(){
 
@@ -58,7 +60,7 @@ class ReviewViewModel @Inject constructor(
 
     val uiState: StateFlow<ReviewUiState> = combine(flag, errorUiState){flag, errState ->
         if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("")
-        hShopReviewRepository.getMyOrders()
+        hShopRepository.getMyOrders()
     }.asResult().map{ result ->
         when(result){
             Result.Loading -> ReviewUiState.Loading

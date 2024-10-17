@@ -22,13 +22,14 @@ import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ReviewItem
 import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_userinfo.viewModel.MyReviewUiState
 import com.hmoa.feature_userinfo.viewModel.MyReviewViewModel
 
 @Composable
 fun MyReviewRoute(
-    navReview: () -> Unit,
+    navReview: (befRoute: HbtiRoute) -> Unit,
     navBack: () -> Unit,
     viewModel: MyReviewViewModel = hiltViewModel()
 ){
@@ -39,7 +40,7 @@ fun MyReviewRoute(
         uiState = uiState,
         errState = errState,
         reviews = reviews,
-        navReview = navReview,
+        navReview = { navReview(HbtiRoute.Hbti) },
         navBack = navBack
     )
 }

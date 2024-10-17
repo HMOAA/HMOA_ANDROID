@@ -86,6 +86,7 @@ import com.hmoa.feature_userinfo.navigation.navigateToMyFavoritePerfume
 import com.hmoa.feature_userinfo.navigation.navigateToMyGenderPage
 import com.hmoa.feature_userinfo.navigation.navigateToMyInfoPage
 import com.hmoa.feature_userinfo.navigation.navigateToMyPostPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyReview
 import com.hmoa.feature_userinfo.navigation.navigateToOrderRecord
 import com.hmoa.feature_userinfo.navigation.navigateToRefund
 import com.hmoa.feature_userinfo.navigation.navigateToRefundRecord
@@ -146,6 +147,7 @@ fun SetUpNavGraph(
             navMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
             navMyPost = navController::navigateToMyPostPage,
             navMyComment = navController::navigateToMyCommentPage,
+            navMyReview = navController::navigateToMyReview,
             navMyBirth = navController::navigateToMyBirth,
             navMyGender = navController::navigateToMyGenderPage,
             navMyPerfume = navController::navigateToMyFavoritePerfume,

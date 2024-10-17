@@ -17,6 +17,7 @@ import com.hmoa.feature_userinfo.screen.MyGenderRoute
 import com.hmoa.feature_userinfo.screen.MyInfoRoute
 import com.hmoa.feature_userinfo.screen.MyPageRoute
 import com.hmoa.feature_userinfo.screen.MyPostRoute
+import com.hmoa.feature_userinfo.screen.MyReviewRoute
 import com.hmoa.feature_userinfo.screen.NoAuthMyPage
 import com.hmoa.feature_userinfo.screen.OrderRecordRoute
 import com.hmoa.feature_userinfo.screen.RefundRecordRoute
@@ -61,6 +62,8 @@ fun NavController.navigateToOrderRecord() = navigate(UserInfoRoute.OrderRecordRo
 fun NavController.navigateToRefundRecord() = navigate(UserInfoRoute.RefundRecordRoute.name)
 //뒤로가기
 fun NavController.navigateToBack() = navigateUp()
+//내가 작성한 리뷰로 이동
+fun NavController.navigateToMyReview() = navigate("${UserInfoRoute.MyReview.name}")
 
 fun NavGraphBuilder.nestedUserInfoGraph(
     navHome: () -> Unit,
@@ -75,6 +78,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navMyFavoriteComment: () -> Unit,
     navMyPost: () -> Unit,
     navMyComment: () -> Unit,
+    navMyReview: () -> Unit,
     navMyBirth: () -> Unit,
     navMyGender: () -> Unit,
     navPerfume : (Int) -> Unit,
@@ -112,7 +116,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 navMyFavoriteComment = navMyFavoriteComment,
                 navMyComment = navMyComment,
                 navMyPost = navMyPost,
-                navBack = navBack
+                navBack = navBack,
+                navMyReview = navMyReview
             )
         }
         composable(route = UserInfoRoute.MyCommentRoute.name) {
@@ -176,6 +181,9 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         }
         composable(route = "${UserInfoRoute.RefundRecordRoute.name}"){
             RefundRecordRoute(navBack = navBack)
+        }
+        composable(route = "${UserInfoRoute.MyReview.name}"){
+            MyReviewRoute()
         }
     }
 }

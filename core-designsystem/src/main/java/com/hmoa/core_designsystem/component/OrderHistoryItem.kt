@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -44,6 +45,7 @@ fun OrderRecordItem(
     totalPrice: Int,
     shippingPayment: Int,
     trackingNumber: String?,
+    createdAt: String,
     onRefundClick: () -> Unit,
     onReturnClick: () -> Unit,
     onReviewWriteClick: () -> Unit,
@@ -67,8 +69,16 @@ fun OrderRecordItem(
                 fontFamily = CustomFont.bold,
                 color = shippingStatusColor
             )
-            Spacer(Modifier.width(24.dp))
-            HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray1)
+            Spacer(Modifier.width(12.dp))
+            HorizontalDivider(modifier = Modifier.weight(1f), thickness = 1.dp, color = Color.Black)
+            Spacer(Modifier.width(12.dp))
+            Text(
+                modifier = Modifier.wrapContentWidth(),
+                text = createdAt,
+                fontSize = 12.sp,
+                fontFamily = CustomFont.bold,
+                color = Color.Black
+            )
         }
         Spacer(Modifier.height(20.dp))
         products.forEach{
@@ -108,7 +118,7 @@ fun OrderRecordItem(
             )
         }
         Spacer(Modifier.height(24.dp))
-        HorizontalDivider(color = Color.Black, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(color = CustomColor.gray1, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(24.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -288,7 +298,8 @@ private fun OrderHistoryItemUiTest(){
             onRefundClick = {},
             onReturnClick = {},
             shippingPayment = 3000,
-            onReviewWriteClick = {}
+            onReviewWriteClick = {},
+            createdAt = "2024/10/17"
         )
         OrderRecordItem(
             courierCompany = "대한통운(CJ)",
@@ -328,7 +339,8 @@ private fun OrderHistoryItemUiTest(){
             onRefundClick = {},
             onReturnClick = {},
             shippingPayment = 3000,
-            onReviewWriteClick = {}
+            onReviewWriteClick = {},
+            createdAt = "2024/07/21"
         )
     }
 }

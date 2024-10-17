@@ -155,8 +155,14 @@ private fun HbtiHomeContent(
             if(selectedReview != null){
                 if (selectedReview!!.isWrited) {
                     EditModal(
-                        onDeleteClick = { onDeleteClick(selectedReview!!.hbtiReviewId) },
-                        onEditClick = { onEditClick(selectedReview!!.hbtiReviewId) },
+                        onDeleteClick = {
+                            onDeleteClick(selectedReview!!.hbtiReviewId)
+                            dialogClose()
+                        },
+                        onEditClick = {
+                            onEditClick(selectedReview!!.hbtiReviewId)
+                            dialogClose()
+                        },
                         onCancelClick = { dialogClose() }
                     )
                 } else {

@@ -138,6 +138,7 @@ fun SetUpNavGraph(
         this.nestedUserInfoGraph(
             navHome = navController::navigateToHome,
             navLogin = navController::navigateToLogin,
+            navReview = navController::navigateToReview,
             navBack = navController::navigateToBack,
             navCommunity = navController::navigateToCommunityDescriptionRoute,
             navEditPost = navController::navigateToCommunityEditRoute,

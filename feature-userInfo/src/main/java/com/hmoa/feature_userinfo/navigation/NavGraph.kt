@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.feature_userinfo.screen.EditProfileRoute
 import com.hmoa.feature_userinfo.screen.MyActivityRoute
@@ -69,6 +70,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navHome: () -> Unit,
     navMyPerfume : () -> Unit,
     navLogin: () -> Unit,
+    navReview: (befRoute: HbtiRoute) -> Unit,
     navBack: () -> Unit,
     navCommunity: (Int) -> Unit,
     navEditPost: (Int) -> Unit,
@@ -183,7 +185,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             RefundRecordRoute(navBack = navBack)
         }
         composable(route = "${UserInfoRoute.MyReview.name}"){
-            MyReviewRoute()
+            MyReviewRoute(navReview = navReview, navBack = navBack)
         }
     }
 }

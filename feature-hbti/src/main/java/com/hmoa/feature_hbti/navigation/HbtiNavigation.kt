@@ -63,9 +63,7 @@ fun NavController.navigateToWriteReview(orderId: Int) = navigate("${HbtiRoute.Wr
 //리뷰 모음 화면
 fun NavController.navigateToReview(befRoute: HbtiRoute) = navigate(HbtiRoute.ReviewRoute.name){
     if(befRoute == HbtiRoute.WriteReviewRoute){
-        popUpTo("${HbtiRoute.WriteReviewRoute.name}/{orderId}"){
-            inclusive = true
-        }
+        popUpTo("${HbtiRoute.WriteReviewRoute.name}/{orderId}"){inclusive = true}
     } else if (befRoute == HbtiRoute.EditReviewRoute){
         popUpTo("${HbtiRoute.EditReviewRoute.name}/{reviewId}") {inclusive = true}
     }

@@ -2,11 +2,23 @@ package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,11 +42,13 @@ fun Comment(
     comment: String,
     isFirst: Boolean,
     isSelected: Boolean,
-    onChangeSelect: () -> Unit,
     heartCount: Int,
+    onHeartClick: (Boolean) -> Unit,
     onOpenBottomDialog: () -> Unit,
     onNavCommunity: () -> Unit,
 ) {
+    var isLiked by remember{mutableStateOf(isSelected)}
+    var heartCount by remember{mutableStateOf(heartCount)}
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,12 +104,16 @@ fun Comment(
             ) {
                 if (isEditable) {
                     IconButton(
-                        onClick = onChangeSelect
+                        onClick = {
+                            if(isLiked) heartCount-- else heartCount++
+                            onHeartClick(isLiked)
+                            isLiked = !isLiked
+                        }
                     ) {
                         Icon(
                             modifier = Modifier.size(22.dp),
                             painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
-                            tint = if (isSelected) CustomColor.red else CustomColor.gray2,
+                            tint = if (isLiked) CustomColor.red else CustomColor.gray2,
                             contentDescription = "Comment Like Button"
                         )
                     }
@@ -153,7 +171,7 @@ fun TestComment() {
         comment = "아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ",
         isFirst = true,
         isSelected = true,
-        onChangeSelect = {},
+        onHeartClick = {},
         heartCount = 10,
         onOpenBottomDialog = {},
         onNavCommunity = {},

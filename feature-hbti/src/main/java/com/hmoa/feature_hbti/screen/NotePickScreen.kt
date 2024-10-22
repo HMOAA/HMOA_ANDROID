@@ -20,14 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.gson.GsonBuilder
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.NoteImageView
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.pretendard
-import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_domain.entity.data.NoteSelect
+import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.feature_hbti.viewmodel.NotePickUiState
 import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
@@ -36,7 +32,7 @@ import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
 fun NotePickRoute(
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
-    noteOrderQuantity: Int?,
+    noteOrderQuantity: Int,
     onBackToHbtiScreen: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
@@ -54,7 +50,7 @@ fun NotePickScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
-    noteOrderQuantity: Int?,
+    noteOrderQuantity: Int,
     onBackToHbtiScreen: () -> Unit,
     viewmodel: NotePickViewmodel = hiltViewModel()
 ) {
@@ -85,7 +81,7 @@ fun NotePickScreen(
         is NotePickUiState.NotePickData -> NoteContent(
             topRecommendedNote = (uiState as NotePickUiState.NotePickData).topRecommendedNote,
             noteList = (uiState as NotePickUiState.NotePickData).noteProductList,
-            noteOrderQuantity = noteOrderQuantity ?: 0,
+            noteOrderQuantity = noteOrderQuantity,
             selectedNotesOrderQuantity = (uiState as NotePickUiState.NotePickData).noteOrderIndex,
             isNoteSelectedList = (uiState as NotePickUiState.NotePickData).noteSelectData,
             onBackClick = { onBackClick() },
@@ -173,7 +169,7 @@ fun NotePickGridWindow(
         LazyVerticalGrid(columns = GridCells.Fixed(3), verticalArrangement = Arrangement.SpaceBetween) {
             itemsIndexed(notes?.data ?: emptyList()) { index, item ->
                 Column(
-                    modifier = Modifier.padding(vertical = 10.dp),
+                    modifier = Modifier.padding(vertical = 10.dp).padding(horizontal = 5.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     NoteImageView(

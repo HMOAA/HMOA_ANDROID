@@ -21,19 +21,18 @@ import com.hmoa.core_designsystem.component.SurveyOptionList
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
-import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import com.hmoa.feature_hbti.viewmodel.NoteOrderQuantityPickUiState
 import com.hmoa.feature_hbti.viewmodel.NoteOrderQuantityPickViewmodel
 
 @Composable
-fun NoteOrderQuantityPickRoute(onBackClick: () -> Unit, onNextClick: (noteOrderQuantity: NoteOrderQuantity) -> Unit) {
+fun NoteOrderQuantityPickRoute(onBackClick: () -> Unit, onNextClick: (noteOrderQuantity: Int) -> Unit) {
     NoteOrderQuantityPickContent(onBackClick = { onBackClick() }, onNextClick = { onNextClick(it) })
 }
 
 @Composable
 fun NoteOrderQuantityPickContent(
     onBackClick: () -> Unit,
-    onNextClick: (noteOrderQuantity: NoteOrderQuantity) -> Unit,
+    onNextClick: (noteOrderQuantity: Int) -> Unit,
     viewModel: NoteOrderQuantityPickViewmodel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -78,7 +77,7 @@ fun NoteOrderQuantityPickContent(
                     Button(
                         isEnabled = (uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).isNextButtonDisabled,
                         btnText = "다음",
-                        onClick = { onNextClick(noteOrderQuantityChoice) },
+                        onClick = { onNextClick(noteOrderQuantityChoice.number ?: 0) },
                         buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(
                             color = if ((uiState as NoteOrderQuantityPickUiState.NoteOrderQuantityPickData).isNextButtonDisabled)
                                 Color.Black else CustomColor.gray3

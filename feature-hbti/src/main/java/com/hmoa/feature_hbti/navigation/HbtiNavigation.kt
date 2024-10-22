@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.gson.GsonBuilder
-import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.screen.*
@@ -24,8 +23,8 @@ fun NavController.navigateToHbtiProcess() = navigate("${com.hmoa.core_domain.ent
 fun NavController.navigateToNoteOrderQuantityPick() =
     navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.NoteOrderQuantityPick}")
 
-fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
-    navigate("${HbtiRoute.NotePick}/${noteOrderQuantity.number}")
+fun NavController.navigateToNotePick(noteOrderQuantity: Int) =
+    navigate("${HbtiRoute.NotePick}/${noteOrderQuantity}")
 
 fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
@@ -103,7 +102,7 @@ fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuanti
 
 fun NavGraphBuilder.noteOrderQuantityPickScreen(
     onBackClick: () -> Unit,
-    onNextClick: (noteOrderQuantity: NoteOrderQuantity) -> Unit
+    onNextClick: (noteOrderQuantity: Int) -> Unit
 ) {
     composable(route = "${HbtiRoute.NoteOrderQuantityPick}") {
         NoteOrderQuantityPickRoute(onBackClick = { onBackClick() }, onNextClick = { onNextClick(it) })
@@ -120,7 +119,7 @@ fun NavGraphBuilder.notePickScreen(
         route = "${HbtiRoute.NotePick}/{noteOrderQuantity}",
         arguments = listOf(navArgument("noteOrderQuantity") { type = NavType.IntType })
     ) {
-        val noteOrderQuantity = it.arguments?.getInt("noteOrderQuantity")
+        val noteOrderQuantity = it.arguments?.getInt("noteOrderQuantity") ?: 0
         NotePickRoute(
             onBackClick = { onBackClick() },
             onNextClick = onNextClick,

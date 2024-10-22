@@ -56,7 +56,6 @@ fun NotePickScreen(
 ) {
     var isOpen by remember { mutableStateOf(true) }
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-    val isNextAvailable by viewmodel.isCompletedNoteSelected.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
     val selectedProductIds by viewmodel.selectedIds.collectAsStateWithLifecycle(emptyList())
 
@@ -67,14 +66,13 @@ fun NotePickScreen(
         onCloseClick = { onBackToHbtiScreen() },
     )
 
-    LaunchedEffect(isNextAvailable) {
-        if (isNextAvailable) {
-            val navigationDto = NoteProductIds(productIds = selectedProductIds)
-            val gson = GsonBuilder().create()
-            val productIdsToJson = gson.toJson(navigationDto)
-            onNextClick(productIdsToJson)
-        }
+    fun handleNextClick() {
+        val navigationDto = NoteProductIds(productIds = selectedProductIds)
+        val gson = GsonBuilder().create()
+        val productIdsToJson = gson.toJson(navigationDto)
+        onNextClick(productIdsToJson)
     }
+
 
     when (uiState) {
         NotePickUiState.Loading -> AppLoadingScreen()
@@ -88,7 +86,7 @@ fun NotePickScreen(
             onClickItem = { index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int ->
                 viewmodel.handleNoteSelectData(index, value, data, noteOrderQuantity, selectedNotesOrderQuantity)
             },
-            onNextClick = { viewmodel.postNoteSelected() }
+            onNextClick = { viewmodel.postNoteSelected(onSuccess = { handleNextClick() }) }
         )
     }
 }

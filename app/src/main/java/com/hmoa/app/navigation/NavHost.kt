@@ -166,7 +166,8 @@ fun SetUpNavGraph(
         /** hbti 모듈 */
         hbtiScreen(
             onHbtiSurveyClick = navController::navigateToHbtiSurvey,
-            onAfterOrderClick = navController::navigateToPerfumeRecommendation
+            onAfterOrderClick = navController::navigateToPerfumeRecommendation,
+            onBackClick = navController::navigateToBack
         )
         hbtiSurveyScreen(
             onBackClick = navController::navigateToBack,
@@ -179,7 +180,8 @@ fun SetUpNavGraph(
             onHbtiProcessClick = navController::navigateToHbtiProcess
         )
         hbtiSurveyLoadingScreen(
-            onNextScreen = navController::navigateToHbtiSurveyResult
+            onNextScreen = navController::navigateToHbtiSurveyResult,
+            onBackClick = navController::navigateToBack,
         )
         hbtiProcessScreen(
             onBackClick = navController::navigateToBack,

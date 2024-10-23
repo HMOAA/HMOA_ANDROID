@@ -46,9 +46,16 @@ fun NavController.navigateToAddAddress(addressJson: String, productIds: String) 
 
 fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name)
 
-fun NavGraphBuilder.hbtiScreen(onHbtiSurveyClick: () -> Unit, onAfterOrderClick: () -> Unit) {
+fun NavGraphBuilder.hbtiScreen(
+    onHbtiSurveyClick: () -> Unit,
+    onAfterOrderClick: () -> Unit,
+    onBackClick: () -> Unit,
+) {
     composable(route = "${HbtiRoute.Hbti}") {
-        HbtiRoute(onAfterOrderClick = { onAfterOrderClick() }, onHbtiSurveyClick = { onHbtiSurveyClick() })
+        HbtiRoute(
+            onAfterOrderClick = { onAfterOrderClick() },
+            onHbtiSurveyClick = { onHbtiSurveyClick() },
+            onBackClick = { onBackClick() })
     }
 }
 
@@ -66,11 +73,11 @@ fun NavGraphBuilder.hbtiSurveyScreen(
     }
 }
 
-fun NavGraphBuilder.hbtiSurveyLoadingScreen(onNextScreen: () -> Unit) {
+fun NavGraphBuilder.hbtiSurveyLoadingScreen(onNextScreen: () -> Unit, onBackClick: () -> Unit) {
     composable(
         route = "${HbtiRoute.HbtiSurveyLoading}",
     ) {
-        HbtiSurveyResultLoading(onNextScreen = { onNextScreen() })
+        HbtiSurveyResultLoading(onNextScreen = { onNextScreen() }, onBackClick = onBackClick)
     }
 }
 

@@ -1,13 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,15 +21,16 @@ import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun TopBar(
-    iconSize : Dp = 20.dp, //icon 크기
-    navIcon : Painter ?= null, //navigation 버튼
-    onNavClick : () -> Unit = {}, //navigation click 이벤트
-    menuIcon : Painter ?= null, //menu 버튼
-    onMenuClick : () -> Unit = {}, //menu click 이벤트,
+    iconSize: Dp = 20.dp, //icon 크기
+    navIcon: Painter? = null, //navigation 버튼
+    onNavClick: () -> Unit = {}, //navigation click 이벤트
+    menuIcon: Painter? = null, //menu 버튼
+    onMenuClick: () -> Unit = {}, //menu click 이벤트,
     menuIconColor: Color = CustomColor.black,
-    title : String, //메인 타이틀
-    titleColor : Color = Color.Black, //타이틀 글 색
-){
+    navIconColor: Color = CustomColor.black,
+    title: String, //메인 타이틀
+    titleColor: Color = Color.Black, //타이틀 글 색
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,12 +38,13 @@ fun TopBar(
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
-    ){
-        if (navIcon != null){
+    ) {
+        if (navIcon != null) {
             Icon(
                 modifier = Modifier.size(iconSize).clickable { onNavClick() },
                 painter = navIcon,
-                contentDescription = "Navigation Button"
+                contentDescription = "Navigation Button",
+                tint = navIconColor
             )
         } else {
             Spacer(Modifier.size(iconSize))
@@ -81,12 +77,12 @@ fun TopBar(
 
 @Composable
 @Preview(showBackground = true)
-fun TopBarPreview(){
+fun TopBarPreview() {
     TopBar(
         title = "댓글",
         iconSize = 25.dp,
         navIcon = painterResource(R.drawable.ic_back),
-        onNavClick = {  },
+        onNavClick = { },
         menuIcon = painterResource(R.drawable.three_dot_menu_horizontal),
         onMenuClick = {},
         menuIconColor = CustomColor.gray2

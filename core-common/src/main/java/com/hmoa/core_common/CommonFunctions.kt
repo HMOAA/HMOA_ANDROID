@@ -38,7 +38,6 @@ fun OrderStatus.toDisplayString(): String{
         OrderStatus.SHIPPING_COMPLETE -> "배송 완료"
         OrderStatus.SHIPPING_PROGRESS -> "배송 중"
         OrderStatus.PURCHASE_CONFIRMATION -> "구매 확정"
-        OrderStatus.REVIEW_COMPLETE -> "리뷰 작성 완료"
     }
 }
 

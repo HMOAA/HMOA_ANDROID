@@ -10,5 +10,6 @@ data class OrderRecordDto(
     val orderProducts: FinalOrderResponseDto,
     val createdAt: String,
     val orderStatus: OrderStatus,
-    val trackingNumber: String?
+    val trackingNumber: String?,
+    val isReviewed: Boolean
 )

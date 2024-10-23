@@ -10,5 +10,4 @@ enum class OrderStatus {
     SHIPPING_PROGRESS, //배송 중
     SHIPPING_COMPLETE, //배송 완료
     PURCHASE_CONFIRMATION, //구매 확정
-    REVIEW_COMPLETE, //리뷰 완료
 }

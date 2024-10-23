@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.gson.GsonBuilder
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.data.NoteProductIds
@@ -58,6 +59,11 @@ fun NotePickScreen(
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
     val selectedProductIds by viewmodel.selectedIds.collectAsStateWithLifecycle(emptyList())
+    val isNextButtonAvailable by viewmodel.isNextButtonAvailableState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(true) {
+        viewmodel.initializeNoteOrderQuantity(noteOrderQuantity)
+    }
 
     ErrorUiSetView(
         isOpen = isOpen,
@@ -77,6 +83,7 @@ fun NotePickScreen(
     when (uiState) {
         NotePickUiState.Loading -> AppLoadingScreen()
         is NotePickUiState.NotePickData -> NoteContent(
+            isNextButtonAvailable = isNextButtonAvailable,
             topRecommendedNote = (uiState as NotePickUiState.NotePickData).topRecommendedNote,
             noteList = (uiState as NotePickUiState.NotePickData).noteProductList,
             noteOrderQuantity = noteOrderQuantity,
@@ -93,6 +100,7 @@ fun NotePickScreen(
 
 @Composable
 fun NoteContent(
+    isNextButtonAvailable: Boolean,
     topRecommendedNote: String,
     noteList: ProductListResponseDto?,
     noteOrderQuantity: Int,
@@ -138,13 +146,12 @@ fun NoteContent(
                 )
             }
             Button(
-                isEnabled = true,
+                isEnabled = isNextButtonAvailable,
                 btnText = "다음",
                 onClick = { onNextClick() },
-                buttonModifier = Modifier
-                    .fillMaxWidth(1f)
-                    .height(52.dp)
-                    .background(color = Color.Black),
+                buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(
+                    color = if (isNextButtonAvailable) Color.Black else CustomColor.gray3
+                ),
                 textSize = 18,
                 textColor = Color.White,
                 radious = 5

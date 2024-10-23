@@ -1,5 +1,6 @@
 package com.hmoa.feature_hbti.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
@@ -22,10 +23,13 @@ class NotePickViewmodel @Inject constructor(
     private var _topRecommendedNoteState = MutableStateFlow<String>("")
     private var _noteProductsState = MutableStateFlow<ProductListResponseDto?>(null)
     private var _noteSelectDataState = MutableStateFlow<List<NoteSelect>>(listOf())
+    private var _isNextButtonAvailableState = MutableStateFlow<Boolean>(false)
     val topRecommendedNoteState: StateFlow<String> = _topRecommendedNoteState
     val noteProductState: StateFlow<ProductListResponseDto?> = _noteProductsState
     val noteSelectDataState: StateFlow<List<NoteSelect>> = _noteSelectDataState
+    val isNextButtonAvailableState: StateFlow<Boolean> = _isNextButtonAvailableState
     val selectedIds = MutableStateFlow<List<Int>>(emptyList())
+    private var _noteOrderQuantityState = MutableStateFlow<Int>(0)
     private var _noteOrderIndex = MutableStateFlow<Int>(1)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
@@ -98,6 +102,10 @@ class NotePickViewmodel @Inject constructor(
             )
         }
         _noteSelectDataState.update { initializedList }
+    }
+
+    fun initializeNoteOrderQuantity(noteOrderQuantity: Int) {
+        _noteOrderQuantityState.update { noteOrderQuantity }
     }
 
     suspend fun getTopRecommendedNote() {
@@ -182,6 +190,18 @@ class NotePickViewmodel @Inject constructor(
             noteSelectData = reorderNoteFaceIndex(noteSelectData)
             _noteSelectDataState.update { noteSelectData }
             _noteOrderIndex.update { countSelectedNote(noteSelectData) }
+            handleIsNextButtonAvailableState(noteOrderQuantity, noteSelectData = noteSelectData)
+        }
+    }
+
+    fun handleIsNextButtonAvailableState(noteOrderQuantity: Int, noteSelectData: MutableList<NoteSelect>) {
+        val noteSelectedCount = countSelectedNote(noteSelectData)
+        Log.d(
+            "NotePickViewmodel",
+            "noteSelectedCount: ${noteSelectedCount}, noteOrderQuantity: ${noteOrderQuantity} "
+        )
+        if (noteSelectedCount == noteOrderQuantity) {
+            _isNextButtonAvailableState.update { true }
         }
     }
 

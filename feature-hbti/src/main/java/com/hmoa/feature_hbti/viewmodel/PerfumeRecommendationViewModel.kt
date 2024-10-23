@@ -24,8 +24,6 @@ class PerfumeRecommendationViewModel @Inject constructor(
     private val calculateMinAndMaxPriceOutOfStringUseCase: CalculateMinAndMaxPriceOutOfStringUseCase,
     private val surveyRepository: SurveyRepository
 ) : ViewModel() {
-    private var _isPostCompleted = MutableStateFlow<Boolean>(false)
-    val isPostCompleted: StateFlow<Boolean> = _isPostCompleted
     private var _perfumeSurveyContentsState = MutableStateFlow<PerfumeSurveyContents?>(null)
     val perfumeSurveyContentsState: StateFlow<PerfumeSurveyContents?> = _perfumeSurveyContentsState
     private var _isNextButtonAvailableState = MutableStateFlow<List<Boolean>>(List(2) { false }) // price, note 2가지 질문
@@ -100,7 +98,7 @@ class PerfumeRecommendationViewModel @Inject constructor(
         }
     }
 
-    fun postSurveyResult() {
+    fun postSurveyResult(onSuccess: () -> Unit) {
         viewModelScope.launch {
             val dto = mapOptionIdAndNoteTagsToChangePostSurveyAnswer(
                 selectedPriceOptionIds = _selectedPriceOptionIdsState.value,
@@ -108,7 +106,7 @@ class PerfumeRecommendationViewModel @Inject constructor(
             )
             postSurveyPriceSortedResult(dto)
             postSurveyNoteSortedResult(dto)
-            _isPostCompleted.update { true }
+            onSuccess()
         }
     }
 

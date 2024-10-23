@@ -38,15 +38,8 @@ fun PerfumeRecommendationRoute(
     viewModel: PerfumeRecommendationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isPostCompleted by viewModel.isPostCompleted.collectAsStateWithLifecycle()
     LaunchedEffect(true) {
         viewModel.getSurveyResult()
-    }
-
-    LaunchedEffect(isPostCompleted) {
-        if (isPostCompleted) {
-            onNavNext()
-        }
     }
 
     when (uiState) {
@@ -91,7 +84,7 @@ fun PerfumeRecommendationRoute(
             onDeleteAll = { viewModel.deleteAllNoteTagOptions() },
             onNavBack = onNavBack,
             onClickNext = {
-                viewModel.postSurveyResult()
+                viewModel.postSurveyResult(onSuccess = { onNavNext() })
             },
             isMultipleAnswerAvailable = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isPriceMultipleChoice
                 ?: false,
@@ -153,7 +146,7 @@ fun PerfumeRecommendationScreen(
             .padding(bottom = 40.dp)
     ) {
         TopBar(
-            title = "향BTI",
+            title = "향수 추천",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             onNavClick = {
                 if (pagerState.currentPage == 0) {

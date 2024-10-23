@@ -190,6 +190,10 @@ fun NotePickGridWindow(
                         text = item.productDetails,
                         style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
                     )
+                    Text(
+                        text = "(총 ${item.price}원)",
+                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
+                    )
                 }
             }
         }

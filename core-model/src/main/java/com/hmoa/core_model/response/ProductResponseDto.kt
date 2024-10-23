@@ -8,5 +8,6 @@ data class ProductResponseDto(
     val productName: String,
     val productDetails: String,
     val productPhotoUrl: String,
-    val isRecommended: Boolean
+    val isRecommended: Boolean,
+    val price: Int,
 )

@@ -33,7 +33,6 @@ import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
 fun NotePickRoute(
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
-    noteOrderQuantity: Int,
     onBackToHbtiScreen: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
@@ -41,7 +40,6 @@ fun NotePickRoute(
         onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
         onBackClick = { onBackClick() },
         onNextClick = onNextClick,
-        noteOrderQuantity,
         onBackToHbtiScreen = onBackToHbtiScreen
     )
 }
@@ -51,7 +49,6 @@ fun NotePickScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
-    noteOrderQuantity: Int,
     onBackToHbtiScreen: () -> Unit,
     viewmodel: NotePickViewmodel = hiltViewModel()
 ) {
@@ -60,10 +57,6 @@ fun NotePickScreen(
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
     val selectedProductIds by viewmodel.selectedIds.collectAsStateWithLifecycle(emptyList())
     val isNextButtonAvailable by viewmodel.isNextButtonAvailableState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(true) {
-        viewmodel.initializeNoteOrderQuantity(noteOrderQuantity)
-    }
 
     ErrorUiSetView(
         isOpen = isOpen,
@@ -86,12 +79,11 @@ fun NotePickScreen(
             isNextButtonAvailable = isNextButtonAvailable,
             topRecommendedNote = (uiState as NotePickUiState.NotePickData).topRecommendedNote,
             noteList = (uiState as NotePickUiState.NotePickData).noteProductList,
-            noteOrderQuantity = noteOrderQuantity,
             selectedNotesOrderQuantity = (uiState as NotePickUiState.NotePickData).noteOrderIndex,
             isNoteSelectedList = (uiState as NotePickUiState.NotePickData).noteSelectData,
             onBackClick = { onBackClick() },
-            onClickItem = { index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int ->
-                viewmodel.handleNoteSelectData(index, value, data, noteOrderQuantity, selectedNotesOrderQuantity)
+            onClickItem = { index: Int, value: Boolean, data: NoteSelect ->
+                viewmodel.handleNoteSelectData(index, value, data)
             },
             onNextClick = { viewmodel.postNoteSelected(onSuccess = { handleNextClick() }) }
         )
@@ -103,10 +95,9 @@ fun NoteContent(
     isNextButtonAvailable: Boolean,
     topRecommendedNote: String,
     noteList: ProductListResponseDto?,
-    noteOrderQuantity: Int,
     selectedNotesOrderQuantity: Int,
     isNoteSelectedList: List<NoteSelect>,
-    onClickItem: (index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int) -> Unit,
+    onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit
 ) {
@@ -139,8 +130,6 @@ fun NoteContent(
                 )
                 NotePickGridWindow(
                     notes = noteList,
-                    noteOrderQuantity = noteOrderQuantity,
-                    selectedNotesOrderQuantity = selectedNotesOrderQuantity,
                     isNoteSelectedList = isNoteSelectedList,
                     onClickItem = onClickItem
                 )
@@ -163,10 +152,8 @@ fun NoteContent(
 @Composable
 fun NotePickGridWindow(
     notes: ProductListResponseDto?,
-    noteOrderQuantity: Int,
-    selectedNotesOrderQuantity: Int,
     isNoteSelectedList: List<NoteSelect>,
-    onClickItem: (index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int) -> Unit
+    onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit
 ) {
     if (notes?.data == null) {
         Text("데이터가 없습니다")
@@ -187,11 +174,8 @@ fun NotePickGridWindow(
                             onClickItem(
                                 index,
                                 !isNoteSelectedList[index].isSelected,
-                                isNoteSelectedList[index],
-                                noteOrderQuantity,
-                                selectedNotesOrderQuantity
+                                isNoteSelectedList[index]
                             )
-
                         },
                         isRecommanded = item.isRecommended,
                         index = isNoteSelectedList[index].nodeFaceIndex,

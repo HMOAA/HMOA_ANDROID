@@ -183,11 +183,7 @@ fun SetUpNavGraph(
         )
         hbtiProcessScreen(
             onBackClick = navController::navigateToBack,
-            onNoteOrderQuantityPickClick = navController::navigateToNoteOrderQuantityPick
-        )
-        noteOrderQuantityPickScreen(
-            onBackClick = navController::navigateToBack,
-            onNextClick = { noteOrderQuantity -> navController.navigateToNotePick(noteOrderQuantity) }
+            onNextClick = navController::navigateToNotePick
         )
         notePickScreen(
             onBackClick = navController::navigateToBack,

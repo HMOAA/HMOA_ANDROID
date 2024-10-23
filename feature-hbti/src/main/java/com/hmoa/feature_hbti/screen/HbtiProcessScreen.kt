@@ -8,20 +8,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.VerticalStepBar
 
 @Composable
-fun HbtiProcessRoute(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
+fun HbtiProcessRoute(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     HbtiProcessScreen(
         onBackClick = { onBackClick() },
-        onNoteOrderQuantityPickClick = { onNoteOrderQuantityPickClick() })
+        onNextClick = { onNextClick() })
 }
 
 @Composable
-private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
+private fun HbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White).padding(bottom = 40.dp),
         verticalArrangement = Arrangement.SpaceBetween
@@ -44,7 +44,7 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickCl
             Button(
                 isEnabled = true,
                 btnText = "다음",
-                onClick = { onNoteOrderQuantityPickClick() },
+                onClick = { onNextClick() },
                 buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
                 textSize = 18,
                 textColor = Color.White,
@@ -57,5 +57,5 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickCl
 @Preview
 @Composable
 private fun HbtiProcessScreenPreview() {
-    HbtiProcessScreen(onBackClick = {}, onNoteOrderQuantityPickClick = {})
+    HbtiProcessScreen(onBackClick = {}, onNextClick = {})
 }

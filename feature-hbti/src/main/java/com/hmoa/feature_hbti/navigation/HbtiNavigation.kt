@@ -20,11 +20,9 @@ fun NavController.navigateToHbtiSurveyLoading() =
     navigate("${HbtiRoute.HbtiSurveyLoading}")
 
 fun NavController.navigateToHbtiProcess() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.HbtiProcess}")
-fun NavController.navigateToNoteOrderQuantityPick() =
-    navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.NoteOrderQuantityPick}")
 
-fun NavController.navigateToNotePick(noteOrderQuantity: Int) =
-    navigate("${HbtiRoute.NotePick}/${noteOrderQuantity}")
+fun NavController.navigateToNotePick() =
+    navigate("${HbtiRoute.NotePick}")
 
 fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
@@ -92,20 +90,11 @@ fun NavGraphBuilder.hbtiSurveyResultScreen(
     }
 }
 
-fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
+fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.HbtiProcess}") {
         HbtiProcessRoute(
             onBackClick = { onBackClick() },
-            onNoteOrderQuantityPickClick = { onNoteOrderQuantityPickClick() })
-    }
-}
-
-fun NavGraphBuilder.noteOrderQuantityPickScreen(
-    onBackClick: () -> Unit,
-    onNextClick: (noteOrderQuantity: Int) -> Unit
-) {
-    composable(route = "${HbtiRoute.NoteOrderQuantityPick}") {
-        NoteOrderQuantityPickRoute(onBackClick = { onBackClick() }, onNextClick = { onNextClick(it) })
+            onNextClick = { onNextClick() })
     }
 }
 
@@ -115,15 +104,10 @@ fun NavGraphBuilder.notePickScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackToHbtiScreen: () -> Unit,
 ) {
-    composable(
-        route = "${HbtiRoute.NotePick}/{noteOrderQuantity}",
-        arguments = listOf(navArgument("noteOrderQuantity") { type = NavType.IntType })
-    ) {
-        val noteOrderQuantity = it.arguments?.getInt("noteOrderQuantity") ?: 0
+    composable(route = "${HbtiRoute.NotePick}") {
         NotePickRoute(
             onBackClick = { onBackClick() },
             onNextClick = onNextClick,
-            noteOrderQuantity = noteOrderQuantity,
             onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
             onBackToHbtiScreen = onBackToHbtiScreen
         )

@@ -86,6 +86,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navPerfume : (Int) -> Unit,
     navOrderRecord: () -> Unit,
     navRefund: (pageType: String, orderId: Int) -> Unit,
+    navReviewWrite: (orderId: Int) -> Unit,
     navRefundRecord: () -> Unit,
 ) {
     navigation(
@@ -163,7 +164,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             OrderRecordRoute(
                 navBack = navBack,
                 navReturnOrRefund = navRefund,
-                navReviewWrite = { /** 리뷰 작성 페이지로 넘어가자 */ }
+                navReviewWrite = navReviewWrite
             )
         }
         composable(

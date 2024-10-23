@@ -234,13 +234,13 @@ private fun Buttons(
                 shape = RoundedCornerShape(3.dp),
                 onClick = onReviewWriteClick,
                 enabled = !isReviewed,
-                border = BorderStroke(width = 1.dp, color = if(isReviewed) CustomColor.gray3 else Color.Black),
+                border = BorderStroke(width = 1.dp, color = if(!isReviewed) Color.Black else CustomColor.gray3),
                 contentPadding = PaddingValues(vertical = 10.dp),
             ) {
                 Text(
                     text = "후기 작성",
                     fontSize = 12.sp,
-                    color = if(isReviewed) CustomColor.gray3 else Color.Black,
+                    color = if(!isReviewed) Color.Black else CustomColor.gray3,
                     fontFamily = CustomFont.semiBold
                 )
             }

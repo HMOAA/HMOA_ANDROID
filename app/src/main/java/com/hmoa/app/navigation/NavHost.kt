@@ -154,6 +154,7 @@ fun SetUpNavGraph(
             navMyPerfume = navController::navigateToMyFavoritePerfume,
             navPerfume = navController::navigateToPerfume,
             navOrderRecord = navController::navigateToOrderRecord,
+            navReviewWrite = navController::navigateToWriteReview,
             navRefund = navController::navigateToRefund,
             navRefundRecord = navController::navigateToRefundRecord
         )

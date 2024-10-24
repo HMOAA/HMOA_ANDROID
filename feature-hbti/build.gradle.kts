@@ -69,12 +69,13 @@ dependencies {
     implementation(project(":core-repository"))
 
     implementation("io.github.bootpay:android:4.4.0") //boot pay
-
+    implementation("androidx.paging:paging-compose:3.2.0") //paging
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
     implementation("com.google.code.gson:gson:2.9.0")
 
     implementation("androidx.compose.ui:ui:1.1.0")
     implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.material:material:1.2.0-beta02")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.navigation:navigation-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")

@@ -10,7 +10,7 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
-import com.hmoa.feature_userinfo.CommunityPagingSource
+import com.hmoa.feature_userinfo.paging.CommunityPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

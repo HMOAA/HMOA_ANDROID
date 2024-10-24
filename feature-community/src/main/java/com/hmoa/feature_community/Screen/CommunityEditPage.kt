@@ -155,7 +155,9 @@ fun CommunityEditPage(
                         onDeletePictures = onDeletePictures
                     )
                 }
-                BottomCameraBtn(onUpdatePictures)
+                BottomCameraBtn(
+                    onUpdatePictures = onUpdatePictures
+                )
             }
         }
 

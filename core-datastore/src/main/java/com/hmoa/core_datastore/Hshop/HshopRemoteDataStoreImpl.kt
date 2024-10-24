@@ -4,6 +4,7 @@ import ResultResponse
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.FinalOrderResponseDto
+import com.hmoa.core_model.response.GetMyOrderResponseDto
 import com.hmoa.core_model.response.PostNoteOrderResponseDto
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
@@ -11,6 +12,7 @@ import com.hmoa.core_network.service.HshopService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -74,6 +76,15 @@ class HshopRemoteDataStoreImpl @Inject constructor(private val hshopService: Hsh
             result.data = this.data
         }.suspendOnError{
             result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }
+        return result
+    }
+    override suspend fun getMyOrders(): ResultResponse<List<GetMyOrderResponseDto>> {
+        val result = ResultResponse<List<GetMyOrderResponseDto>>()
+        hshopService.getMyOrders().suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnSuccess{
+            result.data = this.data
         }
         return result
     }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -44,6 +45,8 @@ fun OrderRecordItem(
     totalPrice: Int,
     shippingPayment: Int,
     trackingNumber: String?,
+    createdAt: String,
+    isReviewed: Boolean,
     onRefundClick: () -> Unit,
     onReturnClick: () -> Unit,
     onReviewWriteClick: () -> Unit,
@@ -67,8 +70,16 @@ fun OrderRecordItem(
                 fontFamily = CustomFont.bold,
                 color = shippingStatusColor
             )
-            Spacer(Modifier.width(24.dp))
-            HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray1)
+            Spacer(Modifier.width(12.dp))
+            HorizontalDivider(modifier = Modifier.weight(1f), thickness = 1.dp, color = Color.Black)
+            Spacer(Modifier.width(12.dp))
+            Text(
+                modifier = Modifier.wrapContentWidth(),
+                text = createdAt,
+                fontSize = 12.sp,
+                fontFamily = CustomFont.bold,
+                color = Color.Black
+            )
         }
         Spacer(Modifier.height(20.dp))
         products.forEach{
@@ -108,7 +119,7 @@ fun OrderRecordItem(
             )
         }
         Spacer(Modifier.height(24.dp))
-        HorizontalDivider(color = Color.Black, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(color = CustomColor.gray1, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(24.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -128,6 +139,7 @@ fun OrderRecordItem(
         }
         Spacer(Modifier.height(32.dp))
         Buttons(
+            isReviewed = isReviewed,
             shippingStatus = shippingType,
             buttonText = buttonText,
             buttonEvent = buttonEvent,
@@ -182,26 +194,37 @@ fun ProductView(
 
 @Composable
 private fun Buttons(
+    isReviewed: Boolean,
     shippingStatus: OrderStatus,
     buttonText: String,
     buttonEvent: () -> Unit,
     onReviewWriteClick: () -> Unit,
 ){
-    if (shippingStatus == OrderStatus.SHIPPING_COMPLETE){
+    val twoButtonStatusList = listOf(
+        OrderStatus.SHIPPING_PROGRESS,
+        OrderStatus.SHIPPING_COMPLETE,
+        OrderStatus.RETURN_COMPLETE,
+        OrderStatus.RETURN_PROGRESS
+    )
+    if (shippingStatus in twoButtonStatusList){
         Row(
             modifier = Modifier.fillMaxWidth()
         ){
+            val buttonEnabled = shippingStatus == OrderStatus.SHIPPING_PROGRESS
+                    || shippingStatus == OrderStatus.SHIPPING_COMPLETE
+
             OutlinedButton(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(3.dp),
                 onClick = buttonEvent,
-                border = BorderStroke(width = 1.dp, color = CustomColor.gray3),
+                enabled = buttonEnabled,
+                border = BorderStroke(width = 1.dp, color = if(buttonEnabled) Color.Black else CustomColor.gray3),
                 contentPadding = PaddingValues(vertical = 10.dp),
             ) {
                 Text(
                     text = buttonText,
                     fontSize = 12.sp,
-                    color = CustomColor.gray3,
+                    color = if(buttonEnabled) Color.Black else CustomColor.gray3,
                     fontFamily = CustomFont.semiBold
                 )
             }
@@ -210,29 +233,32 @@ private fun Buttons(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(3.dp),
                 onClick = onReviewWriteClick,
-                border = BorderStroke(width = 1.dp, color = CustomColor.gray3),
+                enabled = !isReviewed,
+                border = BorderStroke(width = 1.dp, color = if(!isReviewed) Color.Black else CustomColor.gray3),
                 contentPadding = PaddingValues(vertical = 10.dp),
             ) {
                 Text(
                     text = "후기 작성",
                     fontSize = 12.sp,
-                    color = CustomColor.gray3,
+                    color = if(!isReviewed) Color.Black else CustomColor.gray3,
                     fontFamily = CustomFont.semiBold
                 )
             }
         }
     } else {
+        val buttonEnabled = shippingStatus == OrderStatus.PAY_COMPLETE
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(3.dp),
             onClick = buttonEvent,
-            border = BorderStroke(width = 1.dp, color = CustomColor.gray3),
+            enabled = buttonEnabled,
+            border = BorderStroke(width = 1.dp, color = if(buttonEnabled) Color.Black else CustomColor.gray3),
             contentPadding = PaddingValues(vertical = 10.dp),
         ) {
             Text(
                 text = buttonText,
                 fontSize = 12.sp,
-                color = CustomColor.gray3,
+                color = if(buttonEnabled) Color.Black else CustomColor.gray3,
                 fontFamily = CustomFont.semiBold
             )
         }
@@ -253,7 +279,7 @@ private fun OrderHistoryItemUiTest(){
         OrderRecordItem(
             courierCompany = "대한통운(CJ)",
             trackingNumber = "365861396573",
-            shippingType = OrderStatus.SHIPPING_COMPLETE,
+            shippingType = OrderStatus.PAY_FAILED,
             products = listOf(
                 NoteProduct(
                     notes = listOf(
@@ -288,12 +314,14 @@ private fun OrderHistoryItemUiTest(){
             onRefundClick = {},
             onReturnClick = {},
             shippingPayment = 3000,
-            onReviewWriteClick = {}
+            onReviewWriteClick = {},
+            createdAt = "2024/10/17",
+            isReviewed = true
         )
         OrderRecordItem(
             courierCompany = "대한통운(CJ)",
             trackingNumber = "365861396573",
-            shippingType = OrderStatus.SHIPPING_PROGRESS,
+            shippingType = OrderStatus.PAY_COMPLETE,
             products = listOf(
                 NoteProduct(
                     notes = listOf(
@@ -328,7 +356,9 @@ private fun OrderHistoryItemUiTest(){
             onRefundClick = {},
             onReturnClick = {},
             shippingPayment = 3000,
-            onReviewWriteClick = {}
+            onReviewWriteClick = {},
+            createdAt = "2024/07/21",
+            isReviewed = false
         )
     }
 }

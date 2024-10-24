@@ -9,6 +9,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -253,6 +254,7 @@ private fun MyPageContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
+                        .clickable{it.onNavClick()}
                         .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -263,17 +265,12 @@ private fun MyPageContent(
                         fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                     )
 
-                    IconButton(
+                    Icon(
                         modifier = Modifier.size(20.dp),
-                        onClick = it.onNavClick
-                    ) {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(R.drawable.ic_next),
-                            contentDescription = "Navigation Button",
-                            tint = CustomColor.gray2
-                        )
-                    }
+                        painter = painterResource(R.drawable.ic_next),
+                        contentDescription = "Navigation Button",
+                        tint = CustomColor.gray2
+                    )
                 }
                 if (idx % 3 == 2) {
                     HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)

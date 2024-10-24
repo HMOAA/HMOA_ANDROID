@@ -3,7 +3,18 @@ package com.hmoa.core_designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -30,8 +41,8 @@ fun LikeRowItem(
     itemNameKo: String,
     itemNameEng: String,
     onClickClose: () -> Unit,
-    onNavPerfumeDesc: () -> Unit,
-    isCloseButtonExist: Boolean = true
+    isCloseButtonExist: Boolean = true,
+    navPerfume: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -39,9 +50,7 @@ fun LikeRowItem(
             .width(280.dp)
             .background(color = Color.White, shape = RoundedCornerShape(size = 5.dp))
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(size = 5.dp))
-            .clickable {
-                onNavPerfumeDesc()
-            },
+            .clickable {navPerfume()},
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -172,7 +181,7 @@ fun LikeRowItemPreview() {
             itemNameKo = "우드 세이지 앤 씨 솔트 코롱",
             itemNameEng = "Wood Sage & Sea Salt Cologne",
             onClickClose = {},
-            onNavPerfumeDesc = {},
+            navPerfume = {},
             isCloseButtonExist = false
         )
         LikeRowItem(
@@ -182,7 +191,7 @@ fun LikeRowItemPreview() {
             itemNameKo = "[단종] 플로라 바이 구찌 오 드 퍼퓸",
             itemNameEng = "[Discontinued] Flora by Gucci Eau de Parfum",
             onClickClose = {},
-            onNavPerfumeDesc = {},
+            navPerfume = {},
             isCloseButtonExist = false
         )
     }

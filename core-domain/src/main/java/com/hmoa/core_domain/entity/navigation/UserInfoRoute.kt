@@ -7,6 +7,7 @@ enum class UserInfoRoute {
     MyActivityRoute, //내 활동 화면
     MyCommentRoute, //작성한 댓글 Route
     MyPostRoute, //작성한 게시글 화면
+    MyReview, //작성한 리뷰
     MyFavoriteCommentRoute, //좋아요 누른 댓글 화면
     MyFavoritePerfumeRoute, //좋아요 한 향수 화면
     EditProfileRoute, //프로필 수정 화면

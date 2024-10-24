@@ -85,7 +85,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
 
             CommunityPostRoute(
                 navBack = navBack,
-                _category = type
+                category = type
             )
         }
         composable(route = "${CommunityRoute.CommunityEditRoute.name}/{id}") {

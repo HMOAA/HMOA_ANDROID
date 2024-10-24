@@ -46,6 +46,7 @@ fun PostListItem(
 ){
     Row(
         modifier = modifier
+            .background(color = Color.White)
             .clickable {
                 onPostClick()
             }
@@ -95,7 +96,8 @@ fun PostListItem(
                 fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                fontFamily = CustomFont.regular
+                fontFamily = CustomFont.regular,
+                color = Color.Black
             )
         }
     }

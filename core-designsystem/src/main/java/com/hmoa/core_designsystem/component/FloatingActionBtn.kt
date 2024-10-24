@@ -1,6 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -31,8 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
@@ -40,27 +44,34 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun FloatingActionBtn(
-    onNavRecommend: () -> Unit,
-    onNavHbtiReview: () -> Unit,
-    onNavFree: () -> Unit,
+    isFabOpen: Boolean,
+    onFabClick: (Boolean) -> Unit,
+    width: Dp,
+    fontSize: TextUnit,
+    options: List<String>,
+    events: List<() -> Unit>,
     isAvailable: Boolean,
 ) {
-
-    var isOpen by remember { mutableStateOf(false) }
-
+    val itemHeight = when(fontSize){
+        16.sp -> 40
+        12.sp -> 35
+        else -> 30
+    }
+    val height = options.size * itemHeight
     val textStyle = TextStyle(
         color = Color.White,
-        fontSize = 16.sp,
+        fontSize = fontSize,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     )
 
     Column(
-        modifier = Modifier.width(135.dp)
+        modifier = Modifier.width(width)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(color = Color.Transparent)
                 .padding(end = 8.dp),
             horizontalArrangement = Arrangement.End
         ) {
@@ -68,9 +79,10 @@ fun FloatingActionBtn(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(CircleShape)
-                    .clickable { if (isAvailable) isOpen = !isOpen }
-                    .background(color = Color.White, shape = CircleShape),
-                painter = painterResource(if (isOpen) R.drawable.ic_fab_open else R.drawable.ic_fab),
+                    .clickable { if (isAvailable) onFabClick(!isFabOpen) }
+                    .background(color = Color.White, shape = CircleShape)
+                    .border(width = 1.dp, color = Color.Black, shape = CircleShape),
+                painter = painterResource(if (isFabOpen) R.drawable.ic_fab_open else R.drawable.ic_fab),
                 contentDescription = "FAB"
             )
         }
@@ -79,73 +91,58 @@ fun FloatingActionBtn(
 
         DropdownMenu(
             modifier = Modifier
-                .height(138.dp)
-                .width(135.dp)
-                .background(color = Color.Black, shape = RoundedCornerShape(10.dp)),
-            expanded = isOpen,
-            onDismissRequest = {
-                isOpen = false
-            },
-            offset = DpOffset(x = 0.dp, y = (-204).dp)
+                .wrapContentHeight()
+                .width(width)
+                .background(color = Color.Black),
+            expanded = isFabOpen,
+            onDismissRequest = {onFabClick(false)},
+            offset = DpOffset(x = 0.dp, y = (-(90 + height)).dp)
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        modifier = Modifier.height(46.dp),
-                        text = "추천",
-                        style = textStyle
+            repeat(options.size){ idx ->
+                Row(
+                    modifier = Modifier.height(itemHeight.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = options[idx],
+                                style = textStyle,
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        onClick = {
+                            onFabClick(false)
+                            events[idx]()
+                        }
                     )
-                },
-                onClick = {
-                    isOpen = false
-                    onNavRecommend()
                 }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        modifier = Modifier.height(46.dp),
-                        text = "시향기",
-                        style = textStyle
-                    )
-                },
-                onClick = {
-                    isOpen = false
-                    onNavHbtiReview()
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        modifier = Modifier.height(46.dp),
-                        text = "자유",
-                        style = textStyle
-                    )
-                },
-                onClick = {
-                    isOpen = false
-                    onNavFree()
-                }
-            )
+            }
         }
     }
-
 }
 
 @Preview(showBackground = true)
 @Composable
 fun TestFAB() {
+    var isFabOpen by remember{mutableStateOf(false)}
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White),
+            .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
         FloatingActionBtn(
-            onNavRecommend = {},
-            onNavHbtiReview = {},
-            onNavFree = {},
+            options = listOf("추천", "시향기", "자유"),
+//            options = listOf("후기 작성하기 (시트러스 24.10.08)"),
+//            options = listOf("추천", "시향기"),
+            events = listOf(),
             isAvailable = true,
+            width = 135.dp,
+            fontSize = 16.sp,
+            isFabOpen = isFabOpen,
+            onFabClick = {isFabOpen = it}
         )
     }
 }

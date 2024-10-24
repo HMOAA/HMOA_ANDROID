@@ -3,14 +3,63 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.hmoa.feature_authentication.navigation.*
+import com.hmoa.feature_authentication.navigation.loginScreen
+import com.hmoa.feature_authentication.navigation.navigateToLogin
+import com.hmoa.feature_authentication.navigation.navigateToPickNickname
+import com.hmoa.feature_authentication.navigation.navigateToPickPersonalInfo
+import com.hmoa.feature_authentication.navigation.navigateToSignup
+import com.hmoa.feature_authentication.navigation.pickNicknameScreen
+import com.hmoa.feature_authentication.navigation.pickPersonalInfoScreen
+import com.hmoa.feature_authentication.navigation.signupScreen
 import com.hmoa.feature_brand.navigation.brandScreen
 import com.hmoa.feature_brand.navigation.brandSearchScreen
 import com.hmoa.feature_brand.navigation.navigateToBrand
-import com.hmoa.feature_community.Navigation.*
+import com.hmoa.feature_community.Navigation.navigateToCommunityCommentEditRoute
+import com.hmoa.feature_community.Navigation.navigateToCommunityDescriptionRoute
+import com.hmoa.feature_community.Navigation.navigateToCommunityEditRoute
+import com.hmoa.feature_community.Navigation.navigateToCommunityPage
+import com.hmoa.feature_community.Navigation.navigateToCommunityPostRoute
+import com.hmoa.feature_community.Navigation.navigateToCommunityRoute
+import com.hmoa.feature_community.Navigation.navigateToCommunitySearchRoute
+import com.hmoa.feature_community.Navigation.nestedCommunityGraph
 import com.hmoa.feature_fcm.alarmRoute
-import com.hmoa.feature_hbti.navigation.*
-import com.hmoa.feature_home.navigation.*
+import com.hmoa.feature_hbti.navigation.addAddress
+import com.hmoa.feature_hbti.navigation.editReview
+import com.hmoa.feature_hbti.navigation.hbtiProcessScreen
+import com.hmoa.feature_hbti.navigation.hbtiScreen
+import com.hmoa.feature_hbti.navigation.hbtiSurveyLoadingScreen
+import com.hmoa.feature_hbti.navigation.hbtiSurveyResultScreen
+import com.hmoa.feature_hbti.navigation.hbtiSurveyScreen
+import com.hmoa.feature_hbti.navigation.navigateToAddAddress
+import com.hmoa.feature_hbti.navigation.navigateToEditReview
+import com.hmoa.feature_hbti.navigation.navigateToHbti
+import com.hmoa.feature_hbti.navigation.navigateToHbtiProcess
+import com.hmoa.feature_hbti.navigation.navigateToHbtiSurvey
+import com.hmoa.feature_hbti.navigation.navigateToHbtiSurveyLoading
+import com.hmoa.feature_hbti.navigation.navigateToHbtiSurveyResult
+import com.hmoa.feature_hbti.navigation.navigateToNoteOrderQuantityPick
+import com.hmoa.feature_hbti.navigation.navigateToNotePick
+import com.hmoa.feature_hbti.navigation.navigateToNotePickResult
+import com.hmoa.feature_hbti.navigation.navigateToOrder
+import com.hmoa.feature_hbti.navigation.navigateToOrderResult
+import com.hmoa.feature_hbti.navigation.navigateToPerfumeRecommendation
+import com.hmoa.feature_hbti.navigation.navigateToPerfumeRecommendationResult
+import com.hmoa.feature_hbti.navigation.navigateToReview
+import com.hmoa.feature_hbti.navigation.navigateToWriteReview
+import com.hmoa.feature_hbti.navigation.noteOrderQuantityPickScreen
+import com.hmoa.feature_hbti.navigation.notePickResult
+import com.hmoa.feature_hbti.navigation.notePickScreen
+import com.hmoa.feature_hbti.navigation.order
+import com.hmoa.feature_hbti.navigation.orderResult
+import com.hmoa.feature_hbti.navigation.perfumeRecommendationResultRoute
+import com.hmoa.feature_hbti.navigation.perfumeRecommendationRoute
+import com.hmoa.feature_hbti.navigation.review
+import com.hmoa.feature_hbti.navigation.writeReview
+import com.hmoa.feature_home.navigation.allPerfumeScreen
+import com.hmoa.feature_home.navigation.homeScreen
+import com.hmoa.feature_home.navigation.navigateToAllPerfume
+import com.hmoa.feature_home.navigation.navigateToHome
+import com.hmoa.feature_home.navigation.perfumeSearchScreen
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
@@ -18,8 +67,30 @@ import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
 import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
-import com.hmoa.feature_perfume.navigation.*
-import com.hmoa.feature_userinfo.navigation.*
+import com.hmoa.feature_perfume.navigation.createNewPerfumeComment
+import com.hmoa.feature_perfume.navigation.editMyPerfumeComment
+import com.hmoa.feature_perfume.navigation.navigateToCreateNewperfumeComment
+import com.hmoa.feature_perfume.navigation.navigateToPerfume
+import com.hmoa.feature_perfume.navigation.navigateToPerfumeComment
+import com.hmoa.feature_perfume.navigation.navigateToSpecificPerfumeComment
+import com.hmoa.feature_perfume.navigation.perfumeComment
+import com.hmoa.feature_perfume.navigation.perfumeScreen
+import com.hmoa.feature_perfume.navigation.specificComment
+import com.hmoa.feature_userinfo.navigation.navigateToBack
+import com.hmoa.feature_userinfo.navigation.navigateToEditProfilePage
+import com.hmoa.feature_userinfo.navigation.navigateToMyActivity
+import com.hmoa.feature_userinfo.navigation.navigateToMyBirth
+import com.hmoa.feature_userinfo.navigation.navigateToMyCommentPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyFavoriteCommentPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyFavoritePerfume
+import com.hmoa.feature_userinfo.navigation.navigateToMyGenderPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyInfoPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyPostPage
+import com.hmoa.feature_userinfo.navigation.navigateToMyReview
+import com.hmoa.feature_userinfo.navigation.navigateToOrderRecord
+import com.hmoa.feature_userinfo.navigation.navigateToRefund
+import com.hmoa.feature_userinfo.navigation.navigateToRefundRecord
+import com.hmoa.feature_userinfo.navigation.nestedUserInfoGraph
 
 @Composable
 fun SetUpNavGraph(
@@ -67,6 +138,7 @@ fun SetUpNavGraph(
         this.nestedUserInfoGraph(
             navHome = navController::navigateToHome,
             navLogin = navController::navigateToLogin,
+            navReview = navController::navigateToReview,
             navBack = navController::navigateToBack,
             navCommunity = navController::navigateToCommunityDescriptionRoute,
             navEditPost = navController::navigateToCommunityEditRoute,
@@ -76,11 +148,13 @@ fun SetUpNavGraph(
             navMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
             navMyPost = navController::navigateToMyPostPage,
             navMyComment = navController::navigateToMyCommentPage,
+            navMyReview = navController::navigateToMyReview,
             navMyBirth = navController::navigateToMyBirth,
             navMyGender = navController::navigateToMyGenderPage,
             navMyPerfume = navController::navigateToMyFavoritePerfume,
             navPerfume = navController::navigateToPerfume,
             navOrderRecord = navController::navigateToOrderRecord,
+            navReviewWrite = navController::navigateToWriteReview,
             navRefund = navController::navigateToRefund,
             navRefundRecord = navController::navigateToRefundRecord
         )
@@ -165,6 +239,9 @@ fun SetUpNavGraph(
 
         /** hbti 모듈 */
         hbtiScreen(
+            navBack = navController::navigateToBack,
+            navHome = navController::navigateToHome,
+            navReview = navController::navigateToReview,
             onHbtiSurveyClick = navController::navigateToHbtiSurvey,
             onAfterOrderClick = navController::navigateToPerfumeRecommendation
         )
@@ -212,15 +289,21 @@ fun SetUpNavGraph(
             navBack = navController::navigateToBack,
             navHome = navController::navigateToHome
         )
-        //order()
         perfumeRecommendationRoute(
             onBackClick = navController::navigateToBack,
             onNextClick = navController::navigateToPerfumeRecommendationResult
         )
         perfumeRecommendationResultRoute(
             onBackClick = navController::navigateToBack,
-            onNavPerfumeDescription = { id -> navController.navigateToPerfume(id) },
-            onNavHome = navController::navigateToHome
+            navPerfumeDescription = { id -> navController.navigateToPerfume(id) },
+            navHome = navController::navigateToHome
         )
+        writeReview(navBack = navController::navigateToBack)
+        review(
+            navBack = navController::navigateToBack,
+            navWriteReview = navController::navigateToWriteReview,
+            navEditReview = navController::navigateToEditReview
+        )
+        editReview(navReview = navController::navigateToReview)
     }
 }

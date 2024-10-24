@@ -8,6 +8,8 @@ data class OrderRecordDto(
     val courierCompany: String?,
     val orderId: Int,
     val orderProducts: FinalOrderResponseDto,
+    val createdAt: String,
     val orderStatus: OrderStatus,
-    val trackingNumber: String?
+    val trackingNumber: String?,
+    val isReviewed: Boolean
 )

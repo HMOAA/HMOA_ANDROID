@@ -1,14 +1,29 @@
 package com.hmoa.feature_community.Screen
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -87,6 +102,10 @@ fun CommunityPage(
     onErrorHandleLoginAgain: () -> Unit,
 ) {
     var isOpen by remember { mutableStateOf(true) }
+    var isFabOpen by remember{mutableStateOf(false)}
+    val animatedAlpha by animateFloatAsState(
+        targetValue = if(isFabOpen) 0.8f else 0f, label = "fab alpha animation"
+    )
 
     when (uiState) {
         is CommunityMainUiState.Loading -> AppLoadingScreen()
@@ -119,17 +138,32 @@ fun CommunityPage(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                        .padding(end = 8.dp),
                     horizontalAlignment = Alignment.End
                 ) {
                     FloatingActionBtn(
-                        onNavRecommend = { navPost(Category.추천.name) },
-                        onNavHbtiReview = { navPost(Category.시향기.name) },
-                        onNavFree = { navPost(Category.자유.name) },
-                        isAvailable = !uiState.enableLoginErrorDialog,
+                        width = 135.dp,
+                        fontSize = 16.sp,
+                        options = listOf(
+                            Category.추천.name,
+                            Category.시향기.name,
+                            Category.자유.name,
+                        ),
+                        events = listOf(
+                            {navPost(Category.추천.name)},
+                            {navPost(Category.시향기.name)},
+                            {navPost(Category.자유.name)}
+                        ),
+                        isAvailable = true,
+                        isFabOpen = isFabOpen,
+                        onFabClick = {isFabOpen = it}
                     )
                 }
             }
+            
+            //fab 선택 시 화면 필터
+            Box(modifier = Modifier.fillMaxSize().alpha(animatedAlpha).background(Color.Black))
         }
 
         is CommunityMainUiState.Error -> {
@@ -151,6 +185,7 @@ fun CommunityMainTypes(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(color = Color.White)
             .height(44.dp)
             .padding(start = 32.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -167,9 +202,7 @@ fun CommunityMainTypes(
         Spacer(Modifier.width(8.dp))
 
         TypeBadge(
-            onClickItem = {
-                onTypeChanged(Category.시향기)
-            },
+            onClickItem = {onTypeChanged(Category.시향기)},
             roundedCorner = 20.dp,
             type = Category.시향기.name,
             fontSize = 14.sp,

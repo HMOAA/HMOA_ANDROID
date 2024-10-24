@@ -8,6 +8,7 @@ import com.hmoa.core_network.service.ReportService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -20,13 +21,23 @@ class ReportDataStoreImpl @Inject constructor(private val reportService: ReportS
         return reportService.postReportCommunityComment(dto)
     }
 
-    suspend override fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {
+    override suspend fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {
         val result = ResultResponse<DataResponseDto<Any?>>()
         reportService.postReportPerfumeComment(dto).suspendOnSuccess {
             result.data = this.data
         }.suspendOnError {
             val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
             result.errorMessage = errorMessage
+        }
+        return result
+    }
+
+    override suspend fun reportReview(reviewId: Int): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        reportService.postReportReview(reviewId).suspendOnError{
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
+        }.suspendOnSuccess{
+            result.data = this.data
         }
         return result
     }

@@ -12,7 +12,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.feature_userinfo.FavoriteCommentPagingSource
+import com.hmoa.feature_userinfo.paging.FavoriteCommentPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

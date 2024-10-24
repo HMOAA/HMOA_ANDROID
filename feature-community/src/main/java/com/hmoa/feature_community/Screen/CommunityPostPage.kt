@@ -29,6 +29,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,48 +56,48 @@ import com.hmoa.feature_community.ViewModel.CommunityPostViewModel
 
 @Composable
 fun CommunityPostRoute(
-    _category : String?,
+    category : String?,
     navBack : () -> Unit,
     viewModel : CommunityPostViewModel = hiltViewModel()
 ){
-    viewModel.setCategory(_category ?: "")
-
-    val title = viewModel.title.collectAsStateWithLifecycle()
-    val content = viewModel.content.collectAsStateWithLifecycle()
-    val category = viewModel.category.collectAsStateWithLifecycle()
+    val isDone = viewModel.isDone.collectAsStateWithLifecycle()
+    val category = when(category){
+        Category.추천.name -> Category.추천
+        Category.자유.name -> Category.자유
+        Category.시향기.name -> Category.시향기
+        else -> Category.자유
+    }
     val pictures = viewModel.pictures.collectAsStateWithLifecycle()
-    val errState = viewModel.errState.collectAsStateWithLifecycle()
 
     PostCommunityPage(
-        errState = errState.value,
-        title = title.value,
-        onTitleChanged = {viewModel.updateTitle(it)},
-        content = content.value,
-        onContentChanged = {viewModel.updateContent(it)},
-        category = category.value,
+        category = category,
         pictures = pictures.value,
         onUpdatePictures = {viewModel.updatePictures(it)},
         onDeletePictures = {viewModel.deletePicture(it)},
         navBack = navBack,
-        onPostCommunity = {viewModel.postCommunity()}
+        onPostCommunity = { title, content ->
+            viewModel.postCommunity(title = title, content = content, category = category)
+        }
     )
+
+    LaunchedEffect(isDone.value){
+        if(isDone.value){navBack()}
+    }
 }
 
 @Composable
 fun PostCommunityPage(
-    errState : String?,
-    title : String,
-    onTitleChanged : (String) -> Unit,
-    content : String,
-    onContentChanged : (String) -> Unit,
     category : Category,
     pictures : List<Uri>,
     onUpdatePictures : (List<Uri>) -> Unit,
     onDeletePictures : (Int) -> Unit,
     navBack: () -> Unit,
-    onPostCommunity: () -> Unit,
+    onPostCommunity: (title: String, content: String) -> Unit,
 ) {
     val scrollableState = rememberScrollState()
+    var title by remember{mutableStateOf("")}
+    var content by remember{mutableStateOf("")}
+
 
     val context = LocalContext.current
 
@@ -104,7 +109,7 @@ fun PostCommunityPage(
             context = context,
             title = category.name,
             isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
-            onPostCommunity = onPostCommunity,
+            onPostCommunity = { onPostCommunity(title, content) },
             navBack = navBack
         )
 
@@ -112,7 +117,7 @@ fun PostCommunityPage(
 
         TextFieldTitle(
             title = title,
-            onTitleChanged = onTitleChanged
+            onTitleChanged = { title = it }
         )
 
         HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
@@ -124,12 +129,12 @@ fun PostCommunityPage(
                 .padding(horizontal = 33.dp, vertical = 27.dp)
                 .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
             content = content,
-            onContentChanged = onContentChanged,
+            onContentChanged = { content = it },
             pictures = pictures,
             onDeletePictures = onDeletePictures
         )
 
-        BottomCameraBtn(onUpdatePictures)
+        BottomCameraBtn(onUpdatePictures = onUpdatePictures)
     }
 }
 

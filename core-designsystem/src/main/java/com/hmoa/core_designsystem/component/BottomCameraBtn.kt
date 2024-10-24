@@ -14,12 +14,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hmoa.core_designsystem.R
 
 @Composable
 fun BottomCameraBtn(
+    isColorInverted: Boolean = true,
     onUpdatePictures : (List<Uri>) -> Unit,
 ){
     //갤러리에서 사진 가져오기
@@ -50,6 +52,7 @@ fun BottomCameraBtn(
             Icon(
                 modifier = Modifier.fillMaxSize(),
                 painter = painterResource(R.drawable.ic_camera),
+                tint = if(isColorInverted) Color.Black else Color.White,
                 contentDescription = "Add Picture"
             )
         }

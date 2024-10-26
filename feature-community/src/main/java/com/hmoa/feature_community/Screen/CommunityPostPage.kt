@@ -3,6 +3,9 @@ package com.hmoa.feature_community.Screen
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -42,8 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.checkPermission
+import com.hmoa.core_common.galleryPermission
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.BottomCameraBtn
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
@@ -61,7 +68,7 @@ fun CommunityPostRoute(
     val content = viewModel.content.collectAsStateWithLifecycle()
     val category = viewModel.category.collectAsStateWithLifecycle()
     val pictures = viewModel.pictures.collectAsStateWithLifecycle()
-    val errState = viewModel.errState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
 
     PostCommunityPage(
         errState = errState.value,
@@ -80,7 +87,7 @@ fun CommunityPostRoute(
 
 @Composable
 fun PostCommunityPage(
-    errState : String?,
+    errState : ErrorUiState,
     title : String,
     onTitleChanged : (String) -> Unit,
     content : String,
@@ -93,43 +100,68 @@ fun PostCommunityPage(
     onPostCommunity: () -> Unit,
 ) {
     val scrollableState = rememberScrollState()
-
+    //갤러리에서 사진 가져오기
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = {uris ->
+            onUpdatePictures(uris)
+        }
+    )
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        //unique top bar
-        CommunityPostTopBar(
-            context = context,
-            title = category.name,
-            isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
-            onPostCommunity = onPostCommunity,
-            navBack = navBack
+    //오류가 없다면
+    if (errState is ErrorUiState.ErrorData && errState.generalError.first){
+        ErrorUiSetView(
+            onLoginClick = navBack,
+            errorUiState = errState,
+            onCloseClick = navBack
         )
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ){
+            //unique top bar
+            CommunityPostTopBar(
+                context = context,
+                title = category.name,
+                isDataEmpty = title.isNotEmpty() && content.isNotEmpty(),
+                onPostCommunity = onPostCommunity,
+                navBack = navBack
+            )
 
-        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+            HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-        TextFieldTitle(
-            title = title,
-            onTitleChanged = onTitleChanged
-        )
+            TextFieldTitle(
+                title = title,
+                onTitleChanged = onTitleChanged
+            )
 
-        HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
+            HorizontalDivider(Modifier.fillMaxWidth(),thickness = 1.dp,color = Color.Black)
 
-        TextFieldContent(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 33.dp, vertical = 27.dp)
-                .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
-            content = content,
-            onContentChanged = onContentChanged,
-            pictures = pictures,
-            onDeletePictures = onDeletePictures
-        )
+            TextFieldContent(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 33.dp, vertical = 27.dp)
+                    .scrollable(state = scrollableState, orientation = Orientation.Horizontal),
+                content = content,
+                onContentChanged = onContentChanged,
+                pictures = pictures,
+                onDeletePictures = onDeletePictures
+            )
 
-        BottomCameraBtn(onUpdatePictures)
+            BottomCameraBtn(
+                onClick = {
+                    if(checkPermission(context, galleryPermission)){
+                        multiplePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    } else {
+                        Toast.makeText(context, "갤러리 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -160,9 +192,7 @@ fun CommunityPostTopBar(
         verticalAlignment = Alignment.CenterVertically
     ){
         Text(
-            modifier = Modifier.clickable{
-                navBack()
-            },
+            modifier = Modifier.clickable{navBack()},
             text = "취소",
             style = sideTopBarTextStyle
         )

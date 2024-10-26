@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("com.android.application")
@@ -21,9 +21,9 @@ android {
     defaultConfig {
         applicationId = "com.hmoa.app"
         minSdk = 26
-        targetSdk = 33
-        versionCode = 12
-        versionName = "1.0.0"
+        targetSdk = 34
+        versionCode = 23
+        versionName = "1.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String
@@ -78,6 +78,7 @@ dependencies {
     val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
+    val kakao_version = "2.20.5"
 
     implementation(project(":feature-home"))
     implementation(project(":feature-authentication"))
@@ -97,12 +98,12 @@ dependencies {
 
     implementation("io.github.bootpay:android:4.4.0") //boot pay
 
-    implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원
-    implementation("com.kakao.sdk:v2-user:2.19.0") // 카카오 로그인 API 모듈
-    implementation("com.kakao.sdk:v2-talk:2.19.0") // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
-    implementation("com.kakao.sdk:v2-share:2.19.0") // 카카오톡 공유 API 모듈
-    implementation("com.kakao.sdk:v2-friend:2.19.0") // 피커 API 모듈
-    implementation("com.kakao.sdk:v2-cert:2.19.0") // 카카오 인증서비스 API 모듈
+    implementation("com.kakao.sdk:v2-all:${kakao_version}")// 전체 모듈 설치, 2.11.0 버전부터 지원
+    implementation("com.kakao.sdk:v2-user:${kakao_version}") // 카카오 로그인 API 모듈
+    implementation("com.kakao.sdk:v2-talk:${kakao_version}") // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
+    implementation("com.kakao.sdk:v2-share:${kakao_version}") // 카카오톡 공유 API 모듈
+    implementation("com.kakao.sdk:v2-friend:${kakao_version}") // 피커 API 모듈
+    implementation("com.kakao.sdk:v2-cert:${kakao_version}") // 카카오 인증서비스 API 모듈
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation("com.google.dagger:hilt-compiler:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")

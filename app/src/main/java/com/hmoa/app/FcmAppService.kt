@@ -10,6 +10,9 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class FcmAppService : FirebaseMessagingService() {
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+    }
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -26,7 +29,7 @@ class FcmAppService : FirebaseMessagingService() {
             putExtra("deeplink",fcmData["deeplink"])
             putExtra("id",fcmData["id"])
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notification = Notification.Builder(this, CHANNEL_DEFAULT_IMPORTANCE)
             .setContentTitle(fcmData["title"])

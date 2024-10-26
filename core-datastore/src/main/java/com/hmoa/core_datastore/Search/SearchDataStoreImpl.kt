@@ -1,25 +1,31 @@
 package com.hmoa.core_datastore.Search
 
 import ResultResponse
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.*
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.service.SearchService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
-import kotlinx.serialization.json.Json
+import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class SearchDataStoreImpl @Inject constructor(
-    private val searchService: SearchService
+    private val searchService: SearchService,
+    private val authenticator: Authenticator
 ) : SearchDataStore {
     override suspend fun getBrand(searchWord: String): ResultResponse<List<BrandSearchResponseDto>> {
         val result = ResultResponse<List<BrandSearchResponseDto>>()
         searchService.getBrand(searchWord).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    searchService.getBrand(searchWord).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -29,8 +35,13 @@ class SearchDataStoreImpl @Inject constructor(
         searchService.getBrandAll(consonant).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    searchService.getBrandAll(consonant).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -50,8 +61,13 @@ class SearchDataStoreImpl @Inject constructor(
         searchService.getCommunity(page, searchWord).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    searchService.getCommunity(page, searchWord).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -73,8 +89,13 @@ class SearchDataStoreImpl @Inject constructor(
         searchService.getPerfume(page, searchWord).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    searchService.getPerfume(page, searchWord).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -87,8 +108,13 @@ class SearchDataStoreImpl @Inject constructor(
         searchService.getPerfumeName(page, searchWord).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    searchService.getPerfumeName(page, searchWord).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }

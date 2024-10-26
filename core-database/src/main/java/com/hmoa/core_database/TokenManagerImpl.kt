@@ -61,6 +61,7 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
+
     override suspend fun getRememberedToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[REMEMBERED_TOKEN_KEY]
@@ -75,6 +76,8 @@ class TokenManagerImpl @Inject constructor(@ApplicationContext context: Context)
 
     override suspend fun getGoogleAccessToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
+            val p = preferences[GOOGLE_ACCESS_TOKEN_KEY]
+            Log.d("TokenManagerImpl", "${p}")
             preferences[GOOGLE_ACCESS_TOKEN_KEY]
         }
     }

@@ -6,7 +6,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,15 +53,13 @@ fun NotePickScreen(
     onBackToHbtiScreen: () -> Unit,
     viewmodel: NotePickViewmodel = hiltViewModel()
 ) {
-    var isOpen by remember { mutableStateOf(true) }
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
     val selectedProductIds by viewmodel.selectedIds.collectAsStateWithLifecycle(emptyList())
     val isNextButtonAvailable by viewmodel.isNextButtonAvailableState.collectAsStateWithLifecycle()
 
     ErrorUiSetView(
-        isOpen = isOpen,
-        onConfirmClick = { onErrorHandleLoginAgain() },
+        onLoginClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
         onCloseClick = { onBackToHbtiScreen() },
     )

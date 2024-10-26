@@ -33,7 +33,12 @@ fun Button(
         modifier = Modifier
             .background(
                 color = if (isEnabled) Color.Black else CustomColor.gray2,
-                shape = RoundedCornerShape(roundCorner)
+                shape = RoundedCornerShape(
+                    topStart = roundCorner.dp,
+                    topEnd = roundCorner.dp,
+                    bottomStart = roundCorner.dp,
+                    bottomEnd = roundCorner.dp
+                )
             )
             .clickable {
                 if (isEnabled) {
@@ -61,7 +66,7 @@ fun Button(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun TestBottomButton() {
 

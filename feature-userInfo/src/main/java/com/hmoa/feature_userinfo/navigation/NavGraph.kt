@@ -6,21 +6,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.example.feature_userinfo.EditProfileRoute
+import com.example.userinfo.MyPageRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
-import com.hmoa.feature_userinfo.screen.EditProfileRoute
-import com.hmoa.feature_userinfo.screen.MyActivityRoute
-import com.hmoa.feature_userinfo.screen.MyBirthRoute
-import com.hmoa.feature_userinfo.screen.MyCommentRoute
-import com.hmoa.feature_userinfo.screen.MyFavoriteCommentRoute
-import com.hmoa.feature_userinfo.screen.MyFavoritePerfumeRoute
-import com.hmoa.feature_userinfo.screen.MyGenderRoute
-import com.hmoa.feature_userinfo.screen.MyInfoRoute
-import com.hmoa.feature_userinfo.screen.MyPageRoute
-import com.hmoa.feature_userinfo.screen.MyPostRoute
-import com.hmoa.feature_userinfo.screen.NoAuthMyPage
-import com.hmoa.feature_userinfo.screen.OrderRecordRoute
-import com.hmoa.feature_userinfo.screen.RefundRecordRoute
-import com.hmoa.feature_userinfo.screen.RefundRoute
+import com.hmoa.feature_like.Screen.MyFavoritePerfumeRoute
+import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
+import com.hmoa.feature_userinfo.screen.*
 
 //graph 이동
 fun NavController.navigateToUserInfoGraph() = navigate(UserInfoRoute.UserInfoGraph.name)
@@ -51,20 +42,27 @@ fun NavController.navigateToMyBirth() = navigate(UserInfoRoute.MyBirthRoute.name
 
 //내 게시글 페이지
 fun NavController.navigateToMyPostPage() = navigate(UserInfoRoute.MyPostRoute.name)
+
 //내가 좋아요 한 향수 페이지
 fun NavController.navigateToMyFavoritePerfume() = navigate(UserInfoRoute.MyFavoritePerfumeRoute.name)
+
 //환불 & 반품
-fun NavController.navigateToRefund(type: String, orderId: Int) = navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
+fun NavController.navigateToRefund(type: String, orderId: Int) =
+    navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
+
 //주문 내역
 fun NavController.navigateToOrderRecord() = navigate(UserInfoRoute.OrderRecordRoute.name)
+
 //환불 & 반품 내역
 fun NavController.navigateToRefundRecord() = navigate(UserInfoRoute.RefundRecordRoute.name)
+
 //뒤로가기
 fun NavController.navigateToBack() = navigateUp()
 
 fun NavGraphBuilder.nestedUserInfoGraph(
+    appVersion: String,
     navHome: () -> Unit,
-    navMyPerfume : () -> Unit,
+    navMyPerfume: () -> Unit,
     navLogin: () -> Unit,
     navBack: () -> Unit,
     navCommunity: (Int) -> Unit,
@@ -77,7 +75,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navMyComment: () -> Unit,
     navMyBirth: () -> Unit,
     navMyGender: () -> Unit,
-    navPerfume : (Int) -> Unit,
+    navPerfume: (Int) -> Unit,
     navOrderRecord: () -> Unit,
     navRefund: (pageType: String, orderId: Int) -> Unit,
     navRefundRecord: () -> Unit,
@@ -96,6 +94,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 navBack = navBack,
                 navOrderRecord = navOrderRecord,
                 navRefundRecord = navRefundRecord,
+                appVersion = appVersion
             )
         }
         composable(route = UserInfoRoute.EditProfileRoute.name) {
@@ -142,18 +141,20 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         composable(route = UserInfoRoute.MyGenderRoute.name) {
             MyGenderRoute(navBack = navBack)
         }
-        composable(route = UserInfoRoute.MyFavoritePerfumeRoute.name){
+        composable(route = UserInfoRoute.MyFavoritePerfumeRoute.name) {
             MyFavoritePerfumeRoute(
                 navPerfume = navPerfume,
                 navHome = navHome,
-                onErrorHandleLoginAgain = navLogin
+                onErrorHandleLoginAgain = navLogin,
+                navBack = navBack
             )
         }
         composable(route = UserInfoRoute.NoAuthMyPage.name) {
             NoAuthMyPage(navLogin = navLogin)
         }
-        composable(route = UserInfoRoute.OrderRecordRoute.name){
+        composable(route = UserInfoRoute.OrderRecordRoute.name) {
             OrderRecordRoute(
+                navLogin = navLogin,
                 navBack = navBack,
                 navReturnOrRefund = navRefund,
                 navReviewWrite = { /** 리뷰 작성 페이지로 넘어가자 */ }
@@ -162,20 +163,21 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         composable(
             route = "${UserInfoRoute.RefundRoute.name}/{type}/{orderId}",
             arguments = listOf(
-                navArgument("type"){type = NavType.StringType},
-                navArgument("orderId"){type = NavType.IntType}
+                navArgument("type") { type = NavType.StringType },
+                navArgument("orderId") { type = NavType.IntType }
             )
-        ){
+        ) {
             val type = it.arguments?.getString("type")
             val orderId = it.arguments?.getInt("orderId")
             RefundRoute(
                 type = type,
                 orderId = orderId,
-                navBack = navBack
+                navBack = navBack,
+                navLogin = navLogin
             )
         }
-        composable(route = "${UserInfoRoute.RefundRecordRoute.name}"){
-            RefundRecordRoute(navBack = navBack)
+        composable(route = "${UserInfoRoute.RefundRecordRoute.name}") {
+            RefundRecordRoute(navBack = navBack, navLogin = navLogin)
         }
     }
 }

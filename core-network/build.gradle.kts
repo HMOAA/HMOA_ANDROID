@@ -45,13 +45,13 @@ android {
 }
 
 dependencies {
-    val ktor_version = "2.3.7"
     val mockito_version = "4.8.0"
     val hilt_version = "2.48.1"
     val kotlinx_version = "1.5.0"
 
     implementation(project(":core-model"))
     implementation(project(":core-database"))
+    implementation(project(":core-common"))
     implementation("com.github.skydoves:sandwich:1.3.5")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

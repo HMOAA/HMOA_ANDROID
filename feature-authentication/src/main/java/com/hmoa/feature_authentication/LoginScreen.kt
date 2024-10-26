@@ -123,8 +123,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.padding(top = 100.dp))
             OAuthLoginButton(
                 backgroundColor = Color.White,
-                iconId = com.hmoa.core_designsystem.R.mipmap.ic_google_foreground,
-                iconSize = 40,
+                iconId = com.hmoa.core_designsystem.R.drawable.ic_google,
+                iconSize = 16,
                 buttonText = " Google로 로그인",
                 textColor = Color.Black,
                 textSize = 16,
@@ -136,7 +136,7 @@ fun LoginScreen(
             OAuthLoginButton(
                 backgroundColor = CustomColor.kakao,
                 iconId = com.hmoa.core_designsystem.R.drawable.ic_kakao,
-                iconSize = 13,
+                iconSize = 16,
                 buttonModifier = Modifier.padding(start = 15.dp),
                 buttonText = "Kakaotalk으로 로그인",
                 textColor = Color.Black,

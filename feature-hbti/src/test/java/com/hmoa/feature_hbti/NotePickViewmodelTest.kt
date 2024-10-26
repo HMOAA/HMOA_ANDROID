@@ -42,42 +42,48 @@ class NotePickViewmodelTest : TestCase() {
                         productName = "그린",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "그린사진",
-                        isRecommended = true
+                        isRecommended = true,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 1,
                         productName = "아쿠아",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "바다사진",
-                        isRecommended = true
+                        isRecommended = true,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 2,
                         productName = "스파이스",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "스파이스사진",
-                        isRecommended = true
+                        isRecommended = true,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 3,
                         productName = "머스크",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "머스크사진",
-                        isRecommended = false
+                        isRecommended = false,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 4,
                         productName = "프루티",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "과일사진",
-                        isRecommended = false
+                        isRecommended = false,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 5,
                         productName = "플라워",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "꽃사진",
-                        isRecommended = false
+                        isRecommended = false,
+                        price = 10
                     ),
                 )
             )

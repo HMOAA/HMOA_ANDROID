@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,17 +21,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.component.PostListItem
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.FloatingActionBtn
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityMainUiState
-import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
-
+import com.hmoa.feature_community.ViewModel.CommunityPreviewViewModel
 
 @Composable
 fun CommunityPreviewRoute(
@@ -40,7 +36,7 @@ fun CommunityPreviewRoute(
     navPost: (String) -> Unit,
     navLogin: () -> Unit,
     navHPedia: () -> Unit,
-    viewModel: CommunityMainViewModel = hiltViewModel()
+    viewModel: CommunityPreviewViewModel = hiltViewModel()
 ) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,10 +49,10 @@ fun CommunityPreviewRoute(
         communities = viewModel.communityPagingSource().collectAsLazyPagingItems(),
         type = type,
         onTypeChanged = { viewModel.updateCategory(it) },
-        navBack = navBack,
-        navSearch = navSearch,
-        navCommunityDescription = navCommunityDescription,
-        navPost = {
+        onNavBack = navBack,
+        onNavSearch = navSearch,
+        onNavCommunityDescription = navCommunityDescription,
+        onNavPost = {
             if (viewModel.hasToken()) {
                 navPost(it)
             } else {
@@ -64,11 +60,7 @@ fun CommunityPreviewRoute(
             }
         },
         onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()) {
-                navHPedia()
-            } else {
-                navLogin()
-            }
+            navLogin()
         }
     )
 }
@@ -80,14 +72,12 @@ fun CommunityPage(
     communities: LazyPagingItems<CommunityByCategoryResponseDto>,
     type: Category,
     onTypeChanged: (Category) -> Unit,
-    navBack: () -> Unit,
-    navSearch: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
-    navPost: (String) -> Unit,
+    onNavBack: () -> Unit,
+    onNavSearch: () -> Unit,
+    onNavCommunityDescription: (Int) -> Unit,
+    onNavPost: (String) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
         is CommunityMainUiState.Loading -> AppLoadingScreen()
         is CommunityMainUiState.Community -> {
@@ -101,9 +91,9 @@ fun CommunityPage(
                     TopBar(
                         title = "Community",
                         navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                        onNavClick = navBack,
+                        onNavClick = onNavBack,
                         menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
-                        onMenuClick = navSearch
+                        onMenuClick = onNavSearch
                     )
                     ContentDivider()
                     CommunityMainTypes(
@@ -113,7 +103,7 @@ fun CommunityPage(
                     ContentDivider()
                     CommunityPagePostList(
                         communities = communities.itemSnapshotList,
-                        navCommunityDescription = navCommunityDescription
+                        onNavCommunityDescription = onNavCommunityDescription
                     )
                 }
                 Column(
@@ -123,9 +113,9 @@ fun CommunityPage(
                     horizontalAlignment = Alignment.End
                 ) {
                     FloatingActionBtn(
-                        onNavRecommend = { navPost(Category.추천.name) },
-                        onNavHbtiReview = { navPost(Category.시향기.name) },
-                        onNavFree = { navPost(Category.자유.name) },
+                        navRecommend = { onNavPost(Category.추천.name) },
+                        navHbtiReview = { onNavPost(Category.시향기.name) },
+                        navFree = { onNavPost(Category.자유.name) },
                         isAvailable = !uiState.enableLoginErrorDialog,
                     )
                 }
@@ -134,8 +124,7 @@ fun CommunityPage(
 
         is CommunityMainUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = onErrorHandleLoginAgain,
+                onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
                 onCloseClick = onErrorHandleLoginAgain
             )
@@ -193,7 +182,7 @@ fun CommunityMainTypes(
 @Composable
 fun CommunityPagePostList(
     communities: ItemSnapshotList<CommunityByCategoryResponseDto>,
-    navCommunityDescription: (Int) -> Unit
+    onNavCommunityDescription: (Int) -> Unit
 ) {
     LazyColumn {
         items(communities) { community ->
@@ -205,7 +194,7 @@ fun CommunityPagePostList(
                         .border(width = 1.dp, color = CustomColor.gray2),
                     onPostClick = {
                         // 여기서 Description으로 이동
-                        navCommunityDescription(community.communityId)
+                        onNavCommunityDescription(community.communityId)
                     },
                     postType = community.category,
                     postTitle = community.title,

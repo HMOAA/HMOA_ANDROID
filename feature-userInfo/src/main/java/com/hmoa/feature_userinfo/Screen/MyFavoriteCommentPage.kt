@@ -1,22 +1,10 @@
-package com.hmoa.feature_userinfo.screen
+package com.hmoa.feature_userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -27,12 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Comment
-import com.hmoa.core_designsystem.component.EmptyDataPage
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
@@ -43,7 +26,7 @@ import com.hmoa.feature_userinfo.viewModel.FavoriteCommentViewModel
 fun MyFavoriteCommentRoute(
     navBack: () -> Unit,
     navCommunity: (Int) -> Unit,
-    navPerfume : (Int) -> Unit,
+    navPerfume: (Int) -> Unit,
     viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
     //comment list
@@ -58,10 +41,13 @@ fun MyFavoriteCommentRoute(
         onTypeChanged = { viewModel.changeType(it) },
         navBack = navBack,
         onNavParent = {
-            if (type.value == MyPageCategory.향수.name){
+            if (type.value == MyPageCategory.향수.name) {
                 navPerfume(it)
-            } else {
-                navCommunity(it)
+                if (type.value == MyPageCategory.향수.name) {
+                    navPerfume(it)
+                } else {
+                    navCommunity(it)
+                }
             }
         }
     )
@@ -72,16 +58,15 @@ fun MyFavoriteCommentPage(
     navBack: () -> Unit,
     onNavParent: (Int) -> Unit,
     uiState: FavoriteCommentUiState,
-    errState : ErrorUiState,
+    errState: ErrorUiState,
     commentType: String,
     onTypeChanged: (String) -> Unit,
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
         FavoriteCommentUiState.Loading -> {
             AppLoadingScreen()
         }
+
         is FavoriteCommentUiState.Comments -> {
             val comments = uiState.comments.collectAsLazyPagingItems()
             FavoriteCommentContent(
@@ -92,14 +77,15 @@ fun MyFavoriteCommentPage(
                 onNavParent = onNavParent
             )
         }
+
         FavoriteCommentUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = navBack,
+                onLoginClick = navBack,
                 errorUiState = errState,
                 onCloseClick = navBack
             )
         }
+
         else -> {}
     }
 }
@@ -146,7 +132,7 @@ fun FavoriteCommentContent(
                                 navCommunity = { onNavParent(comment.parentId) },
                                 onOpenBottomDialog = { /** 여기도 Bottom Dialog 사용하려면 사용합시다 */ },
                                 isSelected = comment.liked,
-                                onChangeSelect = {}
+                                onHeartClick = {}
                             )
                             if (index < commentCount - 1) {
                                 Spacer(

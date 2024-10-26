@@ -25,22 +25,18 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
+import com.hmoa.core_common.permissions
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
-import com.hmoa.core_domain.entity.navigation.AuthenticationRoute
-import com.hmoa.core_domain.entity.navigation.CommunityRoute
-import com.hmoa.core_domain.entity.navigation.HPediaRoute
-import com.hmoa.core_domain.entity.navigation.HomeRoute
-import com.hmoa.core_domain.entity.navigation.MagazineRoute
-import com.hmoa.core_domain.entity.navigation.PerfumeRoute
-import com.hmoa.core_domain.entity.navigation.UserInfoRoute
+import com.hmoa.core_domain.entity.navigation.*
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
 import com.hmoa.feature_fcm.navigateToAlarmScreen
 import com.hmoa.feature_home.navigation.navigateToHome
@@ -49,14 +45,8 @@ import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import com.hmoa.feature_userinfo.navigation.navigateToUserInfoGraph
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.zip
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kr.co.bootpay.android.BootpayAnalytics
 
 @AndroidEntryPoint
@@ -90,51 +80,28 @@ class MainActivity : AppCompatActivity() {
     private val needTopBarScreens = HomeRoute.Home.name
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
-        initFirebaseSetting()
         BootpayAnalytics.init(this, BuildConfig.BOOTPAY_APPLICATION_ID)
 
         lifecycleScope.launch {
-            val currentJob = coroutineContext.job
-            val authTokenState = viewModel.authToken().stateIn(this)
-            val rememberedTokenState = viewModel.rememberedToken().stateIn(this)
-            val newFlow = authTokenState.zip(rememberedTokenState) { authtoken, rememberedToken ->
-                Pair<String?, String?>(authtoken, rememberedToken)
-            }
-            launch {
-                newFlow.collectLatest { token ->
-                    Log.d("LOGIN TOKEN", "access : ${token.first} refresh : ${token.second}")
-                    if (token.first == null && token.second == null) {
-                        initialRoute = AuthenticationRoute.Login.name
-                        currentJob.cancel()
-                    } else {
-                        Log.d("LOGIN TOKEN", "access : ${token.first} refresh : ${token.second}")
-                        initialRoute = HomeRoute.Home.name
-                        currentJob.cancel()
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.fcmTokenFlow().collectLatest { fcmToken ->
+                    viewModel.getNotificationEnabled().collectLatest { isEnabled ->
+                        Log.d("POST PERMISSION", "is granted : ${isEnabled}")
+                        Log.d("FCM TEST", "fcm token : ${fcmToken}")
+                        initializeFirebaseSetting(
+                            fcmToken = fcmToken,
+                            onSaveFcmToken = { token -> viewModel.saveFcmToken(token) })
+                        initializeRoute(
+                            onRouteToLogin = { checkFcmToken(fcmToken, isEnabled) })
                     }
                 }
             }
         }
 
-        //fcm token post
-        lifecycleScope.launch {
-            val authToken = viewModel.authToken()
-            val rememberToken = viewModel.rememberedToken()
-            val fcmToken = viewModel.getFcmToken()
-            combine(authToken, rememberToken, fcmToken) { authToken, rememberToken, fcmToken -> }.collectLatest {
-                val auth = authToken.stateIn(this).value
-                val remember = rememberToken.stateIn(this).value
-                val fcm = fcmToken.stateIn(this).value
-                if (auth != null && remember != null && fcm != null) {
-                    withContext(Dispatchers.IO) { checkFcmToken(fcm) }
-                    lifecycle.coroutineScope.cancel()
-                }
-            }
-        }
 
         setContent {
             val navHostController = rememberNavController()
@@ -149,13 +116,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 isBottomBarVisible = route in needBottomBarScreens
                 isTopBarVisible = route in needTopBarScreens
-            }
-            navHostController.addOnDestinationChangedListener { controller, destination, arguments ->
-                val backStack = controller.currentBackStack.value
-                val stackLog = backStack.joinToString(" -> ") {
-                    it.destination.route ?: "Unknown"
-                }
-                Log.d("NAVIGATION ROUTE TEST", "current stack : $stackLog")
+            } ?: run {
+                isBottomBarVisible = false
+                isTopBarVisible = false
             }
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
             val deeplink = remember { handleDeeplink(intent) }
@@ -191,7 +154,11 @@ class MainActivity : AppCompatActivity() {
                 Box(
                     modifier = Modifier.padding(bottom = it.calculateBottomPadding())
                 ) {
-                    SetUpNavGraph(navHostController, initialRoute)
+                    SetUpNavGraph(
+                        navController = navHostController,
+                        startDestination = initialRoute,
+                        appVersion = BuildConfig.VERSION_NAME
+                    )
                     LaunchedEffect(Unit) {
                         if (deeplink.first != null) {
                             navHostController.navigate(deeplink.first!!)
@@ -204,18 +171,49 @@ class MainActivity : AppCompatActivity() {
     }
 
     //firebase 초기 토큰 처리
-    private fun initFirebaseSetting() {
+    private fun initializeFirebaseSetting(fcmToken: String?, onSaveFcmToken: (token: String) -> Unit) {
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                val fcmToken = viewModel.getFcmToken().stateIn(this).value
-                Log.d("FCM TEST", "fcm token : ${fcmToken}")
-                if (it != fcmToken) {
-                    Log.d("FCM TEST", "firebase messaging fcm token : ${it}")
-                    viewModel.saveFcmToken(it)
-                }
+            if (it != fcmToken) {
+                Log.d("FCM TEST", "firebase messaging fcm token : ${it}")
+                onSaveFcmToken(it)
             }
         }.addOnFailureListener {
             Log.e("FCM TEST", "${it.message} \n ${it.stackTrace}")
+        }
+    }
+
+    private suspend fun initializeRoute(
+        onRouteToLogin: suspend () -> Unit
+    ) {
+        viewModel.authTokenFlow().collectLatest { authToken ->
+            viewModel.rememberedTokenFlow().collectLatest { rememberToken ->
+                Log.d("LOGIN TOKEN", "auth : ${authToken} remember : ${rememberToken}")
+                if (authToken == null && rememberToken == null) {
+                    initialRoute = AuthenticationRoute.Login.name
+                    onRouteToLogin()
+                } else {
+                    initialRoute = HomeRoute.Home.name
+                }
+            }
+        }
+    }
+
+    private suspend fun checkFcmToken(fcmToken: String?, isEnabled: Boolean) {
+        if (fcmToken != null) {
+            handleFcmToken(fcmToken, isEnabled)
+        }
+        Log.d("FCM TEST", "checkFcmToken의 fcmToken 값: ${fcmToken}")
+    }
+
+    private suspend fun handleFcmToken(
+        fcmToken: String, isEnabled: Boolean
+    ) {
+        if (isEnabled) {
+            Log.d("FCM TEST", "post fcm token")
+            viewModel.postFcmToken(fcmToken)
+        } else {
+            Log.d("FCM TEST", "delete fcm token")
+            viewModel.delFcmToken()
         }
     }
 
@@ -236,40 +234,26 @@ class MainActivity : AppCompatActivity() {
         return Pair(deeplink, alarm_id)
     }
 
-    private suspend fun checkFcmToken(
-        fcmToken: String
-    ) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val isEnabled = viewModel.getNotificationEnabled().stateIn(this)
-            // isEnabled 가 true 면
-            if (isEnabled.value) {
-                Log.d("FCM TEST", "post fcm token")
-                viewModel.postFcmToken(fcmToken)
-            } else {
-                Log.d("FCM TEST", "delete fcm token")
-                viewModel.delFcmToken()
-            }
-        }
-    }
-
     private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                PERMISSION_REQUEST_CODE
-            )
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.saveNotificationEnabled(false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val deniedPermissions = permissions.filter { !com.hmoa.core_common.checkPermission(this, it) }
+            Log.d("PERMISSION TEST", "permissions : ${permissions}")
+            Log.d("PERMISSION TEST", "denied : ${deniedPermissions}")
+            if (deniedPermissions.isNotEmpty()) {
+                ActivityCompat.requestPermissions(this, deniedPermissions.toTypedArray(), PERMISSION_REQUEST_CODE)
             }
         } else {
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.saveNotificationEnabled(true)
+            //13 버전 미만 카메라 권한 (READ_EXTERNAL_STORAGE) 요청
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_DENIED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    permissions,
+                    PERMISSION_REQUEST_CODE
+                )
             }
         }
     }
@@ -287,20 +271,14 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                // 권한 부여되면 그 때 fcm token을 서버에 보내도록 해야 할 듯?
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.saveNotificationEnabled(true)
-                }
+                /** 알림 권한 유 */
+                lifecycleScope.launch { viewModel.saveNotificationEnabled(true) }
             } else {
-                // 알림 권한 설정을 안할 시 알림을 받지 않도록 함
-                lifecycleScope.launch {
-                    viewModel.saveNotificationEnabled(false)
-                }
+                /** 알림 권한 무 */
+                lifecycleScope.launch { viewModel.saveNotificationEnabled(false) }
             }
         } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.saveNotificationEnabled(true)
-            }
+            lifecycleScope.launch { viewModel.saveNotificationEnabled(true) }
         }
     }
 }

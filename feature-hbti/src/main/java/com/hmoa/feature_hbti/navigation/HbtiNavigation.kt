@@ -168,21 +168,24 @@ fun NavGraphBuilder.order(
     navBack: () -> Unit,
     navAddAddress: (String, String) -> Unit,
     navOrderResult: () -> Unit,
+    navLogin: () -> Unit
 ) {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
         val productIdsToJson = it.arguments?.getString("productIdsToJson") ?: ""
         val productIds = Json.decodeFromString<NoteProductIds>(productIdsToJson)
         OrderRoute(
             productIds = productIds.productIds,
-            onNavBack = navBack,
+            navBack = navBack,
             navAddAddress = navAddAddress,
-            navOrderResult = navOrderResult
+            navOrderResult = navOrderResult,
+            navLogin = navLogin
         )
     }
 }
 
 fun NavGraphBuilder.addAddress(
-    navOrder: (String, String) -> Unit
+    navOrder: (String, String) -> Unit,
+    navLogin: () -> Unit
 ) {
     composable(
         route = "${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}",
@@ -196,7 +199,8 @@ fun NavGraphBuilder.addAddress(
         AddAddressRoute(
             addressJson = addressJson,
             productIds = productIds,
-            navOrder = navOrder
+            navOrder = navOrder,
+            navLogin = navLogin
         )
     }
 }

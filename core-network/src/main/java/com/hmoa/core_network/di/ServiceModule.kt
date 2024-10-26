@@ -3,7 +3,6 @@ package com.hmoa.core_network.di
 import com.google.gson.GsonBuilder
 import com.hmoa.core_database.TokenManager
 import com.hmoa.core_network.BuildConfig
-import com.hmoa.core_network.authentication.AuthAuthenticator
 import com.hmoa.core_network.service.*
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
@@ -32,22 +31,19 @@ object ServiceModule {
     }
 
     @Provides
-    fun provideOkHttpClient(headerInterceptor: Interceptor, authenticator: AuthAuthenticator): OkHttpClient {
-
+    fun provideOkHttpClient(headerInterceptor: Interceptor): OkHttpClient {
         val okHttpClientBuilder = OkHttpClient().newBuilder()
         okHttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS)
         okHttpClientBuilder.readTimeout(60, TimeUnit.SECONDS)
-        okHttpClientBuilder.authenticator(authenticator)
         okHttpClientBuilder.addInterceptor(headerInterceptor)
         return okHttpClientBuilder.build()
     }
 
     @Provides
     fun provideHeaderInterceptor(tokenManager: TokenManager): Interceptor {
-        val token = tokenManager.getAuthTokenForHeader()
-
         return Interceptor { chain ->
             with(chain) {
+                val token = tokenManager.getAuthTokenForHeader()
                 val newRequest = request().newBuilder()
                     .header("X-AUTH-TOKEN", "${token}")
                     .build()
@@ -78,12 +74,6 @@ object ServiceModule {
     @Provides
     fun providerFcmService(retrofit: Retrofit): FcmService {
         return retrofit.create(FcmService::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun providerAdminService(retrofit: Retrofit): AdminService {
-        return retrofit.create(AdminService::class.java)
     }
 
     @Singleton

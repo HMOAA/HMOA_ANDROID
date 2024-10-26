@@ -13,10 +13,6 @@ interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindAdminRepositoryImpl(repositoryImpl: AdminRepositoryImpl): AdminRepository
-
-    @Binds
-    @Singleton
     fun bindBrandRepositoryImpl(repositoryImpl: BrandRepositoryImpl): BrandRepository
 
     @Binds

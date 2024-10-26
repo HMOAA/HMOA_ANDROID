@@ -1,6 +1,7 @@
 package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,19 +51,19 @@ import com.hmoa.core_designsystem.theme.pretendard
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostContent(
-    modifier : Modifier = Modifier,
-    width : Dp,
-    onChangeBottomSheetState : () -> Unit,
-    profile : String,
-    nickname : String,
-    dateDiff : String,
-    title : String,
-    content : String,
-    heartCount : String,
-    isLiked : Boolean,
-    onChangeLike : () -> Unit,
-    pictures : List<String>
-){
+    modifier: Modifier = Modifier,
+    width: Dp,
+    onChangeBottomSheetState: () -> Unit,
+    profile: String,
+    nickname: String,
+    dateDiff: String,
+    title: String,
+    content: String,
+    heartCount: Int,
+    isLiked: Boolean,
+    onChangeLike: (isLiked: Boolean) -> Unit,
+    pictures: List<String>
+) {
     //pager state
     val state = rememberPagerState(
         initialPage = 0,
@@ -72,66 +74,64 @@ fun PostContent(
     val screenWidth = configuration.screenWidthDp.toFloat()
     val screenHeight = configuration.screenHeightDp.toFloat()
 
+    var isLiked by remember{mutableStateOf(isLiked)}
+    var heartCount by remember{mutableStateOf(heartCount)}
+
     val nicknameTextStyle = TextStyle(
         fontSize = 14.sp,
         color = Color.Black,
-        fontWeight = FontWeight.Normal,fontFamily = pretendard
+        fontWeight = FontWeight.Normal, fontFamily = pretendard
     )
     val dateDiffTextStyle = TextStyle(
         fontSize = 12.sp,
         color = CustomColor.gray3,
-        fontWeight = FontWeight.Normal,fontFamily = pretendard
+        fontWeight = FontWeight.Normal, fontFamily = pretendard
     )
     val titleTextStyle = TextStyle(
         fontSize = 20.sp,
         color = Color.Black,
-        fontWeight = FontWeight.Normal,fontFamily = pretendard
+        fontWeight = FontWeight.Normal, fontFamily = pretendard
     )
     val contentTextStyle = TextStyle(
         fontSize = 16.sp,
         color = Color.Black,
-        fontWeight = FontWeight.Normal,fontFamily = pretendard
+        fontWeight = FontWeight.Normal, fontFamily = pretendard
     )
     val viewNumberTextStyle = TextStyle(
         fontSize = 14.sp,
         color = Color.Black,
-        fontWeight = FontWeight.Normal,fontFamily = pretendard
+        fontWeight = FontWeight.Normal, fontFamily = pretendard
     )
 
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp),
-    ){
+    ) {
         Spacer(Modifier.height(16.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             //profile
             CircleImageView(imgUrl = profile, height = 28, width = 28)
 
             Spacer(Modifier.width(8.dp))
 
-            Text(text = nickname,style = nicknameTextStyle)
+            Text(text = nickname, style = nicknameTextStyle)
 
             Spacer(Modifier.width(7.dp))
 
-            Text(text = dateDiff,style = dateDiffTextStyle)
+            Text(text = dateDiff, style = dateDiffTextStyle)
 
             Spacer(Modifier.weight(1f))
 
             //menu (isWritten true >> 수정, 삭제, 취소 / false >> 신고하기, 취소
             IconButton(
-                modifier = Modifier.size(16.dp),
                 onClick = { onChangeBottomSheetState() }
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.three_dot_menu_vertical),
-                    contentDescription = "Menu Button",
-                    tint = CustomColor.gray2
-                )
+                Image(modifier=Modifier.size(20.dp),painter = painterResource(R.drawable.three_dot_menu_vertical), contentDescription = null)
             }
         }
 
@@ -140,7 +140,7 @@ fun PostContent(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Icon(
                 painter = painterResource(R.drawable.question_ic),
                 contentDescription = "Question Icon"
@@ -148,7 +148,7 @@ fun PostContent(
 
             Spacer(Modifier.width(8.dp))
 
-            Text(text = title,style = titleTextStyle)
+            Text(text = title, style = titleTextStyle)
         }
 
         Spacer(Modifier.height(15.dp))
@@ -194,28 +194,28 @@ fun PostContent(
 
         Spacer(Modifier.height(17.dp))
 
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             IconButton(
-                modifier = Modifier.size(20.dp),
                 onClick = {
-                    onChangeLike()
+                    if(isLiked) heartCount-- else heartCount++
+                    onChangeLike(isLiked)
+                    isLiked = !isLiked
                 }
             ) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.ic_heart_filled),
-                    tint = if(isLiked) CustomColor.red else CustomColor.gray2,
+                    tint = if (isLiked) CustomColor.red else CustomColor.gray2,
                     contentDescription = "Like"
                 )
             }
 
-            Spacer(Modifier.width(5.dp))
-
-            Text(text = heartCount,style = viewNumberTextStyle)
+            Text(text = if (heartCount > 999) "999+" else heartCount.toString(), style = viewNumberTextStyle)
         }
 
         Spacer(Modifier.height(14.dp))
@@ -224,22 +224,23 @@ fun PostContent(
 
 @Composable
 private fun ExpandableImage(
-    modifier : Modifier,
-    width : Float,
-    height : Float,
-    picture : String
-){
-    var showDialog by remember{mutableStateOf(false)}
+    modifier: Modifier,
+    width: Float,
+    height: Float,
+    picture: String
+) {
+    var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
         Dialog(
             onDismissRequest = { showDialog = false }
         ) {
             Box(
-                modifier = modifier.width(width.dp)
+                modifier = modifier
+                    .width(width.dp)
                     .height(height.dp),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 ImageView(
                     imageUrl = picture,
                     width = 1f,
@@ -248,15 +249,16 @@ private fun ExpandableImage(
                     contentScale = ContentScale.FillWidth
                 )
                 Row(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(start = 16.dp, top = 19.dp),
                     verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.Start
-                ){
+                ) {
                     IconButton(
                         modifier = Modifier.size(24.dp),
-                        onClick = {showDialog = false}
-                    ){
+                        onClick = { showDialog = false }
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "Close Dialog",
@@ -278,7 +280,7 @@ private fun ExpandableImage(
                 }
             },
         contentAlignment = Alignment.Center
-    ){
+    ) {
         //image view
         ImageView(
             imageUrl = picture,
@@ -288,4 +290,22 @@ private fun ExpandableImage(
             contentScale = ContentScale.FillWidth
         )
     }
+}
+
+@Preview
+@Composable
+fun PostContentPreview() {
+    PostContent(
+        width = 300.dp,
+        onChangeBottomSheetState = {},
+        profile = "?",
+        nickname = "String",
+        dateDiff = "76",
+        title = "안녕하셈",
+        content = "반갑습니다 ㅎㅎ",
+        heartCount = 3,
+        isLiked = false,
+        onChangeLike = {},
+        pictures = emptyList()
+    )
 }

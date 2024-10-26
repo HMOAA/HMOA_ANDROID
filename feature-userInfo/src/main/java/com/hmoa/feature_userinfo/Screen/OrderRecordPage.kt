@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -22,11 +18,7 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.EmptyDataPage
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.OrderRecordItem
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.feature_userinfo.viewModel.OrderRecordUiState
 import com.hmoa.feature_userinfo.viewModel.OrderRecordViewModel
@@ -37,8 +29,9 @@ fun OrderRecordRoute(
     navBack: () -> Unit,
     navReturnOrRefund: (pageType: String, orderId: Int) -> Unit,
     navReviewWrite: (orderId: Int) -> Unit,
+    navLogin: () -> Unit,
     viewModel: OrderRecordViewModel = hiltViewModel()
-){
+) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     OrderRecordScreen(
@@ -46,7 +39,8 @@ fun OrderRecordRoute(
         errState = errState.value,
         navBack = navBack,
         navReturnOrRefund = navReturnOrRefund,
-        navReviewWrite = navReviewWrite
+        navReviewWrite = navReviewWrite,
+        navLogin = navLogin
     )
 }
 
@@ -56,25 +50,19 @@ fun OrderRecordScreen(
     errState: ErrorUiState,
     navBack: () -> Unit,
     navReturnOrRefund: (pageType: String, orderId: Int) -> Unit,
-    navReviewWrite: (orderId: Int) -> Unit
-){
-    var isOpen by remember{mutableStateOf(true)}
-    when(uiState){
+    navReviewWrite: (orderId: Int) -> Unit,
+    navLogin: () -> Unit
+) {
+    when (uiState) {
         OrderRecordUiState.Loading -> AppLoadingScreen()
         OrderRecordUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = {
-                    isOpen = false
-                    navBack()
-                },
+                onLoginClick = navLogin,
                 errorUiState = errState,
-                onCloseClick = {
-                    isOpen = false
-                    navBack()
-                }
+                onCloseClick = navBack
             )
         }
+
         is OrderRecordUiState.Success -> {
             OrderRecordContent(
                 data = uiState.orderRecords.collectAsLazyPagingItems().itemSnapshotList,
@@ -97,7 +85,7 @@ fun OrderRecordContent(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-    ){
+    ) {
         TopBar(
             title = "주문 내역",
             navIcon = painterResource(R.drawable.ic_back),
@@ -107,13 +95,13 @@ fun OrderRecordContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
-        ){
-            if(data.isNotEmpty()){
+        ) {
+            if (data.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
-                ){
+                ) {
                     items(data) { order ->
-                        if (order != null){
+                        if (order != null) {
                             OrderRecordItem(
                                 shippingType = order.orderStatus,
                                 courierCompany = order.courierCompany,
@@ -137,7 +125,7 @@ fun OrderRecordContent(
 
 @Composable
 @Preview
-private fun OrderRecordUITest(){
+private fun OrderRecordUITest() {
     OrderRecordScreen(
         uiState = OrderRecordUiState.Loading,
         errState = ErrorUiState.Loading,
@@ -145,6 +133,7 @@ private fun OrderRecordUITest(){
         navReturnOrRefund = { a, b ->
 
         },
-        navReviewWrite = {}
+        navReviewWrite = {},
+        navLogin = {}
     )
 }

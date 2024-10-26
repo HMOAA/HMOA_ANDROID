@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -34,8 +35,6 @@ fun PerfumeRecommendationResultRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorState by viewModel.errorState.collectAsStateWithLifecycle()
 
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
 
         PerfumeResultUiState.Loading -> AppLoadingScreen()
@@ -55,8 +54,7 @@ fun PerfumeRecommendationResultRoute(
         PerfumeResultUiState.Error -> {
             /** Error 발생 시 어디로 가는 것이 좋을까? **/
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = { /*TODO*/ },
+                onLoginClick = { /*TODO*/ },
                 errorUiState = errorState,
                 onCloseClick = onNavBack
             )
@@ -98,7 +96,10 @@ private fun PerfumeCommentResultContent(
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
                 )
-                Row(modifier = Modifier.fillMaxWidth().padding(end = 16.dp).padding(top = 50.dp), horizontalArrangement = Arrangement.End) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(end = 16.dp).padding(top = 50.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
                     Text(
                         text = "가격대 우선",
                         fontSize = 12.sp,

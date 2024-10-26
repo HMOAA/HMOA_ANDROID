@@ -2,14 +2,7 @@ package com.hmoa.feature_community.Screen
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -18,12 +11,7 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,14 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Comment
-import com.hmoa.core_designsystem.component.CommentInputBar
-import com.hmoa.core_designsystem.component.EditModal
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.PostContent
-import com.hmoa.core_designsystem.component.ReportModal
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
 import com.hmoa.core_model.response.CommunityDefaultResponseDto
@@ -57,11 +38,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommunityDescriptionRoute(
     id: Int?,
-    navCommunityEdit: (Int) -> Unit,
-    navCommentEdit: (Int) -> Unit,
-    navLogin: () -> Unit,
-    navBack: () -> Unit,
-    navHPedia: () -> Unit,
+    onNavCommunityEdit: (Int) -> Unit,
+    onNavCommentEdit: (Int) -> Unit,
+    onNavLogin: () -> Unit,
+    onNavBack: () -> Unit,
+    onNavHPedia: () -> Unit,
+    onNavPopStack: () -> Unit,
     viewModel: CommunityDescViewModel = hiltViewModel()
 ) {
     viewModel.setId(id)
@@ -71,16 +53,23 @@ fun CommunityDescriptionRoute(
     val isLiked = viewModel.isLiked.collectAsStateWithLifecycle()
     val comments = viewModel.commentPagingSource().collectAsLazyPagingItems()
     val reportState = viewModel.reportState.collectAsStateWithLifecycle()
+    val onHeartClick = remember<(commentId: Int, isLiked: Boolean) -> Unit> {
+        { commentId, isLiked ->
+            viewModel.updateCommentLike(
+                commentId,
+                isLiked
+            )
+        }
+    }
 
     val context = LocalContext.current
 
     CommunityDescriptionPage(
         errState = errState.value,
-        isLiked = isLiked.value,
-        onChangeLike = { viewModel.updateLike() },
+        onChangeLike = viewModel::updateLike,
         uiState = uiState.value,
         commentList = comments,
-        navBack = navBack,
+        onNavBack = onNavBack,
         onReportCommunity = {
             viewModel.reportCommunity()
             if (reportState.value) {
@@ -97,13 +86,10 @@ fun CommunityDescriptionRoute(
             viewModel.postComment(it)
             comments.refresh()
         },
-        onChangeCommentLike = { commentId, isSelected ->
-            viewModel.updateCommentLike(commentId, isSelected)
-            comments.refresh()
-        },
+        onChangeCommentLike = onHeartClick,
         onDeleteCommunity = {
             viewModel.delCommunity()
-            navBack()
+            onNavBack()
             Toast.makeText(context, "게시글 삭제 완료", Toast.LENGTH_SHORT).show()
         },
         onDeleteComment = { commentId ->
@@ -111,15 +97,12 @@ fun CommunityDescriptionRoute(
             comments.refresh()
             Toast.makeText(context, "댓글 삭제", Toast.LENGTH_SHORT).show()
         },
-        navCommunityEdit = { navCommunityEdit(id!!) },
-        navCommentEdit = navCommentEdit,
+        onNavCommunityEdit = { onNavCommunityEdit(id!!) },
+        onNavCommentEdit = onNavCommentEdit,
         onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()) {
-                navHPedia()
-            } else {
-                navLogin()
-            }
-        }
+            onNavLogin()
+        },
+        onNavPopStack = onNavPopStack
     )
 }
 
@@ -128,28 +111,25 @@ fun CommunityDescriptionPage(
     errState: ErrorUiState,
     uiState: CommunityDescUiState,
     commentList: LazyPagingItems<CommunityCommentWithLikedResponseDto>,
-    isLiked: Boolean,
-    onChangeLike: () -> Unit,
+    onChangeLike: (isLiked: Boolean) -> Unit,
     onReportCommunity: () -> Unit,
     onReportComment: (Int) -> Unit,
     onPostComment: (String) -> Unit,
     onChangeCommentLike: (Int, Boolean) -> Unit,
     onDeleteCommunity: () -> Unit,
     onDeleteComment: (Int) -> Unit,
-    navBack: () -> Unit,
-    navCommunityEdit: () -> Unit,
-    navCommentEdit: (Int) -> Unit,
-    onErrorHandleLoginAgain: () -> Unit
+    onNavBack: () -> Unit,
+    onNavCommunityEdit: () -> Unit,
+    onNavCommentEdit: (Int) -> Unit,
+    onErrorHandleLoginAgain: () -> Unit,
+    onNavPopStack: () -> Unit,
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
         CommunityDescUiState.Loading -> AppLoadingScreen()
         is CommunityDescUiState.CommunityDesc -> {
             CommunityDescContent(
                 community = uiState.community,
                 commentList = commentList,
-                isLiked = isLiked,
                 photoList = uiState.photoList,
                 onChangeLike = onChangeLike,
                 onReportCommunity = onReportCommunity,
@@ -158,18 +138,18 @@ fun CommunityDescriptionPage(
                 onChangeCommentLike = onChangeCommentLike,
                 onDeleteCommunity = onDeleteCommunity,
                 onDeleteComment = onDeleteComment,
-                navBack = navBack,
-                navCommunityEdit = navCommunityEdit,
-                navCommentEdit = navCommentEdit,
+                onNavBack = onNavBack,
+                onNavCommunityEdit = onNavCommunityEdit,
+                onNavCommentEdit = onNavCommentEdit,
+                onNavPopStack = onNavPopStack
             )
         }
 
         CommunityDescUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = onErrorHandleLoginAgain,
+                onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,
-                onCloseClick = navBack,
+                onCloseClick = onNavBack,
             )
         }
     }
@@ -181,17 +161,17 @@ private fun CommunityDescContent(
     community: CommunityDefaultResponseDto,
     commentList: LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     photoList: List<String>,
-    isLiked: Boolean,
-    onChangeLike: () -> Unit,
+    onChangeLike: (isLiked: Boolean) -> Unit,
     onReportCommunity: () -> Unit,
     onReportComment: (Int) -> Unit,
     onPostComment: (String) -> Unit,
     onChangeCommentLike: (Int, Boolean) -> Unit,
     onDeleteCommunity: () -> Unit,
     onDeleteComment: (Int) -> Unit,
-    navBack: () -> Unit,
-    navCommunityEdit: () -> Unit,
-    navCommentEdit: (Int) -> Unit,
+    onNavBack: () -> Unit,
+    onNavCommunityEdit: () -> Unit,
+    onNavCommentEdit: (Int) -> Unit,
+    onNavPopStack: () -> Unit
 ) {
     var type by remember { mutableStateOf("post") }
     val onChangeType: (String) -> Unit = { type = it }
@@ -201,7 +181,10 @@ private fun CommunityDescContent(
     var comment by remember { mutableStateOf<CommunityCommentWithLikedResponseDto?>(null) }
     val scope = rememberCoroutineScope()
     val dialogOpen = { scope.launch { modalSheetState.show() } }
-    val dialogClose = { scope.launch { modalSheetState.hide() } }
+    val dialogClose = {
+        scope.launch { modalSheetState.hide() }
+        onNavPopStack()
+    }
 
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
@@ -210,13 +193,13 @@ private fun CommunityDescContent(
             if (type == "post" && community.writed) {
                 EditModal(
                     onDeleteClick = onDeleteCommunity,
-                    onEditClick = navCommunityEdit,
+                    onEditClick = onNavCommunityEdit,
                     onCancelClick = { dialogClose() }
                 )
             } else if (type == "comment" && comment != null && comment!!.writed) {
                 EditModal(
                     onDeleteClick = { onDeleteComment(comment!!.commentId) },
-                    onEditClick = { navCommentEdit(comment!!.commentId) },
+                    onEditClick = { onNavCommentEdit(comment!!.commentId) },
                     onCancelClick = { dialogClose() }
                 )
             } else {
@@ -244,7 +227,6 @@ private fun CommunityDescContent(
                 dialogOpen()
                 onChangeType("post")
             },
-            isLiked = isLiked,
             onChangeLike = onChangeLike,
             photoList = photoList,
             commentList = commentList,
@@ -252,7 +234,7 @@ private fun CommunityDescContent(
             onChangeType = onChangeType,
             onPostComment = onPostComment,
             setComment = { comment = it },
-            navBack = navBack,
+            onNavBack = onNavBack,
         )
     }
 }
@@ -260,8 +242,7 @@ private fun CommunityDescContent(
 @Composable
 private fun CommunityDescMainContent(
     community: CommunityDefaultResponseDto,
-    isLiked: Boolean,
-    onChangeLike: () -> Unit,
+    onChangeLike: (Boolean) -> Unit,
     photoList: List<String>,
     commentList: LazyPagingItems<CommunityCommentWithLikedResponseDto>,
     onChangeType: (String) -> Unit,
@@ -269,7 +250,7 @@ private fun CommunityDescMainContent(
     onPostComment: (String) -> Unit,
     setComment: (CommunityCommentWithLikedResponseDto) -> Unit,
     onDialogOpen: () -> Unit,
-    navBack: () -> Unit,
+    onNavBack: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
@@ -282,14 +263,13 @@ private fun CommunityDescMainContent(
         TopBar(
             title = "Community",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = navBack
+            onNavClick = onNavBack
         )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
         ) {
             Spacer(Modifier.height(16.dp))
@@ -301,8 +281,6 @@ private fun CommunityDescMainContent(
                 fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
                 color = CustomColor.gray2
             )
-            Spacer(Modifier.height(18.dp))
-
             PostContent(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -313,34 +291,34 @@ private fun CommunityDescMainContent(
                 dateDiff = community.time,
                 title = community.title,
                 content = community.content,
-                heartCount = if (community.heartCount > 999) "999+" else community.heartCount.toString(),
-                isLiked = isLiked,
+                heartCount = community.heartCount,
+                isLiked = community.liked,
                 onChangeLike = onChangeLike,
                 pictures = photoList
             )
-            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-            Spacer(Modifier.height(32.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "답변",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
-                    color = Color.Black
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = "+${commentList.itemCount}",
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
-                    color = Color.Black
-                )
+            Column(modifier = Modifier.padding(16.dp)) {
+                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                Spacer(Modifier.height(32.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "답변",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
+                        color = Color.Black
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = "+${commentList.itemCount}",
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
+                        color = Color.Black
+                    )
+                }
             }
-
             Spacer(Modifier.height(21.dp))
-
             Comments(
                 commentList = commentList,
                 changeBottomOptionState = { onDialogOpen() },
@@ -349,6 +327,7 @@ private fun CommunityDescMainContent(
                 setComment = { setComment(it) }
             )
         }
+
         CommentInputBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -382,9 +361,9 @@ private fun Comments(
                     comment = comment.content,
                     isFirst = false,
                     isSelected = comment.liked,
-                    onChangeSelect = { onChangeCommentLike(comment.commentId, !comment.liked) },
+                    onHeartClick = { onChangeCommentLike(comment.commentId, it) },
                     heartCount = comment.heartCount,
-                    navCommunity = { /** 여기서는 아무 event도 없이 처리 */ },
+                    navCommunity = {/* 여기서는 아무 event도 없이 처리 */ },
                     onOpenBottomDialog = {
                         setComment(comment)
                         changeBottomOptionState(true)
@@ -393,13 +372,14 @@ private fun Comments(
                 )
                 if (index != comments.size - 1) {
                     Spacer(Modifier.height(15.dp))
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2, modifier = Modifier.padding(16.dp))
                 }
             }
         }
     } else {
         Spacer(Modifier.height(40.dp))
         Text(
+            modifier = Modifier.padding(start = 16.dp),
             text = "아직 작성한 댓글이 없습니다",
             fontSize = 20.sp,
             fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),

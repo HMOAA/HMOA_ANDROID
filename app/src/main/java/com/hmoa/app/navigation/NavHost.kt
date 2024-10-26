@@ -24,7 +24,8 @@ import com.hmoa.feature_userinfo.navigation.*
 @Composable
 fun SetUpNavGraph(
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
+    appVersion: String
 ) {
     NavHost(
         navController = navController,
@@ -82,7 +83,8 @@ fun SetUpNavGraph(
             navPerfume = navController::navigateToPerfume,
             navOrderRecord = navController::navigateToOrderRecord,
             navRefund = navController::navigateToRefund,
-            navRefundRecord = navController::navigateToRefundRecord
+            navRefundRecord = navController::navigateToRefundRecord,
+            appVersion = appVersion
         )
 
         /** HPedia 모듈 (내부에 Community 모듈 포함) */
@@ -106,7 +108,8 @@ fun SetUpNavGraph(
             onErrorHandleLoginAgain = navController::navigateToLogin,
             navLogin = navController::navigateToLogin,
             navHome = navController::navigateToHome,
-            navHPedia = navController::navigateToHPedia
+            navHPedia = navController::navigateToHPedia,
+            popStack = { navController.popBackStack() }
         )
 
         /** perfume 모듈 */
@@ -201,10 +204,12 @@ fun SetUpNavGraph(
         order(
             navBack = navController::navigateToBack,
             navAddAddress = navController::navigateToAddAddress,
-            navOrderResult = navController::navigateToOrderResult
+            navOrderResult = navController::navigateToOrderResult,
+            navLogin = navController::navigateToLogin
         )
         addAddress(
-            navOrder = navController::navigateToOrder
+            navOrder = navController::navigateToOrder,
+            navLogin = navController::navigateToLogin
         )
         orderResult(
             navBack = navController::navigateToBack,

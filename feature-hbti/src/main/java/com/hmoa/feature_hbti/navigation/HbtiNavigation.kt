@@ -259,7 +259,8 @@ fun NavGraphBuilder.orderResult(
 }
 
 fun NavGraphBuilder.writeReview(
-    navBack: () -> Unit
+    navBack: () -> Unit,
+    navReview: (befRoute: HbtiRoute) -> Unit
 ){
     composable(
         route = "${HbtiRoute.WriteReviewRoute.name}/{orderId}",
@@ -270,7 +271,8 @@ fun NavGraphBuilder.writeReview(
         val orderId = it.arguments?.getInt("orderId")
         WriteReviewRoute(
             orderId = orderId,
-            navBack = navBack
+            navBack = navBack,
+            navReview = navReview
         )
     }
 }

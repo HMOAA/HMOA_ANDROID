@@ -298,7 +298,7 @@ fun SetUpNavGraph(
             navPerfumeDescription = { id -> navController.navigateToPerfume(id) },
             navHome = navController::navigateToHome
         )
-        writeReview(navBack = navController::navigateToBack)
+        writeReview(navBack = navController::navigateToBack, navReview = navController::navigateToReview)
         review(
             navBack = navController::navigateToBack,
             navWriteReview = navController::navigateToWriteReview,

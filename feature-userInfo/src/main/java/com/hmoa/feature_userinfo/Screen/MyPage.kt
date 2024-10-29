@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,10 +21,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -109,8 +108,10 @@ internal fun MyPageRoute(
             openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
             openTermsOfServiceLink = { context.startActivity(termsOfServiceIntent) },
             onDelAccount = {
-                viewModel.delAccount()
-                navLogin()
+                scope.launch {
+                    launch { viewModel.delAccount() }.join()
+                    navLogin()
+                }
             },
             onNavKakaoChat = navKakao,
             navMyPerfume = navMyPerfume,
@@ -213,6 +214,8 @@ private fun MyPageContent(
     navRefundRecord: () -> Unit,
     navBack: () -> Unit
 ) {
+    var isOpen by remember { mutableStateOf(false) }
+    var url by remember { mutableStateOf("") }
     val columnInfo = listOf(
         ColumnData("주문 내역") { navOrderRecord() },
         ColumnData("취소/반품 내역") { navRefundRecord() },
@@ -228,51 +231,59 @@ private fun MyPageContent(
         ColumnData("계정삭제") { onDelAccount() }
     )
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
-    ) {
-        item {
-            TopBar(title = "마이페이지")
-            UserProfileInfo(
-                profile = profile,
-                nickname = nickname,
-                provider = provider,
-                navEditProfile = navEditProfile
-            )
-            ServiceAlarm(isEnabledAlarm = isEnabledAlarm, onChangeAlarm = onChangeAlarm)
-            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+    BackHandler(
+        enabled = true,
+        onBack = {
+            if (isOpen) isOpen = false
+            else navBack()
         }
-
-        itemsIndexed(columnInfo) { idx, it ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(46.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = it.title,
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    )
+    if (isOpen) {
+        CustomWebView(url)
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.White)
+        ) {
+            item {
+                TopBar(title = "마이페이지")
+                UserProfileInfo(
+                    profile = profile,
+                    nickname = nickname,
+                    provider = provider,
+                    navEditProfile = navEditProfile
                 )
-                IconButton(
-                    modifier = Modifier.size(20.dp),
-                    onClick = it.onNavClick
+                //ServiceAlarm()
+                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+            }
+
+            itemsIndexed(columnInfo) { idx, it ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .clickable { it.onNavClick() }
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    Text(
+                        text = it.title,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                    )
+
                     Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_next),
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(R.drawable.ic_next),
                         contentDescription = "Navigation Button",
                         tint = CustomColor.gray2
                     )
                 }
-            }
-            if (idx % 3 == 2) {
-                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                if (idx % 3 == 2) {
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                }
             }
         }
     }

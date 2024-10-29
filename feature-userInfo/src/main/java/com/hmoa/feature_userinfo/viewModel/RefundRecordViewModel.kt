@@ -12,7 +12,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.response.GetRefundRecordResponseDto
-import com.hmoa.feature_userinfo.RefundRecordPagingSource
+import com.hmoa.feature_userinfo.paging.RefundRecordPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

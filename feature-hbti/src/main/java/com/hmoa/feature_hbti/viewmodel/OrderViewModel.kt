@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kr.co.bootpay.android.Bootpay
 import kr.co.bootpay.android.events.BootpayEventListener

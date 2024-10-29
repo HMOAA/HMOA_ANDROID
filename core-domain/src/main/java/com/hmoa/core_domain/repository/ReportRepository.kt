@@ -8,4 +8,5 @@ interface ReportRepository {
     suspend fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>>
     suspend fun reportCommunity(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any>>
     suspend fun reportCommunityComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any>>
-    }
+    suspend fun reportReview(reviewId: Int): ResultResponse<DataResponseDto<Any>>
+}

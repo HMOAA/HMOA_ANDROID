@@ -85,9 +85,13 @@ interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindHshopRepositoryImpl(repositoryImpl: HshopRepositoryImpl):HshopRepository
+    fun bindHshopRepositoryImpl(repositoryImpl: HshopRepositoryImpl): HshopRepository
 
     @Binds
     @Singleton
     fun bindBootpayRepositoryImpl(repositoryImpl: BootpayRepositoryImpl): BootpayRepository
+
+    @Binds
+    @Singleton
+    fun bindHShopReviewRepositoryImpl(repositoryImpl: HShopReviewRepositoryImpl): HShopReviewRepository
 }

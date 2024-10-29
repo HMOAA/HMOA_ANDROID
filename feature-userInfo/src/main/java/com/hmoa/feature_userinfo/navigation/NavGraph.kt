@@ -8,6 +8,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.example.feature_userinfo.EditProfileRoute
 import com.example.userinfo.MyPageRoute
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.feature_like.Screen.MyFavoritePerfumeRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
@@ -59,11 +60,15 @@ fun NavController.navigateToRefundRecord() = navigate(UserInfoRoute.RefundRecord
 //뒤로가기
 fun NavController.navigateToBack() = navigateUp()
 
+//내가 작성한 리뷰로 이동
+fun NavController.navigateToMyReview() = navigate("${UserInfoRoute.MyReview.name}")
+
 fun NavGraphBuilder.nestedUserInfoGraph(
     appVersion: String,
     navHome: () -> Unit,
     navMyPerfume: () -> Unit,
     navLogin: () -> Unit,
+    navReview: (befRoute: HbtiRoute) -> Unit,
     navBack: () -> Unit,
     navCommunity: (Int) -> Unit,
     navEditPost: (Int) -> Unit,
@@ -73,11 +78,13 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navMyFavoriteComment: () -> Unit,
     navMyPost: () -> Unit,
     navMyComment: () -> Unit,
+    navMyReview: () -> Unit,
     navMyBirth: () -> Unit,
     navMyGender: () -> Unit,
     navPerfume: (Int) -> Unit,
     navOrderRecord: () -> Unit,
     navRefund: (pageType: String, orderId: Int) -> Unit,
+    navReviewWrite: (orderId: Int) -> Unit,
     navRefundRecord: () -> Unit,
 ) {
     navigation(
@@ -111,7 +118,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 navMyFavoriteComment = navMyFavoriteComment,
                 navMyComment = navMyComment,
                 navMyPost = navMyPost,
-                navBack = navBack
+                navBack = navBack,
+                navMyReview = navMyReview
             )
         }
         composable(route = UserInfoRoute.MyCommentRoute.name) {
@@ -157,7 +165,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 navLogin = navLogin,
                 navBack = navBack,
                 navReturnOrRefund = navRefund,
-                navReviewWrite = { /** 리뷰 작성 페이지로 넘어가자 */ }
+                navReviewWrite = navReviewWrite
             )
         }
         composable(
@@ -178,6 +186,9 @@ fun NavGraphBuilder.nestedUserInfoGraph(
         }
         composable(route = "${UserInfoRoute.RefundRecordRoute.name}") {
             RefundRecordRoute(navBack = navBack, navLogin = navLogin)
+        }
+        composable(route = "${UserInfoRoute.MyReview.name}") {
+            MyReviewRoute(navReview = navReview, navBack = navBack, navLogin = navLogin)
         }
     }
 }

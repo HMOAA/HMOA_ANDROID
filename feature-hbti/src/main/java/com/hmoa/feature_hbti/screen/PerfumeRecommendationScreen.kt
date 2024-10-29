@@ -33,8 +33,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun PerfumeRecommendationRoute(
-    onNavNext: () -> Unit,
-    onNavBack: () -> Unit,
+    navNext: () -> Unit,
+    navBack: () -> Unit,
     viewModel: PerfumeRecommendationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -82,9 +82,9 @@ fun PerfumeRecommendationRoute(
                 viewModel.onDeleteNoteTagOption(tag)
             },
             onDeleteAll = { viewModel.deleteAllNoteTagOptions() },
-            onNavBack = onNavBack,
+            onNavBack = navBack,
             onClickNext = {
-                viewModel.postSurveyResult(onSuccess = { onNavNext() })
+                viewModel.postSurveyResult(onSuccess = { navNext() })
             },
             isMultipleAnswerAvailable = (uiState as PerfumeRecommendationUiState.PerfumeRecommendationData).contents?.isPriceMultipleChoice
                 ?: false,

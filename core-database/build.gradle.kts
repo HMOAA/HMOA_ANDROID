@@ -45,6 +45,7 @@ android {
 
 dependencies {
     implementation(project(":core-model"))
+
     val hilt_version = "2.48.1"
     val datastore_version = "1.0.0"
     val room_version = "2.6.1"

@@ -11,10 +11,10 @@ import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.screen.*
 import kotlinx.serialization.json.Json
 
-fun NavController.navigateToHbti() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.Hbti}")
-fun NavController.navigateToHbtiSurvey() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.HbtiSurvey}")
+fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}") { launchSingleTop = true }
+fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}") { launchSingleTop = true }
 fun NavController.navigateToHbtiSurveyResult() =
-    navigate("${HbtiRoute.HbtiSurveyResult}")
+    navigate("${HbtiRoute.HbtiSurveyResult}") { launchSingleTop = true }
 
 fun NavController.navigateToHbtiSurveyLoading() =
     navigate("${HbtiRoute.HbtiSurveyLoading}")
@@ -27,14 +27,15 @@ fun NavController.navigateToNotePick() =
 fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
 fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
 fun NavController.navigateToNotePickResult(productIdsToJson: String) =
-    navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}")
+    navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}") { launchSingleTop = true }
 
 fun NavController.navigateToOrder(fromRoute: String, productIdsToJson: String) =
     if (fromRoute == HbtiRoute.NotePickResultRoute.name) {
-        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}")
+        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}") { launchSingleTop = true }
     } else {
         navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}") {
             popUpTo("${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}") { inclusive = true }
+            launchSingleTop = true
         }
     }
 
@@ -44,18 +45,43 @@ fun NavController.navigateToAddAddress(addressJson: String, productIds: String) 
         launchSingleTop = true
     }
 
-fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name)
+fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name) { launchSingleTop = true }
+
+//주문 리뷰 작성
+fun NavController.navigateToWriteReview(orderId: Int) =
+    navigate("${HbtiRoute.WriteReviewRoute.name}/${orderId}") { launchSingleTop = true }
+
+//리뷰 모음 화면
+fun NavController.navigateToReview(befRoute: HbtiRoute) = navigate(HbtiRoute.ReviewRoute.name) {
+    if (befRoute == HbtiRoute.WriteReviewRoute) {
+        popUpTo("${HbtiRoute.WriteReviewRoute.name}/{orderId}") { inclusive = true }
+    } else if (befRoute == HbtiRoute.EditReviewRoute) {
+        popUpTo("${HbtiRoute.EditReviewRoute.name}/{reviewId}") { inclusive = true }
+    }
+}
+
+//리뷰 수정 화면
+fun NavController.navigateToEditReview(reviewId: Int) =
+    navigate("${HbtiRoute.EditReviewRoute.name}/${reviewId}") { launchSingleTop = true }
 
 fun NavGraphBuilder.hbtiScreen(
     onHbtiSurveyClick: () -> Unit,
     onAfterOrderClick: () -> Unit,
-    onBackClick: () -> Unit,
+    navBack: () -> Unit,
+    navHome: () -> Unit,
+    navLogin: () -> Unit,
+    navReview: (befRoute: HbtiRoute) -> Unit
 ) {
     composable(route = "${HbtiRoute.Hbti}") {
         HbtiRoute(
-            onAfterOrderClick = { onAfterOrderClick() },
-            onHbtiSurveyClick = { onHbtiSurveyClick() },
-            onBackClick = { onBackClick() })
+            onAfterOrderClick = onAfterOrderClick,
+            onHbtiSurveyClick = onHbtiSurveyClick,
+            navBack = navBack,
+            navHome = navHome,
+            navReview = navReview,
+            navEditReview = {},
+            navLogin = navLogin,
+        )
     }
 }
 
@@ -143,22 +169,24 @@ fun NavGraphBuilder.perfumeRecommendationRoute(onBackClick: () -> Unit, onNextCl
     composable(route = HbtiRoute.PerfumeRecommendationRoute.name) {
         PerfumeRecommendationRoute(
             /** navigation event 추후 추가 **/
-            onNavNext = { onNextClick() },
-            onNavBack = { onBackClick() }
+            navNext = { onNextClick() },
+            navBack = { onBackClick() }
         )
     }
 }
 
 fun NavGraphBuilder.perfumeRecommendationResultRoute(
     onBackClick: () -> Unit,
-    onNavPerfumeDescription: (id: Int) -> Unit,
-    onNavHome: () -> Unit
+    navPerfumeDescription: (id: Int) -> Unit,
+    navHome: () -> Unit,
+    navLogin: () -> Unit
 ) {
     composable(route = HbtiRoute.PerfumeRecommendationResultRoute.name) {
         PerfumeRecommendationResultRoute(
-            onNavBack = { onBackClick() },
-            onNavPerfumeDesc = { id -> onNavPerfumeDescription(id) },
-            onNavHome = { onNavHome() }
+            navBack = { onBackClick() },
+            navPerfume = { id -> navPerfumeDescription(id) },
+            navHome = { navHome() },
+            navLogin = navLogin
         )
     }
 }
@@ -215,6 +243,55 @@ fun NavGraphBuilder.orderResult(
         OrderResultRoute(
             navBack = navBack,
             navHome = navHome
+        )
+    }
+}
+
+fun NavGraphBuilder.writeReview(
+    navBack: () -> Unit
+) {
+    composable(
+        route = "${HbtiRoute.WriteReviewRoute.name}/{orderId}",
+        arguments = listOf(
+            navArgument("orderId") { type = NavType.IntType }
+        )
+    ) {
+        val orderId = it.arguments?.getInt("orderId")
+        WriteReviewRoute(
+            orderId = orderId,
+            navBack = navBack
+        )
+    }
+}
+
+fun NavGraphBuilder.review(
+    navBack: () -> Unit,
+    navEditReview: (Int) -> Unit,
+    navLogin: () -> Unit,
+    navWriteReview: (reviewId: Int) -> Unit
+) {
+    composable(
+        route = "${HbtiRoute.ReviewRoute.name}"
+    ) {
+        ReviewRoute(
+            navBack = navBack,
+            navEditReview = navEditReview,
+            navWriteReview = navWriteReview,
+            navLogin = navLogin,
+        )
+    }
+}
+
+fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit, navLogin: () -> Unit) {
+    composable(
+        route = "${HbtiRoute.EditReviewRoute.name}/{reviewId}",
+        arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
+    ) {
+        val reviewId = it.arguments?.getInt("reviewId")
+        EditReviewRoute(
+            reviewId = reviewId,
+            navReview = navReview,
+            navLogin = navLogin
         )
     }
 }

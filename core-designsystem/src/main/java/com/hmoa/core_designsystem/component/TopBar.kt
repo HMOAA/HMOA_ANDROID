@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
@@ -21,13 +22,14 @@ import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun TopBar(
+    color: Color = Color.White,
     iconSize: Dp = 20.dp, //icon 크기
     navIcon: Painter? = null, //navigation 버튼
     onNavClick: () -> Unit = {}, //navigation click 이벤트
+    navIconColor: Color = Color.Black,
     menuIcon: Painter? = null, //menu 버튼
     onMenuClick: () -> Unit = {}, //menu click 이벤트,
     menuIconColor: Color = CustomColor.black,
-    navIconColor: Color = CustomColor.black,
     title: String, //메인 타이틀
     titleColor: Color = Color.Black, //타이틀 글 색
 ) {
@@ -35,6 +37,7 @@ fun TopBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
+            .background(color = color)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -43,8 +46,8 @@ fun TopBar(
             Icon(
                 modifier = Modifier.size(iconSize).clickable { onNavClick() },
                 painter = navIcon,
-                contentDescription = "Navigation Button",
-                tint = navIconColor
+                tint = navIconColor,
+                contentDescription = "Navigation Button"
             )
         } else {
             Spacer(Modifier.size(iconSize))

@@ -27,9 +27,10 @@ import com.hmoa.feature_hbti.viewmodel.PerfumeResultUiState
 
 @Composable
 fun PerfumeRecommendationResultRoute(
-    onNavBack: () -> Unit,
-    onNavPerfumeDesc: (Int) -> Unit,
-    onNavHome: () -> Unit,
+    navBack: () -> Unit,
+    navPerfume: (Int) -> Unit,
+    navHome: () -> Unit,
+    navLogin:()->Unit,
     viewModel: PerfumeRecommendationResultViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -43,9 +44,9 @@ fun PerfumeRecommendationResultRoute(
                 perfumes = (uiState as PerfumeResultUiState.Success).perfumes ?: emptyList(),
                 isPriceSortedSelected = (uiState as PerfumeResultUiState.Success).isPriceSortedSelected,
                 isNoteSortedSelected = (uiState as PerfumeResultUiState.Success).isNoteSortedSelected,
-                onNavBack = onNavBack,
-                onNavPerfumeDesc = onNavPerfumeDesc,
-                onClickButton = { onNavHome() },
+                navBack = navBack,
+                navPerfume = navPerfume,
+                onClickButton = navHome,
                 onClickPriceSorted = { viewModel.insertPriceSortedPerfumes() },
                 onClickNoteSorted = { viewModel.insertNoteSortedPerfumes() }
             )
@@ -54,9 +55,9 @@ fun PerfumeRecommendationResultRoute(
         PerfumeResultUiState.Error -> {
             /** Error 발생 시 어디로 가는 것이 좋을까? **/
             ErrorUiSetView(
-                onLoginClick = { /*TODO*/ },
+                onLoginClick = navLogin,
                 errorUiState = errorState,
-                onCloseClick = onNavBack
+                onCloseClick = navBack
             )
         }
     }
@@ -67,11 +68,11 @@ private fun PerfumeCommentResultContent(
     perfumes: List<PerfumeRecommendResponseDto>,
     isPriceSortedSelected: Boolean,
     isNoteSortedSelected: Boolean,
-    onNavBack: () -> Unit,
-    onNavPerfumeDesc: (Int) -> Unit,
     onClickButton: () -> Unit,
     onClickPriceSorted: () -> Unit,
     onClickNoteSorted: () -> Unit,
+    navBack: () -> Unit,
+    navPerfume: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -81,7 +82,7 @@ private fun PerfumeCommentResultContent(
         TopBar(
             title = "향수 추천",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = onNavBack
+            onNavClick = navBack
         )
         Column(
             modifier = Modifier
@@ -118,7 +119,7 @@ private fun PerfumeCommentResultContent(
                 /** 임시 더미 데이터 */
                 PerfumeResult(
                     perfumes = perfumes,
-                    onNavPerfumeDesc = onNavPerfumeDesc
+                    navPerfume = navPerfume
                 )
                 Spacer(Modifier.height(30.dp))
             }
@@ -142,7 +143,7 @@ private fun PerfumeCommentResultContent(
 @Composable
 private fun PerfumeResult(
     perfumes: List<PerfumeRecommendResponseDto>,
-    onNavPerfumeDesc: (Int) -> Unit,
+    navPerfume: (Int) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = { perfumes.size })
     Column(
@@ -165,7 +166,7 @@ private fun PerfumeResult(
                     itemNameKo = perfume.perfumeName ?: "",
                     itemNameEng = perfume.perfumeEnglishName ?: "",
                     onClickClose = { /** 아무 이벤트도 실행하지 않음 */ },
-                    onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId ?: 0) },
+                    navPerfume = { navPerfume(perfume.perfumeId ?: 0) },
                     isCloseButtonExist = false
                 )
             }
@@ -190,8 +191,8 @@ fun PerfumeRecommendationsResultPreview() {
         perfumes = perfumes,
         isPriceSortedSelected = true,
         isNoteSortedSelected = false,
-        onNavBack = {},
-        onNavPerfumeDesc = {},
+        navBack = {},
+        navPerfume = {},
         onClickButton = {},
         onClickPriceSorted = {},
         onClickNoteSorted = {}

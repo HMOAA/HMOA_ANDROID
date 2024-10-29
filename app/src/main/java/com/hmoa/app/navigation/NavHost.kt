@@ -68,6 +68,7 @@ fun SetUpNavGraph(
         this.nestedUserInfoGraph(
             navHome = navController::navigateToHome,
             navLogin = navController::navigateToLogin,
+            navReview = navController::navigateToReview,
             navBack = navController::navigateToBack,
             navCommunity = navController::navigateToCommunityDescriptionRoute,
             navEditPost = navController::navigateToCommunityEditRoute,
@@ -77,11 +78,13 @@ fun SetUpNavGraph(
             navMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
             navMyPost = navController::navigateToMyPostPage,
             navMyComment = navController::navigateToMyCommentPage,
+            navMyReview = navController::navigateToMyReview,
             navMyBirth = navController::navigateToMyBirth,
             navMyGender = navController::navigateToMyGenderPage,
             navMyPerfume = navController::navigateToMyFavoritePerfume,
             navPerfume = navController::navigateToPerfume,
             navOrderRecord = navController::navigateToOrderRecord,
+            navReviewWrite = navController::navigateToWriteReview,
             navRefund = navController::navigateToRefund,
             navRefundRecord = navController::navigateToRefundRecord,
             appVersion = appVersion
@@ -168,9 +171,12 @@ fun SetUpNavGraph(
 
         /** hbti 모듈 */
         hbtiScreen(
+            navBack = navController::navigateToBack,
+            navHome = navController::navigateToHome,
+            navReview = navController::navigateToReview,
             onHbtiSurveyClick = navController::navigateToHbtiSurvey,
             onAfterOrderClick = navController::navigateToPerfumeRecommendation,
-            onBackClick = navController::navigateToBack
+            navLogin = navController::navigateToLogin,
         )
         hbtiSurveyScreen(
             onBackClick = navController::navigateToBack,
@@ -215,15 +221,23 @@ fun SetUpNavGraph(
             navBack = navController::navigateToBack,
             navHome = navController::navigateToHome
         )
-        //order()
         perfumeRecommendationRoute(
             onBackClick = navController::navigateToBack,
             onNextClick = navController::navigateToPerfumeRecommendationResult
         )
         perfumeRecommendationResultRoute(
             onBackClick = navController::navigateToBack,
-            onNavPerfumeDescription = { id -> navController.navigateToPerfume(id) },
-            onNavHome = navController::navigateToHome
+            navPerfumeDescription = { id -> navController.navigateToPerfume(id) },
+            navHome = navController::navigateToHome,
+            navLogin = navController::navigateToLogin
         )
+        writeReview(navBack = navController::navigateToBack)
+        review(
+            navBack = navController::navigateToBack,
+            navWriteReview = navController::navigateToWriteReview,
+            navEditReview = navController::navigateToEditReview,
+            navLogin = navController::navigateToLogin
+        )
+        editReview(navReview = navController::navigateToReview, navLogin = navController::navigateToLogin)
     }
 }

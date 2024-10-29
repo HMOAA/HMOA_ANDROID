@@ -165,4 +165,10 @@ object ServiceModule {
     fun providerBootpayService(retrofit: Retrofit): BootpayService{
         return retrofit.create(BootpayService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun providerHShopReviewService(retrofit: Retrofit): HShopReviewService{
+        return retrofit.create(HShopReviewService::class.java)
+    }
 }

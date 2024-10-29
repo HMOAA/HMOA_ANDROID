@@ -14,6 +14,8 @@ import com.hmoa.core_datastore.Fcm.FcmLocalDataStore
 import com.hmoa.core_datastore.Fcm.FcmLocalDataStoreImpl
 import com.hmoa.core_datastore.Fcm.FcmRemoteDataStore
 import com.hmoa.core_datastore.Fcm.FcmRemoteDataStoreImpl
+import com.hmoa.core_datastore.HShopReview.HShopReviewDataStore
+import com.hmoa.core_datastore.HShopReview.HShopReviewDataStoreImpl
 import com.hmoa.core_datastore.Hshop.HshopRemoteDataStore
 import com.hmoa.core_datastore.Hshop.HshopRemoteDataStoreImpl
 import com.hmoa.core_datastore.Login.LoginLocalDataStore
@@ -147,4 +149,8 @@ interface DatastoreModule {
     @Singleton
     @Binds
     fun provideBootpayDataStore(bootpayDataStoreImpl: BootpayDataStoreImpl): BootpayDataStore
+
+    @Singleton
+    @Binds
+    fun provideHshopReviewDataStore(hShopReviewDataStoreImpl: HShopReviewDataStoreImpl): HShopReviewDataStore
 }

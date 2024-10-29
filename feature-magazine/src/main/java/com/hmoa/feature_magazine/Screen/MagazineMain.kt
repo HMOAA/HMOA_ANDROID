@@ -44,11 +44,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
@@ -196,6 +196,7 @@ private fun MagazineTitleBox(
                 .background(color = Color.Transparent)
         ) {
             TopBar(
+                color = Color.Transparent,
                 title = "Magazine",
                 titleColor = Color.White
             )

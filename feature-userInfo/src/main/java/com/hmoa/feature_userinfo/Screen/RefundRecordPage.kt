@@ -80,27 +80,33 @@ private fun RefundRecordContent(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White)
-            .padding(horizontal = 16.dp)
     ) {
         TopBar(
             title = "환불 / 반품 내역",
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             onNavClick = navBack
         )
-        if (data.isNotEmpty()) {
-            LazyColumn {
-                items(data) { record ->
-                    if (record != null) {
-                        ReturnOrRefundRecordItem(
-                            status = record.orderStatus.toDisplayString(),
-                            requestAt = record.createdAt,
-                            notes = record.orderProducts
-                        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.White)
+                .padding(horizontal = 16.dp)
+        ) {
+            if (data.isNotEmpty()) {
+                LazyColumn {
+                    items(data) { record ->
+                        if (record != null) {
+                            ReturnOrRefundRecordItem(
+                                status = record.orderStatus.toDisplayString(),
+                                requestAt = record.createdAt,
+                                notes = record.orderProducts
+                            )
+                        }
                     }
                 }
+            } else {
+                EmptyDataPage(mainText = "환불/반품 내역이 없습니다.")
             }
-        } else {
-            EmptyDataPage(mainText = "환불/반품 내역이 없습니다.")
         }
     }
 }

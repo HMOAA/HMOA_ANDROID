@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -65,24 +66,19 @@ private fun HomeScreen(
             }
 
             is HomeViewModel.BannerWithFirstMenuState.Data -> {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 17.dp).padding(vertical = 10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
                     FirstMenuWithBannerContent(
-                        onPerfumeClick = { onPerfumeClick(it) },
+                        onHbtiClick = { onHbtiClick() },
                         bannerImgUrl = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerImg,
-                        bannerTitle = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerTitle,
-                        firstMenu = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
-                    )
-                    Button(
-                        isEnabled = true,
-                        btnText = "# 향bti 검사하기",
-                        onClick = { onHbtiClick() },
-                        buttonModifier = Modifier.background(color = CustomColor.gray4).fillMaxWidth(0.9f)
-                            .height(47.dp),
-                        textColor = Color.White,
-                        textSize = 14,
-                        radious = 8
                     )
                 }
+                FirstMenuView(
+                    (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
+                    { onPerfumeClick(it) })
             }
 
             is HomeViewModel.BannerWithFirstMenuState.Error -> {
@@ -112,39 +108,73 @@ private fun HomeScreen(
 
 @Composable
 private fun FirstMenuWithBannerContent(
-    onPerfumeClick: (perfumeId: Int) -> Unit,
+    onHbtiClick: () -> Unit,
     bannerImgUrl: String?,
-    bannerTitle: String?,
-    firstMenu: HomeMenuDefaultResponseDto,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.Start,
+        modifier = Modifier.fillMaxWidth().background(
+            color = Color.Black,
+            shape = RoundedCornerShape(
+                topStart = 12.dp,
+                topEnd = 12.dp,
+                bottomStart = 12.dp,
+                bottomEnd = 12.dp
+            )
+        ).border(
+            width = 1.dp, color = Color.Black, shape = RoundedCornerShape(
+                topStart = 12.dp,
+                topEnd = 12.dp,
+                bottomStart = 12.dp,
+                bottomEnd = 12.dp
+            )
+        ).padding(bottom = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        ImageView(
-            imageUrl = bannerImgUrl,
-            width = 2f,
-            height = 1f,
-            backgroundColor = Color.White,
-            ContentScale.FillWidth
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(CustomColor.gray7)
-                .padding(vertical = 12.dp)
-                .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(top = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
-                bannerTitle ?: "글씨가 없습니다",
+                text = "무료 향BTI 검사 후",
                 textAlign = TextAlign.Start,
-                fontSize = 14.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                fontFamily = CustomFont.regular
+                fontFamily = CustomFont.regular,
+                color = Color.White
+            )
+            Text(
+                text = "당신만의 향을 찾아보세요",
+                textAlign = TextAlign.Start,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = CustomFont.regular,
+                color = Color.White
             )
         }
-        FirstMenuView(firstMenu, { onPerfumeClick(it) })
+        Column(
+            modifier = Modifier.padding(horizontal = 22.dp).padding(bottom = 10.dp, top = 28.dp).fillMaxWidth(0.8f)
+                .background(Color.Black)
+        ) {
+            ImageView(
+                imageUrl = bannerImgUrl,
+                width = 2f,
+                height = 1f,
+                backgroundColor = Color.White,
+                ContentScale.FillWidth
+            )
+        }
+        Button(
+            isEnabled = true,
+            btnText = "# 향bti 검사하기",
+            onClick = { onHbtiClick() },
+            buttonModifier = Modifier.background(color = CustomColor.gray4).fillMaxWidth(0.9f)
+                .height(47.dp),
+            textColor = Color.White,
+            textSize = 14,
+            radious = 8
+        )
     }
 }
 
@@ -339,15 +369,7 @@ fun ImageWithTitleView(
 private fun HomePreview() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-            FirstMenuWithBannerContent(
-                {}, "", "시향지 체험단 모집 ~09.18", HomeMenuDefaultResponseDto(
-                    listOf(
-                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
-                    ), "겨울 이 향수 어떠세요?"
-                )
-            )
+            FirstMenuWithBannerContent({}, "")
             Button(
                 isEnabled = true,
                 btnText = "향bti 검사하기",

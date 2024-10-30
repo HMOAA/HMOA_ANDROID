@@ -182,6 +182,7 @@ private fun HbtiHomeContent(
                         TopBar(
                             title = "향BTI",
                             titleColor = Color.White,
+                            color = Color.Black,
                             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
                             onNavClick = onBackClick,
                             navIconColor = Color.White

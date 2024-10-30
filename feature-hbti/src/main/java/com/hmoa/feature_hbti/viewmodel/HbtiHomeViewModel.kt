@@ -1,9 +1,11 @@
 package com.hmoa.feature_hbti.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
 import com.hmoa.core_domain.repository.HShopReviewRepository
+import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.response.HbtiHomeMetaDataResponse
@@ -18,7 +20,8 @@ import javax.inject.Inject
 class HbtiHomeViewModel @Inject constructor(
     private val hShopReviewRepository: HShopReviewRepository,
     private val reportRepository: ReportRepository,
-    private val surveyRepository: SurveyRepository
+    private val surveyRepository: SurveyRepository,
+    private val loginRepository: LoginRepository
 ) : ViewModel() {
 
     private val flag = MutableStateFlow<Boolean>(false)
@@ -58,8 +61,19 @@ class HbtiHomeViewModel @Inject constructor(
     )
 
     init {
-        getReviews()
         getMetaData()
+        getReviews()
+        checkIsLogined()
+    }
+
+    fun checkIsLogined() {
+        viewModelScope.launch(Dispatchers.IO) {
+            loginRepository.getAuthToken().collectLatest {
+                if (it == null) {
+                    unLoginedErrorState.update { true }
+                }
+            }
+        }
     }
 
     fun getMetaData() {
@@ -71,6 +85,7 @@ class HbtiHomeViewModel @Inject constructor(
                 when (result) {
                     Result.Loading -> HbtiHomeUiState.Loading
                     is Result.Success -> {
+                        Log.d("HbtiHomeViewMdoel", "data:${result.data.data}")
                         metadataState.update { result.data.data }
                     }
 
@@ -138,8 +153,10 @@ class HbtiHomeViewModel @Inject constructor(
     }
 
     fun onAfterOrderClick(onAvailable: () -> Unit) {
-        if (metadataState.value?.isOrdered ?: false) {
+        if (metadataState.value?.isOrdered ?: true) {
             onAvailable()
+        } else {
+            TODO("다이얼로그 오픈")
         }
     }
 

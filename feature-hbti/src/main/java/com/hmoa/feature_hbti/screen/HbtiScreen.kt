@@ -82,14 +82,14 @@ fun HbtiScreen(
     errState: ErrorUiState,
     onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
 ) {
+    ErrorUiSetView(
+        onLoginClick = navLogin,
+        errorUiState = errState,
+        onCloseClick = navHome
+    )
     when (uiState) {
         HbtiHomeUiState.Loading -> AppLoadingScreen()
         HbtiHomeUiState.Error -> {
-            ErrorUiSetView(
-                onLoginClick = navLogin,
-                errorUiState = errState,
-                onCloseClick = navHome
-            )
         }
 
         is HbtiHomeUiState.Success -> {
@@ -221,7 +221,7 @@ private fun HbtiHomeContent(
                                         shape = RoundedCornerShape(5.dp)
                                     )) {
                                 ImageView(
-                                    imageUrl = metadata?.firstImageUrl,
+                                    imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/122bc5b1-1cc1-44b3-a468-1b56f9998994",
                                     width = 1f,
                                     height = 1f,
                                     backgroundColor = Color.Transparent,
@@ -259,7 +259,7 @@ private fun HbtiHomeContent(
                                     )
                             ) {
                                 ImageView(
-                                    imageUrl = metadata?.secondImageUrl,
+                                    imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/4bb30703-d77d-49ac-8a01-2aee48bf04c3",
                                     width = 1f,
                                     height = 1f,
                                     backgroundColor = Color.Transparent,
@@ -293,7 +293,7 @@ private fun HbtiHomeContent(
                                 )
                         ) {
                             ImageView(
-                                imageUrl = metadata?.backgroundImgUrl,
+                                imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/eb5499d5-25e4-4141-af66-353daa76f2a2",
                                 width = 0.1f,
                                 height = 1f,
                                 backgroundColor = Color.Transparent,

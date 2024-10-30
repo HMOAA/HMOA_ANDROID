@@ -13,16 +13,7 @@ import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.CommunityPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,6 +25,7 @@ class CommunityMainViewModel @Inject constructor(
     private val loginRepository: LoginRepository
 ) : ViewModel() {
     private val authToken = MutableStateFlow<String?>(null)
+
     //type 정보
     private val _type = MutableStateFlow(Category.추천)
     val type get() = _type.asStateFlow()
@@ -74,7 +66,10 @@ class CommunityMainViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = CommunityMainUiState.Loading
     )
-    init {getAuthToken()}
+
+    init {
+        getAuthToken()
+    }
 
     fun communityPagingSource(): Flow<PagingData<CommunityByCategoryResponseDto>> = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
@@ -93,13 +88,18 @@ class CommunityMainViewModel @Inject constructor(
         communityRepository = communityRepository,
         category = category
     )
+
     //err state update
-    fun updateLoginError(){unLoginedErrorState.update{true}}
+    fun updateLoginError() {
+        unLoginedErrorState.update { true }
+    }
+
     fun hasToken() = authToken.value != null
+
     //get token
     private fun getAuthToken() {
         viewModelScope.launch {
-            loginRepository.getAuthToken().onEmpty { }.collectLatest {authToken.value = it}
+            loginRepository.getAuthToken().onEmpty { }.collectLatest { authToken.value = it }
         }
     }
 }

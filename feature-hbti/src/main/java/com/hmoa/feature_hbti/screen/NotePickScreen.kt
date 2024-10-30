@@ -6,7 +6,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,14 +21,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.gson.GsonBuilder
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.NoteImageView
+import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
-import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_domain.entity.data.NoteSelect
+import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.feature_hbti.viewmodel.NotePickUiState
 import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
@@ -36,7 +34,6 @@ import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
 fun NotePickRoute(
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
-    noteOrderQuantity: Int?,
     onBackToHbtiScreen: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
@@ -44,7 +41,6 @@ fun NotePickRoute(
         onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
         onBackClick = { onBackClick() },
         onNextClick = onNextClick,
-        noteOrderQuantity,
         onBackToHbtiScreen = onBackToHbtiScreen
     )
 }
@@ -54,57 +50,53 @@ fun NotePickScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: (productIdsToJson: String) -> Unit,
-    noteOrderQuantity: Int?,
     onBackToHbtiScreen: () -> Unit,
     viewmodel: NotePickViewmodel = hiltViewModel()
 ) {
-    var isOpen by remember { mutableStateOf(true) }
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-    val isNextAvailable by viewmodel.isCompletedNoteSelected.collectAsStateWithLifecycle()
     val errorUiState by viewmodel.errorUiState.collectAsStateWithLifecycle()
     val selectedProductIds by viewmodel.selectedIds.collectAsStateWithLifecycle(emptyList())
+    val isNextButtonAvailable by viewmodel.isNextButtonAvailableState.collectAsStateWithLifecycle()
 
     ErrorUiSetView(
-        isOpen = isOpen,
-        onConfirmClick = { onErrorHandleLoginAgain() },
+        onLoginClick = { onErrorHandleLoginAgain() },
         errorUiState = errorUiState,
         onCloseClick = { onBackToHbtiScreen() },
     )
 
-    LaunchedEffect(isNextAvailable) {
-        if (isNextAvailable) {
-            val navigationDto = NoteProductIds(productIds = selectedProductIds)
-            val gson = GsonBuilder().create()
-            val productIdsToJson = gson.toJson(navigationDto)
-            onNextClick(productIdsToJson)
-        }
+    fun handleNextClick() {
+        val navigationDto = NoteProductIds(productIds = selectedProductIds)
+        val gson = GsonBuilder().create()
+        val productIdsToJson = gson.toJson(navigationDto)
+        onNextClick(productIdsToJson)
     }
+
 
     when (uiState) {
         NotePickUiState.Loading -> AppLoadingScreen()
         is NotePickUiState.NotePickData -> NoteContent(
+            isNextButtonAvailable = isNextButtonAvailable,
             topRecommendedNote = (uiState as NotePickUiState.NotePickData).topRecommendedNote,
             noteList = (uiState as NotePickUiState.NotePickData).noteProductList,
-            noteOrderQuantity = noteOrderQuantity ?: 0,
             selectedNotesOrderQuantity = (uiState as NotePickUiState.NotePickData).noteOrderIndex,
             isNoteSelectedList = (uiState as NotePickUiState.NotePickData).noteSelectData,
             onBackClick = { onBackClick() },
-            onClickItem = { index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int ->
-                viewmodel.handleNoteSelectData(index, value, data, noteOrderQuantity, selectedNotesOrderQuantity)
+            onClickItem = { index: Int, value: Boolean, data: NoteSelect ->
+                viewmodel.handleNoteSelectData(index, value, data)
             },
-            onNextClick = { viewmodel.postNoteSelected() }
+            onNextClick = { viewmodel.postNoteSelected(onSuccess = { handleNextClick() }) }
         )
     }
 }
 
 @Composable
 fun NoteContent(
+    isNextButtonAvailable: Boolean,
     topRecommendedNote: String,
     noteList: ProductListResponseDto?,
-    noteOrderQuantity: Int,
     selectedNotesOrderQuantity: Int,
     isNoteSelectedList: List<NoteSelect>,
-    onClickItem: (index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int) -> Unit,
+    onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit
 ) {
@@ -137,20 +129,17 @@ fun NoteContent(
                 )
                 NotePickGridWindow(
                     notes = noteList,
-                    noteOrderQuantity = noteOrderQuantity,
-                    selectedNotesOrderQuantity = selectedNotesOrderQuantity,
                     isNoteSelectedList = isNoteSelectedList,
                     onClickItem = onClickItem
                 )
             }
             Button(
-                isEnabled = true,
+                isEnabled = isNextButtonAvailable,
                 btnText = "다음",
                 onClick = { onNextClick() },
-                buttonModifier = Modifier
-                    .fillMaxWidth(1f)
-                    .height(52.dp)
-                    .background(color = Color.Black),
+                buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(
+                    color = if (isNextButtonAvailable) Color.Black else CustomColor.gray3
+                ),
                 textSize = 18,
                 textColor = Color.White,
                 radious = 5
@@ -162,10 +151,8 @@ fun NoteContent(
 @Composable
 fun NotePickGridWindow(
     notes: ProductListResponseDto?,
-    noteOrderQuantity: Int,
-    selectedNotesOrderQuantity: Int,
     isNoteSelectedList: List<NoteSelect>,
-    onClickItem: (index: Int, value: Boolean, data: NoteSelect, noteOrderQuantity: Int, selectedNotesOrderQuantity: Int) -> Unit
+    onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit
 ) {
     if (notes?.data == null) {
         Text("데이터가 없습니다")
@@ -173,7 +160,7 @@ fun NotePickGridWindow(
         LazyVerticalGrid(columns = GridCells.Fixed(3), verticalArrangement = Arrangement.SpaceBetween) {
             itemsIndexed(notes?.data ?: emptyList()) { index, item ->
                 Column(
-                    modifier = Modifier.padding(vertical = 10.dp),
+                    modifier = Modifier.padding(vertical = 10.dp).padding(horizontal = 5.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     NoteImageView(
@@ -186,11 +173,8 @@ fun NotePickGridWindow(
                             onClickItem(
                                 index,
                                 !isNoteSelectedList[index].isSelected,
-                                isNoteSelectedList[index],
-                                noteOrderQuantity,
-                                selectedNotesOrderQuantity
+                                isNoteSelectedList[index]
                             )
-
                         },
                         isRecommanded = item.isRecommended,
                         index = isNoteSelectedList[index].nodeFaceIndex,
@@ -203,6 +187,10 @@ fun NotePickGridWindow(
                     )
                     Text(
                         text = item.productDetails,
+                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
+                    )
+                    Text(
+                        text = "(총 ${item.price}원)",
                         style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
                     )
                 }

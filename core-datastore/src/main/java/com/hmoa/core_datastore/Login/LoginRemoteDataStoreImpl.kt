@@ -2,24 +2,25 @@ package com.hmoa.core_datastore.Login
 
 import ResultResponse
 import com.hmoa.core_model.Provider
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.request.GoogleAccessTokenRequestDto
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.request.RememberedLoginRequestDto
 import com.hmoa.core_model.response.GoogleAccessTokenResponseDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.core_model.response.TokenResponseDto
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.authentication.GoogleServerAuthCodeService
 import com.hmoa.core_network.service.LoginService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
 import com.skydoves.sandwich.suspendOnError
-import kotlinx.serialization.json.Json
+import com.skydoves.sandwich.suspendOnSuccess
 import javax.inject.Inject
 
 class LoginRemoteDataStoreImpl @Inject constructor(
     private val loginService: LoginService,
-    private val googleServerAuthCodeService: GoogleServerAuthCodeService
+    private val googleServerAuthCodeService: GoogleServerAuthCodeService,
+    private val authenticator: Authenticator
 ) : LoginRemoteDataStore {
 
 
@@ -31,8 +32,13 @@ class LoginRemoteDataStoreImpl @Inject constructor(
         loginService.postOAuth(accessToken, provider).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    loginService.postOAuth(accessToken, provider).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -42,8 +48,13 @@ class LoginRemoteDataStoreImpl @Inject constructor(
         loginService.postRemembered(dto).suspendMapSuccess {
             result.data = this
         }.suspendOnError {
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    loginService.postRemembered(dto).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }

@@ -27,7 +27,10 @@ class PerfumeRecommendationResultViewModel @Inject constructor(
         generalErrorState
     ) { expiredTokenError, wrongTypeToken, unLoginedError, generalError ->
         ErrorUiState.ErrorData(
-            expiredTokenError, wrongTypeToken, unLoginedError, generalError
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeToken,
+            unknownError = unLoginedError,
+            generalError = generalError
         )
     }.stateIn(
         scope = viewModelScope,

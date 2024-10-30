@@ -1,6 +1,8 @@
-package com.hmoa.feature_userinfo.screen
+package com.example.userinfo
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -10,15 +12,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -27,12 +21,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,19 +34,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.feature_userinfo.viewModel.MyPageViewModel
+import com.example.feature_userinfo.viewModel.UserInfoUiState
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.checkPermission
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.CircleImageView
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.OnAndOffBtn
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.ColumnData
 import com.hmoa.feature_userinfo.BuildConfig
-import com.hmoa.feature_userinfo.viewModel.MyPageViewModel
-import com.hmoa.feature_userinfo.viewModel.UserInfoUiState
+import com.hmoa.feature_userinfo.screen.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
 import kotlinx.coroutines.launch
 
@@ -65,6 +52,7 @@ const val APP_VERSION = "1.1.0"
 
 @Composable
 internal fun MyPageRoute(
+    appVersion: String,
     navEditProfile: () -> Unit,
     navMyActivity: () -> Unit,
     navManageMyInfo: () -> Unit,
@@ -75,11 +63,18 @@ internal fun MyPageRoute(
     navBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
-    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
+    val isEnabledAlarm = viewModel.isEnabled.collectAsStateWithLifecycle()
+    val onChangeAlarm: (Boolean) -> Unit = {
+        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {
+            viewModel.changeAlarmSetting(it)
+        } else {
+            Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()
+        }
+    }
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val navKakao = {
         TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
             if (err != null) {
@@ -87,13 +82,19 @@ internal fun MyPageRoute(
             }
         }
     }
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-    }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {}
+
+    val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
+    val termsOfServiceIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_OF_SERVICE)) }
+    val scope = rememberCoroutineScope()
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
             uiState = uiState.value,
             errorUiState = errorUiState,
+            appVersion = appVersion,
+            isEnabledAlarm = isEnabledAlarm.value,
+            onChangeAlarm = onChangeAlarm,
             logoutEvent = {
                 scope.launch {
                     launch { viewModel.logout() }.join()
@@ -104,6 +105,8 @@ internal fun MyPageRoute(
                 launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
                 OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
             },
+            openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
+            openTermsOfServiceLink = { context.startActivity(termsOfServiceIntent) },
             onDelAccount = {
                 scope.launch {
                     launch { viewModel.delAccount() }.join()
@@ -133,9 +136,14 @@ internal fun MyPageRoute(
 fun MyPage(
     uiState: UserInfoUiState,
     errorUiState: ErrorUiState,
+    appVersion: String,
+    isEnabledAlarm: Boolean,
+    onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     onDelAccount: () -> Unit,
+    openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onNavKakaoChat: () -> Unit,
     navMyPerfume: () -> Unit,
     navEditProfile: () -> Unit,
@@ -146,8 +154,6 @@ fun MyPage(
     onErrorHandleLoginAgain: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
         UserInfoUiState.Loading -> AppLoadingScreen()
         is UserInfoUiState.User -> {
@@ -155,8 +161,13 @@ fun MyPage(
                 profile = uiState.profile,
                 nickname = uiState.nickname,
                 provider = uiState.provider,
+                appVersion = appVersion,
+                isEnabledAlarm = isEnabledAlarm,
+                onChangeAlarm = onChangeAlarm,
                 logoutEvent = logoutEvent,
                 doOpenLicense = doOpenLicense,
+                openPrivacyPolicyLink = openPrivacyPolicyLink,
+                openTermsOfServiceLink = openTermsOfServiceLink,
                 onDelAccount = onDelAccount,
                 onNavKakaoChat = onNavKakaoChat,
                 navMyPerfume = navMyPerfume,
@@ -171,8 +182,7 @@ fun MyPage(
 
         UserInfoUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = { onErrorHandleLoginAgain() },
+                onLoginClick = { onErrorHandleLoginAgain() },
                 errorUiState = errorUiState,
                 onCloseClick = { onBackClick() }
             )
@@ -187,8 +197,13 @@ private fun MyPageContent(
     profile: String,
     nickname: String,
     provider: String,
+    appVersion: String,
+    isEnabledAlarm: Boolean,
+    onChangeAlarm: (Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
+    openPrivacyPolicyLink: () -> Unit,
+    openTermsOfServiceLink: () -> Unit,
     onDelAccount: () -> Unit,
     navMyPerfume: () -> Unit,
     onNavKakaoChat: () -> Unit,
@@ -199,24 +214,18 @@ private fun MyPageContent(
     navRefundRecord: () -> Unit,
     navBack: () -> Unit
 ) {
-    var isOpen by remember{mutableStateOf(false)}
-    var url by remember{mutableStateOf("")}
+    var isOpen by remember { mutableStateOf(false) }
+    var url by remember { mutableStateOf("") }
     val columnInfo = listOf(
-        ColumnData("주문 내역"){navOrderRecord()},
-        ColumnData("취소/반품 내역"){navRefundRecord()},
-        ColumnData("이용 약관"){
-            isOpen = true
-            url = BuildConfig.TERMS_OF_SERVICE
-        },
+        ColumnData("주문 내역") { navOrderRecord() },
+        ColumnData("취소/반품 내역") { navRefundRecord() },
         ColumnData("나의 향수") { navMyPerfume() },
         ColumnData("내 활동") { navMyActivity() },
         ColumnData("내 정보관리") { navManageMyInfo() },
         ColumnData("오픈소스라이센스") { doOpenLicense() },
-        ColumnData("개인정보 처리방침") {
-            isOpen = true
-            url = BuildConfig.PRIVACY_POLICY_URI
-        },
-        ColumnData("버전 정보 ${APP_VERSION}") {},
+        ColumnData("이용 약관") { openTermsOfServiceLink() },
+        ColumnData("개인정보 처리방침") { openPrivacyPolicyLink() },
+        ColumnData("버전 정보 ${appVersion}") {},
         ColumnData("1대1 문의") { onNavKakaoChat() },
         ColumnData("로그아웃") { logoutEvent() },
         ColumnData("계정삭제") { onDelAccount() }
@@ -229,7 +238,7 @@ private fun MyPageContent(
             else navBack()
         }
     )
-    if (isOpen){
+    if (isOpen) {
         CustomWebView(url)
     } else {
         LazyColumn(
@@ -254,7 +263,7 @@ private fun MyPageContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
-                        .clickable{it.onNavClick()}
+                        .clickable { it.onNavClick() }
                         .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -329,7 +338,8 @@ private fun UserProfileInfo(
 
 @Composable
 private fun ServiceAlarm(
-
+    isEnabledAlarm: Boolean,
+    onChangeAlarm: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -346,23 +356,26 @@ private fun ServiceAlarm(
         )
 
         /** service alarm 토글 버튼 */
-        OnAndOffBtn()
+        OnAndOffBtn(
+            isChecked = isEnabledAlarm,
+            onChangeChecked = onChangeAlarm
+        )
     }
 }
 
 @Composable
-private fun CustomWebView(url: String){
+private fun CustomWebView(url: String) {
     val context = LocalContext.current
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = {
-            WebView(context).apply{
+            WebView(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 settings.domStorageEnabled = true
-                webViewClient = object: WebViewClient(){
+                webViewClient = object : WebViewClient() {
 
                 }
 

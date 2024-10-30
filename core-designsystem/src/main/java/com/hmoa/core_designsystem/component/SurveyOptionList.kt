@@ -62,7 +62,7 @@ fun SurveyOptionList(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        modifier = Modifier.wrapContentHeight().verticalScroll(scrollState).background(color = Color.White)
+        modifier = Modifier.fillMaxHeight(0.92f).verticalScroll(scrollState).background(color = Color.White)
     ) {
         surveyOptions.forEachIndexed { index, it ->
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
@@ -114,7 +114,7 @@ fun SurveyOptionItem(text: String, onClick: () -> Unit, isSelected: Boolean) {
 @Preview
 @Composable
 fun SurveyOptionItemPreview() {
-    val seasons = listOf("싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'")
+    val seasons = listOf("싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'","싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'","싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'")
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxHeight(1f)

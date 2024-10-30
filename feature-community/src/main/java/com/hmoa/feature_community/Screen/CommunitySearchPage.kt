@@ -15,23 +15,28 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.component.PostListItem
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunitySearchUiState
 import com.hmoa.feature_community.ViewModel.CommunitySearchViewModel
 
 @Composable
 fun CommunitySearchRoute(
-    navBack: () -> Unit,
+    navBack : () -> Unit,
     navCommunityDesc: (Int) -> Unit,
     viewModel : CommunitySearchViewModel = hiltViewModel()
 ){
     val searchWord = viewModel.searchWord.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
 
     CommunitySearchPage(
         uiState = uiState.value,
+        errState = errState.value,
         searchWord = searchWord.value,
         onSearchWordChanged = { viewModel.updateSearchWord(it) },
         onClearSearchWord = { viewModel.clearSearchWord() },
@@ -44,6 +49,7 @@ fun CommunitySearchRoute(
 @Composable
 fun CommunitySearchPage(
     uiState : CommunitySearchUiState,
+    errState: ErrorUiState,
     searchWord : String,
     onSearchWordChanged : (String) -> Unit,
     onClearSearchWord : () -> Unit,
@@ -51,51 +57,70 @@ fun CommunitySearchPage(
     navBack : () -> Unit,
     navCommunityDesc : (Int) -> Unit
 ){
-
     when(uiState){
         CommunitySearchUiState.Loading ->  AppLoadingScreen()
         is CommunitySearchUiState.SearchResult -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.White)
-            ){
-                SearchTopBar(
-                    searchWord = searchWord,
-                    onChangeWord = onSearchWordChanged,
-                    onClearWord = onClearSearchWord,
-                    onClickSearch = onClickSearch,
-                    navBack = navBack
-                )
-
-                HorizontalDivider(thickness = 1.dp, color = CustomColor.gray3)
-
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                ){
-                    items(uiState.result){community ->
-                        PostListItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            onPostClick = { navCommunityDesc(community.communityId) },
-                            postType = community.category,
-                            postTitle = community.title,
-                            heartCount = community.heartCount,
-                            commentCount = community.commentCount
-                        )
-
-                        if (community != uiState.result[uiState.result.lastIndex]){
-                            HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                        }
-                    }
-                }
-            }
+            SearchContent(
+                communities = uiState.result,
+                searchWord = searchWord,
+                onSearchWordChanged = onSearchWordChanged,
+                onClearSearchWord = onClearSearchWord,
+                onClickSearch = onClickSearch,
+                navBack = navBack,
+                navCommunityDesc = navCommunityDesc
+            )
         }
         CommunitySearchUiState.Error -> {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Red)){}
+            ErrorUiSetView(
+                onLoginClick = navBack,
+                errorUiState = errState,
+                onCloseClick = navBack
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchContent(
+    communities: List<CommunityByCategoryResponseDto>,
+    searchWord: String,
+    onSearchWordChanged: (String) -> Unit,
+    onClearSearchWord: () -> Unit,
+    onClickSearch: () -> Unit,
+    navBack: () -> Unit,
+    navCommunityDesc: (Int) -> Unit
+){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ){
+        SearchTopBar(
+            searchWord = searchWord,
+            onChangeWord = onSearchWordChanged,
+            onClearWord = onClearSearchWord,
+            onClickSearch = onClickSearch,
+            navBack = navBack
+        )
+        HorizontalDivider(thickness = 1.dp, color = CustomColor.gray3)
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+        ){
+            items(communities){community ->
+                PostListItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    onPostClick = { navCommunityDesc(community.communityId) },
+                    postType = community.category,
+                    postTitle = community.title,
+                    heartCount = community.heartCount,
+                    commentCount = community.commentCount
+                )
+                if (communities.indexOf(community) != communities.lastIndex){
+                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
+                }
+            }
         }
     }
 }

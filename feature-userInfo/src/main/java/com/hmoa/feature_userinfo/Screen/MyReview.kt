@@ -31,8 +31,9 @@ import com.hmoa.feature_userinfo.viewModel.MyReviewViewModel
 fun MyReviewRoute(
     navReview: (befRoute: HbtiRoute) -> Unit,
     navBack: () -> Unit,
+    navLogin: () -> Unit,
     viewModel: MyReviewViewModel = hiltViewModel()
-){
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val reviews = viewModel.reviewPagingSource().collectAsLazyPagingItems()
@@ -41,7 +42,8 @@ fun MyReviewRoute(
         errState = errState,
         reviews = reviews,
         navReview = { navReview(HbtiRoute.Hbti) },
-        navBack = navBack
+        navBack = navBack,
+        navLogin = navLogin
     )
 }
 
@@ -51,18 +53,19 @@ fun MyReviewScreen(
     errState: ErrorUiState,
     reviews: LazyPagingItems<ReviewResponseDto>,
     navReview: () -> Unit,
-    navBack: () -> Unit
-){
-    when(uiState){
+    navBack: () -> Unit,
+    navLogin: () -> Unit
+) {
+    when (uiState) {
         MyReviewUiState.Loading -> AppLoadingScreen()
         MyReviewUiState.Error -> {
             ErrorUiSetView(
-                isOpen = true,
-                onConfirmClick = navBack,
+                onLoginClick = navLogin,
                 errorUiState = errState,
                 onCloseClick = navBack
             )
         }
+
         MyReviewUiState.Success -> {
             MyReviewContent(
                 reviews = reviews.itemSnapshotList,
@@ -78,10 +81,10 @@ private fun MyReviewContent(
     reviews: ItemSnapshotList<ReviewResponseDto>,
     onBackClick: () -> Unit,
     onItemClick: () -> Unit,
-){
+) {
     Column(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         TopBar(
             title = "작성한 후기",
             onNavClick = onBackClick
@@ -91,10 +94,10 @@ private fun MyReviewContent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
-        ){
-            items(reviews){review ->
-                if (review != null){
-                    val photos = remember(review){review.hbtiPhotos.map{it.photoUrl}}
+        ) {
+            items(reviews) { review ->
+                if (review != null) {
+                    val photos = remember(review) { review.hbtiPhotos.map { it.photoUrl } }
                     ReviewItem(
                         isItemClickable = true,
                         reviewId = review.hbtiReviewId,
@@ -106,7 +109,7 @@ private fun MyReviewContent(
                         content = review.content,
                         images = photos,
                         category = review.orderTitle,
-                        onHeartClick = {a, b ->},
+                        onHeartClick = { a, b -> },
                         onMenuClick = { /*TODO*/ },
                         onItemClick = onItemClick
                     )
@@ -118,7 +121,7 @@ private fun MyReviewContent(
 
 @Preview
 @Composable
-private fun MyReviewUiTest(){
+private fun MyReviewUiTest() {
     MyReviewContent(
         onBackClick = {},
         onItemClick = {},

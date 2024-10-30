@@ -5,7 +5,6 @@ import kotlinx.coroutines.test.*
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-
 class TestCoroutineRule(
     private val testScope: TestScope = TestScope(),
     val testDispatcher: TestDispatcher = StandardTestDispatcher(testScope.testScheduler)

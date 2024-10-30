@@ -1,44 +1,28 @@
-package com.hmoa.feature_userinfo.screen
+package com.example.feature_userinfo
 
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.core_designsystem.component.AppDefaultDialog
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.CircleImageView
-import com.hmoa.core_designsystem.component.NicknameInput
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_common.checkPermission
+import com.hmoa.core_common.galleryPermission
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.viewModel.EditProfileUiState
 import com.hmoa.feature_userinfo.viewModel.EditProfileViewModel
@@ -48,6 +32,7 @@ fun EditProfileRoute(
     navBack: () -> Unit,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState()
     val nickname = viewModel.nickname.collectAsStateWithLifecycle()
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
@@ -56,54 +41,63 @@ fun EditProfileRoute(
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ){
-        if (it != null){viewModel.updateProfile(it.toString())}
+    ) {
+        if (it != null) {
+            viewModel.updateProfile(it.toString())
+        }
     }
 
     EditProfilePage(
-        launcher = launcher,
         nickname = nickname.value ?: "",
         uiState = uiState.value,
         isEnabled = isEnabled.value,
         isDuplicated = isDuplicated.value,
         profileImg = profileImg.value,
-        onChangeInfo = {viewModel.saveInfo()},
-        checkDuplication = {viewModel.checkNicknameDup(it)},
-        onUpdateNickname = {viewModel.updateNickname(it)},
-        navBack = navBack
+        onChangeInfo = { viewModel.saveInfo() },
+        onEditProfile = {
+            if (checkPermission(context, galleryPermission)) {
+                launcher.launch("image/*")
+            } else {
+                Toast.makeText(context, "갤러리 권한이 필요합니다", Toast.LENGTH_SHORT).show()
+            }
+        },
+        checkDuplication = { viewModel.checkNicknameDup(it) },
+        onUpdateNickname = { viewModel.updateNickname(it) },
+        onNavBack = navBack
     )
 }
 
 @Composable
 fun EditProfilePage(
-    launcher: ManagedActivityResultLauncher<String, Uri?>,
-    nickname : String,
+    nickname: String,
     uiState: EditProfileUiState,
     isEnabled: Boolean,
-    isDuplicated : Boolean,
-    profileImg : String?,
-    onChangeInfo : () -> Unit,
-    checkDuplication : (String) -> Unit,
-    onUpdateNickname : (String) -> Unit,
-    navBack: () -> Unit,
+    isDuplicated: Boolean,
+    profileImg: String?,
+    onChangeInfo: () -> Unit,
+    onEditProfile: () -> Unit,
+    checkDuplication: (String) -> Unit,
+    onUpdateNickname: (String) -> Unit,
+    onNavBack: () -> Unit,
 ) {
     when (uiState) {
         EditProfileUiState.Loading -> AppLoadingScreen()
         EditProfileUiState.Success -> {
             EditProfileContent(
-                launcher = launcher,
                 nickname = nickname,
                 isEnabled = isEnabled,
                 isDuplicated = isDuplicated,
                 profileImg = profileImg,
+                onEditProfile = onEditProfile,
                 onChangeInfo = onChangeInfo,
                 checkDuplication = checkDuplication,
                 onUpdateNickname = onUpdateNickname,
-                navBack = navBack
+                onNavBack = onNavBack
             )
         }
+
         is EditProfileUiState.Error -> {
-            var showDialog by remember{mutableStateOf(true)}
+            var showDialog by remember { mutableStateOf(true) }
             AppDefaultDialog(
                 isOpen = showDialog,
                 modifier = Modifier.fillMaxWidth(0.7f),
@@ -111,7 +105,7 @@ fun EditProfilePage(
                 content = uiState.message,
                 onDismiss = {
                     showDialog = false
-                    navBack()
+                    onNavBack()
                 }
             )
         }
@@ -120,16 +114,16 @@ fun EditProfilePage(
 
 @Composable
 private fun EditProfileContent(
-    launcher: ManagedActivityResultLauncher<String, Uri?>,
-    nickname : String,
-    isEnabled : Boolean,
-    isDuplicated : Boolean,
-    profileImg : String?,
-    onChangeInfo : () -> Unit,
-    checkDuplication : (String) -> Unit,
-    onUpdateNickname : (String) -> Unit,
-    navBack : () -> Unit,
-){
+    nickname: String,
+    isEnabled: Boolean,
+    isDuplicated: Boolean,
+    profileImg: String?,
+    onEditProfile: () -> Unit,
+    onChangeInfo: () -> Unit,
+    checkDuplication: (String) -> Unit,
+    onUpdateNickname: (String) -> Unit,
+    onNavBack: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -137,7 +131,7 @@ private fun EditProfileContent(
     ) {
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = navBack,
+            onNavClick = onNavBack,
             title = "프로필 수정",
         )
         Spacer(Modifier.height(38.dp))
@@ -151,8 +145,8 @@ private fun EditProfileContent(
                 modifier = Modifier.size(72.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                CircleImageView(imgUrl = profileImg ?: "",width = 72,height = 72)
-                EditProfileButton(launcher = launcher)
+                CircleImageView(imgUrl = profileImg ?: "", width = 72, height = 72)
+                EditProfileButton(onEditProfile = onEditProfile)
             }
         }
         Spacer(Modifier.height(72.dp))
@@ -188,7 +182,7 @@ private fun EditProfileContent(
             btnText = "변경",
             onClick = {
                 onChangeInfo()
-                navBack()
+                onNavBack()
             }
         )
     }
@@ -196,8 +190,8 @@ private fun EditProfileContent(
 
 @Composable
 private fun EditProfileButton(
-    launcher: ManagedActivityResultLauncher<String, Uri?>
-){
+    onEditProfile: () -> Unit
+) {
     Box(
         modifier = Modifier
             .size(20.dp)
@@ -206,13 +200,11 @@ private fun EditProfileButton(
     ) {
         IconButton(
             modifier = Modifier.size(16.dp),
-            onClick = {
-                launcher.launch("image/*")
-            }
+            onClick = onEditProfile
         ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),
-                painter = painterResource(com.hmoa.core_designsystem.R.drawable.ic_comment_input),
+                painter = painterResource(com.hmoa.core_designsystem.R.drawable.profile_edit_btn),
                 contentDescription = "Profile Edit Button",
                 tint = CustomColor.gray2
             )

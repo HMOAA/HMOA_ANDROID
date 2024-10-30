@@ -5,36 +5,15 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,19 +34,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.concatWithComma
 import com.hmoa.core_common.formatWon
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.CircleImageView
-import com.hmoa.core_designsystem.component.CustomOutlinedTextField
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.TagBadge
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.data.WebviewType
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.core_domain.entity.data.WebviewType
 import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
@@ -81,8 +54,9 @@ import kotlinx.serialization.json.Json
 @Composable
 fun OrderRoute(
     productIds: List<Int>,
-    onNavBack: () -> Unit,
+    navBack: () -> Unit,
     navAddAddress: (String, String) -> Unit,
+    navLogin: () -> Unit,
     navOrderResult: () -> Unit,
     viewModel: OrderViewModel = hiltViewModel()
 ) {
@@ -102,15 +76,16 @@ fun OrderRoute(
         saveBuyerInfo = { name, phoneNumber ->
             viewModel.saveBuyerInfo(name, phoneNumber)
         },
-        onNavBack = onNavBack,
+        onNavBack = navBack,
         navAddAddress = {
             val productIdsToJson = Json.encodeToString(NoteProductIds(productIds))
             navAddAddress(it, productIdsToJson)
-        }
+        },
+        navLogin = navLogin
     )
-    LaunchedEffect(Unit){viewModel.setIds(productIds)}
-    LaunchedEffect(isDone.value){
-        if(isDone.value){
+    LaunchedEffect(Unit) { viewModel.setIds(productIds) }
+    LaunchedEffect(isDone.value) {
+        if (isDone.value) {
             navOrderResult()
         }
     }
@@ -125,10 +100,9 @@ fun OrderScreen(
     deleteNote: (id: Int) -> Unit,
     saveBuyerInfo: (name: String, phoneNumber: String) -> Unit,
     onNavBack: () -> Unit,
+    navLogin: () -> Unit,
     navAddAddress: (String) -> Unit
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
         OrderUiState.Loading -> AppLoadingScreen()
         is OrderUiState.Success -> {
@@ -147,11 +121,9 @@ fun OrderScreen(
 
         OrderUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = onNavBack,
+                onLoginClick = navLogin,
                 errorUiState = errState,
                 onCloseClick = {
-                    isOpen = false
                     onNavBack()
                 }
             )
@@ -179,20 +151,21 @@ private fun OrderScreenMainContent(
     var phone3 by remember { mutableStateOf("") }
     var isRefundChecked by remember { mutableStateOf(false) }
     var isPrivacyConsentGranted by remember { mutableStateOf(false) }
-    var isAllChecked by remember {mutableStateOf(false)}
-    val isEnabled = remember {derivedStateOf { addressInfo != null && buyerInfo != null && isAllChecked }}
-    var flag by remember{mutableStateOf(false)}
-    var showWebView by remember{mutableStateOf(false)}
-    var webViewType by remember{mutableStateOf<WebviewType?>(null)}
+    var isAllChecked by remember { mutableStateOf(false) }
+    val isEnabled = remember { derivedStateOf { addressInfo != null && buyerInfo != null && isAllChecked } }
+    var flag by remember { mutableStateOf(false) }
+    var showWebView by remember { mutableStateOf(false) }
+    var webViewType by remember { mutableStateOf<WebviewType?>(null) }
     BackHandler(
         enabled = true,
         onBack = {
-            if(showWebView) showWebView = false
+            if (showWebView) showWebView = false
             else onNavBack()
         }
     )
-    if(showWebView){NotificationWebView(webViewType)}
-    else {
+    if (showWebView) {
+        NotificationWebView(webViewType)
+    } else {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -252,15 +225,18 @@ private fun OrderScreenMainContent(
                         phone3 = phone3,
                         onPhone3Changed = { phone3 = it },
                         navAddAddress = {
-                            if (isSaveBuyerInfo){navAddAddress(it)}
-                            else {Toast.makeText(context, "배송자 정보를 먼저 입력해주세요", Toast.LENGTH_SHORT).show()}
+                            if (isSaveBuyerInfo) {
+                                navAddAddress(it)
+                            } else {
+                                Toast.makeText(context, "배송자 정보를 먼저 입력해주세요", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     )
                 }
                 HorizontalDivider(thickness = 1.dp, color = Color.Black)
                 ProductInfo(
                     notes = orderInfo.productInfo.noteProducts,
-                    deleteNote = {deleteNote(it)}
+                    deleteNote = { deleteNote(it) }
                 )
                 HorizontalDivider(thickness = 1.dp, color = Color.Black)
                 Receipt(
@@ -276,9 +252,9 @@ private fun OrderScreenMainContent(
                         isAllChecked = it
                     },
                     isRefundChecked = isRefundChecked,
-                    onUpdateRefundChecked = {isRefundChecked = it},
+                    onUpdateRefundChecked = { isRefundChecked = it },
                     isPrivacyConsentGranted = isPrivacyConsentGranted,
-                    onUpdatePrivacyConsentGranted = { isPrivacyConsentGranted = it},
+                    onUpdatePrivacyConsentGranted = { isPrivacyConsentGranted = it },
                     showPrivacyConsent = {
                         webViewType = WebviewType.PRIVACY_CONSENT
                         showWebView = true
@@ -294,26 +270,26 @@ private fun OrderScreenMainContent(
                         .height(52.dp),
                     isEnabled = isEnabled.value,
                     btnText = "결제하기",
-                    onClick = {onPaymentClick("${phone1}-${phone2}-${phone3}")}
+                    onClick = { onPaymentClick("${phone1}-${phone2}-${phone3}") }
                 )
             }
         }
     }
-    LaunchedEffect(buyerInfo){
-        if(buyerInfo != null){
+    LaunchedEffect(buyerInfo) {
+        if (buyerInfo != null) {
             name = buyerInfo.name
-            phone1 = buyerInfo.phoneNumber.substring(0,3)
-            phone2 = buyerInfo.phoneNumber.substring(4,8)
+            phone1 = buyerInfo.phoneNumber.substring(0, 3)
+            phone2 = buyerInfo.phoneNumber.substring(4, 8)
             phone3 = buyerInfo.phoneNumber.substring(9)
         }
     }
-    LaunchedEffect(isAllChecked){
-        if(flag) {
+    LaunchedEffect(isAllChecked) {
+        if (flag) {
             isRefundChecked = isAllChecked
             isPrivacyConsentGranted = isAllChecked
         }
     }
-    LaunchedEffect(isRefundChecked, isPrivacyConsentGranted){
+    LaunchedEffect(isRefundChecked, isPrivacyConsentGranted) {
         isAllChecked = isRefundChecked && isPrivacyConsentGranted
         flag = false
     }
@@ -374,7 +350,9 @@ private fun InputUserInfo(
                     .height(44.dp),
                 value = phone1,
                 onValueChanged = {
-                    if(it.length <= 3){onPhone1Changed(it)}
+                    if (it.length <= 3) {
+                        onPhone1Changed(it)
+                    }
                 },
                 color = Color.Black,
                 fontSize = 12.sp,
@@ -402,7 +380,9 @@ private fun InputUserInfo(
                     .height(44.dp),
                 value = phone2,
                 onValueChanged = {
-                    if(it.length <= 4) {onPhone2Changed(it)}
+                    if (it.length <= 4) {
+                        onPhone2Changed(it)
+                    }
                 },
                 color = Color.Black,
                 fontSize = 12.sp,
@@ -429,7 +409,11 @@ private fun InputUserInfo(
                     .weight(1f)
                     .height(44.dp),
                 value = phone3,
-                onValueChanged = { if(it.length <= 4) {onPhone3Changed(it)} },
+                onValueChanged = {
+                    if (it.length <= 4) {
+                        onPhone3Changed(it)
+                    }
+                },
                 color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -459,7 +443,7 @@ private fun InputUserInfo(
                 fontFamily = CustomFont.bold
             )
             Text(
-                modifier = Modifier.clickable {navAddAddress("NULL")},
+                modifier = Modifier.clickable { navAddAddress("NULL") },
                 text = "배송지를 입력해주세요",
                 fontSize = 10.sp,
                 fontFamily = CustomFont.medium,
@@ -483,9 +467,9 @@ private fun UserInfoDesc(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Text(
-                text = if(addressInfo == null) buyerInfo.name else addressInfo.name,
+                text = if (addressInfo == null) buyerInfo.name else addressInfo.name,
                 fontSize = 14.sp,
                 fontFamily = CustomFont.semiBold,
                 style = TextStyle(
@@ -493,7 +477,7 @@ private fun UserInfoDesc(
                     platformStyle = PlatformTextStyle(includeFontPadding = true)
                 )
             )
-            if (addressInfo != null){
+            if (addressInfo != null) {
                 Spacer(Modifier.width(8.dp))
                 TagBadge(
                     tag = addressInfo.addressName
@@ -513,12 +497,12 @@ private fun UserInfoDesc(
         }
         Spacer(Modifier.height(10.dp))
         Text(
-            text = if(addressInfo == null) buyerInfo.phoneNumber else addressInfo.phoneNumber,
+            text = if (addressInfo == null) buyerInfo.phoneNumber else addressInfo.phoneNumber,
             fontSize = 12.sp,
             fontFamily = CustomFont.medium,
             color = CustomColor.gray3
         )
-        if (addressInfo != null){
+        if (addressInfo != null) {
             Spacer(Modifier.height(16.dp))
             Text(
                 text = "${addressInfo.streetAddress} ${addressInfo.detailAddress}",
@@ -542,7 +526,7 @@ private fun UserInfoDesc(
                     fontFamily = CustomFont.bold
                 )
                 Text(
-                    modifier = Modifier.clickable {navAddAddress("NULL")},
+                    modifier = Modifier.clickable { navAddAddress("NULL") },
                     text = "배송지를 입력해주세요",
                     fontSize = 10.sp,
                     fontFamily = CustomFont.medium,
@@ -797,7 +781,7 @@ private fun CheckPrivacyConsent(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable {showShippingRefund()},
+                modifier = Modifier.clickable { showShippingRefund() },
                 text = "보기",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -830,7 +814,7 @@ private fun CheckPrivacyConsent(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable {showPrivacyConsent()},
+                modifier = Modifier.clickable { showPrivacyConsent() },
                 text = "보기",
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -842,9 +826,9 @@ private fun CheckPrivacyConsent(
 }
 
 @Composable
-private fun NotificationWebView(webviewType: WebviewType?){
+private fun NotificationWebView(webviewType: WebviewType?) {
     val context = LocalContext.current
-    val url = when(webviewType){
+    val url = when (webviewType) {
         WebviewType.PRIVACY_CONSENT -> BuildConfig.PRIVACY_CONSENT_URL
         WebviewType.SHIPPING_REFUND -> BuildConfig.SHIPPING_REFUND_URL
         else -> ""
@@ -852,13 +836,13 @@ private fun NotificationWebView(webviewType: WebviewType?){
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = {
-            WebView(context).apply{
+            WebView(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 settings.domStorageEnabled = true
-                webViewClient = object: WebViewClient(){
+                webViewClient = object : WebViewClient() {
 
                 }
 
@@ -957,6 +941,7 @@ private fun UITest() {
         },
         onNavBack = {},
         deleteNote = { },
-        navAddAddress = {}
+        navAddAddress = {},
+        navLogin = {}
     )
 }

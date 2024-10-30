@@ -1,27 +1,6 @@
 package com.hmoa.core_repository
 
-import com.hmoa.core_domain.repository.AdminRepository
-import com.hmoa.core_domain.repository.BootpayRepository
-import com.hmoa.core_domain.repository.BrandHPediaRepository
-import com.hmoa.core_domain.repository.BrandRepository
-import com.hmoa.core_domain.repository.CommunityCommentRepository
-import com.hmoa.core_domain.repository.CommunityRepository
-import com.hmoa.core_domain.repository.FcmRepository
-import com.hmoa.core_domain.repository.HShopReviewRepository
-import com.hmoa.core_domain.repository.HshopRepository
-import com.hmoa.core_domain.repository.LoginRepository
-import com.hmoa.core_domain.repository.MagazineRepository
-import com.hmoa.core_domain.repository.MainRepository
-import com.hmoa.core_domain.repository.MemberRepository
-import com.hmoa.core_domain.repository.NoteRepository
-import com.hmoa.core_domain.repository.PerfumeCommentRepository
-import com.hmoa.core_domain.repository.PerfumeRepository
-import com.hmoa.core_domain.repository.PerfumerRepository
-import com.hmoa.core_domain.repository.ReportRepository
-import com.hmoa.core_domain.repository.SearchRepository
-import com.hmoa.core_domain.repository.SignupRepository
-import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_domain.repository.TermRepository
+import com.hmoa.core_domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -31,10 +10,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 interface RepositoryModule {
-
-    @Binds
-    @Singleton
-    fun bindAdminRepositoryImpl(repositoryImpl: AdminRepositoryImpl): AdminRepository
 
     @Binds
     @Singleton
@@ -110,7 +85,7 @@ interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindHshopRepositoryImpl(repositoryImpl: HshopRepositoryImpl):HshopRepository
+    fun bindHshopRepositoryImpl(repositoryImpl: HshopRepositoryImpl): HshopRepository
 
     @Binds
     @Singleton

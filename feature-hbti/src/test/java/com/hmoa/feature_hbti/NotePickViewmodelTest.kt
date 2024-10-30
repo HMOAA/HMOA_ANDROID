@@ -1,9 +1,9 @@
 package com.hmoa.feature_hbti
 
 import ResultResponse
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.core_model.response.ProductResponseDto
@@ -11,6 +11,7 @@ import com.hmoa.feature_hbti.viewmodel.NotePickViewmodel
 import junit.framework.TestCase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,42 +42,48 @@ class NotePickViewmodelTest : TestCase() {
                         productName = "그린",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "그린사진",
-                        isRecommended = true
+                        isRecommended = true,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 1,
                         productName = "아쿠아",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "바다사진",
-                        isRecommended = true
+                        isRecommended = true,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 2,
                         productName = "스파이스",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "스파이스사진",
-                        isRecommended = true
+                        isRecommended = true,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 3,
                         productName = "머스크",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "머스크사진",
-                        isRecommended = false
+                        isRecommended = false,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 4,
                         productName = "프루티",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "과일사진",
-                        isRecommended = false
+                        isRecommended = false,
+                        price = 10
                     ),
                     ProductResponseDto(
                         productId = 5,
                         productName = "플라워",
                         productDetails = "어쩌구저쩌구",
                         productPhotoUrl = "꽃사진",
-                        isRecommended = false
+                        isRecommended = false,
+                        price = 10
                     ),
                 )
             )
@@ -85,7 +92,6 @@ class NotePickViewmodelTest : TestCase() {
 
     @Before
     override fun setUp() {
-        super.setUp()
         runBlocking {
             Mockito.`when`(surveyRepository.getAllSurveyResult()).thenReturn(surveyResult)
             Mockito.`when`(hshopRepository.getNotesProduct()).thenReturn(noteProducts)
@@ -123,7 +129,7 @@ class NotePickViewmodelTest : TestCase() {
     fun `test_createViewmodel_TopRecommendedNoteInitialized`() = coroutineRule.runTest {
         val expectedTopNote = "그린"
         viewmodel.getTopRecommendedNote()
-        assertEquals(expectedTopNote, viewmodel.topRecommendedNoteState.value)
+        Assert.assertEquals(expectedTopNote, viewmodel.topRecommendedNoteState.value)
     }
 
     @Test
@@ -138,7 +144,7 @@ class NotePickViewmodelTest : TestCase() {
         }
         launch { viewmodel.getNoteProducts() }.join()
         launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
-        assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
+        Assert.assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
     }
 
     @Test
@@ -152,12 +158,10 @@ class NotePickViewmodelTest : TestCase() {
             value = true,
             data = NoteSelect(
                 productId = targetNode.productId,
-                isSelected = true,
+                isSelected = false,
                 isRecommended = targetNode.isRecommended,
                 nodeFaceIndex = null,
-            ),
-            noteOrderQuantity = 5,
-            selectedNotesOrderQuantity = 0
+            )
         )
         var expectedNoteSelectData = noteProducts.data!!.data.map {
             NoteSelect(
@@ -173,124 +177,13 @@ class NotePickViewmodelTest : TestCase() {
             isRecommended = targetNode.isRecommended,
             nodeFaceIndex = null
         )
-        assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
-    }
-
-    @Test
-    fun `test_addNoteSelectWhenOrderLimit_noChangeInNoteSelectData`() = coroutineRule.runTest {
-        viewmodel.getTopRecommendedNote()
-        launch { viewmodel.getNoteProducts() }.join()
-        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
-        //when: 이미 3개 수량 중에 3개를 모두 고른 경우
-        viewmodel.handleNoteSelectData(
-            index = 0,
-            value = true,
-            data = NoteSelect(
-                productId = noteProducts.data!!.data[0].productId,
-                isSelected = true,
-                isRecommended = noteProducts.data!!.data[0].isRecommended,
-                nodeFaceIndex = null,
-            ),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 0
-        )
-        viewmodel.handleNoteSelectData(
-            index = 1,
-            value = true,
-            data = NoteSelect(
-                productId = noteProducts.data!!.data[1].productId,
-                isSelected = true,
-                isRecommended = noteProducts.data!!.data[1].isRecommended,
-                nodeFaceIndex = null,
-            ),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 1
-        )
-        viewmodel.handleNoteSelectData(
-            index = 2,
-            value = true,
-            data = NoteSelect(
-                productId = noteProducts.data!!.data[2].productId,
-                isSelected = true,
-                isRecommended = noteProducts.data!!.data[2].isRecommended,
-                nodeFaceIndex = null,
-            ),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 2
-        )
-        val expectedNoteSelectData = mutableListOf<NoteSelect>()
-        viewmodel.noteSelectDataState.value.map { expectedNoteSelectData.add(it) }
-        //given: 1개를 추가로 고르는 경우
-        viewmodel.handleNoteSelectData(
-            index = 3,
-            value = true,
-            data = NoteSelect(
-                productId = noteProducts.data!!.data[3].productId,
-                isSelected = true,
-                isRecommended = noteProducts.data!!.data[3].isRecommended,
-                nodeFaceIndex = null,
-            ),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 3
-        )
-        //then: 3개 추가까지 반영되고, 마지막 1개는 반영되지 않음
-        assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
-    }
-
-    @Test
-    fun `test_cancelNoteSelectWhenOrderLimit_reflectInNoteSelectData`() = coroutineRule.runTest {
-        viewmodel.getTopRecommendedNote()
-        launch { viewmodel.getNoteProducts() }.join()
-        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
-        //when: 이미 3개 수량 중에 3개를 모두 고른 경우
-        viewmodel.handleNoteSelectData(
-            index = 0,
-            value = true,
-            data = viewmodel.noteSelectDataState.value.get(0),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 0
-        )
-        viewmodel.handleNoteSelectData(
-            index = 1,
-            value = true,
-            data = viewmodel.noteSelectDataState.value.get(1),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 1
-        )
-        viewmodel.handleNoteSelectData(
-            index = 2,
-            value = true,
-            data = viewmodel.noteSelectDataState.value.get(2),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 2
-        )
-        val expectedNoteSelectData = mutableListOf<NoteSelect>()
-        viewmodel.noteSelectDataState.value.map { expectedNoteSelectData.add(it) }
-        expectedNoteSelectData.set(
-            2,
-            NoteSelect(
-                productId = viewmodel.noteSelectDataState.value.get(2).productId,
-                isSelected = false,
-                nodeFaceIndex = null,
-                isRecommended = viewmodel.noteSelectDataState.value.get(2).isRecommended
-            )
-        )
-        //given: 1개를 취소하는 경우
-        viewmodel.handleNoteSelectData(
-            index = 2,
-            value = false,
-            data = viewmodel.noteSelectDataState.value.get(2),
-            noteOrderQuantity = 3,
-            selectedNotesOrderQuantity = 3
-        )
-        //then: 1개가 취소됨
-        assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
+        Assert.assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
     }
 
     @Test
     fun `test_changeSelectStateOfSingleNote_reflectInReturn`() = coroutineRule.runTest {
         val targetNote = fakeNoteSelectData.get(0)
-        //given: targetNote 취소하기(isSelected = false)
+        //given: 0번째 노트인 targetNote 취소하기(isSelected = false)
         val result = viewmodel.changeNoteSelectData(0, false, targetNote, fakeNoteSelectData)
         val expectedResult = fakeNoteSelectData.mapIndexed { index, noteSelect ->
             if (index == 0) {
@@ -304,7 +197,7 @@ class NotePickViewmodelTest : TestCase() {
                 noteSelect
             }
         }
-        assertEquals(expectedResult, result)
+        Assert.assertEquals(expectedResult, result)
     }
 
     @Test
@@ -338,7 +231,7 @@ class NotePickViewmodelTest : TestCase() {
         //given1: 첫번째 노트 선택
         val resultAfter1NodeSelected = viewmodel.reorderNoteFaceIndex(fakeNoteSelectData)
 
-        assertEquals(expectedDataAfterNodeSelected, resultAfter1NodeSelected)
+        Assert.assertEquals(expectedDataAfterNodeSelected, resultAfter1NodeSelected)
         //given2: 두번째 노트 선택
         resultAfter1NodeSelected.set(
             2, NoteSelect(
@@ -357,6 +250,70 @@ class NotePickViewmodelTest : TestCase() {
             )
         )
         val resultAfter2NodeSelected = viewmodel.reorderNoteFaceIndex(resultAfter1NodeSelected)
-        assertEquals(expectedDataAfterNodeSelected, resultAfter2NodeSelected)
+        Assert.assertEquals(expectedDataAfterNodeSelected, resultAfter2NodeSelected)
+    }
+
+    @Test
+    fun `test_nextButtonState_afterInitialize_resultsInFalse`() = coroutineRule.runTest {
+        //Given: 초기화
+        viewmodel.getTopRecommendedNote()
+        launch { viewmodel.getNoteProducts() }.join()
+        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        //Then: 버튼의 사용가능여부 = false이다
+        Assert.assertEquals(false, viewmodel.isNextButtonAvailableState.value)
+    }
+
+    @Test
+    fun `test_nextButtonState_noteSelect_resultsInTrue`() = coroutineRule.runTest {
+        //Given: 초기화
+        viewmodel.getTopRecommendedNote()
+        launch { viewmodel.getNoteProducts() }.join()
+        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        val targetNode = noteProducts.data!!.data[0]
+        //When:targetNode만 선택한다
+        viewmodel.handleNoteSelectData(
+            index = 0,
+            value = true,
+            data = NoteSelect(
+                productId = targetNode.productId,
+                isSelected = false,
+                isRecommended = targetNode.isRecommended,
+                nodeFaceIndex = null,
+            )
+        )
+        //Then: 버튼의 사용가능여부 = true이다
+        Assert.assertEquals(true, viewmodel.isNextButtonAvailableState.value)
+    }
+
+    @Test
+    fun `test_nextButtonState_noteSelectAndCancel_resultsInFalse`() = coroutineRule.runTest {
+        //Given: 초기화 후 targetNode만 선택한다
+        viewmodel.getTopRecommendedNote()
+        launch { viewmodel.getNoteProducts() }.join()
+        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        val targetNode = noteProducts.data!!.data[0]
+        viewmodel.handleNoteSelectData(
+            index = 0,
+            value = true,
+            data = NoteSelect(
+                productId = targetNode.productId,
+                isSelected = false,
+                isRecommended = targetNode.isRecommended,
+                nodeFaceIndex = null,
+            )
+        )
+        //When: 다시 targetNode 선택을 취소한다
+        viewmodel.handleNoteSelectData(
+            index = 0,
+            value = false,
+            data = NoteSelect(
+                productId = targetNode.productId,
+                isSelected = true,
+                isRecommended = targetNode.isRecommended,
+                nodeFaceIndex = null,
+            )
+        )
+        //Then: 버튼의 사용가능여부 = false이다
+        Assert.assertEquals(false, viewmodel.isNextButtonAvailableState.value)
     }
 }

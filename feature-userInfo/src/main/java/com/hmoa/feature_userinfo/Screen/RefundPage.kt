@@ -56,8 +56,9 @@ fun RefundRoute(
     type: String?,
     orderId: Int?,
     navBack: () -> Unit,
+    navLogin: () -> Unit,
     viewModel: RefundViewModel = hiltViewModel()
-){
+) {
     viewModel.setId(orderId)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
@@ -66,11 +67,12 @@ fun RefundRoute(
         uiState = uiState.value,
         errState = errState.value,
         type = type!!,
-        doRefund = {viewModel.refundOrder()},
-        navBack = navBack
+        doRefund = { viewModel.refundOrder() },
+        navBack = navBack,
+        navLogin = navLogin
     )
-    LaunchedEffect(isDone.value){
-        if(isDone.value) navBack()
+    LaunchedEffect(isDone.value) {
+        if (isDone.value) navBack()
     }
 }
 
@@ -81,9 +83,9 @@ fun ReturnOrRefundScreen(
     type: String,
     doRefund: () -> Unit,
     navBack: () -> Unit,
-){
-    var isOpen by remember{mutableStateOf(false)}
-    when(uiState){
+    navLogin: () -> Unit,
+) {
+    when (uiState) {
         RefundUiState.Loading -> AppLoadingScreen()
         is RefundUiState.Success -> {
             RefundContent(
@@ -93,16 +95,12 @@ fun ReturnOrRefundScreen(
                 navBack = navBack
             )
         }
+
         RefundUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = {
-                    isOpen = false
-                },
+                onLoginClick = navLogin,
                 errorUiState = errState,
-                onCloseClick = {
-                    isOpen = false
-                }
+                onCloseClick = navBack
             )
         }
     }
@@ -278,6 +276,7 @@ private fun ReturnOrRefundUITest(){
         uiState = RefundUiState.Loading,
         errState = ErrorUiState.Loading,
         doRefund = {},
-        navBack = {}
+        navBack = {},
+        navLogin = {}
     )
 }

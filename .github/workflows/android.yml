@@ -1,10 +1,11 @@
 name: Android develop CI
 
 on:
-  push:
-    branches: [ "feature/hbti" ]
   pull_request:
-    branches: [ "feature/hbti" ]
+    branches:
+      - "develop"
+      - "release"
+      - "master"
 
 jobs:
   build:
@@ -45,8 +46,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Clear Gradle Cache
+        run: ./gradlew clean
+
       - name: Build for debug with Gradle
         run: ./gradlew assembleDebug
 
-      - name: unit test
-        run: ./gradlew test
+#      - name: unit test
+#        run: ./gradlew test

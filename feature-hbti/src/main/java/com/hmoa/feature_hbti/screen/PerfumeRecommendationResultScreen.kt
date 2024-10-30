@@ -3,24 +3,12 @@ package com.hmoa.feature_hbti.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -31,11 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.LikeRowItem
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeRecommendResponseDto
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationResultViewModel
@@ -46,12 +30,11 @@ fun PerfumeRecommendationResultRoute(
     navBack: () -> Unit,
     navPerfume: (Int) -> Unit,
     navHome: () -> Unit,
+    navLogin:()->Unit,
     viewModel: PerfumeRecommendationResultViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorState by viewModel.errorState.collectAsStateWithLifecycle()
-
-    var isOpen by remember { mutableStateOf(true) }
 
     when (uiState) {
 
@@ -72,8 +55,7 @@ fun PerfumeRecommendationResultRoute(
         PerfumeResultUiState.Error -> {
             /** Error 발생 시 어디로 가는 것이 좋을까? **/
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = navBack,
+                onLoginClick = navLogin,
                 errorUiState = errorState,
                 onCloseClick = navBack
             )
@@ -115,7 +97,10 @@ private fun PerfumeCommentResultContent(
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_bold))
                 )
-                Row(modifier = Modifier.fillMaxWidth().padding(end = 16.dp).padding(top = 50.dp), horizontalArrangement = Arrangement.End) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(end = 16.dp).padding(top = 50.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
                     Text(
                         text = "가격대 우선",
                         fontSize = 12.sp,

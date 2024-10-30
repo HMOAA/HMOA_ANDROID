@@ -3,17 +3,7 @@ package com.hmoa.feature_hbti.screen
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -24,14 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,28 +42,34 @@ import kotlinx.coroutines.launch
 fun EditReviewRoute(
     reviewId: Int?,
     navReview: (befRoute: HbtiRoute) -> Unit,
+    navLogin: () -> Unit,
     viewModel: EditReviewViewModel = hiltViewModel()
-){
-    LaunchedEffect(Unit){viewModel.setId(reviewId)}
+) {
+    LaunchedEffect(Unit) { viewModel.setId(reviewId) }
     val isDone by viewModel.isDone.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    val onOkClick = remember<(images: List<String>, content: String) -> Unit>{
+    val onOkClick = remember<(images: List<String>, content: String) -> Unit> {
         { images, content -> viewModel.editReview(images = images, content = content) }
     }
     val context = LocalContext.current
-    val uriToString = remember<(uri: Uri) -> String>{
-        { uri -> viewModel.transformUriToString(context, uri)}
+    val uriToString = remember<(uri: Uri) -> String> {
+        { uri -> viewModel.transformUriToString(context, uri) }
     }
     EditReviewScreen(
         uiState = uiState,
         errState = errorUiState,
-        navBack = {navReview(HbtiRoute.EditReviewRoute)},
+        navBack = { navReview(HbtiRoute.EditReviewRoute) },
         uriToString = uriToString,
-        onCancelClick = {navReview(HbtiRoute.EditReviewRoute)},
-        onOkClick = onOkClick
+        onCancelClick = { navReview(HbtiRoute.EditReviewRoute) },
+        onOkClick = onOkClick,
+        navLogin = navLogin
     )
-    LaunchedEffect(isDone){if(isDone) {navReview(HbtiRoute.EditReviewRoute)}}
+    LaunchedEffect(isDone) {
+        if (isDone) {
+            navReview(HbtiRoute.EditReviewRoute)
+        }
+    }
 }
 
 @Composable
@@ -88,20 +77,21 @@ fun EditReviewScreen(
     uiState: EditReviewUiState,
     errState: ErrorUiState,
     navBack: () -> Unit,
+    navLogin: () -> Unit,
     uriToString: (uri: Uri) -> String,
     onCancelClick: () -> Unit,
     onOkClick: (images: List<String>, content: String) -> Unit,
-){
-    when(uiState){
+) {
+    when (uiState) {
         EditReviewUiState.Loading -> AppLoadingScreen()
         EditReviewUiState.Error -> {
             ErrorUiSetView(
-                isOpen = true,
-                onConfirmClick = navBack,
+                onLoginClick = navLogin,
                 errorUiState = errState,
                 onCloseClick = navBack
             )
         }
+
         is EditReviewUiState.Success -> {
             EditReviewContent(
                 pictures = uiState.photoUris,
@@ -122,20 +112,20 @@ private fun EditReviewContent(
     onCancelClick: () -> Unit,
     onOkClick: (images: List<String>, content: String) -> Unit,
     uriToString: (uri: Uri) -> String
-){
-    val pictures = remember{ mutableStateListOf(*pictures.toTypedArray()) }
-    val state = rememberPagerState(initialPage = 0, pageCount = {pictures.size})
+) {
+    val pictures = remember { mutableStateListOf(*pictures.toTypedArray()) }
+    val state = rememberPagerState(initialPage = 0, pageCount = { pictures.size })
     val coroutine = rememberCoroutineScope()
-    var content by remember{ mutableStateOf(content) }
+    var content by remember { mutableStateOf(content) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         TextTopBar(
-            onCancelClick  = onCancelClick,
+            onCancelClick = onCancelClick,
             onOkClick = { onOkClick(pictures, content) }
         )
         Spacer(Modifier.height(24.dp))
@@ -144,20 +134,20 @@ private fun EditReviewContent(
                 .weight(1f)
                 .fillMaxWidth(),
             value = content,
-            onValueChange = {content = it},
+            onValueChange = { content = it },
             textStyle = TextStyle(
                 color = Color.White,
                 fontFamily = CustomFont.regular,
                 fontSize = 14.sp
             ),
             cursorBrush = SolidColor(Color.White)
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 32.dp)
-            ){
-                if(content.isEmpty()){
+            ) {
+                if (content.isEmpty()) {
                     Text(
                         modifier = Modifier.fillMaxSize(),
                         text = "리뷰를 작성해주세요",
@@ -172,7 +162,7 @@ private fun EditReviewContent(
         }
         Spacer(Modifier.weight(1f))
 
-        if(pictures.isNotEmpty()){
+        if (pictures.isNotEmpty()) {
 
             Spacer(Modifier.height(10.dp))
 
@@ -182,7 +172,7 @@ private fun EditReviewContent(
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize()
-                ){
+                ) {
                     //image view
                     ImageView(
                         imageUrl = pictures[it].toString(),
@@ -199,12 +189,12 @@ private fun EditReviewContent(
                             .padding(top = 15.dp, end = 15.dp),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.Top
-                    ){
+                    ) {
                         IconButton(
                             modifier = Modifier.size(24.dp),
                             onClick = {
-                                coroutine.launch{
-                                    state.animateScrollToPage(it-1)
+                                coroutine.launch {
+                                    state.animateScrollToPage(it - 1)
                                     pictures.remove(pictures[it])
                                 }
                             }
@@ -228,8 +218,8 @@ private fun EditReviewContent(
                     .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterHorizontally)
-            ){
-                pictures.map{
+            ) {
+                pictures.map {
                     val selected = pictures[state.currentPage] == it
                     Box(
                         modifier = Modifier
@@ -246,9 +236,9 @@ private fun EditReviewContent(
         BottomCameraBtn(
             isColorInverted = false,
             onUpdatePictures = { newPictures ->
-                newPictures.map{
+                newPictures.map {
                     val uri = uriToString(it)
-                    if (uri !in pictures){
+                    if (uri !in pictures) {
                         pictures.add(uri)
                     }
                 }
@@ -261,17 +251,17 @@ private fun EditReviewContent(
 private fun TextTopBar(
     onCancelClick: () -> Unit,
     onOkClick: () -> Unit,
-){
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
             .background(color = CustomColor.gray4),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         TextButton(
             onClick = onCancelClick
-        ){
+        ) {
             Text(
                 text = "취소",
                 fontSize = 16.sp,
@@ -289,7 +279,7 @@ private fun TextTopBar(
         Spacer(Modifier.weight(1f))
         TextButton(
             onClick = onOkClick
-        ){
+        ) {
             Text(
                 text = "확인",
                 fontSize = 16.sp,

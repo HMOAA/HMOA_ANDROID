@@ -31,6 +31,7 @@ import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
+import com.hmoa.core_model.response.HbtiHomeMetaDataResponse
 import com.hmoa.core_model.response.Photo
 import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_hbti.viewmodel.HbtiHomeUiState
@@ -52,7 +53,7 @@ fun HbtiRoute(
     val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
     HbtiScreen(
         onHbtiSurveyClick = { onHbtiSurveyClick() },
-        onAfterOrderClick = { onAfterOrderClick() },
+        onAfterOrderClick = { viewModel::onAfterOrderClick { onAfterOrderClick() } },
         navHome = navHome,
         navReview = { navReview(HbtiRoute.Hbti) },
         navBack = navBack,
@@ -94,6 +95,7 @@ fun HbtiScreen(
         is HbtiHomeUiState.Success -> {
             HbtiHomeContent(
                 reviews = uiState.reviews,
+                metadata = uiState.metadata,
                 onHbtiSurveyClick = onHbtiSurveyClick,
                 onAfterOrderClick = onAfterOrderClick,
                 onReviewItemClick = navReview,
@@ -111,6 +113,7 @@ fun HbtiScreen(
 @Composable
 private fun HbtiHomeContent(
     reviews: List<ReviewResponseDto>,
+    metadata: HbtiHomeMetaDataResponse?,
     onHbtiSurveyClick: () -> Unit,
     onAfterOrderClick: () -> Unit,
     onReviewItemClick: () -> Unit,
@@ -218,7 +221,7 @@ private fun HbtiHomeContent(
                                         shape = RoundedCornerShape(5.dp)
                                     )) {
                                 ImageView(
-                                    imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/122bc5b1-1cc1-44b3-a468-1b56f9998994",
+                                    imageUrl = metadata?.firstImageUrl,
                                     width = 1f,
                                     height = 1f,
                                     backgroundColor = Color.Transparent,
@@ -256,7 +259,7 @@ private fun HbtiHomeContent(
                                     )
                             ) {
                                 ImageView(
-                                    imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/4bb30703-d77d-49ac-8a01-2aee48bf04c3",
+                                    imageUrl = metadata?.secondImageUrl,
                                     width = 1f,
                                     height = 1f,
                                     backgroundColor = Color.Transparent,
@@ -290,7 +293,7 @@ private fun HbtiHomeContent(
                                 )
                         ) {
                             ImageView(
-                                imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/eb5499d5-25e4-4141-af66-353daa76f2a2",
+                                imageUrl = metadata?.backgroundImgUrl,
                                 width = 0.1f,
                                 height = 1f,
                                 backgroundColor = Color.Transparent,
@@ -421,7 +424,8 @@ fun HbtiScreenPreview() {
                 isLiked = true,
                 orderTitle = "시트러스"
             ),
-        )
+        ),
+        null
     ),
         navBack = {},
         navHome = {},

@@ -149,4 +149,21 @@ class SurveyRemoteDataStoreImpl @Inject constructor(
         }
         return result
     }
+
+    override suspend fun getHbtiHomeMetaDataResult(): ResultResponse<HbtiHomeMetaDataResponse> {
+        val result = ResultResponse<HbtiHomeMetaDataResponse>()
+        surveyService.getHbtiHomeMetaData().suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    surveyService.getHbtiHomeMetaData()
+                        .suspendOnSuccess { result.data = this.data }
+                }
+            )
+        }
+        return result
+    }
 }

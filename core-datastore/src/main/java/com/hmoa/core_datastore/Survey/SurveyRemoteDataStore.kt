@@ -18,4 +18,6 @@ interface SurveyRemoteDataStore {
         dto: PerfumeSurveyAnswerRequestDto,
         recommendType: PerfumeRecommendType
     ): ResultResponse<PerfumeRecommendsResponseDto>
+
+    suspend fun getHbtiHomeMetaDataResult(): ResultResponse<HbtiHomeMetaDataResponse>
 }

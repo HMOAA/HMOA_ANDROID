@@ -27,6 +27,7 @@ import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
@@ -101,12 +102,77 @@ private fun HomeScreen(
                     onAllPerfumeClick = { onAllPerfumeClick(it) },
                     (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu!!
                 )
+                HmoaCompanyMetaData()
             }
 
             is HomeViewModel.BottomMenuState.Error -> {
 
             }
         }
+    }
+}
+
+@Composable
+private fun HmoaCompanyMetaData() {
+    Column(
+        modifier = Modifier.background(color = Color.Black).fillMaxWidth().padding(top = 32.dp, bottom = 36.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "사업자 번호: 554-20-01858",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = CustomFont.regular,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "향모아 / 대표자 : 박태성",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = CustomFont.regular,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "개인정보보호책임자 : 이종현",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "통신판매업 : 제 2028-화성동탄-0976호",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "주소 : 화성시 동탄지성로11, 714-B03호",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "고객센터 : 070-8080-3309",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
     }
 }
 

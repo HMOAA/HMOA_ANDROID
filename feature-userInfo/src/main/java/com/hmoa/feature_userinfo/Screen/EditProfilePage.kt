@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -53,6 +54,7 @@ fun EditProfileRoute(
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val isDuplicated = viewModel.isEnabledBtn.collectAsStateWithLifecycle(false)
     val profileImg = viewModel.profileImg.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -67,7 +69,7 @@ fun EditProfileRoute(
         isEnabled = isEnabled.value,
         isDuplicated = isDuplicated.value,
         profileImg = profileImg.value,
-        onChangeInfo = {viewModel.saveInfo()},
+        onChangeInfo = {viewModel.saveInfo(context)},
         checkDuplication = {viewModel.checkNicknameDup(it)},
         onUpdateNickname = {viewModel.updateNickname(it)},
         navBack = navBack

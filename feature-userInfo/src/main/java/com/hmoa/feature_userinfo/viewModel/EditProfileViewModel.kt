@@ -1,19 +1,26 @@
 package com.hmoa.feature_userinfo.viewModel
 
 import android.app.Application
-import android.net.Uri
+import android.content.Context
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
+import com.hmoa.core_common.absolutePath
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.request.NickNameRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -98,15 +105,19 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             val result = memberRepository.postExistsNickname(requestDto)
             if (result.errorMessage != null) {
-                errState.update { result.errorMessage!!.message }
+                if (result.errorMessage!!.code == "DUPLICATED_NICKNAME"){
+                    _isDuplicated.update{false}
+                } else {
+                    errState.update { result.errorMessage!!.message }
+                }
             }
             _isDuplicated.update { !result.data!! }
         }
     }
 
     //remote 정보 update
-    fun saveInfo() {
-        val path = absolutePath(profileImg.value!!.toUri()) ?: ""
+    fun saveInfo(context: Context) {
+        val path = absolutePath(context, profileImg.value!!.toUri()) ?: return
         val file = File(path)
         val requestDto = NickNameRequestDto(nickname.value)
         viewModelScope.launch {
@@ -122,28 +133,6 @@ class EditProfileViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun absolutePath(uri: Uri): String? {
-        val contentResolver = context.contentResolver
-
-        val filePath = (context.applicationInfo.dataDir + File.separator + System.currentTimeMillis())
-        val file = File(filePath)
-
-        try {
-            val inputStream = contentResolver.openInputStream(uri) ?: return null
-
-            val outputStream = FileOutputStream(file)
-
-            val buf = ByteArray(1024)
-            var len: Int
-            while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
-            outputStream.close()
-            inputStream.close()
-        } catch (ignore: Exception) {
-            return null
-        }
-        return file.absolutePath
     }
 }
 

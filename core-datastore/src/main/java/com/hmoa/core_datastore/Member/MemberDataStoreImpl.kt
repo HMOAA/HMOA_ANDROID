@@ -94,14 +94,9 @@ class MemberDataStoreImpl @Inject constructor(
     override suspend fun postExistsNickname(request: NickNameRequestDto): ResultResponse<Boolean> {
         val result = ResultResponse<Boolean>()
         memberService.postExistsNickname(request).suspendOnSuccess {
-            result.data = false
+            result.data = this.data
         }.suspendOnError {
-            if (this.statusCode.code == 409) {
-                result.data = true
-            } else {
-                val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-                result.errorMessage = errorMessage
-            }
+            result.errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
         }
         return result
     }

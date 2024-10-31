@@ -1,7 +1,7 @@
 package com.hmoa.feature_userinfo.viewModel
 
-import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,11 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
-    private val application: Application,
     private val memberRepository: MemberRepository
 ) : ViewModel() {
-    private val context = application.applicationContext
-
     private val _nickname = MutableStateFlow<String?>(null)
     val nickname get() = _nickname.asStateFlow()
 
@@ -105,11 +102,7 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             val result = memberRepository.postExistsNickname(requestDto)
             if (result.errorMessage != null) {
-                if (result.errorMessage!!.code == "DUPLICATED_NICKNAME"){
-                    _isDuplicated.update{false}
-                } else {
-                    errState.update { result.errorMessage!!.message }
-                }
+                errState.update { result.errorMessage!!.message }
             }
             _isDuplicated.update { !result.data!! }
         }

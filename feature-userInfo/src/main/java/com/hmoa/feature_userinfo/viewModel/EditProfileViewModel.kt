@@ -1,20 +1,21 @@
 package com.hmoa.feature_userinfo.viewModel
 
 import android.content.Context
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.absolutePath
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.request.NickNameRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -27,55 +28,54 @@ import javax.inject.Inject
 class EditProfileViewModel @Inject constructor(
     private val memberRepository: MemberRepository
 ) : ViewModel() {
-    private val _nickname = MutableStateFlow<String?>(null)
-    val nickname get() = _nickname.asStateFlow()
 
-    private val _profileImg = MutableStateFlow<String?>(null)
-    val profileImg get() = _profileImg.asStateFlow()
-
-    private val _isDuplicated = MutableStateFlow(false)
-    private val _isProfileUpdate = MutableStateFlow(false)
-
-    val isEnabled = nickname.map {
-        if (uiState.value != EditProfileUiState.Loading && it == null) {
-            errState.update { "Nickname is NULL" }
-        }
-        (it != "" && it != baseNickname)
-    }
-
-    val isEnabledBtn = combine(
-        _isDuplicated,
-        _isProfileUpdate,
-    ) { isDup, isUpdate ->
-        isDup || isUpdate
-    }
-
-    private val errState = MutableStateFlow<String?>(null)
-
-    private var baseNickname = ""
-
-    val uiState: StateFlow<EditProfileUiState> = errState.map {
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
+    val uiState: StateFlow<EditProfileUiState> = errorUiState.map {
+        if (it is ErrorUiState.ErrorData && it.isValidate()) throw Exception("")
         val result = memberRepository.getMember()
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage!!.message)
-        }
-        if (errState.value != null) {
-            throw Exception(errState.value)
-        }
+        if (result.errorMessage != null) { throw Exception(result.errorMessage!!.message) }
         result.data!!
     }.asResult().map { result ->
         when (result) {
             Result.Loading -> EditProfileUiState.Loading
             is Result.Success -> {
                 val data = result.data
-                baseNickname = data.nickname
-                _nickname.update { data.nickname }
-                _profileImg.update { data.memberImageUrl }
-                EditProfileUiState.Success
+                EditProfileUiState.Success(
+                    profileImg = data.memberImageUrl,
+                    nickname = MutableStateFlow(data.nickname)
+                )
             }
-
             is Result.Error -> {
-                EditProfileUiState.Error(if (result.exception is Exception) result.exception.toString() else errState.value.toString())
+                if (result.exception.message != ""){
+                    handleErrorType(
+                        error = result.exception,
+                        onExpiredTokenError = {expiredTokenErrorState.update{true}},
+                        onWrongTypeTokenError = {wrongTypeTokenErrorState.update{true}},
+                        onUnknownError = {unLoginedErrorState.update{true}},
+                        onGeneralError = {generalErrorState.update{Pair(true, result.exception.message)}},
+                    )
+                }
+                EditProfileUiState.Error
             }
         }
     }.stateIn(
@@ -84,55 +84,71 @@ class EditProfileViewModel @Inject constructor(
         initialValue = EditProfileUiState.Loading
     )
 
-    //nick name 업데이트
-    fun updateNickname(newNick: String) {
-        _nickname.update { newNick }
-        _isDuplicated.update { false }
-    }
-
-    //profile 업데이트
-    fun updateProfile(newProfile: String) {
-        _profileImg.update { newProfile }
-        _isProfileUpdate.update { true }
-    }
-
     //nickname 중복 검사
     fun checkNicknameDup(nick: String) {
         val requestDto = NickNameRequestDto(nick)
         viewModelScope.launch {
             val result = memberRepository.postExistsNickname(requestDto)
             if (result.errorMessage != null) {
-                errState.update { result.errorMessage!!.message }
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
+                    else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
+                }
+                return@launch
             }
-            _isDuplicated.update { !result.data!! }
+            if (uiState.value is EditProfileUiState.Success){
+                (uiState.value as EditProfileUiState.Success).updateInfo(nick, !result.data!!)
+            }
         }
     }
 
     //remote 정보 update
-    fun saveInfo(context: Context) {
-        val path = absolutePath(context, profileImg.value!!.toUri()) ?: return
+    fun saveInfo(
+        nickname: String,
+        profileImg: String?,
+        context: Context,
+        onSuccess: () -> Unit,
+    ) {
+        val path = absolutePath(context, profileImg?.toUri() ?: return) ?: return
         val file = File(path)
-        val requestDto = NickNameRequestDto(nickname.value)
+        val requestDto = NickNameRequestDto(nickname)
         viewModelScope.launch {
-            if (profileImg.value != null) {
-                val resultProfile = memberRepository.postProfilePhoto(file)
-                val resultNickname = memberRepository.updateNickname(requestDto)
+            val resultProfile = memberRepository.postProfilePhoto(file)
+            val resultNickname = memberRepository.updateNickname(requestDto)
 
-                if (resultProfile.errorMessage != null) {
-                    errState.update { resultProfile.errorMessage!!.message }
+            if (resultProfile.errorMessage != null) {
+                when(resultProfile.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
                 }
-                if (resultNickname.errorMessage != null) {
-                    errState.update { resultNickname.errorMessage!!.message }
+                return@launch
+            } else if (resultNickname.errorMessage != null) {
+                when(resultNickname.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
                 }
+                return@launch
             }
         }
+        onSuccess()
     }
 }
 
 sealed interface EditProfileUiState {
     data object Loading : EditProfileUiState
-    data object Success : EditProfileUiState
-    data class Error(
-        val message: String
-    ) : EditProfileUiState
+    data class Success(
+        val profileImg: String?,
+        var nickname: MutableStateFlow<String>,
+        var isDuplicated: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    ) : EditProfileUiState {
+        fun updateInfo(newNickname: String, isDup: Boolean){
+            this.isDuplicated.update{isDup}
+            this.nickname.update { newNickname }
+        }
+    }
+    data object Error: EditProfileUiState
 }

@@ -1,6 +1,7 @@
 package com.hmoa.feature_userinfo.screen
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,7 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,9 +37,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.core_designsystem.component.AppDefaultDialog
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.NicknameInput
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -49,72 +52,51 @@ fun EditProfileRoute(
     navBack: () -> Unit,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsState()
-    val nickname = viewModel.nickname.collectAsStateWithLifecycle()
-    val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
-    val isDuplicated = viewModel.isEnabledBtn.collectAsStateWithLifecycle(false)
-    val profileImg = viewModel.profileImg.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ){
-        if (it != null){viewModel.updateProfile(it.toString())}
-    }
+    val saveInfo = remember<(nickname: String, profileImg: String?) -> Unit> {{
+        nickname, profileImg -> viewModel.saveInfo(
+            nickname = nickname,
+            profileImg = profileImg,
+            context = context,
+            onSuccess = navBack
+        )
+    }}
 
     EditProfilePage(
-        launcher = launcher,
-        nickname = nickname.value ?: "",
-        uiState = uiState.value,
-        isEnabled = isEnabled.value,
-        isDuplicated = isDuplicated.value,
-        profileImg = profileImg.value,
-        onChangeInfo = {viewModel.saveInfo(context)},
-        checkDuplication = {viewModel.checkNicknameDup(it)},
-        onUpdateNickname = {viewModel.updateNickname(it)},
+        uiState = uiState,
+        errState = errState,
+        onChangeInfo = saveInfo,
+        checkDuplication = viewModel::checkNicknameDup,
         navBack = navBack
     )
 }
 
 @Composable
 fun EditProfilePage(
-    launcher: ManagedActivityResultLauncher<String, Uri?>,
-    nickname : String,
     uiState: EditProfileUiState,
-    isEnabled: Boolean,
-    isDuplicated : Boolean,
-    profileImg : String?,
-    onChangeInfo : () -> Unit,
+    errState: ErrorUiState,
+    onChangeInfo : (nickname: String, profileImg: String?) -> Unit,
     checkDuplication : (String) -> Unit,
-    onUpdateNickname : (String) -> Unit,
     navBack: () -> Unit,
 ) {
     when (uiState) {
         EditProfileUiState.Loading -> AppLoadingScreen()
-        EditProfileUiState.Success -> {
+        is EditProfileUiState.Success -> {
             EditProfileContent(
-                launcher = launcher,
-                nickname = nickname,
-                isEnabled = isEnabled,
-                isDuplicated = isDuplicated,
-                profileImg = profileImg,
+                data = uiState,
                 onChangeInfo = onChangeInfo,
                 checkDuplication = checkDuplication,
-                onUpdateNickname = onUpdateNickname,
                 navBack = navBack
             )
         }
-        is EditProfileUiState.Error -> {
-            var showDialog by remember{mutableStateOf(true)}
-            AppDefaultDialog(
-                isOpen = showDialog,
-                modifier = Modifier.fillMaxWidth(0.7f),
-                title = "오류",
-                content = uiState.message,
-                onDismiss = {
-                    showDialog = false
-                    navBack()
-                }
+        EditProfileUiState.Error -> {
+            ErrorUiSetView(
+                isOpen = true,
+                onConfirmClick = navBack,
+                errorUiState = errState,
+                onCloseClick = navBack
             )
         }
     }
@@ -122,16 +104,22 @@ fun EditProfilePage(
 
 @Composable
 private fun EditProfileContent(
-    launcher: ManagedActivityResultLauncher<String, Uri?>,
-    nickname : String,
-    isEnabled : Boolean,
-    isDuplicated : Boolean,
-    profileImg : String?,
-    onChangeInfo : () -> Unit,
-    checkDuplication : (String) -> Unit,
-    onUpdateNickname : (String) -> Unit,
-    navBack : () -> Unit,
+    data: EditProfileUiState.Success,
+    onChangeInfo: (nickname: String, profileImg: String?) -> Unit,
+    checkDuplication: (nickname: String) -> Unit,
+    navBack: () -> Unit,
 ){
+    val isDuplicated by data.isDuplicated.collectAsStateWithLifecycle()
+    LaunchedEffect(isDuplicated){ Log.d("TAG TEST", "isDup? $isDuplicated")}
+    val initNickname by data.nickname.collectAsStateWithLifecycle()
+    var profileImg by remember{mutableStateOf(data.profileImg)}
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ){
+        if (it != null){ profileImg = it.toString() }
+    }
+    val isNextEnabled by remember{derivedStateOf{!isDuplicated && profileImg != data.profileImg}}
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -171,13 +159,9 @@ private fun EditProfileContent(
             )
             Spacer(Modifier.height(6.dp))
             NicknameInput(
-                initNickname = nickname,
-                onChangeValue = onUpdateNickname,
-                onPressNicknameExist = {
-                    checkDuplication(it)
-                },
-                isAvailable = isDuplicated,
-                isEnabled = isEnabled
+                initNickname = initNickname,
+                onPressNicknameExist = checkDuplication,
+                isAvailable = isDuplicated
             )
         }
         Spacer(Modifier.weight(1f))
@@ -185,13 +169,10 @@ private fun EditProfileContent(
             buttonModifier = Modifier
                 .height(82.dp)
                 .fillMaxWidth()
-                .background(color = if (isDuplicated) Color.Black else CustomColor.gray2),
-            isEnabled = isDuplicated,
+                .background(color = if (isNextEnabled) Color.Black else CustomColor.gray2),
+            isEnabled = isNextEnabled,
             btnText = "변경",
-            onClick = {
-                onChangeInfo()
-                navBack()
-            }
+            onClick = {onChangeInfo(initNickname, profileImg)}
         )
     }
 }

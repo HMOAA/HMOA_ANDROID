@@ -18,7 +18,8 @@
 
     <application
             android:name=".App"
-            android:allowBackup="true"
+            android:allowBackup="false"
+            tools:replace="android:allowBackup, android:roundIcon"
             android:dataExtractionRules="@xml/data_extraction_rules"
             android:fullBackupContent="@xml/backup_rules"
             android:icon="@mipmap/ic_launcher"
@@ -27,7 +28,6 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.Hmoa"
             android:usesCleartextTraffic="true"
-            tools:replace="android:roundIcon"
             tools:targetApi="31">
         <activity
                 android:name=".MainActivity"

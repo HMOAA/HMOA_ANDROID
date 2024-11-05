@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,6 +68,7 @@ fun EditProfileRoute(
         errState = errState,
         onChangeInfo = saveInfo,
         checkDuplication = viewModel::checkNicknameDup,
+        resetIsDup = viewModel::resetIsDup,
         navBack = navBack
     )
 }
@@ -79,6 +79,7 @@ fun EditProfilePage(
     errState: ErrorUiState,
     onChangeInfo : (nickname: String, profileImg: String?) -> Unit,
     checkDuplication : (String) -> Unit,
+    resetIsDup: () -> Unit,
     navBack: () -> Unit,
 ) {
     when (uiState) {
@@ -88,6 +89,7 @@ fun EditProfilePage(
                 data = uiState,
                 onChangeInfo = onChangeInfo,
                 checkDuplication = checkDuplication,
+                resetIsDup = resetIsDup,
                 navBack = navBack
             )
         }
@@ -107,10 +109,10 @@ private fun EditProfileContent(
     data: EditProfileUiState.Success,
     onChangeInfo: (nickname: String, profileImg: String?) -> Unit,
     checkDuplication: (nickname: String) -> Unit,
+    resetIsDup: () -> Unit,
     navBack: () -> Unit,
 ){
-    val isDuplicated by data.isDuplicated.collectAsStateWithLifecycle()
-    LaunchedEffect(isDuplicated){ Log.d("TAG TEST", "isDup? $isDuplicated")}
+    val isDuplicated by data.isDuplicated.collectAsStateWithLifecycle(false)
     val initNickname by data.nickname.collectAsStateWithLifecycle()
     var profileImg by remember{mutableStateOf(data.profileImg)}
     val launcher = rememberLauncherForActivityResult(
@@ -118,7 +120,7 @@ private fun EditProfileContent(
     ){
         if (it != null){ profileImg = it.toString() }
     }
-    val isNextEnabled by remember{derivedStateOf{!isDuplicated && profileImg != data.profileImg}}
+    val isNextEnabled by remember{derivedStateOf{(isDuplicated != null && isDuplicated!!) || profileImg != data.profileImg}}
 
     Column(
         modifier = Modifier
@@ -161,6 +163,7 @@ private fun EditProfileContent(
             NicknameInput(
                 initNickname = initNickname,
                 onPressNicknameExist = checkDuplication,
+                clearAvailable = resetIsDup,
                 isAvailable = isDuplicated
             )
         }
@@ -172,7 +175,10 @@ private fun EditProfileContent(
                 .background(color = if (isNextEnabled) Color.Black else CustomColor.gray2),
             isEnabled = isNextEnabled,
             btnText = "변경",
-            onClick = {onChangeInfo(initNickname, profileImg)}
+            onClick = {
+                Log.d("TAG TEST", "on click event")
+                onChangeInfo(initNickname, profileImg)
+            }
         )
     }
 }

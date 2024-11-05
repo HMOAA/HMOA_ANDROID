@@ -1,7 +1,5 @@
 package com.hmoa.core_datastore
 
-import com.hmoa.core_datastore.Admin.AdminDataStore
-import com.hmoa.core_datastore.Admin.AdminDataStoreImpl
 import com.hmoa.core_datastore.Bootpay.BootpayDataStore
 import com.hmoa.core_datastore.Bootpay.BootpayDataStoreImpl
 import com.hmoa.core_datastore.Brand.BrandDataStore
@@ -59,9 +57,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 interface DatastoreModule {
-    @Singleton
-    @Binds
-    fun provideAdminDatastore(adminDataStoreImpl: AdminDataStoreImpl): AdminDataStore
 
     @Singleton
     @Binds

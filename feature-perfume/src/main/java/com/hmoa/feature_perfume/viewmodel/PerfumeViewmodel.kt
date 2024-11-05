@@ -3,10 +3,10 @@ package com.hmoa.feature_perfume.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_domain.repository.ReportRepository
@@ -134,23 +134,13 @@ class PerfumeViewmodel @Inject constructor(
                 }
 
                 is Result.Error -> {
-                    when (result.exception.message) {
-                        ErrorMessageType.EXPIRED_TOKEN.message -> {
-                            expiredTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                            wrongTypeTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.UNKNOWN_ERROR.message -> {
-                            unLoginedErrorState.update { true }
-                        }
-
-                        else -> {
-                            generalErrorState.update { Pair(true, result.exception.message) }
-                        }
-                    }
+                    handleErrorType(
+                        error = result.exception,
+                        onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                        onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                        onUnknownError = { unLoginedErrorState.update { true } },
+                        onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                    )
                 }
 
                 is Result.Loading -> {}
@@ -219,23 +209,13 @@ class PerfumeViewmodel @Inject constructor(
                     }
 
                     is Result.Error -> {
-                        when (result.exception.message) {
-                            ErrorMessageType.EXPIRED_TOKEN.message -> {
-                                expiredTokenErrorState.update { true }
-                            }
-
-                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                                wrongTypeTokenErrorState.update { true }
-                            }
-
-                            ErrorMessageType.UNKNOWN_ERROR.message -> {
-                                unLoginedErrorState.update { true }
-                            }
-
-                            else -> {
-                                generalErrorState.update { Pair(true, result.exception.message) }
-                            }
-                        }
+                        handleErrorType(
+                            error = result.exception,
+                            onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                            onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                            onUnknownError = { unLoginedErrorState.update { true } },
+                            onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                        )
                     }
                 }
             }

@@ -1,12 +1,7 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,14 +14,14 @@ import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.VerticalStepBar
 
 @Composable
-fun HbtiProcessRoute(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
+fun HbtiProcessRoute(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     HbtiProcessScreen(
         onBackClick = { onBackClick() },
-        onNoteOrderQuantityPickClick = { onNoteOrderQuantityPickClick() })
+        onNextClick = { onNextClick() })
 }
 
 @Composable
-private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
+private fun HbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White).padding(bottom = 40.dp),
         verticalArrangement = Arrangement.SpaceBetween
@@ -48,8 +43,8 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickCl
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Button(
                 isEnabled = true,
-                btnText = "향료 시향 후 향수 추천까지 받아보세요",
-                onClick = { onNoteOrderQuantityPickClick() },
+                btnText = "다음",
+                onClick = { onNextClick() },
                 buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
                 textSize = 18,
                 textColor = Color.White,
@@ -62,5 +57,5 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickCl
 @Preview
 @Composable
 private fun HbtiProcessScreenPreview() {
-    HbtiProcessScreen(onBackClick = {}, onNoteOrderQuantityPickClick = {})
+    HbtiProcessScreen(onBackClick = {}, onNextClick = {})
 }

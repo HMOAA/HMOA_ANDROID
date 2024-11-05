@@ -8,16 +8,7 @@ import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -27,13 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,22 +34,22 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.CustomOutlinedTextField
 import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.feature_hbti.BuildConfig
-import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.AddAddressViewModel
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 @Composable
 fun AddAddressRoute(
     addressJson: String?,
     productIds: String?,
+    navLogin: () -> Unit,
     navOrder: (String, String) -> Unit,
     viewModel: AddAddressViewModel = hiltViewModel()
 ) {
@@ -76,7 +61,8 @@ fun AddAddressRoute(
         onPostAddressClick = { name, addressName, phone, homePhone, postalCode, address, detailAddress, request ->
             viewModel.postAddress(name, addressName, phone, homePhone, postalCode, address, detailAddress, request)
         },
-        navOrder = {navOrder(HbtiRoute.AddAddressRoute.name, productIds ?: "")},
+        navOrder = { navOrder(HbtiRoute.AddAddressRoute.name, productIds ?: "") },
+        navLogin = navLogin
     )
     LaunchedEffect(isPostAddressCompleted) {
         if (isPostAddressCompleted) navOrder(HbtiRoute.AddAddressRoute.name, productIds ?: "")
@@ -85,17 +71,16 @@ fun AddAddressRoute(
 
 @Composable
 fun AddAddressScreen(
+    navLogin: () -> Unit,
     addressJson: String?,
     errorState: ErrorUiState,
     onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
     navOrder: () -> Unit,
 ) {
-    var isOpen by remember { mutableStateOf(true) }
 
     if (errorState is ErrorUiState.ErrorData && (errorState.expiredTokenError || errorState.wrongTypeTokenError || errorState.unknownError || errorState.generalError.first)) {
         ErrorUiSetView(
-            isOpen = isOpen,
-            onConfirmClick = navOrder,
+            onLoginClick = navLogin,
             errorUiState = errorState,
             onCloseClick = navOrder
         )
@@ -114,39 +99,50 @@ private fun AddAddressMainContent(
     onPostAddressClick: (name: String, addressName: String, phone: String, homePhone: String, postalCode: String, address: String, detailAddress: String, request: String) -> Unit,
     navOrder: () -> Unit
 ) {
-    var name by remember{ mutableStateOf("") }
-    var addressName by remember{mutableStateOf("")}
-    var phone1 by remember{mutableStateOf("")}
-    var phone2 by remember{mutableStateOf("")}
-    var phone3 by remember{mutableStateOf("")}
-    var homePhone1 by remember{mutableStateOf("")}
-    var homePhone2 by remember{mutableStateOf("")}
-    var homePhone3 by remember{mutableStateOf("")}
-    var postalCode by remember{mutableStateOf("")}
-    var address by remember{mutableStateOf("")}
-    var detailAddress by remember{mutableStateOf("")}
-    var request by remember{mutableStateOf("")}
+    var name by remember { mutableStateOf("") }
+    var addressName by remember { mutableStateOf("") }
+    var phone1 by remember { mutableStateOf("") }
+    var phone2 by remember { mutableStateOf("") }
+    var phone3 by remember { mutableStateOf("") }
+    var homePhone1 by remember { mutableStateOf("") }
+    var homePhone2 by remember { mutableStateOf("") }
+    var homePhone3 by remember { mutableStateOf("") }
+    var postalCode by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var detailAddress by remember { mutableStateOf("") }
+    var request by remember { mutableStateOf("") }
 
     val scrollState = rememberScrollState()
-    var showWebView by remember{mutableStateOf(false)}
-    var isEnabled = remember{ derivedStateOf{
-        name.isNotEmpty() && addressName.isNotEmpty()
-                && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
-                && homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
-                && postalCode.isNotEmpty() && address.isNotEmpty()
-                && detailAddress.isNotEmpty() && request.isNotEmpty()
-    }}
-    LaunchedEffect(Unit){
-        if (!addressJson.isNullOrEmpty() && addressJson != "NULL"){
+    var showWebView by remember { mutableStateOf(false) }
+    var isEnabled = remember {
+        derivedStateOf {
+            name.isNotEmpty() && addressName.isNotEmpty()
+                    && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
+                    && homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
+                    && postalCode.isNotEmpty() && address.isNotEmpty()
+                    && detailAddress.isNotEmpty() && request.isNotEmpty()
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (!addressJson.isNullOrEmpty() && addressJson != "NULL") {
             val initAddress = Json.decodeFromString<DefaultAddressDto>(addressJson)
             name = initAddress.name
             addressName = initAddress.addressName
-            phone1 = initAddress.phoneNumber.substring(0,3)
-            phone2 = initAddress.phoneNumber.substring(4,8)
-            phone3 = initAddress.phoneNumber.substring(9,12)
-            homePhone1 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(0,3) else initAddress.landlineNumber.substring(0,2)
-            homePhone2 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(4,8) else initAddress.landlineNumber.substring(3,7)
-            homePhone3 = if(initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(9,13) else initAddress.landlineNumber.substring(8,12)
+            phone1 = initAddress.phoneNumber.substring(0, 3)
+            phone2 = initAddress.phoneNumber.substring(4, 8)
+            phone3 = initAddress.phoneNumber.substring(9, 12)
+            homePhone1 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(
+                0,
+                3
+            ) else initAddress.landlineNumber.substring(0, 2)
+            homePhone2 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(
+                4,
+                8
+            ) else initAddress.landlineNumber.substring(3, 7)
+            homePhone3 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(
+                9,
+                13
+            ) else initAddress.landlineNumber.substring(8, 12)
             postalCode = initAddress.zipCode
             address = initAddress.streetAddress
             detailAddress = initAddress.detailAddress
@@ -156,7 +152,7 @@ private fun AddAddressMainContent(
     BackHandler(
         enabled = true,
         onBack = {
-            if(showWebView) showWebView = false
+            if (showWebView) showWebView = false
             else navOrder()
         }
     )
@@ -166,13 +162,13 @@ private fun AddAddressMainContent(
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        if (showWebView){
+        if (showWebView) {
             AddressWebView(
                 onUpdateAddress = { newZoneCode, newAddress ->
                     postalCode = newZoneCode
                     address = newAddress
                 },
-                onDismiss = {showWebView = false}
+                onDismiss = { showWebView = false }
             )
         }
         TopBar(
@@ -221,8 +217,8 @@ private fun AddAddressMainContent(
                 postalCode = postalCode,
                 address = address,
                 detailAddress = detailAddress,
-                onShowWebViewClick = {showWebView = true},
-                onUpdateDetailAddress = {detailAddress = it}
+                onShowWebViewClick = { showWebView = true },
+                onUpdateDetailAddress = { detailAddress = it }
             )
             InputRequest(
                 request = request,
@@ -315,7 +311,11 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone1,
-                onValueChanged = { if(it.length <= 3) {onPhone1Change(it)} },
+                onValueChanged = {
+                    if (it.length <= 3) {
+                        onPhone1Change(it)
+                    }
+                },
                 color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -341,7 +341,11 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone2,
-                onValueChanged = { if(it.length <= 4) {onPhone2Change(it)} },
+                onValueChanged = {
+                    if (it.length <= 4) {
+                        onPhone2Change(it)
+                    }
+                },
                 color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -367,7 +371,11 @@ private fun InputPhone(
                     .weight(1f)
                     .height(44.dp),
                 value = phone3,
-                onValueChanged = { if(it.length <= 4) {onPhone3Change(it)} },
+                onValueChanged = {
+                    if (it.length <= 4) {
+                        onPhone3Change(it)
+                    }
+                },
                 color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -449,7 +457,11 @@ private fun InputHomePhone(
                     .weight(1f)
                     .height(44.dp),
                 value = homePhone1,
-                onValueChanged = { if(it.length <= 3) {onHomePhone1Change(it)} },
+                onValueChanged = {
+                    if (it.length <= 3) {
+                        onHomePhone1Change(it)
+                    }
+                },
                 color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -475,7 +487,11 @@ private fun InputHomePhone(
                     .weight(1f)
                     .height(44.dp),
                 value = homePhone2,
-                onValueChanged = { if(it.length <= 4) {onHomePhone2Change(it)} },
+                onValueChanged = {
+                    if (it.length <= 4) {
+                        onHomePhone2Change(it)
+                    }
+                },
                 color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -501,7 +517,11 @@ private fun InputHomePhone(
                     .weight(1f)
                     .height(44.dp),
                 value = homePhone3,
-                onValueChanged = { if(it.length <= 4) {onHomePhone3Change(it)} },
+                onValueChanged = {
+                    if (it.length <= 4) {
+                        onHomePhone3Change(it)
+                    }
+                },
                 color = Color.Black,
                 fontSize = 12.sp,
                 fontFamily = CustomFont.medium,
@@ -527,7 +547,7 @@ private fun InputAddress(
     detailAddress: String,
     onUpdateDetailAddress: (detailAddress: String) -> Unit,
     onShowWebViewClick: () -> Unit,
-){
+) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -634,12 +654,13 @@ private fun InputAddress(
 private fun AddressWebView(
     onUpdateAddress: (zoneCode: String, address: String) -> Unit,
     onDismiss: () -> Unit,
-){
+) {
     val context = LocalContext.current
-    class MyJavaScriptInterface{
+
+    class MyJavaScriptInterface {
         @JavascriptInterface
         @Suppress("unused")
-        fun processData(zoneCode: String, address: String){
+        fun processData(zoneCode: String, address: String) {
             onUpdateAddress(zoneCode, address)
             onDismiss()
         }
@@ -647,7 +668,7 @@ private fun AddressWebView(
 
     AndroidView(
         factory = {
-            WebView(context).apply{
+            WebView(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
@@ -655,7 +676,7 @@ private fun AddressWebView(
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
                 addJavascriptInterface(MyJavaScriptInterface(), "Android")
-                webViewClient = object: WebViewClient(){
+                webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         loadUrl("javascript:sample2_execDaumPostcode();")
                     }
@@ -708,6 +729,7 @@ private fun UiTest() {
         onPostAddressClick = { a, b, c, d, e, f, g, h ->
 
         },
-        addressJson = null
+        addressJson = null,
+        navLogin = {}
     )
 }

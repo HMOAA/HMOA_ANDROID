@@ -9,73 +9,70 @@ import com.google.gson.GsonBuilder
 import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.feature_hbti.screen.AddAddressRoute
-import com.hmoa.feature_hbti.screen.EditReviewRoute
-import com.hmoa.feature_hbti.screen.HbtiProcessRoute
-import com.hmoa.feature_hbti.screen.HbtiRoute
-import com.hmoa.feature_hbti.screen.HbtiSurveyResultLoading
-import com.hmoa.feature_hbti.screen.HbtiSurveyResultRoute
-import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
-import com.hmoa.feature_hbti.screen.NoteOrderQuantityPickRoute
-import com.hmoa.feature_hbti.screen.NotePickResultRoute
-import com.hmoa.feature_hbti.screen.NotePickRoute
-import com.hmoa.feature_hbti.screen.OrderResultRoute
-import com.hmoa.feature_hbti.screen.OrderRoute
-import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
-import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
-import com.hmoa.feature_hbti.screen.ReviewRoute
-import com.hmoa.feature_hbti.screen.WriteReviewRoute
+import com.hmoa.feature_hbti.screen.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}"){launchSingleTop = true}
-fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}"){launchSingleTop = true}
+fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}") { launchSingleTop = true }
+fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}") { launchSingleTop = true }
 fun NavController.navigateToHbtiSurveyResult() =
-    navigate("${HbtiRoute.HbtiSurveyResult}"){launchSingleTop = true}
-fun NavController.navigateToHbtiSurveyLoading() =
-    navigate("${HbtiRoute.HbtiSurveyLoading}"){launchSingleTop = true}
-fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}"){launchSingleTop = true}
-fun NavController.navigateToNoteOrderQuantityPick() =
-    navigate("${HbtiRoute.NoteOrderQuantityPick}"){launchSingleTop = true}
+    navigate("${HbtiRoute.HbtiSurveyResult}") { launchSingleTop = true }
 
-fun NavController.navigateToNotePick(noteOrderQuantity: NoteOrderQuantity) =
-    navigate("${HbtiRoute.NotePick}/${noteOrderQuantity.number}"){launchSingleTop = true}
-fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name){launchSingleTop = true}
-fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name){launchSingleTop = true}
+fun NavController.navigateToHbtiSurveyLoading() =
+    navigate("${HbtiRoute.HbtiSurveyLoading}")
+
+fun NavController.navigateToHbtiProcess() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.HbtiProcess}")
+
+fun NavController.navigateToNotePick() =
+    navigate("${HbtiRoute.NotePick}")
+
+fun NavController.navigateToPerfumeRecommendation() = navigate(HbtiRoute.PerfumeRecommendationRoute.name)
+fun NavController.navigateToPerfumeRecommendationResult() = navigate(HbtiRoute.PerfumeRecommendationResultRoute.name)
 fun NavController.navigateToNotePickResult(productIdsToJson: String) =
-    navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}"){launchSingleTop = true}
+    navigate("${HbtiRoute.NotePickResultRoute.name}/${productIdsToJson}") { launchSingleTop = true }
+
 fun NavController.navigateToOrder(fromRoute: String, productIdsToJson: String) =
-    if (fromRoute == HbtiRoute.NotePickResultRoute.name){
-        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}"){launchSingleTop = true}
-    } else{
-        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}"){
-            popUpTo("${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}"){inclusive = true}
+    if (fromRoute == HbtiRoute.NotePickResultRoute.name) {
+        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}") { launchSingleTop = true }
+    } else {
+        navigate("${HbtiRoute.OrderRoute.name}/${productIdsToJson}") {
+            popUpTo("${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}") { inclusive = true }
             launchSingleTop = true
         }
     }
-fun NavController.navigateToAddAddress(addressJson: String, productIds: String) = navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}/${productIds}"){
-    popUpTo("${HbtiRoute.OrderRoute.name}/{productIdsToJson}"){inclusive = true}
-    launchSingleTop = true
-}
-fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name){launchSingleTop = true}
+
+fun NavController.navigateToAddAddress(addressJson: String, productIds: String) =
+    navigate("${HbtiRoute.AddAddressRoute.name}/${addressJson}/${productIds}") {
+        popUpTo("${HbtiRoute.OrderRoute.name}/{productIdsToJson}") { inclusive = true }
+        launchSingleTop = true
+    }
+
+fun NavController.navigateToOrderResult() = navigate(HbtiRoute.OrderResultRoute.name) { launchSingleTop = true }
+
 //주문 리뷰 작성
-fun NavController.navigateToWriteReview(orderId: Int) = navigate("${HbtiRoute.WriteReviewRoute.name}/${orderId}"){launchSingleTop = true}
+fun NavController.navigateToWriteReview(orderId: Int) =
+    navigate("${HbtiRoute.WriteReviewRoute.name}/${orderId}") { launchSingleTop = true }
+
 //리뷰 모음 화면
-fun NavController.navigateToReview(befRoute: HbtiRoute) = navigate(HbtiRoute.ReviewRoute.name){
-    if(befRoute == HbtiRoute.WriteReviewRoute){
-        popUpTo("${HbtiRoute.WriteReviewRoute.name}/{orderId}"){inclusive = true}
-    } else if (befRoute == HbtiRoute.EditReviewRoute){
-        popUpTo("${HbtiRoute.EditReviewRoute.name}/{reviewId}") {inclusive = true}
+fun NavController.navigateToReview(befRoute: HbtiRoute) = navigate(HbtiRoute.ReviewRoute.name) {
+    if (befRoute == HbtiRoute.WriteReviewRoute) {
+        popUpTo("${HbtiRoute.WriteReviewRoute.name}/{orderId}") { inclusive = true }
+    } else if (befRoute == HbtiRoute.EditReviewRoute) {
+        popUpTo("${HbtiRoute.EditReviewRoute.name}/{reviewId}") { inclusive = true }
     }
     launchSingleTop = true
 }
+
 //리뷰 수정 화면
-fun NavController.navigateToEditReview(reviewId: Int) = navigate("${HbtiRoute.EditReviewRoute.name}/${reviewId}"){launchSingleTop = true}
+fun NavController.navigateToEditReview(reviewId: Int) =
+    navigate("${HbtiRoute.EditReviewRoute.name}/${reviewId}") { launchSingleTop = true }
+
 fun NavGraphBuilder.hbtiScreen(
     onHbtiSurveyClick: () -> Unit,
     onAfterOrderClick: () -> Unit,
     navBack: () -> Unit,
     navHome: () -> Unit,
+    navLogin: () -> Unit,
     navReview: (befRoute: HbtiRoute) -> Unit
 ) {
     composable(route = "${HbtiRoute.Hbti}") {
@@ -85,7 +82,8 @@ fun NavGraphBuilder.hbtiScreen(
             navBack = navBack,
             navHome = navHome,
             navReview = navReview,
-            navEditReview = {}
+            navEditReview = {},
+            navLogin = navLogin,
         )
     }
 }
@@ -104,11 +102,11 @@ fun NavGraphBuilder.hbtiSurveyScreen(
     }
 }
 
-fun NavGraphBuilder.hbtiSurveyLoadingScreen(onNextScreen: () -> Unit) {
+fun NavGraphBuilder.hbtiSurveyLoadingScreen(onNextScreen: () -> Unit, onBackClick: () -> Unit) {
     composable(
         route = "${HbtiRoute.HbtiSurveyLoading}",
     ) {
-        HbtiSurveyResultLoading(onNextScreen = { onNextScreen() })
+        HbtiSurveyResultLoading(onNextScreen = { onNextScreen() }, onBackClick = onBackClick)
     }
 }
 
@@ -128,20 +126,11 @@ fun NavGraphBuilder.hbtiSurveyResultScreen(
     }
 }
 
-fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNoteOrderQuantityPickClick: () -> Unit) {
+fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.HbtiProcess}") {
         HbtiProcessRoute(
             onBackClick = { onBackClick() },
-            onNoteOrderQuantityPickClick = { onNoteOrderQuantityPickClick() })
-    }
-}
-
-fun NavGraphBuilder.noteOrderQuantityPickScreen(
-    onBackClick: () -> Unit,
-    onNextClick: (noteOrderQuantity: NoteOrderQuantity) -> Unit
-) {
-    composable(route = "${HbtiRoute.NoteOrderQuantityPick}") {
-        NoteOrderQuantityPickRoute(onBackClick = { onBackClick() }, onNextClick = { onNextClick(it) })
+            onNextClick = { onNextClick() })
     }
 }
 
@@ -151,15 +140,10 @@ fun NavGraphBuilder.notePickScreen(
     onErrorHandleLoginAgain: () -> Unit,
     onBackToHbtiScreen: () -> Unit,
 ) {
-    composable(
-        route = "${HbtiRoute.NotePick}/{noteOrderQuantity}",
-        arguments = listOf(navArgument("noteOrderQuantity") { type = NavType.IntType })
-    ) {
-        val noteOrderQuantity = it.arguments?.getInt("noteOrderQuantity")
+    composable(route = "${HbtiRoute.NotePick}") {
         NotePickRoute(
             onBackClick = { onBackClick() },
             onNextClick = onNextClick,
-            noteOrderQuantity = noteOrderQuantity,
             onErrorHandleLoginAgain = { onErrorHandleLoginAgain() },
             onBackToHbtiScreen = onBackToHbtiScreen
         )
@@ -197,13 +181,15 @@ fun NavGraphBuilder.perfumeRecommendationRoute(onBackClick: () -> Unit, onNextCl
 fun NavGraphBuilder.perfumeRecommendationResultRoute(
     onBackClick: () -> Unit,
     navPerfumeDescription: (id: Int) -> Unit,
-    navHome: () -> Unit
+    navHome: () -> Unit,
+    navLogin: () -> Unit
 ) {
     composable(route = HbtiRoute.PerfumeRecommendationResultRoute.name) {
         PerfumeRecommendationResultRoute(
             navBack = { onBackClick() },
             navPerfume = { id -> navPerfumeDescription(id) },
-            navHome = { navHome() }
+            navHome = { navHome() },
+            navLogin = navLogin
         )
     }
 }
@@ -211,21 +197,24 @@ fun NavGraphBuilder.order(
     navBack: () -> Unit,
     navAddAddress: (String, String) -> Unit,
     navOrderResult: () -> Unit,
+    navLogin: () -> Unit
 ) {
     composable(route = "${HbtiRoute.OrderRoute.name}/{productIdsToJson}") {
         val productIdsToJson = it.arguments?.getString("productIdsToJson") ?: ""
         val productIds = Json.decodeFromString<NoteProductIds>(productIdsToJson)
         OrderRoute(
             productIds = productIds.productIds,
-            onNavBack = navBack,
+            navBack = navBack,
             navAddAddress = navAddAddress,
-            navOrderResult = navOrderResult
+            navOrderResult = navOrderResult,
+            navLogin = navLogin
         )
     }
 }
 
 fun NavGraphBuilder.addAddress(
-    navOrder: (String, String) -> Unit
+    navOrder: (String, String) -> Unit,
+    navLogin: () -> Unit
 ) {
     composable(
         route = "${HbtiRoute.AddAddressRoute.name}/{addressJson}/{productIds}",
@@ -239,7 +228,8 @@ fun NavGraphBuilder.addAddress(
         AddAddressRoute(
             addressJson = addressJson,
             productIds = productIds,
-            navOrder = navOrder
+            navOrder = navOrder,
+            navLogin = navLogin
         )
     }
 }
@@ -280,6 +270,7 @@ fun NavGraphBuilder.writeReview(
 fun NavGraphBuilder.review(
     navBack: () -> Unit,
     navEditReview: (Int) -> Unit,
+    navLogin: () -> Unit,
     navWriteReview: (reviewId: Int) -> Unit
 ){
     composable(
@@ -288,12 +279,13 @@ fun NavGraphBuilder.review(
         ReviewRoute(
             navBack = navBack,
             navEditReview = navEditReview,
-            navWriteReview = navWriteReview
+            navWriteReview = navWriteReview,
+            navLogin = navLogin,
         )
     }
 }
 
-fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit){
+fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit, navLogin: () -> Unit){
     composable(
         route = "${HbtiRoute.EditReviewRoute.name}/{reviewId}",
         arguments = listOf(navArgument("reviewId"){type = NavType.IntType})
@@ -301,7 +293,8 @@ fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit){
         val reviewId = it.arguments?.getInt("reviewId")
         EditReviewRoute(
             reviewId = reviewId,
-            navReview = navReview
+            navReview = navReview,
+            navLogin = navLogin
         )
     }
 }

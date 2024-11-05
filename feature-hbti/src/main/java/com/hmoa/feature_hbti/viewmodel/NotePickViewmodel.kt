@@ -3,9 +3,9 @@ package com.hmoa.feature_hbti.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,13 +22,13 @@ class NotePickViewmodel @Inject constructor(
     private var _topRecommendedNoteState = MutableStateFlow<String>("")
     private var _noteProductsState = MutableStateFlow<ProductListResponseDto?>(null)
     private var _noteSelectDataState = MutableStateFlow<List<NoteSelect>>(listOf())
+    private var _isNextButtonAvailableState = MutableStateFlow<Boolean>(false)
     val topRecommendedNoteState: StateFlow<String> = _topRecommendedNoteState
     val noteProductState: StateFlow<ProductListResponseDto?> = _noteProductsState
     val noteSelectDataState: StateFlow<List<NoteSelect>> = _noteSelectDataState
+    val isNextButtonAvailableState: StateFlow<Boolean> = _isNextButtonAvailableState
     val selectedIds = MutableStateFlow<List<Int>>(emptyList())
     private var _noteOrderIndex = MutableStateFlow<Int>(1)
-    private var _isCompletedNoteSelected = MutableStateFlow<Boolean>(false)
-    val isCompletedNoteSelected: StateFlow<Boolean> = _isCompletedNoteSelected
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -108,7 +108,10 @@ class NotePickViewmodel @Inject constructor(
     }
 
     suspend fun getNoteProducts() {
-        flow { emit(hshopRepository.getNotesProduct()) }.asResult().collectLatest { result ->
+        flow {
+            val result = hshopRepository.getNotesProduct()
+            result.emitOrThrow { emit(it) }
+        }.asResult().collectLatest { result ->
             when (result) {
                 is com.hmoa.core_common.Result.Success -> {
                     viewModelScope.launch(Dispatchers.IO) {
@@ -133,7 +136,7 @@ class NotePickViewmodel @Inject constructor(
         }
     }
 
-    fun postNoteSelected() {
+    fun postNoteSelected(onSuccess: () -> Unit) {
         val requestDto = _noteSelectDataState.value.filter { it.isSelected }.map { it.productId }
         selectedIds.update { requestDto }
         viewModelScope.launch(Dispatchers.IO) {
@@ -156,7 +159,7 @@ class NotePickViewmodel @Inject constructor(
 
                         Result.Loading -> {}
                         is Result.Success -> {
-                            _isCompletedNoteSelected.update { true }
+                            viewModelScope.launch(Dispatchers.Main) { onSuccess() }
                         }
                     }
                 }
@@ -167,36 +170,28 @@ class NotePickViewmodel @Inject constructor(
         index: Int,
         value: Boolean,
         data: NoteSelect,
-        noteOrderQuantity: Int,
-        selectedNotesOrderQuantity: Int
     ) {
-        if (isAvailableToAddNoteSelect(selectedNotesOrderQuantity, noteOrderQuantity) || isAvailableToCancelNoteSelect(
-                selectedNotesOrderQuantity,
-                noteOrderQuantity,
-                value
-            )
-        ) {
-            var noteSelectData = makeDeepCopyOfNoteSelectData(_noteSelectDataState.value)
-            noteSelectData = changeNoteSelectData(index, value, data, noteSelectData)
-            noteSelectData = reorderNoteFaceIndex(noteSelectData)
-            _noteSelectDataState.update { noteSelectData }
-            _noteOrderIndex.update { countSelectedNote(noteSelectData) }
+        var noteSelectData = makeDeepCopyOfNoteSelectData(_noteSelectDataState.value)
+        noteSelectData = changeNoteSelectData(index, value, data, noteSelectData)
+        noteSelectData = reorderNoteFaceIndex(noteSelectData)
+        _noteSelectDataState.update { noteSelectData }
+        _noteOrderIndex.update { countSelectedNote(noteSelectData) }
+        handleIsNextButtonAvailableState(noteSelectData = noteSelectData)
+    }
+
+    fun handleIsNextButtonAvailableState(noteSelectData: MutableList<NoteSelect>) {
+        val noteSelectedCount = countSelectedNote(noteSelectData)
+        if (noteSelectedCount == 0) {
+            _isNextButtonAvailableState.update { false }
+        } else {
+            _isNextButtonAvailableState.update { true }
         }
     }
 
-    fun isAvailableToCancelNoteSelect(
-        selectedNotesOrderQuantity: Int,
-        noteOrderQuantity: Int,
+    fun cancelNoteSelect(
         value: Boolean
     ): Boolean {
-        if ((selectedNotesOrderQuantity == noteOrderQuantity) && value == false) {
-            return true
-        }
-        return false
-    }
-
-    fun isAvailableToAddNoteSelect(selectedNotesOrderQuantity: Int, noteOrderQuantity: Int): Boolean {
-        if (selectedNotesOrderQuantity < noteOrderQuantity) {
+        if (value == false) {
             return true
         }
         return false

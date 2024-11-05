@@ -1,21 +1,11 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -29,17 +19,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.gson.GsonBuilder
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.NoteSelectedDescription
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.core_model.response.Note
 import com.hmoa.core_model.response.NoteProduct
 import com.hmoa.core_model.response.PostNoteSelectedResponseDto
-import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.NotePickResultState
 import com.hmoa.feature_hbti.viewmodel.NotePickResultViewModel
 
@@ -76,7 +62,6 @@ fun NotePickResultScreen(
     onNextClick: () -> Unit,
     onBackToHbtiScreen: () -> Unit,
 ) {
-    val isOpen by remember { mutableStateOf(true) }
 
     when (uiState) {
         NotePickResultState.Loading -> AppLoadingScreen()
@@ -91,8 +76,7 @@ fun NotePickResultScreen(
 
         is NotePickResultState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = { onBackToHbtiScreen() },
+                onLoginClick = { onBackToHbtiScreen() },
                 errorUiState = errState,
                 onCloseClick = { onBackToHbtiScreen() }
             )

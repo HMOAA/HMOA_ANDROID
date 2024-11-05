@@ -4,8 +4,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -78,7 +76,8 @@ private fun HomeScreen(
                         isEnabled = true,
                         btnText = "# 향bti 검사하기",
                         onClick = { onHbtiClick() },
-                        buttonModifier = Modifier.background(color = Color.Black).fillMaxWidth(0.9f).height(47.dp),
+                        buttonModifier = Modifier.background(color = CustomColor.gray4).fillMaxWidth(0.9f)
+                            .height(47.dp),
                         textColor = Color.White,
                         textSize = 14,
                         radious = 8
@@ -325,7 +324,13 @@ fun ImageWithTitleView(
             backgroundColor = CustomColor.gray8,
             contentScale = ContentScale.Fit
         )
-        Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 10.sp, modifier = Modifier.padding(8.dp), fontFamily = CustomFont.regular)
+        Text(
+            text = title,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 10.sp,
+            modifier = Modifier.padding(8.dp),
+            fontFamily = CustomFont.regular
+        )
     }
 }
 

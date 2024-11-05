@@ -1,14 +1,7 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -24,12 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.Spinner
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.YearPickerDialog
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.viewModel.MyBirthUiState
 import com.hmoa.feature_userinfo.viewModel.MyBirthViewModel
@@ -44,25 +34,28 @@ fun MyBirthRoute(
     val availableYearRange = (1950..LocalDateTime.now().year).toList()
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val isEnabled = viewModel.isEnabled.collectAsStateWithLifecycle(false)
     val birth = viewModel.birth.collectAsStateWithLifecycle()
 
     MyBirthPage(
         availableYearRange = availableYearRange,
         uiState = uiState.value,
+        errorState = errorState.value,
         birth = birth.value,
         isEnabled = isEnabled.value,
-        onUpdateBirth = {viewModel.updateBirth(it)},
-        onSaveBirth = {viewModel.saveBirth()},
+        onUpdateBirth = { viewModel.updateBirth(it) },
+        onSaveBirth = { viewModel.saveBirth() },
         navBack = navBack
     )
 }
 
 @Composable
 fun MyBirthPage(
-    availableYearRange : List<Int>,
+    availableYearRange: List<Int>,
     uiState: MyBirthUiState,
-    birth : Int?,
+    errorState: ErrorUiState,
+    birth: Int?,
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
@@ -80,8 +73,13 @@ fun MyBirthPage(
                 navBack = navBack
             )
         }
+
         MyBirthUiState.Error -> {
-            Text("Error : 뭐징")
+            ErrorUiSetView(
+                onLoginClick = navBack,
+                errorUiState = errorState,
+                onCloseClick = navBack
+            )
         }
     }
 }
@@ -89,17 +87,17 @@ fun MyBirthPage(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SelectBirthContent(
-    availableYearRange : List<Int>,
-    birth : Int,
+    availableYearRange: List<Int>,
+    birth: Int,
     isEnabled: Boolean,
     onUpdateBirth: (Int) -> Unit,
     onSaveBirth: () -> Unit,
     navBack: () -> Unit
-){
+) {
     val scope = rememberCoroutineScope()
     val modalSheetState = androidx.compose.material.rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
-        confirmValueChange = {it!=ModalBottomSheetValue.HalfExpanded},
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     )
     ModalBottomSheetLayout(
@@ -110,15 +108,15 @@ private fun SelectBirthContent(
                     .fillMaxHeight()
                     .background(CustomColor.gray4),
                 verticalArrangement = Arrangement.Bottom
-            ){
+            ) {
                 YearPickerDialog(
                     yearList = availableYearRange,
                     initialValue = birth,
                     height = 370.dp,
-                    onDismiss = {scope.launch{modalSheetState.hide()}},
+                    onDismiss = { scope.launch { modalSheetState.hide() } },
                     onDoneClick = {
                         onUpdateBirth(it)
-                        scope.launch{modalSheetState.hide()}
+                        scope.launch { modalSheetState.hide() }
                     }
                 )
             }
@@ -152,7 +150,7 @@ private fun SelectBirthContent(
                     width = 152.dp,
                     height = 46.dp,
                     value = birth,
-                    onClick = {scope.launch{modalSheetState.show()}},
+                    onClick = { scope.launch { modalSheetState.show() } },
                     placeholder = "선택"
                 )
             }

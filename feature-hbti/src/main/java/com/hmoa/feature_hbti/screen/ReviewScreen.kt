@@ -3,11 +3,7 @@ package com.hmoa.feature_hbti.screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -33,13 +29,7 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.EditModal
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.FloatingActionBtn
-import com.hmoa.core_designsystem.component.ReportModal
-import com.hmoa.core_designsystem.component.ReviewItem
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.Photo
 import com.hmoa.core_model.response.ReviewResponseDto
@@ -51,10 +41,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun ReviewRoute(
     navBack: () -> Unit,
+    navLogin: () -> Unit,
     navWriteReview: (orderId: Int) -> Unit,
     navEditReview: (reviewId: Int) -> Unit,
     viewModel: ReviewViewModel = hiltViewModel()
-){
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
     ReviewScreen(
@@ -66,7 +57,8 @@ fun ReviewRoute(
         onDeleteClick = viewModel::deleteReview,
         onEditClick = navEditReview,
         onReportClick = viewModel::reportReview,
-        handleNoDateError = viewModel::handleNoDateError
+        handleNoDateError = viewModel::handleNoDateError,
+        navLogin = navLogin
     )
 }
 
@@ -75,14 +67,15 @@ fun ReviewScreen(
     uiState: ReviewUiState,
     errState: ErrorUiState,
     navBack: () -> Unit,
+    navLogin: () -> Unit,
     navWriteReview: (orderId: Int) -> Unit,
     onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
     onDeleteClick: (reviewId: Int) -> Unit,
     onEditClick: (reviewId: Int) -> Unit,
     onReportClick: (reviewId: Int) -> Unit,
     handleNoDateError: () -> Unit,
-){
-    when(uiState){
+) {
+    when (uiState) {
         ReviewUiState.Loading -> AppLoadingScreen()
         is ReviewUiState.Success -> {
             ReviewContent(
@@ -98,10 +91,10 @@ fun ReviewScreen(
                 handleNoDateError = handleNoDateError
             )
         }
+
         ReviewUiState.Error -> {
             ErrorUiSetView(
-                isOpen = true,
-                onConfirmClick = navBack,
+                onLoginClick = navLogin,
                 errorUiState = errState,
                 onCloseClick = navBack
             )
@@ -122,23 +115,23 @@ private fun ReviewContent(
     onReportClick: (reviewId: Int) -> Unit,
     onFABClick: (orderId: Int) -> Unit,
     handleNoDateError: () -> Unit
-){
-    var isFabOpen by remember{mutableStateOf(false)}
+) {
+    var isFabOpen by remember { mutableStateOf(false) }
     val modalSheetState = androidx.compose.material.rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
-    val animatedAlpha by animateFloatAsState(targetValue = if(isFabOpen) 0.4f else 1.0f, label = "fab open animation")
+    val animatedAlpha by animateFloatAsState(targetValue = if (isFabOpen) 0.4f else 1.0f, label = "fab open animation")
     val scope = rememberCoroutineScope()
-    val dialogOpen = {scope.launch { modalSheetState.show() }}
+    val dialogOpen = { scope.launch { modalSheetState.show() } }
     val dialogClose = { scope.launch { modalSheetState.hide() } }
-    var selectedReview by remember{mutableStateOf<ReviewResponseDto?>(null)}
-    val onFabItemClick = orderIds.map{{onFABClick(it)}}
+    var selectedReview by remember { mutableStateOf<ReviewResponseDto?>(null) }
+    val onFabItemClick = orderIds.map { { onFABClick(it) } }
 
     BackHandler(
         enabled = true,
         onBack = {
-            if (modalSheetState.currentValue == ModalBottomSheetValue.Expanded){
+            if (modalSheetState.currentValue == ModalBottomSheetValue.Expanded) {
                 dialogClose()
             } else onBackClick()
         }
@@ -148,7 +141,7 @@ private fun ReviewContent(
         modifier = Modifier.fillMaxSize(),
         sheetState = modalSheetState,
         sheetContent = {
-            if(selectedReview != null){
+            if (selectedReview != null) {
                 if (selectedReview!!.isWrited) {
                     EditModal(
                         onDeleteClick = {
@@ -171,17 +164,17 @@ private fun ReviewContent(
         },
         sheetBackgroundColor = CustomColor.gray2,
         sheetContentColor = Color.Transparent
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color.Black)
-        ){
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .alpha(animatedAlpha),
-            ){
+            ) {
                 TopBar(
                     color = Color.Black,
                     title = "향BTI 후기",
@@ -195,14 +188,14 @@ private fun ReviewContent(
                         .fillMaxSize()
                         .padding(horizontal = 16.dp, vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
-                ){
+                ) {
                     items(
-                        key = {review -> review!!.hbtiReviewId},
+                        key = { review -> review!!.hbtiReviewId },
                         items = reviews,
                         contentType = { _ -> ReviewResponseDto }
-                    ){review ->
-                        if (review != null){
-                            val images = remember(review.hbtiPhotos){review.hbtiPhotos.map{it.photoUrl}}
+                    ) { review ->
+                        if (review != null) {
+                            val images = remember(review.hbtiPhotos) { review.hbtiPhotos.map { it.photoUrl } }
                             ReviewItem(
                                 isItemClickable = false,
                                 reviewId = review.hbtiReviewId,
@@ -219,7 +212,7 @@ private fun ReviewContent(
                                     selectedReview = review
                                     dialogOpen()
                                 },
-                                onItemClick = { /* 미사용 */}
+                                onItemClick = { /* 미사용 */ }
                             )
                         }
                     }
@@ -230,7 +223,7 @@ private fun ReviewContent(
                     .fillMaxSize()
                     .padding(end = 24.dp, bottom = 18.dp),
                 contentAlignment = Alignment.BottomEnd
-            ){
+            ) {
                 FloatingActionBtn(
                     options = orderInfos,
                     events = onFabItemClick,
@@ -239,8 +232,11 @@ private fun ReviewContent(
                     isAvailable = true,
                     isFabOpen = isFabOpen,
                     onFabClick = {
-                        if (orderInfos.isEmpty()){handleNoDateError()}
-                        else {isFabOpen = it}
+                        if (orderInfos.isEmpty()) {
+                            handleNoDateError()
+                        } else {
+                            isFabOpen = it
+                        }
                     }
                 )
             }
@@ -250,10 +246,10 @@ private fun ReviewContent(
 
 @Preview
 @Composable
-private fun ReviewUiTest(){
+private fun ReviewUiTest() {
     ReviewScreen(
         uiState = ReviewUiState.Success(
-            reviews = flow{
+            reviews = flow {
                 emit(
                     PagingData.from(
                         data = listOf(
@@ -305,11 +301,12 @@ private fun ReviewUiTest(){
         ),
         errState = ErrorUiState.Loading,
         navBack = {},
-        onHeartClick = {a,b -> },
+        onHeartClick = { a, b -> },
         navWriteReview = {},
         handleNoDateError = {},
         onReportClick = {},
         onDeleteClick = {},
-        onEditClick = {}
+        onEditClick = {},
+        navLogin = {}
     )
 }

@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun Comment(
@@ -29,16 +30,22 @@ fun Comment(
     comment: String,
     isFirst: Boolean,
     isSelected: Boolean,
-    onChangeSelect: () -> Unit,
     heartCount: Int,
+    onHeartClick: (Boolean) -> Unit,
     onOpenBottomDialog: () -> Unit,
     navCommunity: () -> Unit,
 ) {
+    var isLiked by remember { mutableStateOf(isSelected) }
+    var heartCount by remember { mutableStateOf(heartCount) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White)
-            .clickable {navCommunity()}
+            .clickable {
+                navCommunity()
+            }
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)
     ) {
         Spacer(Modifier.height(11.dp))
 
@@ -52,9 +59,9 @@ fun Comment(
                 text = nickname,
                 fontSize = 14.sp,
                 lineHeight = 14.sp,
-                fontWeight = FontWeight(400),
-                color = Color.Black,
-                fontFamily = CustomFont.regular
+                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                color = Color.Black
             )
             Spacer(Modifier.width(7.dp))
             if (isFirst) {
@@ -74,7 +81,6 @@ fun Comment(
                 fontSize = 12.sp,
                 lineHeight = 19.6.sp,
                 fontWeight = FontWeight(300),
-                fontFamily = CustomFont.regular,
                 color = CustomColor.gray3
             )
             Spacer(Modifier.weight(1f))
@@ -87,13 +93,16 @@ fun Comment(
             ) {
                 if (isEditable) {
                     IconButton(
-                        modifier = Modifier.size(16.dp),
-                        onClick = onChangeSelect
+                        onClick = {
+                            if (isLiked) heartCount-- else heartCount++
+                            onHeartClick(isLiked)
+                            isLiked = !isLiked
+                        }
                     ) {
                         Icon(
-                            modifier = Modifier.fillMaxSize(1f),
+                            modifier = Modifier.size(22.dp),
                             painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
-                            tint = if (isSelected) CustomColor.red else CustomColor.gray2,
+                            tint = if (isLiked) CustomColor.red else CustomColor.gray2,
                             contentDescription = "Comment Like Button"
                         )
                     }
@@ -106,21 +115,20 @@ fun Comment(
                     )
                 }
                 Spacer(Modifier.width(8.dp))
-                Text(
-                    text = if (heartCount <= 999) heartCount.toString() else "999+",
-                    color = Color.Black,
-                    fontSize = 12.sp,
-                    fontFamily = CustomFont.regular
-                )
             }
+            Text(
+                text = if (heartCount <= 999) heartCount.toString() else "999+",
+                color = Color.Black,
+                fontSize = 12.sp
+            )
             if (isEditable) {
-                Spacer(Modifier.width(8.dp))
-
                 IconButton(
                     onClick = onOpenBottomDialog
                 ) {
                     Icon(
+                        modifier = Modifier.size(16.dp),
                         painter = painterResource(R.drawable.three_dot_menu_horizontal),
+                        tint = CustomColor.gray2,
                         contentDescription = "Bottom Dialog Status Controller"
                     )
                 }
@@ -152,7 +160,7 @@ fun TestComment() {
         comment = "아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ",
         isFirst = true,
         isSelected = true,
-        onChangeSelect = {},
+        onHeartClick = {},
         heartCount = 10,
         onOpenBottomDialog = {},
         navCommunity = {},

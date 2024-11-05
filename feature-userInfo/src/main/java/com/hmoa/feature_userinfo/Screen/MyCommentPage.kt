@@ -1,14 +1,7 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
@@ -27,12 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Comment
-import com.hmoa.core_designsystem.component.EmptyDataPage
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
@@ -122,8 +110,8 @@ private fun MyCommentContent(
                 .padding(top = 8.dp)
         ) {
             TypeRow(
-                type = type, 
-                onTypeChanged = { 
+                type = type,
+                onTypeChanged = {
                     onTypeChanged(it)
                     type = it
                 }

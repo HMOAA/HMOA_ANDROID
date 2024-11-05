@@ -8,7 +8,6 @@ enum class HbtiRoute {
     HbtiSurveyResult,
     HbtiSurveyLoading,
     HbtiProcess,
-    NoteOrderQuantityPick,
     NotePick,
     NotePickResultRoute,
     OrderRoute,

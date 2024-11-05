@@ -1,18 +1,23 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,22 +37,21 @@ import com.hmoa.core_designsystem.theme.pretendard
 @Composable
 fun NicknameInput(
     initNickname : String? = null,
-    onChangeValue : (String) -> Unit = {},
     onPressNicknameExist: (text: String) -> Unit,
-    isAvailable: Boolean,
-    isEnabled : Boolean = true,
+    clearAvailable: () -> Unit = {},
+    isAvailable: Boolean?,
 ) {
-    var nickname by remember {
-        mutableStateOf(initNickname ?: "")
-    }
-    var descriptionText by remember { mutableStateOf("닉네임 제한 캡션입니다") }
+    var nickname by remember {mutableStateOf(initNickname ?: "")}
+    val isEnabled by remember{derivedStateOf{ nickname != initNickname && nickname.isNotEmpty()}}
+    var descriptionText by remember {mutableStateOf("닉네임 제한 캡션입니다")}
     var descriptionTextColor by remember { mutableStateOf(Color.Black) }
     var nicknameLength by remember { mutableStateOf(nickname.length.toString()) }
 
     LaunchedEffect(isAvailable) {
         descriptionText = handleText(isAvailable)
-        descriptionTextColor = handleTextColor(isAvailable)
+        descriptionTextColor = handleTextColor(isAvailable ?: false, initNickname, nickname)
     }
+    LaunchedEffect(nickname){ if(initNickname != nickname) clearAvailable() }
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -56,7 +60,7 @@ fun NicknameInput(
     ) {
         Column(modifier = Modifier.padding(horizontal = 15.dp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
-                Column() {
+                Column {
                     Row(
                         modifier = Modifier.fillMaxWidth(0.75f),
                         verticalAlignment = Alignment.CenterVertically,
@@ -73,10 +77,9 @@ fun NicknameInput(
                             textStyle = TextStyle(color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Light, fontFamily = CustomFont.regular),
                             value = nickname,
                             onValueChange = {
-                                if (isLenthUnder9(it)) {
+                                if (isLengthUnder9(it)) {
                                     nickname = it
                                     nicknameLength = it.length.toString()
-                                    onChangeValue(it)
                                 }
                             },
                             placeholder = {
@@ -104,16 +107,22 @@ fun NicknameInput(
                             )
                         }
                     }
-                    Divider(modifier = Modifier.border(width = 1.dp, color = CustomColor.gray2).fillMaxWidth(0.75f))
+                    HorizontalDivider(modifier = Modifier
+                        .border(width = 1.dp, color = CustomColor.gray2)
+                        .fillMaxWidth(0.75f))
                 }
                 Column(modifier = Modifier.padding(start = 8.dp), verticalArrangement = Arrangement.Center) {
                     Button(
                         isEnabled,
                         "중복확인",
-                        { onPressNicknameExist(nickname) },
+                        {
+                            onPressNicknameExist(nickname)
+                        },
                         textSize = 14,
                         radious = 10,
-                        buttonModifier = Modifier.height(46.dp).fillMaxWidth(1f),
+                        buttonModifier = Modifier
+                            .height(46.dp)
+                            .fillMaxWidth(1f),
                     )
                 }
             }
@@ -129,28 +138,56 @@ fun NicknameInput(
     }
 }
 
-fun handleText(isAvailable: Boolean): String {
-    if (isAvailable) {
-        return "사용가능한 닉네임 입니다"
+fun handleText(isAvailable: Boolean?): String {
+    return if (isAvailable == null){
+        "닉네임 제한 캡션입니다"
+    } else {
+        if (isAvailable) {
+            "사용가능한 닉네임 입니다"
+        } else {
+            "사용할 수 없는 닉네임 입니다"
+        }
     }
-    return "닉네임 제한 캡션입니다"
 }
 
-fun isLenthUnder9(text: String): Boolean {
+fun isLengthUnder9(text: String): Boolean {
     if (text.length < 9) return true
     return false
 }
 
-fun handleTextColor(isAvailable: Boolean): Color {
-    if (isAvailable) {
-        return CustomColor.blue
+fun handleTextColor(isAvailable: Boolean, initNickname: String?, currentNickname: String): Color {
+    return if(initNickname != currentNickname){
+        Color.Black
+    } else {
+        if (isAvailable) {
+            CustomColor.blue
+        } else {
+            CustomColor.red
+        }
     }
-    return Color.Black
 }
 
 
 @Preview
 @Composable
 fun NicknameInputPreview() {
-    NicknameInput(null,{}, {}, true)
+    var nickname by remember{mutableStateOf("호준")}
+    var baseNickname = "안드"
+    var isDup by remember{mutableStateOf(false)}
+    Log.d("TAG TEST", "isDup : ${isDup}")
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White),
+        contentAlignment = Alignment.Center
+    ){
+        NicknameInput(
+            initNickname = nickname,
+            onPressNicknameExist = {
+                isDup = it==baseNickname
+                if(isDup) {baseNickname = nickname}
+            },
+            isAvailable = !isDup
+        )
+    }
 }

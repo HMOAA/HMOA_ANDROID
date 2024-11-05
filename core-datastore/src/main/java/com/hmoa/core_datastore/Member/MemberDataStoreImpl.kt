@@ -115,19 +115,15 @@ class MemberDataStoreImpl @Inject constructor(
         val result = ResultResponse<Boolean>()
         memberService.postExistsNickname(request)
             .suspendOnSuccess {
-                result.data = false
+                result.data = this.data
             }.suspendOnError {
-                if (this.statusCode.code == 409) {
-                    result.data = true
-                } else {
-                    authenticator.handleApiError(
-                        rawMessage = this.message(),
-                        handleErrorMesssage = { result.errorMessage = it },
-                        onCompleteTokenRefresh = {
-                            memberService.postExistsNickname(request).suspendOnSuccess { result.data = this.data }
-                        }
-                    )
-                }
+                authenticator.handleApiError(
+                    rawMessage = this.message(),
+                    handleErrorMesssage = { result.errorMessage = it },
+                    onCompleteTokenRefresh = {
+                        memberService.postExistsNickname(request).suspendOnSuccess { result.data = this.data }
+                    }
+                )
             }
         return result
     }

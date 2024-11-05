@@ -6,13 +6,23 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.example.feature_userinfo.EditProfileRoute
 import com.example.userinfo.MyPageRoute
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.feature_like.Screen.MyFavoritePerfumeRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
-import com.hmoa.feature_userinfo.screen.*
+import com.hmoa.feature_userinfo.screen.EditProfileRoute
+import com.hmoa.feature_userinfo.screen.MyActivityRoute
+import com.hmoa.feature_userinfo.screen.MyBirthRoute
+import com.hmoa.feature_userinfo.screen.MyCommentRoute
+import com.hmoa.feature_userinfo.screen.MyGenderRoute
+import com.hmoa.feature_userinfo.screen.MyInfoRoute
+import com.hmoa.feature_userinfo.screen.MyPostRoute
+import com.hmoa.feature_userinfo.screen.MyReviewRoute
+import com.hmoa.feature_userinfo.screen.NoAuthMyPage
+import com.hmoa.feature_userinfo.screen.OrderRecordRoute
+import com.hmoa.feature_userinfo.screen.RefundRecordRoute
+import com.hmoa.feature_userinfo.screen.RefundRoute
 
 //graph 이동
 fun NavController.navigateToUserInfoGraph() = navigate(UserInfoRoute.UserInfoGraph.name)
@@ -105,7 +115,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoRoute.EditProfileRoute.name) {
-            EditProfileRoute(navBack = navBack)
+            EditProfileRoute(navBack = navBack, navLogin = navLogin)
         }
         composable(route = UserInfoRoute.MyPostRoute.name) {
             MyPostRoute(
@@ -126,7 +136,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             MyCommentRoute(
                 navBack = navBack,
                 navCommunity = navCommunity,
-                navPerfume = navPerfume
+                navPerfume = navPerfume,
+                navLogin = navLogin
             )
         }
         composable(route = UserInfoRoute.MyFavoriteCommentRoute.name) {

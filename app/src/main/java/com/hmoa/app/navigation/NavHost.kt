@@ -231,7 +231,7 @@ fun SetUpNavGraph(
             navHome = navController::navigateToHome,
             navLogin = navController::navigateToLogin
         )
-        writeReview(navBack = navController::navigateToBack)
+        writeReview(navBack = navController::navigateToBack, navReview = navController::navigateToReview)
         review(
             navBack = navController::navigateToBack,
             navWriteReview = navController::navigateToWriteReview,

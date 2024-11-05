@@ -38,7 +38,8 @@ import com.hmoa.core_designsystem.theme.pretendard
 fun NicknameInput(
     initNickname : String? = null,
     onPressNicknameExist: (text: String) -> Unit,
-    isAvailable: Boolean,
+    clearAvailable: () -> Unit = {},
+    isAvailable: Boolean?,
 ) {
     var nickname by remember {mutableStateOf(initNickname ?: "")}
     val isEnabled by remember{derivedStateOf{ nickname != initNickname && nickname.isNotEmpty()}}
@@ -46,10 +47,11 @@ fun NicknameInput(
     var descriptionTextColor by remember { mutableStateOf(Color.Black) }
     var nicknameLength by remember { mutableStateOf(nickname.length.toString()) }
 
-    LaunchedEffect(isAvailable, nickname) {
-        descriptionText = handleText(isAvailable, initNickname, nickname)
-        descriptionTextColor = handleTextColor(isAvailable, initNickname, nickname)
+    LaunchedEffect(isAvailable) {
+        descriptionText = handleText(isAvailable)
+        descriptionTextColor = handleTextColor(isAvailable ?: false, initNickname, nickname)
     }
+    LaunchedEffect(nickname){ if(initNickname != nickname) clearAvailable() }
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -136,8 +138,8 @@ fun NicknameInput(
     }
 }
 
-fun handleText(isAvailable: Boolean, initNickname: String?, currentNickname: String): String {
-    return if (initNickname != currentNickname){
+fun handleText(isAvailable: Boolean?): String {
+    return if (isAvailable == null){
         "닉네임 제한 캡션입니다"
     } else {
         if (isAvailable) {

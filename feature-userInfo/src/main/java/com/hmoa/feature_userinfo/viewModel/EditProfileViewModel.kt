@@ -1,6 +1,7 @@
 package com.hmoa.feature_userinfo.viewModel
 
 import android.content.Context
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_model.request.NickNameRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -62,6 +64,7 @@ class EditProfileViewModel @Inject constructor(
                 val data = result.data
                 EditProfileUiState.Success(
                     profileImg = data.memberImageUrl,
+                    baseNickname = data.nickname,
                     nickname = MutableStateFlow(data.nickname)
                 )
             }
@@ -104,6 +107,12 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
+    fun resetIsDup(){
+        if(uiState.value is EditProfileUiState.Success){
+            (uiState.value as EditProfileUiState.Success).isDuplicated.tryEmit(null)
+        }
+    }
+
     //remote 정보 update
     fun saveInfo(
         nickname: String,
@@ -111,7 +120,7 @@ class EditProfileViewModel @Inject constructor(
         context: Context,
         onSuccess: () -> Unit,
     ) {
-        val path = absolutePath(context, profileImg?.toUri() ?: return) ?: return
+        val path = absolutePath(context, (profileImg?:"").toUri()) ?: ""
         val file = File(path)
         val requestDto = NickNameRequestDto(nickname)
         viewModelScope.launch {
@@ -142,11 +151,12 @@ sealed interface EditProfileUiState {
     data object Loading : EditProfileUiState
     data class Success(
         val profileImg: String?,
+        val baseNickname: String,
         var nickname: MutableStateFlow<String>,
-        var isDuplicated: MutableStateFlow<Boolean> = MutableStateFlow(false)
+        var isDuplicated: MutableSharedFlow<Boolean?> = MutableSharedFlow(1)
     ) : EditProfileUiState {
-        fun updateInfo(newNickname: String, isDup: Boolean){
-            this.isDuplicated.update{isDup}
+        fun updateInfo(newNickname: String, isDup: Boolean?){
+            this.isDuplicated.tryEmit(isDup)
             this.nickname.update { newNickname }
         }
     }

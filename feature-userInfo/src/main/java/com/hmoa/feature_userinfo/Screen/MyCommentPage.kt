@@ -1,7 +1,14 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
@@ -20,7 +27,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
@@ -32,6 +44,7 @@ fun MyCommentRoute(
     navBack: () -> Unit,
     navCommunity: (communityId: Int) -> Unit,
     navPerfume : (perfumeId: Int) -> Unit,
+    navLogin: () -> Unit,
     viewModel: CommentViewModel = hiltViewModel()
 ) {
     //comment list
@@ -44,7 +57,8 @@ fun MyCommentRoute(
         navBack = navBack,
         navPerfume = navPerfume,
         navCommunity = navCommunity,
-        onTypeChanged = viewModel::changeType
+        onTypeChanged = viewModel::changeType,
+        navLogin = navLogin
     )
 }
 
@@ -55,6 +69,7 @@ fun MyCommentPage(
     navBack: () -> Unit,
     navPerfume: (perfumeId: Int) -> Unit,
     navCommunity: (communityId: Int) -> Unit,
+    navLogin: () -> Unit,
     onTypeChanged: (type: MyPageCategory) -> Unit
 ) {
     var isOpen by remember { mutableStateOf(true) }
@@ -73,8 +88,7 @@ fun MyCommentPage(
         }
         CommentUiState.Error -> {
             ErrorUiSetView(
-                isOpen = isOpen,
-                onConfirmClick = navBack,
+                onLoginClick = navLogin,
                 errorUiState = errState,
                 onCloseClick = navBack
             )
@@ -134,7 +148,7 @@ private fun MyCommentContent(
                                 navCommunity = { navParent(comment.parentId) },
                                 onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
                                 isSelected = comment.liked,
-                                onChangeSelect = {}
+                                onHeartClick = {}
                             )
                             if (index < comments.size - 1) {
                                 HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray2)

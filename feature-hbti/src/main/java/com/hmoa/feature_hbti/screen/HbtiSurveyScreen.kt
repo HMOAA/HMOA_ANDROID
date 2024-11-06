@@ -1,6 +1,5 @@
 package com.hmoa.feature_hbti.screen
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -120,10 +119,6 @@ fun HbtiSurveyContent(
 
     fun addProgress() {
         targetProgress += additionalProgress
-        Log.d(
-            "HbtiScroll",
-            "currentProgress: ${currentProgress}, targetProgress: ${targetProgress}, additionalProgress: ${additionalProgress}"
-        )
         scope.launch {
             loadProgress { progress ->
                 if (currentProgress <= targetProgress) {
@@ -146,7 +141,6 @@ fun HbtiSurveyContent(
 
     fun preventScrollOver2Pages(currentPage: Int, targetPage: Int) {
         if (kotlin.math.abs(targetPage - currentPage) > 1) {
-            // If trying to move more than one page, cancel and scroll back
             scope.launch { pagerState.animateScrollToPage(currentPage) }
         }
     }
@@ -154,7 +148,6 @@ fun HbtiSurveyContent(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.targetPage }
             .collect { targetPage ->
-                Log.d("HbtiScroll", "currentPage:${currentProgress}, targetPage:${targetPage}")
                 val currentPage = pagerState.currentPage
                 preventScrollOver2Pages(currentPage, targetPage)
                 if (currentPage > targetPage) {
@@ -164,24 +157,6 @@ fun HbtiSurveyContent(
                 }
             }
     }
-
-
-//    LaunchedEffect(pagerState) {
-//        snapshotFlow { pagerState.currentPage }
-//            .distinctUntilChanged()
-//            .collect { currentPage ->
-//                if (currentPage == previousPage + 1) {
-//                    Log.d("HbtiScroll", "currentPage: ${currentPage}, {previousPage: ${previousPage}")
-//                    addProgress()
-//                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-//
-//                } else if (currentPage == previousPage - 1) {
-//                    subtractProgress()
-//                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-//                }
-//            }
-//    }
-
 
     Column(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
         TopBar(

@@ -1,5 +1,6 @@
 package com.hmoa.feature_hbti.screen
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.calculateProgressStepSize
+import com.hmoa.core_common.calculateHbtiProgressStepSize
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
@@ -113,12 +114,16 @@ fun HbtiSurveyContent(
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
     val pageContent = hbtiQuestionItems?.hbtiQuestions?.values?.map { it }
-    val additionalProgress = calculateProgressStepSize(pageContent)
+    val additionalProgress = calculateHbtiProgressStepSize(pageContent)
     val pagerState =
         rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
 
     fun addProgress() {
         targetProgress += additionalProgress
+        Log.d(
+            "HbtiScroll",
+            "currentProgress: ${currentProgress}, targetProgress: ${targetProgress}, additionalProgress: ${additionalProgress}"
+        )
         scope.launch {
             loadProgress { progress ->
                 if (currentProgress <= targetProgress) {
@@ -139,19 +144,51 @@ fun HbtiSurveyContent(
         }
     }
 
+    fun preventScrollOver2Pages(currentPage: Int, targetPage: Int) {
+        if (kotlin.math.abs(targetPage - currentPage) > 1) {
+            // If trying to move more than one page, cancel and scroll back
+            scope.launch { pagerState.animateScrollToPage(currentPage) }
+        }
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.targetPage }
+            .collect { targetPage ->
+                Log.d("HbtiScroll", "currentPage:${currentProgress}, targetPage:${targetPage}")
+                val currentPage = pagerState.currentPage
+                preventScrollOver2Pages(currentPage, targetPage)
+                if (currentPage > targetPage) {
+                    subtractProgress()
+                } else if (currentPage < targetPage) {
+                    addProgress()
+                }
+            }
+    }
+
+
+//    LaunchedEffect(pagerState) {
+//        snapshotFlow { pagerState.currentPage }
+//            .distinctUntilChanged()
+//            .collect { currentPage ->
+//                if (currentPage == previousPage + 1) {
+//                    Log.d("HbtiScroll", "currentPage: ${currentPage}, {previousPage: ${previousPage}")
+//                    addProgress()
+//                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+//
+//                } else if (currentPage == previousPage - 1) {
+//                    subtractProgress()
+//                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+//                }
+//            }
+//    }
+
+
     Column(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
         TopBar(
             title = "향BTI",
             titleColor = Color.Black,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = {
-                if (pagerState.currentPage == 0) {
-                    onBackClick()
-                } else {
-                    subtractProgress()
-                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                }
-            }
+            onNavClick = onBackClick
         )
         Column(
             modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f),
@@ -166,10 +203,10 @@ fun HbtiSurveyContent(
                 Column {
                     ProgressBar(percentage = currentProgress)
                     HorizontalPager(
-                        userScrollEnabled = false,
+                        userScrollEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
                         modifier = Modifier.fillMaxWidth().background(color = Color.White),
                         state = pagerState,
-                        verticalAlignment = Alignment.Top
+                        verticalAlignment = Alignment.Top,
                     ) { page ->
                         Column(verticalArrangement = Arrangement.SpaceBetween) {
                             Column(modifier = Modifier.fillMaxWidth()) {

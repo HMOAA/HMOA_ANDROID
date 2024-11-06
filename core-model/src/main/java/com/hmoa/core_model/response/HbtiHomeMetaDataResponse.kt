@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class HbtiHomeMetaDataResponse(
     val backgroundImgUrl: String,
     val firstImageUrl: String,
+    val isOrdered: Boolean,
     val secondImageUrl: String,
-    val isOrdered: Boolean
 )

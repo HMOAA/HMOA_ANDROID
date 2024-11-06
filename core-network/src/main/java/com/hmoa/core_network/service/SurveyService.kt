@@ -40,5 +40,5 @@ interface SurveyService {
     ): ApiResponse<PerfumeRecommendsResponseDto>
 
     @GET("/survey/home")
-    fun getHbtiHomeMetaData(): ApiResponse<HbtiHomeMetaDataResponse>
+    suspend fun getHbtiHomeMetaData(): ApiResponse<HbtiHomeMetaDataResponse>
 }

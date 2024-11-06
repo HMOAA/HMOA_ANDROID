@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.calculateProgressStepSize
+import com.hmoa.core_common.calculateHbtiProgressStepSize
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
@@ -113,7 +113,7 @@ fun HbtiSurveyContent(
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
     val pageContent = hbtiQuestionItems?.hbtiQuestions?.values?.map { it }
-    val additionalProgress = calculateProgressStepSize(pageContent)
+    val additionalProgress = calculateHbtiProgressStepSize(pageContent)
     val pagerState =
         rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
 
@@ -139,19 +139,31 @@ fun HbtiSurveyContent(
         }
     }
 
+    fun preventScrollOver2Pages(currentPage: Int, targetPage: Int) {
+        if (kotlin.math.abs(targetPage - currentPage) > 1) {
+            scope.launch { pagerState.animateScrollToPage(currentPage) }
+        }
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.targetPage }
+            .collect { targetPage ->
+                val currentPage = pagerState.currentPage
+                preventScrollOver2Pages(currentPage, targetPage)
+                if (currentPage > targetPage) {
+                    subtractProgress()
+                } else if (currentPage < targetPage) {
+                    addProgress()
+                }
+            }
+    }
+
     Column(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
         TopBar(
             title = "향BTI",
             titleColor = Color.Black,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = {
-                if (pagerState.currentPage == 0) {
-                    onBackClick()
-                } else {
-                    subtractProgress()
-                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                }
-            }
+            onNavClick = onBackClick
         )
         Column(
             modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f),
@@ -166,10 +178,10 @@ fun HbtiSurveyContent(
                 Column {
                     ProgressBar(percentage = currentProgress)
                     HorizontalPager(
-                        userScrollEnabled = false,
+                        userScrollEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
                         modifier = Modifier.fillMaxWidth().background(color = Color.White),
                         state = pagerState,
-                        verticalAlignment = Alignment.Top
+                        verticalAlignment = Alignment.Top,
                     ) { page ->
                         Column(verticalArrangement = Arrangement.SpaceBetween) {
                             Column(modifier = Modifier.fillMaxWidth()) {

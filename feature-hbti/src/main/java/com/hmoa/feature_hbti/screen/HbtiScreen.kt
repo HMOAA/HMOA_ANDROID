@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +52,7 @@ fun HbtiRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
+    val isOrderWarninngNeeded by viewModel.isOrderedWarningNeedState.collectAsStateWithLifecycle()
     HbtiScreen(
         onHbtiSurveyClick = { onHbtiSurveyClick() },
         onAfterOrderClick = { viewModel::onAfterOrderClick { onAfterOrderClick() } },
@@ -60,8 +62,10 @@ fun HbtiRoute(
         navEditReview = navEditReview,
         onDeleteClick = viewModel::deleteReview,
         onReportClick = viewModel::reportReview,
+        onAfterOrderWarningDialogClick = viewModel::initializeIsOrderWarningNeedState,
         uiState = uiState,
         errState = errState,
+        isOrderWarningNeed = isOrderWarninngNeeded,
         onHeartClick = viewModel::onHeartClick,
         navLogin = navLogin
     )
@@ -70,7 +74,6 @@ fun HbtiRoute(
 @Composable
 fun HbtiScreen(
     onHbtiSurveyClick: () -> Unit,
-    onAfterOrderClick: () -> Unit,
     navBack: () -> Unit,
     navHome: () -> Unit,
     navLogin: () -> Unit,
@@ -78,7 +81,10 @@ fun HbtiScreen(
     navEditReview: (reviewId: Int) -> Unit,
     onDeleteClick: (reviewId: Int) -> Unit,
     onReportClick: (reviewId: Int) -> Unit,
+    onAfterOrderClick: () -> Unit,
+    onAfterOrderWarningDialogClick: () -> Unit,
     uiState: HbtiHomeUiState,
+    isOrderWarningNeed: Boolean,
     errState: ErrorUiState,
     onHeartClick: (reviewId: Int, isLiked: Boolean) -> Unit,
 ) {
@@ -87,6 +93,9 @@ fun HbtiScreen(
         errorUiState = errState,
         onCloseClick = navHome
     )
+
+    OrderWarningDialog(isOrderWarnNeeded = isOrderWarningNeed, onAfterClick = onAfterOrderWarningDialogClick)
+
     when (uiState) {
         HbtiHomeUiState.Loading -> AppLoadingScreen()
         HbtiHomeUiState.Error -> {
@@ -107,6 +116,25 @@ fun HbtiScreen(
             )
         }
     }
+}
+
+@Composable
+private fun OrderWarningDialog(isOrderWarnNeeded: Boolean, onAfterClick: () -> Unit) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    AppDesignDialog(
+        isOpen = isOrderWarnNeeded,
+        modifier = Modifier.wrapContentHeight()
+            .width(screenWidth - 88.dp),
+        title = "주문 후 이용가능한 서비스입니다",
+        content = "배송 후 후기를 작성해주세요",
+        buttonTitle = "확인",
+        onOkClick = {
+            onAfterClick()
+        },
+        onCloseClick = {
+            onAfterClick()
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -221,7 +249,7 @@ private fun HbtiHomeContent(
                                         shape = RoundedCornerShape(5.dp)
                                     )) {
                                 ImageView(
-                                    imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/122bc5b1-1cc1-44b3-a468-1b56f9998994",
+                                    imageUrl = metadata?.firstImageUrl,
                                     width = 1f,
                                     height = 1f,
                                     backgroundColor = Color.Transparent,
@@ -259,7 +287,7 @@ private fun HbtiHomeContent(
                                     )
                             ) {
                                 ImageView(
-                                    imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/4bb30703-d77d-49ac-8a01-2aee48bf04c3",
+                                    imageUrl = metadata?.secondImageUrl,
                                     width = 1f,
                                     height = 1f,
                                     backgroundColor = Color.Transparent,
@@ -362,78 +390,82 @@ private fun HbtiHomeContent(
 @Preview
 @Composable
 fun HbtiScreenPreview() {
-    HbtiScreen({}, {}, errState = ErrorUiState.Loading, uiState = HbtiHomeUiState.Success(
-        listOf(
-            ReviewResponseDto(
-                hbtiReviewId = 0,
-                profileImgUrl = "",
-                author = "향수 러버",
-                content = "향수를 1회도 구매하지 않은 사람인데 향모아에서 인생향수 찾았어요!",
-                imagesCount = 4,
-                hbtiPhotos = listOf(
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
+    HbtiScreen(
+        {}, errState = ErrorUiState.Loading, uiState = HbtiHomeUiState.Success(
+            listOf(
+                ReviewResponseDto(
+                    hbtiReviewId = 0,
+                    profileImgUrl = "",
+                    author = "향수 러버",
+                    content = "향수를 1회도 구매하지 않은 사람인데 향모아에서 인생향수 찾았어요!",
+                    imagesCount = 4,
+                    hbtiPhotos = listOf(
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
                     ),
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
-                    ),
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
-                    ),
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
-                    ),
+                    createdAt = "10일 전",
+                    isWrited = false,
+                    heartCount = 12,
+                    isLiked = false,
+                    orderTitle = "시트러스"
                 ),
-                createdAt = "10일 전",
-                isWrited = false,
-                heartCount = 12,
-                isLiked = false,
-                orderTitle = "시트러스"
-            ),
-            ReviewResponseDto(
-                hbtiReviewId = 0,
-                profileImgUrl = "",
-                author = "향수 러버",
-                content = "평소에 선호하는 향이 있었는데 그 향의 이름을 몰랐는데 향료 배송받고 시향해본 통카 빈? 이더라구요 제가 좋아했던 향수들은 다 통카 빈이 들어가있네요 ㅎ 저 같은 분들에게 추천해요",
-                imagesCount = 4,
-                hbtiPhotos = listOf(
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
+                ReviewResponseDto(
+                    hbtiReviewId = 0,
+                    profileImgUrl = "",
+                    author = "향수 러버",
+                    content = "평소에 선호하는 향이 있었는데 그 향의 이름을 몰랐는데 향료 배송받고 시향해본 통카 빈? 이더라구요 제가 좋아했던 향수들은 다 통카 빈이 들어가있네요 ㅎ 저 같은 분들에게 추천해요",
+                    imagesCount = 4,
+                    hbtiPhotos = listOf(
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
+                        Photo(
+                            photoUrl = "",
+                            photoId = 0
+                        ),
                     ),
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
-                    ),
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
-                    ),
-                    Photo(
-                        photoUrl = "",
-                        photoId = 0
-                    ),
+                    createdAt = "10일 전",
+                    isWrited = false,
+                    heartCount = 12,
+                    isLiked = true,
+                    orderTitle = "시트러스"
                 ),
-                createdAt = "10일 전",
-                isWrited = false,
-                heartCount = 12,
-                isLiked = true,
-                orderTitle = "시트러스"
             ),
+            null
         ),
-        null
-    ),
         navBack = {},
         navHome = {},
         navReview = {},
         onHeartClick = { a, b -> },
         onReportClick = {},
         onDeleteClick = {},
+        onAfterOrderClick = {},
+        onAfterOrderWarningDialogClick = {},
         navEditReview = {},
-        navLogin = {}
+        navLogin = {},
+        isOrderWarningNeed = false
     )
 }

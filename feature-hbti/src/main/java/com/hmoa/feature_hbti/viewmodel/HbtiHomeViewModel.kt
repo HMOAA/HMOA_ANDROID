@@ -27,6 +27,8 @@ class HbtiHomeViewModel @Inject constructor(
     private val flag = MutableStateFlow<Boolean>(false)
     private val reviewsState = MutableStateFlow<List<ReviewResponseDto>>(listOf())
     private val metadataState = MutableStateFlow<HbtiHomeMetaDataResponse?>(null)
+    private val _isOrderedWarningNeedState = MutableStateFlow<Boolean>(false)
+    val isOrderedWarningNeedState: StateFlow<Boolean> = _isOrderedWarningNeedState
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -49,19 +51,20 @@ class HbtiHomeViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<HbtiHomeUiState> = combine(reviewsState, metadataState) { _reviews, _metadata ->
-        HbtiHomeUiState.Success(
-            reviews = _reviews,
-            metadata = _metadata
+    val uiState: StateFlow<HbtiHomeUiState> =
+        combine(reviewsState, metadataState) { _reviews, _metadata ->
+            HbtiHomeUiState.Success(
+                reviews = _reviews,
+                metadata = _metadata,
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = HbtiHomeUiState.Loading
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = HbtiHomeUiState.Loading
-    )
 
     init {
-        //getMetaData()
+        getMetaData()
         getReviews()
         checkIsLogined()
     }
@@ -153,11 +156,17 @@ class HbtiHomeViewModel @Inject constructor(
     }
 
     fun onAfterOrderClick(onAvailable: () -> Unit) {
+        Log.d("HbtiHomeViewModel", "isOrderedWarningNeedState.value: ${isOrderedWarningNeedState.value}")
         if (metadataState.value?.isOrdered ?: true) {
             onAvailable()
         } else {
-            TODO("다이얼로그 오픈")
+            _isOrderedWarningNeedState.update { true }
         }
+    }
+
+    fun initializeIsOrderWarningNeedState() {
+        _isOrderedWarningNeedState.update { false }
+        Log.d("HbtiHomeViewModel", "isOrderedWarningNeedState.value: ${isOrderedWarningNeedState.value}")
     }
 
     fun reportReview(reviewId: Int) {

@@ -1,9 +1,11 @@
 package com.hmoa.feature_home.screen
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,60 +56,83 @@ private fun HomeScreen(
 ) {
     val firstMenuWithBannerState by viewModel.firstMenuWithBannerState.collectAsStateWithLifecycle()
     val bottomMenuState by viewModel.bottomMenuState.collectAsStateWithLifecycle()
-    val verticalScrollState = rememberScrollState()
+    val listState = rememberLazyListState()
     LaunchedEffect(true) {
-        verticalScrollState.animateScrollTo(10000)
+        listState.animateScrollToItem(index = 0)
     }
-
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(state = verticalScrollState, reverseScrolling = true)
             .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        state = listState
     ) {
-        when (firstMenuWithBannerState) {
-            is HomeViewModel.BannerWithFirstMenuState.Loading -> {
-                AppLoadingScreen()
-            }
 
-            is HomeViewModel.BannerWithFirstMenuState.Data -> {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 17.dp).padding(vertical = 10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    FirstMenuWithBannerContent(
-                        onHbtiClick = { onHbtiClick() },
-                        bannerImgUrl = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerImg,
-                    )
-                }
-                FirstMenuView(
-                    (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
-                    { onPerfumeClick(it) })
-            }
-
-            is HomeViewModel.BannerWithFirstMenuState.Error -> {
-
+        itemsIndexed(
+            listOf("TopMenu", "BottomMenu")
+        ) { idx, item ->
+            when (idx) {
+                0 -> TopMenu(firstMenuWithBannerState, onPerfumeClick, onHbtiClick)
+                1 -> BottomMenu(bottomMenuState, onPerfumeClick, onAllPerfumeClick)
             }
         }
+    }
 
-        when (bottomMenuState) {
-            is HomeViewModel.BottomMenuState.Loading -> {
-                AppLoadingScreen()
-            }
+}
 
-            is HomeViewModel.BottomMenuState.Data -> {
-                BottomMenuContent(
-                    onPerfumeClick = { onPerfumeClick(it) },
-                    onAllPerfumeClick = { onAllPerfumeClick(it) },
-                    (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu!!
+@Composable
+fun TopMenu(
+    firstMenuWithBannerState: HomeViewModel.BannerWithFirstMenuState, onPerfumeClick: (perfumeId: Int) -> Unit,
+    onHbtiClick: () -> Unit,
+) {
+    when (firstMenuWithBannerState) {
+        is HomeViewModel.BannerWithFirstMenuState.Loading -> {
+            AppLoadingScreen()
+        }
+
+        is HomeViewModel.BannerWithFirstMenuState.Data -> {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 17.dp).padding(vertical = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                FirstMenuWithBannerContent(
+                    onHbtiClick = { onHbtiClick() },
+                    bannerImgUrl = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerImg,
                 )
-                HmoaCompanyMetaData()
             }
+            FirstMenuView(
+                (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
+                { onPerfumeClick(it) })
+        }
 
-            is HomeViewModel.BottomMenuState.Error -> {
+        is HomeViewModel.BannerWithFirstMenuState.Error -> {
 
-            }
+        }
+    }
+}
+
+@Composable
+fun BottomMenu(
+    bottomMenuState: HomeViewModel.BottomMenuState, onPerfumeClick: (perfumeId: Int) -> Unit,
+    onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
+) {
+    when (bottomMenuState) {
+        is HomeViewModel.BottomMenuState.Loading -> {
+            AppLoadingScreen()
+        }
+
+        is HomeViewModel.BottomMenuState.Data -> {
+            BottomMenuContent(
+                onPerfumeClick = { onPerfumeClick(it) },
+                onAllPerfumeClick = { onAllPerfumeClick(it) },
+                (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu!!
+            )
+            HmoaCompanyMetaData()
+        }
+
+        is HomeViewModel.BottomMenuState.Error -> {
+
         }
     }
 }

@@ -61,7 +61,7 @@ class HbtiHomeViewModel @Inject constructor(
     )
 
     init {
-        //getMetaData()
+        getMetaData()
         getReviews()
         checkIsLogined()
     }

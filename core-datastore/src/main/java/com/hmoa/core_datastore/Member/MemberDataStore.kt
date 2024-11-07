@@ -20,7 +20,7 @@ interface MemberDataStore {
     suspend fun getMember(): ResultResponse<MemberResponseDto>
     suspend fun getAddress(): ResultResponse<DefaultAddressDto>
     suspend fun postAddress(request: DefaultAddressDto): ResultResponse<DataResponseDto<Any>>
-    suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any>
+    suspend fun updateAge(request: AgeRequestDto): ResultResponse<DataResponseDto<Any>>
     suspend fun getCommunities(page: Int): ResultResponse<List<CommunityByCategoryResponseDto>>
     suspend fun getCommunityComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>>
     suspend fun getCommunityFavoriteComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>>

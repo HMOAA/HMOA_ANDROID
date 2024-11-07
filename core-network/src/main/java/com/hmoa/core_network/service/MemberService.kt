@@ -32,7 +32,7 @@ interface MemberService {
     @POST("/member/address")
     suspend fun postAddress(@Body request: DefaultAddressDto): ApiResponse<DataResponseDto<Any>>
     @PATCH("/member/age")
-    suspend fun updateAge(@Body request: AgeRequestDto): DataResponseDto<Any>
+    suspend fun updateAge(@Body request: AgeRequestDto): ApiResponse<DataResponseDto<Any>>
     @GET("/member/communities")
     suspend fun getCommunities(@Query("page") page: Int): ApiResponse<List<CommunityByCategoryResponseDto>>
     @GET("/member/communityComments")

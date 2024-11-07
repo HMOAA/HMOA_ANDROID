@@ -14,9 +14,9 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
-import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.core_model.response.PagingData
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.service.MemberService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
@@ -69,8 +69,20 @@ class MemberDataStoreImpl @Inject constructor(
         return result
     }
 
-    override suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {
-        return memberService.updateAge(request)
+    override suspend fun updateAge(request: AgeRequestDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.updateAge(request).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.updateAge(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
+        }
+        return result
     }
 
     override suspend fun getCommunities(page: Int): ResultResponse<List<CommunityByCategoryResponseDto>> {

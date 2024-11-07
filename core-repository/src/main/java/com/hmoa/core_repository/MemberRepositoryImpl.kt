@@ -34,7 +34,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.postAddress(request)
     }
 
-    override suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {
+    override suspend fun updateAge(request: AgeRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateAge(request)
     }
 

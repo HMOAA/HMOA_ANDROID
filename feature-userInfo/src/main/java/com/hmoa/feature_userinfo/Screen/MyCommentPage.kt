@@ -1,6 +1,8 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,8 +74,6 @@ fun MyCommentPage(
     navLogin: () -> Unit,
     onTypeChanged: (type: MyPageCategory) -> Unit
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
         CommentUiState.Loading -> AppLoadingScreen()
         is CommentUiState.Comments -> {
@@ -131,27 +131,33 @@ private fun MyCommentContent(
                 }
             )
             if (comments.isNotEmpty()) {
-                LazyColumn {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(9.dp)
+                ) {
                     itemsIndexed(
                         items = comments,
                         key = {_, contact -> contact?.id!!}
                     ) { index, comment ->
                         if (comment != null) {
-                            Comment(
-                                isEditable = false,
-                                profile = comment.profileImg,
-                                nickname = comment.nickname,
-                                dateDiff = comment.createAt,
-                                comment = comment.content,
-                                isFirst = false,
-                                heartCount = comment.heartCount,
-                                navCommunity = { navParent(comment.parentId) },
-                                onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
-                                isSelected = comment.liked,
-                                onHeartClick = {}
-                            )
-                            if (index < comments.size - 1) {
-                                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray2)
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .border(width = 0.5.dp, color = CustomColor.gray2, shape = RoundedCornerShape(3.dp))
+                                    .background(color = Color.White, shape = RoundedCornerShape(3.dp))
+                            ){
+                                Comment(
+                                    isEditable = false,
+                                    profile = comment.profileImg,
+                                    nickname = comment.nickname,
+                                    dateDiff = comment.createAt,
+                                    comment = comment.content,
+                                    isFirst = false,
+                                    heartCount = comment.heartCount,
+                                    navCommunity = { navParent(comment.parentId) },
+                                    onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
+                                    isSelected = comment.liked,
+                                    onHeartClick = {}
+                                )
                             }
                         }
                     }

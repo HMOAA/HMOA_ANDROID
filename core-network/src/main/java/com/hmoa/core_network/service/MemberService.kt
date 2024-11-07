@@ -69,5 +69,5 @@ interface MemberService {
     @DELETE("/member/profile-photo")
     suspend fun deleteProfilePhoto(): DataResponseDto<Any>
     @PATCH("/member/sex")
-    suspend fun updateSex(@Body request: SexRequestDto): DataResponseDto<Any>
+    suspend fun updateSex(@Body request: SexRequestDto): ApiResponse<DataResponseDto<Any>>
 }

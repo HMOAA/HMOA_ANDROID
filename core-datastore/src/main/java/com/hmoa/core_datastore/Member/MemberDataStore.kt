@@ -36,5 +36,5 @@ interface MemberDataStore {
     suspend fun getPerfumeFavoriteComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>>
     suspend fun postProfilePhoto(image: File): ResultResponse<DataResponseDto<Any>>
     suspend fun deleteProfilePhoto(): DataResponseDto<Any>
-    suspend fun updateSex(request: SexRequestDto): DataResponseDto<Any>
+    suspend fun updateSex(request: SexRequestDto): ResultResponse<DataResponseDto<Any>>
 }

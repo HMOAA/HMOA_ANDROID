@@ -98,7 +98,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.deleteProfilePhoto()
     }
 
-    override suspend fun updateSex(request: SexRequestDto): DataResponseDto<Any> {
+    override suspend fun updateSex(request: SexRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateSex(request)
     }
 }

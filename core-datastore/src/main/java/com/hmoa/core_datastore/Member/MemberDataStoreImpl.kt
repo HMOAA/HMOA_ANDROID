@@ -316,7 +316,19 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.deleteProfilePhoto()
     }
 
-    override suspend fun updateSex(request: SexRequestDto): DataResponseDto<Any> {
-        return memberService.updateSex(request)
+    override suspend fun updateSex(request: SexRequestDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.updateSex(request).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.updateSex(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
+        }
+        return result
     }
 }

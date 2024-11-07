@@ -155,7 +155,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoRoute.MyBirthRoute.name) {
-            MyBirthRoute(navBack = navBack)
+            MyBirthRoute(navBack = navBack, navLogin = navLogin)
         }
         composable(route = UserInfoRoute.MyGenderRoute.name) {
             MyGenderRoute(navBack = navBack)

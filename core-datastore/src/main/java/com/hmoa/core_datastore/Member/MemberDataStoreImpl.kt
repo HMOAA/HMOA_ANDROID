@@ -63,8 +63,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.postAddress(request).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.postAddress(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -179,8 +184,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.getOrder(cursor).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.getOrder(cursor).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -190,8 +200,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.getRefundRecord(cursor).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.getRefundRecord(cursor).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -201,8 +216,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.getOrderInfo().suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.getOrderInfo().suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -212,8 +232,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.postOrderInfo(request).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.postOrderInfo(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }

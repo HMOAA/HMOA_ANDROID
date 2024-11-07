@@ -164,7 +164,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             MyFavoritePerfumeRoute(
                 navPerfume = navPerfume,
                 navHome = navHome,
-                onErrorHandleLoginAgain = navLogin,
+                navLogin = navLogin,
                 navBack = navBack
             )
         }

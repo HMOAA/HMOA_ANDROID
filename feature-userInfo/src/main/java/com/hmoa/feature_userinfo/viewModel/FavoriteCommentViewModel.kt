@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
@@ -33,7 +34,7 @@ class FavoriteCommentViewModel @Inject constructor(
 ) : ViewModel() {
 
     //선택된 type
-    private val _type = MutableStateFlow("향수")
+    private val _type = MutableStateFlow(MyPageCategory.향수)
     val type get() = _type.asStateFlow()
 
     //comment 리스트
@@ -63,18 +64,12 @@ class FavoriteCommentViewModel @Inject constructor(
     )
 
     val uiState: StateFlow<FavoriteCommentUiState> = type.map{
-        commentPagingSource(it)
+        commentPagingSource(it.name)
     }.asResult().map{ result ->
         when(result){
-            Result.Loading -> {
-                FavoriteCommentUiState.Loading
-            }
-            is Result.Success -> {
-                FavoriteCommentUiState.Comments(result.data)
-            }
-            is Result.Error -> {
-                FavoriteCommentUiState.Error
-            }
+            Result.Loading -> FavoriteCommentUiState.Loading
+            is Result.Success -> FavoriteCommentUiState.Comments(result.data)
+            is Result.Error -> FavoriteCommentUiState.Error
         }
     }.stateIn(
         scope = viewModelScope,
@@ -83,10 +78,8 @@ class FavoriteCommentViewModel @Inject constructor(
     )
 
     //type 변환
-    fun changeType(newType : String){
-        if (_type.value != newType) {
-            _type.update{newType}
-        }
+    fun changeType(newType : MyPageCategory){
+        if (_type.value != newType) { _type.update{newType} }
     }
 
     //댓글 Paging

@@ -24,17 +24,13 @@ import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun OrderResultRoute(
-    navBack: () -> Unit,
-    navHome: () -> Unit
+    navHbti: () -> Unit
 ){
-    OrderResultScreen(navBack, navHome)
+    OrderResultScreen(navHbti)
 }
 
 @Composable
-fun OrderResultScreen(
-    navBack: () -> Unit,
-    navHome: () -> Unit,
-){
+fun OrderResultScreen(navHbti: () -> Unit){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +58,7 @@ fun OrderResultScreen(
             radious = 5,
             isEnabled = true, 
             btnText = "홈으로 돌아가기",
-            onClick = navHome
+            onClick = navHbti
         )
     }
 }
@@ -70,8 +66,5 @@ fun OrderResultScreen(
 @Preview
 @Composable
 private fun OrderResultUITest(){
-    OrderResultScreen(
-        navBack = {},
-        navHome = {}
-    )
+    OrderResultScreen(navHbti = {})
 }

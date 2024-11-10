@@ -6,10 +6,23 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.gson.GsonBuilder
-import com.hmoa.core_domain.entity.data.NoteOrderQuantity
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.feature_hbti.screen.*
+import com.hmoa.feature_hbti.screen.AddAddressRoute
+import com.hmoa.feature_hbti.screen.EditReviewRoute
+import com.hmoa.feature_hbti.screen.HbtiProcessRoute
+import com.hmoa.feature_hbti.screen.HbtiRoute
+import com.hmoa.feature_hbti.screen.HbtiSurveyResultLoading
+import com.hmoa.feature_hbti.screen.HbtiSurveyResultRoute
+import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
+import com.hmoa.feature_hbti.screen.NotePickResultRoute
+import com.hmoa.feature_hbti.screen.NotePickRoute
+import com.hmoa.feature_hbti.screen.OrderResultRoute
+import com.hmoa.feature_hbti.screen.OrderRoute
+import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
+import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
+import com.hmoa.feature_hbti.screen.ReviewRoute
+import com.hmoa.feature_hbti.screen.WriteReviewRoute
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -234,17 +247,9 @@ fun NavGraphBuilder.addAddress(
     }
 }
 
-fun NavGraphBuilder.orderResult(
-    navBack: () -> Unit,
-    navHome: () -> Unit
-){
-    composable(
-        route = HbtiRoute.OrderResultRoute.name
-    ){
-        OrderResultRoute(
-            navBack = navBack,
-            navHome = navHome
-        )
+fun NavGraphBuilder.orderResult(navHbti: () -> Unit){
+    composable(route = HbtiRoute.OrderResultRoute.name){
+        OrderResultRoute(navHbti = navHbti)
     }
 }
 

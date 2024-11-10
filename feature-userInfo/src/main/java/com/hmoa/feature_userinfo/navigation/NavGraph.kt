@@ -192,7 +192,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 type = type,
                 orderId = orderId,
                 navBack = navBack,
-                navLogin = navLogin
+                navLogin = navLogin,
+                navOrderRecord = navOrderRecord
             )
         }
         composable(route = "${UserInfoRoute.RefundRecordRoute.name}") {

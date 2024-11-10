@@ -263,7 +263,8 @@ private fun RefundContent(
                 doRefund()
                 showDialog = false
             },
-            buttonTitle = "확인"
+            buttonTitle = "확인",
+            buttonColor = Color.Black
         )
     }
 }

@@ -49,7 +49,7 @@ fun NicknameInput(
 
     LaunchedEffect(isAvailable) {
         descriptionText = handleText(isAvailable)
-        descriptionTextColor = handleTextColor(isAvailable ?: false, initNickname, nickname)
+        descriptionTextColor = handleTextColor(isAvailable)
     }
     LaunchedEffect(nickname){ if(initNickname != nickname) clearAvailable() }
 
@@ -155,8 +155,8 @@ fun isLengthUnder9(text: String): Boolean {
     return false
 }
 
-fun handleTextColor(isAvailable: Boolean, initNickname: String?, currentNickname: String): Color {
-    return if(initNickname != currentNickname){
+fun handleTextColor(isAvailable: Boolean?): Color {
+    return if(isAvailable == null){
         Color.Black
     } else {
         if (isAvailable) {

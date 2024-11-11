@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.gson.GsonBuilder
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
+import com.hmoa.core_domain.entity.navigation.HomeRoute
 import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.screen.AddAddressRoute
 import com.hmoa.feature_hbti.screen.EditReviewRoute
@@ -26,7 +27,10 @@ import com.hmoa.feature_hbti.screen.WriteReviewRoute
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}") { launchSingleTop = true }
+fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}") {
+    popUpTo(HomeRoute.Home.name){inclusive = false}
+    launchSingleTop = true
+}
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}") { launchSingleTop = true }
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}") { launchSingleTop = true }
@@ -34,7 +38,7 @@ fun NavController.navigateToHbtiSurveyResult() =
 fun NavController.navigateToHbtiSurveyLoading() =
     navigate("${HbtiRoute.HbtiSurveyLoading}")
 
-fun NavController.navigateToHbtiProcess() = navigate("${com.hmoa.core_domain.entity.navigation.HbtiRoute.HbtiProcess}")
+fun NavController.navigateToHbtiProcess() = navigate("${HbtiRoute.HbtiProcess}")
 
 fun NavController.navigateToNotePick() =
     navigate("${HbtiRoute.NotePick}")

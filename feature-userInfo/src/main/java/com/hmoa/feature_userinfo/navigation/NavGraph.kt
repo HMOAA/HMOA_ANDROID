@@ -62,7 +62,9 @@ fun NavController.navigateToRefund(type: String, orderId: Int) =
     navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
 
 //주문 내역
-fun NavController.navigateToOrderRecord() = navigate(UserInfoRoute.OrderRecordRoute.name)
+fun NavController.navigateToOrderRecord(befRoute: UserInfoRoute) = navigate(UserInfoRoute.OrderRecordRoute.name){
+    if(befRoute == UserInfoRoute.RefundRoute){ popUpTo(route = "${UserInfoRoute.RefundRoute.name}/{type}/{orderId}"){inclusive = true} }
+}
 
 //환불 & 반품 내역
 fun NavController.navigateToRefundRecord() = navigate(UserInfoRoute.RefundRecordRoute.name)
@@ -92,7 +94,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navMyBirth: () -> Unit,
     navMyGender: () -> Unit,
     navPerfume: (Int) -> Unit,
-    navOrderRecord: () -> Unit,
+    navOrderRecord: (befRoute: UserInfoRoute) -> Unit,
     navRefund: (pageType: String, orderId: Int) -> Unit,
     navReviewWrite: (orderId: Int) -> Unit,
     navRefundRecord: () -> Unit,

@@ -9,21 +9,7 @@ import com.google.gson.GsonBuilder
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.HomeRoute
 import com.hmoa.core_model.data.NoteProductIds
-import com.hmoa.feature_hbti.screen.AddAddressRoute
-import com.hmoa.feature_hbti.screen.EditReviewRoute
-import com.hmoa.feature_hbti.screen.HbtiProcessRoute
-import com.hmoa.feature_hbti.screen.HbtiRoute
-import com.hmoa.feature_hbti.screen.HbtiSurveyResultLoading
-import com.hmoa.feature_hbti.screen.HbtiSurveyResultRoute
-import com.hmoa.feature_hbti.screen.HbtiSurveyRoute
-import com.hmoa.feature_hbti.screen.NotePickResultRoute
-import com.hmoa.feature_hbti.screen.NotePickRoute
-import com.hmoa.feature_hbti.screen.OrderResultRoute
-import com.hmoa.feature_hbti.screen.OrderRoute
-import com.hmoa.feature_hbti.screen.PerfumeRecommendationResultRoute
-import com.hmoa.feature_hbti.screen.PerfumeRecommendationRoute
-import com.hmoa.feature_hbti.screen.ReviewRoute
-import com.hmoa.feature_hbti.screen.WriteReviewRoute
+import com.hmoa.feature_hbti.screen.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 

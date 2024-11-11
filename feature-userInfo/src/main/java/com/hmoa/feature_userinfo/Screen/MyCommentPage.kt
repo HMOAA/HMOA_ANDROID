@@ -1,19 +1,11 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Comment
-import com.hmoa.core_designsystem.component.EmptyDataPage
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
@@ -139,25 +126,23 @@ private fun MyCommentContent(
                         key = {_, contact -> contact?.id!!}
                     ) { index, comment ->
                         if (comment != null) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .border(width = 0.5.dp, color = CustomColor.gray2, shape = RoundedCornerShape(3.dp))
-                                    .background(color = Color.White, shape = RoundedCornerShape(3.dp))
-                            ){
-                                Comment(
-                                    isEditable = false,
-                                    profile = comment.profileImg,
-                                    nickname = comment.nickname,
-                                    dateDiff = comment.createAt,
-                                    comment = comment.content,
-                                    isFirst = false,
-                                    heartCount = comment.heartCount,
-                                    navCommunity = { navParent(comment.parentId) },
-                                    onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
-                                    isSelected = comment.liked,
-                                    onHeartClick = {}
-                                )
+                            Comment(
+                                isEditable = false,
+                                profile = comment.profileImg,
+                                nickname = comment.nickname,
+                                dateDiff = comment.createAt,
+                                comment = comment.content,
+                                isFirst = false,
+                                heartCount = comment.heartCount,
+                                navCommunity = { navParent(comment.parentId) },
+                                onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
+                                isSelected = comment.liked,
+                                onHeartClick = {
+
+                                }
+                            )
+                            if (index < comments.size - 1) {
+                                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray2)
                             }
                         }
                     }

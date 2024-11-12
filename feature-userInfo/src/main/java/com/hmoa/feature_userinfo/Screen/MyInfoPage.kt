@@ -51,7 +51,7 @@ fun MyInfoPage(
             .background(color = Color.White)
     ){
         TopBar(
-            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+            navIcon = painterResource(R.drawable.ic_back),
             onNavClick = navBack, //뒤오 가기
             title = "내 정보"
         )
@@ -66,7 +66,7 @@ fun MyInfoPage(
         ){
             Text(
                 text = "출생연도",
-                fontFamily = FontFamily(Font(com.hmoa.core_designsystem.R.font.pretendard_regular)),
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 fontSize = 16.sp,
             )
             Icon(

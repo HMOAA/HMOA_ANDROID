@@ -82,29 +82,47 @@ internal fun MyPageRoute(
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
-    val isEnabledAlarm = viewModel.isEnabled.collectAsStateWithLifecycle()
-    val onChangeAlarm: (Boolean) -> Unit = {
-        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {
-            viewModel.changeAlarmSetting(it)
-        } else {
-            Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show()
-        }
-    }
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    val navKakao = {
-        TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
-            if (err != null) {
-                Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {}
 
+    val isLogin = viewModel.isLogin.collectAsStateWithLifecycle(false)
+    val isEnabledAlarm = viewModel.isEnabled.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val privacyPolicyIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_POLICY_URI)) }
     val termsOfServiceIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_OF_SERVICE)) }
-    val scope = rememberCoroutineScope()
+
+
+    val onChangeAlarm: (Boolean) -> Unit = {
+        if (checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) { viewModel.changeAlarmSetting(it) }
+        else { Toast.makeText(context, "알림 권한이 없습니다.\n알림 권한을 설정해주세요.", Toast.LENGTH_SHORT).show() }
+    }
+    val navKakao = {
+        TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
+            if (err != null) { Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show() }
+        }
+    }
+    val navOrderRecord = remember{{navOrderRecord(UserInfoRoute.MyPage)}}
+
+    val openLicenses = remember{{
+        launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
+        OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
+    }}
+    val logout: () -> Unit = remember{{
+        scope.launch {
+            launch { viewModel.logout() }.join()
+            navLogin()
+        }
+    }}
+    val deleteAccount: () -> Unit = remember{{
+        scope.launch {
+            launch { viewModel.delAccount() }.join()
+            navLogin()
+        }
+    }}
+    val openPrivacyPolicyLink = remember{{context.startActivity(privacyPolicyIntent) }}
+    val openTermsOfServiceLink = remember{{context.startActivity(termsOfServiceIntent) }}
+
     if (isLogin.value) {
         //로그인 분기 처리 (토큰 확인)
         MyPage(
@@ -113,30 +131,17 @@ internal fun MyPageRoute(
             appVersion = appVersion,
             isEnabledAlarm = isEnabledAlarm.value,
             onChangeAlarm = onChangeAlarm,
-            logoutEvent = {
-                scope.launch {
-                    launch { viewModel.logout() }.join()
-                    navLogin()
-                }
-            },
-            doOpenLicense = {
-                launcher.launch(Intent(context, OssLicensesMenuActivity::class.java))
-                OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스")
-            },
-            openPrivacyPolicyLink = { context.startActivity(privacyPolicyIntent) },
-            openTermsOfServiceLink = { context.startActivity(termsOfServiceIntent) },
-            onDelAccount = {
-                scope.launch {
-                    launch { viewModel.delAccount() }.join()
-                    navLogin()
-                }
-            },
+            logoutEvent = logout,
+            openLicenses = openLicenses,
+            openPrivacyPolicyLink = openPrivacyPolicyLink,
+            openTermsOfServiceLink = openTermsOfServiceLink,
+            onDelAccount = deleteAccount,
             onNavKakaoChat = navKakao,
             navMyPerfume = navMyPerfume,
             navEditProfile = navEditProfile,
             navMyActivity = navMyActivity,
             navManageMyInfo = navManageMyInfo,
-            navOrderRecord = { navOrderRecord(UserInfoRoute.MyPage) },
+            navOrderRecord = navOrderRecord,
             navRefundRecord = navRefundRecord,
             onErrorHandleLoginAgain = navLogin,
             onBackClick = navBack
@@ -156,9 +161,9 @@ fun MyPage(
     errorUiState: ErrorUiState,
     appVersion: String,
     isEnabledAlarm: Boolean,
-    onChangeAlarm: (Boolean) -> Unit,
+    onChangeAlarm: (isEnabledAlarm: Boolean) -> Unit,
     logoutEvent: () -> Unit,
-    doOpenLicense: () -> Unit,
+    openLicenses: () -> Unit,
     onDelAccount: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
     openTermsOfServiceLink: () -> Unit,
@@ -183,7 +188,7 @@ fun MyPage(
                 isEnabledAlarm = isEnabledAlarm,
                 onChangeAlarm = onChangeAlarm,
                 logoutEvent = logoutEvent,
-                doOpenLicense = doOpenLicense,
+                doOpenLicense = openLicenses,
                 openPrivacyPolicyLink = openPrivacyPolicyLink,
                 openTermsOfServiceLink = openTermsOfServiceLink,
                 onDelAccount = onDelAccount,
@@ -217,7 +222,7 @@ private fun MyPageContent(
     provider: String,
     appVersion: String,
     isEnabledAlarm: Boolean,
-    onChangeAlarm: (Boolean) -> Unit,
+    onChangeAlarm: (isEnabledAlarm: Boolean) -> Unit,
     logoutEvent: () -> Unit,
     doOpenLicense: () -> Unit,
     openPrivacyPolicyLink: () -> Unit,
@@ -272,7 +277,7 @@ private fun MyPageContent(
                     provider = provider,
                     navEditProfile = navEditProfile
                 )
-                //ServiceAlarm()
+                ServiceAlarm(isEnabledAlarm = isEnabledAlarm, onChangeAlarm = onChangeAlarm)
                 HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
             }
 
@@ -299,9 +304,7 @@ private fun MyPageContent(
                         tint = CustomColor.gray2
                     )
                 }
-                if (idx % 3 == 2) {
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                }
+                if (idx % 3 == 2) { HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2) }
             }
         }
     }

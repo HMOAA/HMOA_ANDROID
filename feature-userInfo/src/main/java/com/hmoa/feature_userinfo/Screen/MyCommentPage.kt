@@ -1,16 +1,10 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,12 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Comment
-import com.hmoa.core_designsystem.component.EmptyDataPage
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
@@ -72,8 +61,6 @@ fun MyCommentPage(
     navLogin: () -> Unit,
     onTypeChanged: (type: MyPageCategory) -> Unit
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
     when (uiState) {
         CommentUiState.Loading -> AppLoadingScreen()
         is CommentUiState.Comments -> {
@@ -131,7 +118,9 @@ private fun MyCommentContent(
                 }
             )
             if (comments.isNotEmpty()) {
-                LazyColumn {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(9.dp)
+                ) {
                     itemsIndexed(
                         items = comments,
                         key = {_, contact -> contact?.id!!}
@@ -148,7 +137,9 @@ private fun MyCommentContent(
                                 navCommunity = { navParent(comment.parentId) },
                                 onOpenBottomDialog = { /** Bottom Dialog 띄울 거면 사용 */ },
                                 isSelected = comment.liked,
-                                onHeartClick = {}
+                                onHeartClick = {
+
+                                }
                             )
                             if (index < comments.size - 1) {
                                 HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = CustomColor.gray2)

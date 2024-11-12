@@ -14,9 +14,9 @@ import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
 import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
-import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.core_model.response.PagingData
+import com.hmoa.core_network.authentication.Authenticator
 import com.hmoa.core_network.service.MemberService
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendMapSuccess
@@ -63,14 +63,31 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.postAddress(request).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.postAddress(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
 
-    override suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {
-        return memberService.updateAge(request)
+    override suspend fun updateAge(request: AgeRequestDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.updateAge(request).suspendOnSuccess{
+            result.data = this.data
+        }.suspendOnError{
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.updateAge(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
+        }
+        return result
     }
 
     override suspend fun getCommunities(page: Int): ResultResponse<List<CommunityByCategoryResponseDto>> {
@@ -167,8 +184,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.getOrder(cursor).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.getOrder(cursor).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -178,8 +200,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.getRefundRecord(cursor).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.getRefundRecord(cursor).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -189,8 +216,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.getOrderInfo().suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.getOrderInfo().suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -200,8 +232,13 @@ class MemberDataStoreImpl @Inject constructor(
         memberService.postOrderInfo(request).suspendOnSuccess{
             result.data = this.data
         }.suspendOnError{
-            val errorMessage = Json.decodeFromString<ErrorMessage>(this.message())
-            result.errorMessage = errorMessage
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.postOrderInfo(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
         }
         return result
     }
@@ -279,7 +316,19 @@ class MemberDataStoreImpl @Inject constructor(
         return memberService.deleteProfilePhoto()
     }
 
-    override suspend fun updateSex(request: SexRequestDto): DataResponseDto<Any> {
-        return memberService.updateSex(request)
+    override suspend fun updateSex(request: SexRequestDto): ResultResponse<DataResponseDto<Any>> {
+        val result = ResultResponse<DataResponseDto<Any>>()
+        memberService.updateSex(request).suspendOnSuccess {
+            result.data = this.data
+        }.suspendOnError {
+            authenticator.handleApiError(
+                rawMessage = this.message(),
+                handleErrorMesssage = { result.errorMessage = it },
+                onCompleteTokenRefresh = {
+                    memberService.updateSex(request).suspendOnSuccess { result.data = this.data }
+                }
+            )
+        }
+        return result
     }
 }

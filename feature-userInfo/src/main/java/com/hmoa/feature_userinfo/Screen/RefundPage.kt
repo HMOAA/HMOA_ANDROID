@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +43,7 @@ import com.hmoa.core_designsystem.component.NoteListItem
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.core_model.response.FinalOrderResponseDto
 import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.viewModel.RefundUiState
@@ -56,23 +56,40 @@ fun RefundRoute(
     type: String?,
     orderId: Int?,
     navBack: () -> Unit,
+    navOrderRecord: (befRoute: UserInfoRoute) -> Unit,
     navLogin: () -> Unit,
     viewModel: RefundViewModel = hiltViewModel()
 ) {
     viewModel.setId(orderId)
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
-    val isDone = viewModel.isDone.collectAsStateWithLifecycle()
-    ReturnOrRefundScreen(
-        uiState = uiState.value,
-        errState = errState.value,
-        type = type!!,
-        doRefund = { viewModel.refundOrder() },
-        navBack = navBack,
-        navLogin = navLogin
-    )
-    LaunchedEffect(isDone.value) {
-        if (isDone.value) navBack()
+    val isDone by viewModel.isDone.collectAsStateWithLifecycle()
+    val navOrderRecord = remember{{navOrderRecord(UserInfoRoute.RefundRoute)}}
+    val dialogWidth = LocalConfiguration.current.screenWidthDp.dp - 88.dp
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        AppDesignDialog(
+            isOpen = isDone,
+            modifier = Modifier
+                .width(dialogWidth)
+                .wrapContentHeight(),
+            title = "환불이 완료되었습니다.",
+            content = "환불은 환불 규정에 따라 진행됩니다.",
+            onCloseClick = navOrderRecord,
+            onOkClick = navOrderRecord,
+            buttonTitle = "확인",
+            buttonColor = Color.Black
+        )
+        ReturnOrRefundScreen(
+            uiState = uiState.value,
+            errState = errState.value,
+            type = type!!,
+            doRefund = { viewModel.refundOrder() },
+            navBack = navBack,
+            navLogin = navLogin
+        )
     }
 }
 
@@ -246,16 +263,16 @@ private fun RefundContent(
                 onClick = {
                     if(type == "refund") showDialog = true
                     else TalkApiClient.instance.chatChannel(context, BuildConfig.KAKAO_CHAT_PROFILE) { err ->
-                        if (err != null) {
-                            Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show()
-                        }
+                        if (err != null) { Toast.makeText(context, "향모아 챗봇 오류가 발생했습니다:(", Toast.LENGTH_LONG).show() }
                     }
                 }
             )
         }
         AppDesignDialog(
             isOpen = showDialog,
-            modifier = Modifier.width(dialogWidth).wrapContentHeight(),
+            modifier = Modifier
+                .width(dialogWidth)
+                .wrapContentHeight(),
             title = "환불하시겠습니까?",
             content = "환불은 환불 규정에 따라 진행됩니다.",
             onCloseClick = {showDialog = false},
@@ -263,7 +280,8 @@ private fun RefundContent(
                 doRefund()
                 showDialog = false
             },
-            buttonTitle = "확인"
+            buttonTitle = "확인",
+            buttonColor = Color.Black
         )
     }
 }

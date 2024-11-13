@@ -86,7 +86,7 @@ fun RefundRoute(
             uiState = uiState.value,
             errState = errState.value,
             type = type!!,
-            doRefund = { viewModel.refundOrder() },
+            doRefund = viewModel::refundOrder,
             navBack = navBack,
             navLogin = navLogin
         )

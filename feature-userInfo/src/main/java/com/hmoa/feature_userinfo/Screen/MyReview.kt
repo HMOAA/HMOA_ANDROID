@@ -27,6 +27,7 @@ import com.hmoa.core_model.response.ReviewResponseDto
 import com.hmoa.feature_userinfo.viewModel.MyReviewUiState
 import com.hmoa.feature_userinfo.viewModel.MyReviewViewModel
 
+// 내가 작성한 review 화면
 @Composable
 fun MyReviewRoute(
     navReview: (befRoute: HbtiRoute) -> Unit,

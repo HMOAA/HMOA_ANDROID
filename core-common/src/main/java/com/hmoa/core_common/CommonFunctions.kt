@@ -27,8 +27,9 @@ fun calculateProgressStepSize(list: List<Any>?): Float {
     }
 }
 
-fun calculateHbtiProgressStepSize(list: List<Any>?): Float {
-    return ((100).div(list?.size?.minus(1) ?: 10)).div(100.0).toFloat()
+fun calculateHbtiProgressStepSize(size: Int): Float {
+    val result = 1f.div(size)
+    return result
 }
 
 fun OrderStatus.toDisplayString(): String {

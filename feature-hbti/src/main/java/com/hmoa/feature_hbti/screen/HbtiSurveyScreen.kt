@@ -112,15 +112,13 @@ fun HbtiSurveyContent(
     var currentProgress by remember { mutableStateOf(0f) }
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
-    val pageContent = hbtiQuestionItems?.hbtiQuestions?.values?.map { it }
-    val additionalProgress = calculateHbtiProgressStepSize(pageContent)
     val pagerState =
-        rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
-
+        rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.questionCounts ?: 0 })
+    val additionalProgress = calculateHbtiProgressStepSize(hbtiQuestionItems?.questionCounts ?: 13)
     fun addProgress() {
         targetProgress += additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress <= targetProgress) {
                     currentProgress += progress
                 }
@@ -131,7 +129,7 @@ fun HbtiSurveyContent(
     fun subtractProgress() {
         targetProgress -= additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress >= targetProgress) {
                     currentProgress -= progress
                 }
@@ -220,7 +218,6 @@ fun HbtiSurveyContent(
                         isEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
                         btnText = "다음",
                         onClick = {
-                            addProgress()
                             scope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }

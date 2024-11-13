@@ -154,46 +154,42 @@ fun NotePickGridWindow(
     isNoteSelectedList: List<NoteSelect>,
     onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit
 ) {
-    if (notes?.data == null) {
-        Text("데이터가 없습니다")
-    } else {
-        LazyVerticalGrid(columns = GridCells.Fixed(3), verticalArrangement = Arrangement.SpaceBetween) {
-            itemsIndexed(notes?.data ?: emptyList()) { index, item ->
-                Column(
-                    modifier = Modifier.padding(vertical = 10.dp).padding(horizontal = 5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    NoteImageView(
-                        imageUrl = item.productPhotoUrl,
-                        width = 74f,
-                        height = 74f,
-                        backgroundColor = Color.Transparent,
-                        contentScale = ContentScale.Crop,
-                        onClicked = {
-                            onClickItem(
-                                index,
-                                !isNoteSelectedList[index].isSelected,
-                                isNoteSelectedList[index]
-                            )
-                        },
-                        isRecommanded = item.isRecommended,
-                        index = isNoteSelectedList[index].nodeFaceIndex,
-                        isSelected = isNoteSelectedList[index].isSelected
-                    )
-                    Text(
-                        text = item.productName,
-                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.SemiBold, fontSize = 14.sp),
-                        modifier = Modifier.padding(top = 12.dp, bottom = 5.dp)
-                    )
-                    Text(
-                        text = item.productDetails,
-                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
-                    )
-                    Text(
-                        text = "(총 ${item.price}원)",
-                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
-                    )
-                }
+    LazyVerticalGrid(columns = GridCells.Fixed(3), verticalArrangement = Arrangement.SpaceBetween) {
+        itemsIndexed(notes?.data ?: emptyList()) { index, item ->
+            Column(
+                modifier = Modifier.padding(vertical = 10.dp).padding(horizontal = 5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                NoteImageView(
+                    imageUrl = item.productPhotoUrl,
+                    width = 74f,
+                    height = 74f,
+                    backgroundColor = Color.Transparent,
+                    contentScale = ContentScale.Crop,
+                    onClicked = {
+                        onClickItem(
+                            index,
+                            !isNoteSelectedList.get(index).isSelected,
+                            isNoteSelectedList.get(index)
+                        )
+                    },
+                    isRecommanded = item.isRecommended,
+                    index = isNoteSelectedList.get(index).nodeFaceIndex,
+                    isSelected = isNoteSelectedList.get(index).isSelected
+                )
+                Text(
+                    text = item.productName,
+                    style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.SemiBold, fontSize = 14.sp),
+                    modifier = Modifier.padding(top = 12.dp, bottom = 5.dp)
+                )
+                Text(
+                    text = item.productDetails,
+                    style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
+                )
+                Text(
+                    text = "(총 ${item.price}원)",
+                    style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
+                )
             }
         }
     }

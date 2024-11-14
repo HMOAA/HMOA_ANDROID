@@ -2,9 +2,11 @@ package com.hmoa.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_model.data.ErrorMessage
@@ -13,7 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -27,12 +28,6 @@ class MyBirthViewModel @Inject constructor(
     private val memberRepository: MemberRepository,
     getMyUserInfoUseCase: GetMyUserInfoUseCase
 ) : ViewModel() {
-    private var defaultBirth = 0
-
-    private val _birth = MutableStateFlow<Int?>(null)
-    val birth get() = _birth.asStateFlow()
-
-    val isEnabled = _birth.map {birth.value != defaultBirth}
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -55,21 +50,23 @@ class MyBirthViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
     val uiState: StateFlow<MyBirthUiState> = errorUiState.map{ errState ->
-        if (errState is ErrorUiState.ErrorData && errState.generalError.first) throw Exception(errState.generalError.second)
+        if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("")
         val result = getMyUserInfoUseCase()
         if (result.errorMessage is ErrorMessage) throw Exception(result.errorMessage!!.message)
         result.data!!
     }.asResult().map { result ->
         when (result) {
             Result.Loading -> MyBirthUiState.Loading
-            is Result.Success -> {
-                _birth.update { result.data.birth }
-                defaultBirth = birth.value!!
-                MyBirthUiState.Success
-            }
+            is Result.Success -> MyBirthUiState.Success(result.data.birth)
             is Result.Error -> {
-                if (!(errorUiState.value as ErrorUiState.ErrorData).generalError.first){
-                    generalErrorState.update{Pair(true, result.exception.message)}
+                if (result.exception.message != ""){
+                    handleErrorType(
+                        error = result.exception,
+                        onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                        onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                        onUnknownError = {unLoginedErrorState.update{true}},
+                        onGeneralError = {generalErrorState.update{Pair(true, result.exception.message)}}
+                    )
                 }
                 MyBirthUiState.Error
             }
@@ -80,28 +77,30 @@ class MyBirthViewModel @Inject constructor(
         initialValue = MyBirthUiState.Loading
     )
 
-    //update local 날짜
-    fun updateBirth(newBirth: Int) = _birth.update { newBirth }
     //remote 출생 날짜 저장
-    fun saveBirth() {
-        if (birth.value == null) {
-            generalErrorState.update{Pair(true, "Input Data is NULL")}
-            return
-        }
-        val age = LocalDateTime.now().year - birth.value!! + 1
+    fun saveBirth(birth: Int, onSuccess: () -> Unit) {
+        val age = LocalDateTime.now().year - birth + 1
         val requestDto = AgeRequestDto(age)
         viewModelScope.launch {
-            try {
-                memberRepository.updateAge(requestDto)
-            } catch (e: Exception) {
-                generalErrorState.update { Pair(true, e.message) }
+            val result = memberRepository.updateAge(requestDto)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
+                    else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
+                }
+                return@launch
             }
+            onSuccess()
         }
     }
 }
 
 sealed interface MyBirthUiState {
     data object Error : MyBirthUiState
-    data object Success : MyBirthUiState
+    data class Success(
+        val defaultBirth: Int
+    ) : MyBirthUiState
     data object Loading : MyBirthUiState
 }

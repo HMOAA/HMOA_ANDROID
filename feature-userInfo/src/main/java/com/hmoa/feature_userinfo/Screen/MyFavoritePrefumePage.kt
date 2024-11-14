@@ -1,8 +1,19 @@
-package com.hmoa.feature_like.Screen
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -11,7 +22,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -20,7 +36,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.LikeGridItem
+import com.hmoa.core_designsystem.component.LikeRowItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.PerfumeLikeResponseDto
 import com.hmoa.feature_userinfo.viewModel.MyFavoritePerfumeUiState
@@ -28,27 +49,18 @@ import com.hmoa.feature_userinfo.viewModel.MyFavoritePerfumeViewModel
 
 @Composable
 fun MyFavoritePerfumeRoute(
-    navPerfume: (Int) -> Unit,
+    navPerfume: (perfumeId: Int) -> Unit,
     navHome: () -> Unit,
     navBack: () -> Unit,
-    onErrorHandleLoginAgain: () -> Unit,
+    navLogin: () -> Unit,
     viewModel: MyFavoritePerfumeViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    var type by remember { mutableStateOf("ROW") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
     MyFavoritePerfumeScreen(
-        uiState = uiState.value,
-        type = type,
-        onTypeChanged = { type = it },
+        uiState = uiState,
         errorUiState = errorUiState,
-        onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()) {
-                navHome()
-            } else {
-                onErrorHandleLoginAgain()
-            }
-        },
+        navLogin = navLogin,
         navPerfume = navPerfume,
         navHome = navHome,
         navBack = navBack
@@ -59,33 +71,23 @@ fun MyFavoritePerfumeRoute(
 fun MyFavoritePerfumeScreen(
     errorUiState: ErrorUiState,
     uiState: MyFavoritePerfumeUiState,
-    type: String,
-    onTypeChanged: (String) -> Unit,
-    navPerfume: (Int) -> Unit,
+    navPerfume: (perfumeId: Int) -> Unit,
     navHome: () -> Unit,
     navBack: () -> Unit,
-    onErrorHandleLoginAgain: () -> Unit
+    navLogin: () -> Unit
 ) {
-
     when (uiState) {
         MyFavoritePerfumeUiState.Loading -> AppLoadingScreen()
         is MyFavoritePerfumeUiState.Like -> {
-            if (uiState.perfumes.isNotEmpty()) {
-                MyFavoritePerfumeContent(
-                    type = type,
-                    onTypeChanged = onTypeChanged,
-                    perfumes = uiState.perfumes,
-                    navPerfume = navPerfume,
-                    navBack = navBack
-                )
-            } else {
-                EmptyDataPage(mainText = "좋아요한 향수가 없습니다.")
-            }
+            MyFavoritePerfumeContent(
+                perfumes = uiState.perfumes,
+                navPerfume = navPerfume,
+                navBack = navBack
+            )
         }
-
         is MyFavoritePerfumeUiState.Error -> {
             ErrorUiSetView(
-                onLoginClick = { onErrorHandleLoginAgain() },
+                onLoginClick = navLogin,
                 errorUiState = errorUiState,
                 onCloseClick = navHome
             )
@@ -95,36 +97,39 @@ fun MyFavoritePerfumeScreen(
 
 @Composable
 private fun MyFavoritePerfumeContent(
-    type: String,
-    onTypeChanged: (String) -> Unit,
     perfumes: List<PerfumeLikeResponseDto>,
-    navPerfume: (Int) -> Unit,
+    navPerfume: (perfumeId: Int) -> Unit,
     navBack: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White),
-    ) {
-        TopBar(
-            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            title = "저장",
-            onNavClick = navBack
-        )
-        Spacer(Modifier.height(16.dp))
-        IconRow(type = type, onTypeChanged = onTypeChanged)
-        Spacer(Modifier.height(20.dp))
-        if (type == "ROW") {
-            LikePerfumeListByRow(
-                perfumes = perfumes,
-                navPerfume = navPerfume
+    var type by remember { mutableStateOf("ROW") }
+    if (perfumes.isNotEmpty()){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.White),
+        ) {
+            TopBar(
+                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                title = "저장",
+                onNavClick = navBack
             )
-        } else if (type == "GRID") {
-            LikePerfumeListByGrid(
-                perfumes = perfumes,
-                navPerfume = navPerfume
-            )
+            Spacer(Modifier.height(16.dp))
+            IconRow(type = type, onTypeChanged = { type = it })
+            Spacer(Modifier.height(20.dp))
+            if (type == "ROW") {
+                LikePerfumeListByRow(
+                    perfumes = perfumes,
+                    navPerfume = navPerfume
+                )
+            } else if (type == "GRID") {
+                LikePerfumeListByGrid(
+                    perfumes = perfumes,
+                    navPerfume = navPerfume
+                )
+            }
         }
+    } else {
+        EmptyDataPage(mainText = "좋아요한 향수가 없습니다.")
     }
 }
 

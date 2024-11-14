@@ -233,7 +233,7 @@ private fun Buttons(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(3.dp),
                 onClick = onReviewWriteClick,
-                enabled = !isReviewed,
+                enabled = shippingStatus != OrderStatus.SHIPPING_PROGRESS && (!isReviewed),
                 border = BorderStroke(width = 1.dp, color = if(!isReviewed) Color.Black else CustomColor.gray3),
                 contentPadding = PaddingValues(vertical = 10.dp),
             ) {

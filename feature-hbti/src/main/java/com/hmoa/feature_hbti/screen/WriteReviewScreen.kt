@@ -48,12 +48,14 @@ import com.hmoa.core_designsystem.component.BottomCameraBtn
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.feature_hbti.viewmodel.WriteReviewViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun WriteReviewRoute(
     orderId: Int?,
+    navReview: (befRoute: HbtiRoute) -> Unit,
     navBack: () -> Unit,
     viewModel: WriteReviewViewModel = hiltViewModel()
 ){
@@ -71,7 +73,7 @@ fun WriteReviewRoute(
         }
     )
     LaunchedEffect(isDone){
-        if (isDone) navBack()
+        if (isDone) navReview(HbtiRoute.WriteReviewRoute)
     }
 }
 

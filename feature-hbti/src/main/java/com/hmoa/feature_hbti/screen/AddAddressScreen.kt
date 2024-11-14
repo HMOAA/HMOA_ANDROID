@@ -8,7 +8,16 @@ import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -18,7 +27,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +58,7 @@ import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_model.data.DefaultAddressDto
 import com.hmoa.feature_hbti.BuildConfig
 import com.hmoa.feature_hbti.viewmodel.AddAddressViewModel
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 @Composable
@@ -120,7 +136,7 @@ private fun AddAddressMainContent(
                     && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
                     && homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
                     && postalCode.isNotEmpty() && address.isNotEmpty()
-                    && detailAddress.isNotEmpty() && request.isNotEmpty()
+                    && detailAddress.isNotEmpty()
         }
     }
     LaunchedEffect(Unit) {
@@ -131,18 +147,12 @@ private fun AddAddressMainContent(
             phone1 = initAddress.phoneNumber.substring(0, 3)
             phone2 = initAddress.phoneNumber.substring(4, 8)
             phone3 = initAddress.phoneNumber.substring(9, 12)
-            homePhone1 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(
-                0,
-                3
-            ) else initAddress.landlineNumber.substring(0, 2)
-            homePhone2 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(
-                4,
-                8
-            ) else initAddress.landlineNumber.substring(3, 7)
-            homePhone3 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(
-                9,
-                13
-            ) else initAddress.landlineNumber.substring(8, 12)
+            homePhone1 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(0,3)
+                else initAddress.landlineNumber.substring(0, 2)
+            homePhone2 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(4,8)
+                else initAddress.landlineNumber.substring(3, 7)
+            homePhone3 = if (initAddress.landlineNumber[1] == '1') initAddress.landlineNumber.substring(9,13) 
+                else initAddress.landlineNumber.substring(8, 12)
             postalCode = initAddress.zipCode
             address = initAddress.streetAddress
             detailAddress = initAddress.detailAddress

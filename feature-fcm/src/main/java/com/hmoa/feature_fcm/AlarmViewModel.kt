@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.emitOrThrow
+import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.FcmRepository
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.AlarmResponse
@@ -24,7 +26,6 @@ import javax.inject.Inject
 class AlarmViewModel @Inject constructor(
     private val fcmRepository: FcmRepository
 ) : ViewModel() {
-
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -48,13 +49,17 @@ class AlarmViewModel @Inject constructor(
     )
 
     val uiState : StateFlow<AlarmUiState> = flow{
-        val result = fcmRepository.getFcmList()
-        if (result.errorMessage is ErrorMessage) throw Exception(result.errorMessage!!.message)
-        emit(result)
+        fcmRepository.getFcmList().emitOrThrow{emit(it)}
     }.asResult().map{ result ->
         when(result){
             is Result.Error -> {
-                generalErrorState.update{Pair(true, result.exception.message)}
+                handleErrorType(
+                    error = result.exception,
+                    onExpiredTokenError = {expiredTokenErrorState.update{true}},
+                    onWrongTypeTokenError = {wrongTypeTokenErrorState.update{true}},
+                    onUnknownError = {unLoginedErrorState.update{true}},
+                    onGeneralError = {generalErrorState.update{Pair(true, result.exception.message)}},
+                )
                 AlarmUiState.Error
             }
             Result.Loading -> AlarmUiState.Loading
@@ -76,7 +81,6 @@ class AlarmViewModel @Inject constructor(
             (uiState.value as AlarmUiState.Success).checkAlarm(id)
         }
     }
-
 }
 
 sealed interface AlarmUiState{

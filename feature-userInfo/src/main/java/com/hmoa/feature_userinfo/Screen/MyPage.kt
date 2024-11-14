@@ -43,6 +43,7 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.ColumnData
+import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.feature_userinfo.BuildConfig
 import com.hmoa.feature_userinfo.screen.NoAuthMyPage
 import com.kakao.sdk.talk.TalkApiClient
@@ -58,7 +59,7 @@ internal fun MyPageRoute(
     navManageMyInfo: () -> Unit,
     navLogin: () -> Unit,
     navMyPerfume: () -> Unit,
-    navOrderRecord: () -> Unit,
+    navOrderRecord: (befRoute: UserInfoRoute) -> Unit,
     navRefundRecord: () -> Unit,
     navBack: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
@@ -118,7 +119,7 @@ internal fun MyPageRoute(
             navEditProfile = navEditProfile,
             navMyActivity = navMyActivity,
             navManageMyInfo = navManageMyInfo,
-            navOrderRecord = navOrderRecord,
+            navOrderRecord = { navOrderRecord(UserInfoRoute.MyPage) },
             navRefundRecord = navRefundRecord,
             onErrorHandleLoginAgain = navLogin,
             onBackClick = navBack

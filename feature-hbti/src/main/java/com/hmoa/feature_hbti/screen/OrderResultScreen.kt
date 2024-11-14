@@ -18,23 +18,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun OrderResultRoute(
-    navBack: () -> Unit,
-    navHome: () -> Unit
+    navHbti: () -> Unit
 ){
-    OrderResultScreen(navBack, navHome)
+    OrderResultScreen(navHbti)
 }
 
 @Composable
-fun OrderResultScreen(
-    navBack: () -> Unit,
-    navHome: () -> Unit,
-){
+fun OrderResultScreen(navHbti: () -> Unit){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,11 +39,7 @@ fun OrderResultScreen(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        TopBar(
-            title = "결제완료",
-            navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = navBack
-        )
+        TopBar(title = "결제완료")
         Spacer(Modifier.weight(1f))
         Image(
             modifier = Modifier.size(110.dp),
@@ -66,7 +58,7 @@ fun OrderResultScreen(
             radious = 5,
             isEnabled = true, 
             btnText = "홈으로 돌아가기",
-            onClick = navHome
+            onClick = navHbti
         )
     }
 }
@@ -74,8 +66,5 @@ fun OrderResultScreen(
 @Preview
 @Composable
 private fun OrderResultUITest(){
-    OrderResultScreen(
-        navBack = {},
-        navHome = {}
-    )
+    OrderResultScreen(navHbti = {})
 }

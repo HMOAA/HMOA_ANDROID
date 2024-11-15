@@ -144,7 +144,7 @@ class NotePickViewmodelTest : TestCase() {
         }
         launch { viewmodel.getNoteProducts() }.join()
         launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
-        Assert.assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
+        Assert.assertEquals(expectedNoteSelectData, viewmodel.isNoteSelectDataState.value)
     }
 
     @Test
@@ -177,7 +177,7 @@ class NotePickViewmodelTest : TestCase() {
             isRecommended = targetNode.isRecommended,
             nodeFaceIndex = null
         )
-        Assert.assertEquals(expectedNoteSelectData, viewmodel.noteSelectDataState.value)
+        Assert.assertEquals(expectedNoteSelectData, viewmodel.isNoteSelectDataState.value)
     }
 
     @Test

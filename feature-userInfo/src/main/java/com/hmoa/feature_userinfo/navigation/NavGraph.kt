@@ -9,20 +9,8 @@ import androidx.navigation.navArgument
 import com.example.userinfo.MyPageRoute
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
-import com.hmoa.feature_like.Screen.MyFavoritePerfumeRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
-import com.hmoa.feature_userinfo.screen.EditProfileRoute
-import com.hmoa.feature_userinfo.screen.MyActivityRoute
-import com.hmoa.feature_userinfo.screen.MyBirthRoute
-import com.hmoa.feature_userinfo.screen.MyCommentRoute
-import com.hmoa.feature_userinfo.screen.MyGenderRoute
-import com.hmoa.feature_userinfo.screen.MyInfoRoute
-import com.hmoa.feature_userinfo.screen.MyPostRoute
-import com.hmoa.feature_userinfo.screen.MyReviewRoute
-import com.hmoa.feature_userinfo.screen.NoAuthMyPage
-import com.hmoa.feature_userinfo.screen.OrderRecordRoute
-import com.hmoa.feature_userinfo.screen.RefundRecordRoute
-import com.hmoa.feature_userinfo.screen.RefundRoute
+import com.hmoa.feature_userinfo.screen.*
 
 //graph 이동
 fun NavController.navigateToUserInfoGraph() = navigate(UserInfoRoute.UserInfoGraph.name)
@@ -62,8 +50,10 @@ fun NavController.navigateToRefund(type: String, orderId: Int) =
     navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
 
 //주문 내역
-fun NavController.navigateToOrderRecord(befRoute: UserInfoRoute) = navigate(UserInfoRoute.OrderRecordRoute.name){
-    if(befRoute == UserInfoRoute.RefundRoute){ popUpTo(route = "${UserInfoRoute.RefundRoute.name}/{type}/{orderId}"){inclusive = true} }
+fun NavController.navigateToOrderRecord(befRoute: UserInfoRoute) = navigate(UserInfoRoute.OrderRecordRoute.name) {
+    if (befRoute == UserInfoRoute.RefundRoute) {
+        popUpTo(route = "${UserInfoRoute.RefundRoute.name}/{type}/{orderId}") { inclusive = true }
+    }
 }
 
 //환불 & 반품 내역

@@ -3,9 +3,9 @@ package com.hmoa.feature_hbti.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
-import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_domain.entity.data.HbtiQuestionItem
 import com.hmoa.core_domain.entity.data.HbtiQuestionItems
+import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
@@ -127,7 +127,8 @@ class HbtiSurveyViewmodel @Inject constructor(
                             HbtiQuestionItems(
                                 hbtiQuestions = initializeHbtiQuestionItemsState(
                                     result.data.data
-                                )
+                                ),
+                                questionCounts = result.data.data?.questions?.size ?: 0
                             )
                         }
                         _hbtiAnwserIdsState.update { initializeHbtiAnswerIdsState(result.data.data) }
@@ -230,11 +231,13 @@ class HbtiSurveyViewmodel @Inject constructor(
 
     fun getUpdatedHbtiQuestionItems(page: Int, newHbtiQuestionItem: HbtiQuestionItem): HbtiQuestionItems {
         val newHbtiQuestionItems = mutableMapOf<QuestionPageIndex, HbtiQuestionItem>()
+        var count = 0
         _hbtiQuestionItemsState.value?.hbtiQuestions?.set(page, newHbtiQuestionItem)
         _hbtiQuestionItemsState.value?.hbtiQuestions?.map {
             newHbtiQuestionItems[it.key] = it.value
+            count += 1
         }
-        return HbtiQuestionItems(hbtiQuestions = newHbtiQuestionItems)
+        return HbtiQuestionItems(hbtiQuestions = newHbtiQuestionItems, questionCounts = count)
     }
 
     fun updatedIsNextQuestionAvailable(

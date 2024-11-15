@@ -15,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -120,13 +121,36 @@ fun NoteContent(
             ) {
                 Text(
                     "추천받은 카테고리는 '${topRecommendedNote}'입니다.\n그 외에 원하는 시향카드 카테고리를\n선택해주세요",
-                    modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
+                    modifier = Modifier.padding(bottom = 12.dp, top = 36.dp),
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = pretendard
                     )
                 )
+                Row {
+                    Text(
+                        "*",
+                        modifier = Modifier.padding(bottom = 28.dp),
+                        style = TextStyle(
+                            color = CustomColor.gray5,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = pretendard
+                        ),
+                        textAlign = TextAlign.Start
+                    )
+                    Text(
+                        "향료 1개당 900원",
+                        modifier = Modifier.padding(bottom = 28.dp),
+                        style = TextStyle(
+                            color = CustomColor.gray5,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = pretendard
+                        )
+                    )
+                }
                 NotePickGridWindow(
                     notes = noteList,
                     isNoteSelectedList = isNoteSelectedList,
@@ -154,46 +178,47 @@ fun NotePickGridWindow(
     isNoteSelectedList: List<NoteSelect>,
     onClickItem: (index: Int, value: Boolean, data: NoteSelect) -> Unit
 ) {
-    if (notes?.data == null) {
-        Text("데이터가 없습니다")
-    } else {
-        LazyVerticalGrid(columns = GridCells.Fixed(3), verticalArrangement = Arrangement.SpaceBetween) {
-            itemsIndexed(notes?.data ?: emptyList()) { index, item ->
-                Column(
-                    modifier = Modifier.padding(vertical = 10.dp).padding(horizontal = 5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    NoteImageView(
-                        imageUrl = item.productPhotoUrl,
-                        width = 74f,
-                        height = 74f,
-                        backgroundColor = Color.Transparent,
-                        contentScale = ContentScale.Crop,
-                        onClicked = {
-                            onClickItem(
-                                index,
-                                !isNoteSelectedList[index].isSelected,
-                                isNoteSelectedList[index]
-                            )
-                        },
-                        isRecommanded = item.isRecommended,
-                        index = isNoteSelectedList[index].nodeFaceIndex,
-                        isSelected = isNoteSelectedList[index].isSelected
+    LazyVerticalGrid(columns = GridCells.Fixed(3), verticalArrangement = Arrangement.SpaceBetween) {
+        itemsIndexed(notes?.data ?: emptyList()) { index, item ->
+            Column(
+                modifier = Modifier.padding(vertical = 10.dp).padding(horizontal = 5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                NoteImageView(
+                    imageUrl = item.productPhotoUrl,
+                    width = 74f,
+                    height = 74f,
+                    backgroundColor = Color.Transparent,
+                    contentScale = ContentScale.Crop,
+                    onClicked = {
+                        onClickItem(
+                            index,
+                            !isNoteSelectedList.get(index).isSelected,
+                            isNoteSelectedList.get(index)
+                        )
+                    },
+                    isRecommanded = item.isRecommended,
+                    index = isNoteSelectedList.get(index).nodeFaceIndex,
+                    isSelected = isNoteSelectedList.get(index).isSelected
+                )
+                Text(
+                    text = item.productName,
+                    style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.SemiBold, fontSize = 14.sp),
+                    modifier = Modifier.padding(top = 12.dp, bottom = 5.dp)
+                )
+                Text(
+                    text = item.productDetails,
+                    style = TextStyle(
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center
                     )
-                    Text(
-                        text = item.productName,
-                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.SemiBold, fontSize = 14.sp),
-                        modifier = Modifier.padding(top = 12.dp, bottom = 5.dp)
-                    )
-                    Text(
-                        text = item.productDetails,
-                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
-                    )
-                    Text(
-                        text = "(총 ${item.price}원)",
-                        style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
-                    )
-                }
+                )
+                Text(
+                    text = "(총 ${item.price}원)",
+                    style = TextStyle(fontFamily = pretendard, fontWeight = FontWeight.Normal, fontSize = 12.sp)
+                )
             }
         }
     }

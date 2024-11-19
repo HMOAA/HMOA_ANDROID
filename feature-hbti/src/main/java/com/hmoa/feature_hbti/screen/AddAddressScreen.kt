@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -191,7 +192,7 @@ private fun AddAddressMainContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(state = scrollState)
-                .padding(top = 20.dp)
+                .padding(top = 20.dp, bottom = 15.dp)
                 .padding(horizontal = 16.dp)
         ) {
             Text(
@@ -255,6 +256,18 @@ private fun AddAddressMainContent(
                 },
                 radious = 5
             )
+            if(isEnabled.value){
+                Spacer(Modifier.height(13.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "내용이 올바르지 않거나, 입력하지 않은 항목이 있습니다.",
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                    lineHeight = 12.sp,
+                    fontFamily = CustomFont.regular,
+                    color = CustomColor.red
+                )
+            }
         }
     }
 }

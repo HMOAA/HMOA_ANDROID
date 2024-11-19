@@ -252,7 +252,7 @@ private fun Buttons(
                     fontSize = 10.sp,
                     lineHeight = 12.sp,
                     fontFamily = CustomFont.regular,
-                    color = CustomColor.gray3,
+                    color = Color.Black,
                 )
             }
         }

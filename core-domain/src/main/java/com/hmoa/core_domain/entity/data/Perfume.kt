@@ -8,7 +8,6 @@ data class Perfume(
     val brandEnglishName: String?,
     val brandKoreanName: String,
     val brandId: String,
-    val brandImgUrl: String,
     val perfumeEnglishName: String,
     val perfumeKoreanName: String,
     val baseNote: String?,

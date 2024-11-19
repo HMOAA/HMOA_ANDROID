@@ -7,7 +7,6 @@ data class PerfumeDetailResponseDto(
     val baseNote: String?,
     val brandEnglishName: String,
     val brandId: Int,
-    val brandImgUrl: String,
     val brandName: String,
     val englishName: String,
     val heartNote: String?,

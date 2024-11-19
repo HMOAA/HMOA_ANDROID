@@ -122,7 +122,8 @@ class MainActivity : AppCompatActivity() {
                 backgroundColor = Color.White,
                 bottomBar = {
                     MainBottomBar(
-                        navBackStackEntry = navBackStackEntry,
+                        navController = navHostController,
+                        needBottomBarScreen = needBottomBarScreens,
                         onClickHome = navHostController::navigateToHome,
                         onClickHPedia = navHostController::navigateToHPedia,
                         onClickLike = navHostController::navigateToMagazineHome,

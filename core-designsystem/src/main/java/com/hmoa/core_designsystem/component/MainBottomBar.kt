@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hmoa.core_designsystem.BottomNavItem
@@ -35,7 +35,8 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun MainBottomBar(
-    navBackStackEntry: NavBackStackEntry?,
+    navController: NavHostController,
+    needBottomBarScreen: List<String>,
     onClickHome: () -> Unit,
     onClickHPedia: () -> Unit,
     onClickLike: () -> Unit,
@@ -47,18 +48,14 @@ fun MainBottomBar(
         BottomScreen.Magazine.name,
         BottomScreen.MyPage.name
     )
-    val needBottomBarScreens = listOf(
-        "Home", "CommunityHomeRoute","CommunityPreviewRoute","HPedia","HPediaSearchRoute/{type}",
-        "HPediaDescRoute/{id}/{type}","MyPage","MyInfoRoute","MyFavoriteCommentRoute","MyActivityRoute",
-        "MyCommentRoute","MyPostRoute","MyFavoritePerfumeRoute","Magazine"
-    )
     var currentScreen by remember{mutableStateOf(bottomNav[0])}
     val isVisibleBottomBar by remember{derivedStateOf{
-        currentScreen in needBottomBarScreens
+        currentScreen in needBottomBarScreen
     }}
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
     LaunchedEffect(navBackStackEntry?.destination?.route){
-        if (navBackStackEntry?.destination?.route != null && currentScreen in bottomNav){
-            currentScreen = navBackStackEntry.destination.route!!
+        if (navBackStackEntry != null && navBackStackEntry!!.destination.route != null){
+            currentScreen = navBackStackEntry!!.destination.route!!
         }
     }
     val bottomNavItems = listOf(
@@ -127,6 +124,11 @@ fun MainBottomBar(
 @Composable
 fun MainBottomBarPreview() {
     var selectedScreen = BottomScreen.Home.name
-    val navBackStackEntry by rememberNavController().currentBackStackEntryAsState()
-    MainBottomBar(navBackStackEntry, {selectedScreen = BottomScreen.Home.name}, {selectedScreen = BottomScreen.HPedia.name}, {}, {})
+    val needBottomBarScreens = listOf<String>()
+//    val navBackStackEntry by rememberNavController().currentBackStackEntryAsState()
+    MainBottomBar(
+        rememberNavController(),
+        needBottomBarScreen = needBottomBarScreens,
+        {selectedScreen = BottomScreen.Home.name},
+        {selectedScreen = BottomScreen.HPedia.name}, {}, {})
 }

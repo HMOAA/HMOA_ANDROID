@@ -1,49 +1,125 @@
 package com.hmoa.feature_hbti.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.VerticalStepBar
+import com.hmoa.core_designsystem.component.*
+import com.hmoa.feature_hbti.viewmodel.HbtiProcessUiState
+import com.hmoa.feature_hbti.viewmodel.HbtiProcessViewmodel
 
 @Composable
-fun HbtiProcessRoute(onBackClick: () -> Unit, onNextClick: () -> Unit) {
+fun HbtiProcessRoute(navLogin: () -> Unit, onBackClick: () -> Unit, onNextClick: () -> Unit) {
     HbtiProcessScreen(
+        navLogin = navLogin,
         onBackClick = { onBackClick() },
         onNextClick = { onNextClick() })
 }
 
 @Composable
-private fun HbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize().background(color = Color.White).padding(bottom = 40.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            TopBar(
-                title = "향BTI",
-                titleColor = Color.Black,
-                navIcon = painterResource(R.drawable.ic_back),
-                onNavClick = { onBackClick() }
+private fun HbtiProcessScreen(
+    navLogin: () -> Unit,
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
+    viewModel: HbtiProcessViewmodel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errorState by viewModel.errorUiState.collectAsStateWithLifecycle()
+
+    ErrorUiSetView(
+        onLoginClick = navLogin,
+        errorUiState = errorState,
+        onCloseClick = onBackClick
+    )
+
+    when (uiState) {
+        HbtiProcessUiState.Error -> {}
+        HbtiProcessUiState.Loading -> {
+            AppLoadingScreen()
+        }
+
+        is HbtiProcessUiState.Success -> {
+            HbtiProcessContent(
+                onBackClick,
+                onNextClick,
+                (uiState as HbtiProcessUiState.Success).titles,
+                (uiState as HbtiProcessUiState.Success).contents,
+                (uiState as HbtiProcessUiState.Success).descriptionUrl
             )
-            Column(modifier = Modifier.padding(top = 22.dp).padding(horizontal = 16.dp)) {
-                VerticalStepBar(
-                    arrayOf("향료 선택", "배송", "향수 추천"),
-                    arrayOf("향BTI 검사 이후 추천하는 향료, 원하는 향료 선택(가격대 상이)", "결제 후 1~2일 내 배송 완료", "시향 후 가장 좋았던 향료 선택, 향수 추천 받기")
+        }
+    }
+
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun HbtiProcessContent(
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
+    titles: List<String>,
+    contents: List<String>,
+    imgUrl: String,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(color = Color.White).padding(bottom = 40.dp),
+    ) {
+        LazyColumn {
+            stickyHeader {
+                TopBar(
+                    color = Color.White,
+                    title = "향BTI",
+                    titleColor = Color.Black,
+                    navIcon = painterResource(R.drawable.ic_back),
+                    onNavClick = { onBackClick() }
                 )
             }
+            itemsIndexed(listOf("OrderSteps", "ImgUrl")) { idx, item ->
+                when (idx) {
+                    0 -> {
+                        Column(modifier = Modifier.padding(top = 22.dp).padding(horizontal = 16.dp)) {
+                            VerticalStepBar(
+                                titles = titles,
+                                contents = contents
+                            )
+                        }
+                    }
+
+                    1 -> {
+                        Column(modifier = Modifier.padding(top = 17.dp).padding(horizontal = 22.dp)) {
+                            ImageView(
+                                imageUrl = imgUrl,
+                                backgroundColor = Color.White,
+                                contentScale = ContentScale.Inside,
+                                width = 1f,
+                                height = 1f
+                            )
+                        }
+                    }
+                }
+            }
         }
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+                .background(color = Color.White)
+                .align(Alignment.BottomCenter)
+        ) {
             Button(
                 isEnabled = true,
-                btnText = "다음",
+                btnText = "추천받은 향료를 시향해보세요",
                 onClick = { onNextClick() },
                 buttonModifier = Modifier.fillMaxWidth(1f).height(52.dp).background(color = Color.Black),
                 textSize = 18,
@@ -57,5 +133,5 @@ private fun HbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) 
 @Preview
 @Composable
 private fun HbtiProcessScreenPreview() {
-    HbtiProcessScreen(onBackClick = {}, onNextClick = {})
+    HbtiProcessScreen(navLogin = {}, onBackClick = {}, onNextClick = {})
 }

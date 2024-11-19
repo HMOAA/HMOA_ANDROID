@@ -10,13 +10,13 @@ import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.HomeRoute
 import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.screen.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}") {
-    popUpTo(HomeRoute.Home.name){inclusive = false}
+    popUpTo(HomeRoute.Home.name) { inclusive = false }
     launchSingleTop = true
 }
+
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}") { launchSingleTop = true }
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}") { launchSingleTop = true }
@@ -129,9 +129,10 @@ fun NavGraphBuilder.hbtiSurveyResultScreen(
     }
 }
 
-fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
+fun NavGraphBuilder.hbtiProcessScreen(navLogin: () -> Unit, onBackClick: () -> Unit, onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.HbtiProcess}") {
         HbtiProcessRoute(
+            navLogin = navLogin,
             onBackClick = { onBackClick() },
             onNextClick = { onNextClick() })
     }
@@ -196,6 +197,7 @@ fun NavGraphBuilder.perfumeRecommendationResultRoute(
         )
     }
 }
+
 fun NavGraphBuilder.order(
     navBack: () -> Unit,
     navAddAddress: (String, String) -> Unit,
@@ -237,8 +239,8 @@ fun NavGraphBuilder.addAddress(
     }
 }
 
-fun NavGraphBuilder.orderResult(navHbti: () -> Unit){
-    composable(route = HbtiRoute.OrderResultRoute.name){
+fun NavGraphBuilder.orderResult(navHbti: () -> Unit) {
+    composable(route = HbtiRoute.OrderResultRoute.name) {
         OrderResultRoute(navHbti = navHbti)
     }
 }
@@ -246,13 +248,13 @@ fun NavGraphBuilder.orderResult(navHbti: () -> Unit){
 fun NavGraphBuilder.writeReview(
     navBack: () -> Unit,
     navReview: (befRoute: HbtiRoute) -> Unit
-){
+) {
     composable(
         route = "${HbtiRoute.WriteReviewRoute.name}/{orderId}",
         arguments = listOf(
-            navArgument("orderId"){type = NavType.IntType}
+            navArgument("orderId") { type = NavType.IntType }
         )
-    ){
+    ) {
         val orderId = it.arguments?.getInt("orderId")
         WriteReviewRoute(
             orderId = orderId,
@@ -267,10 +269,10 @@ fun NavGraphBuilder.review(
     navEditReview: (Int) -> Unit,
     navLogin: () -> Unit,
     navWriteReview: (reviewId: Int) -> Unit
-){
+) {
     composable(
         route = "${HbtiRoute.ReviewRoute.name}"
-    ){
+    ) {
         ReviewRoute(
             navBack = navBack,
             navEditReview = navEditReview,
@@ -280,11 +282,11 @@ fun NavGraphBuilder.review(
     }
 }
 
-fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit, navLogin: () -> Unit){
+fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit, navLogin: () -> Unit) {
     composable(
         route = "${HbtiRoute.EditReviewRoute.name}/{reviewId}",
-        arguments = listOf(navArgument("reviewId"){type = NavType.IntType})
-    ){
+        arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
+    ) {
         val reviewId = it.arguments?.getInt("reviewId")
         EditReviewRoute(
             reviewId = reviewId,

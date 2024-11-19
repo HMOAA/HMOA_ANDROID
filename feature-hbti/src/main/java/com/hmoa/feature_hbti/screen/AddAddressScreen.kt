@@ -133,10 +133,11 @@ private fun AddAddressMainContent(
     var isEnabled = remember {
         derivedStateOf {
             name.isNotEmpty() && addressName.isNotEmpty()
-                    && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
-                    && homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
-                    && postalCode.isNotEmpty() && address.isNotEmpty()
-                    && detailAddress.isNotEmpty()
+                && phone1.isNotEmpty() && phone2.isNotEmpty() && phone3.isNotEmpty()
+                && (homePhone1.isNotEmpty() && homePhone2.isNotEmpty() && homePhone3.isNotEmpty()
+                || homePhone1.isEmpty() && homePhone2.isEmpty() && homePhone3.isEmpty())
+                && postalCode.isNotEmpty() && address.isNotEmpty()
+                && detailAddress.isNotEmpty()
         }
     }
     LaunchedEffect(Unit) {
@@ -453,7 +454,7 @@ private fun InputHomePhone(
             .padding(top = 16.dp)
     ) {
         Text(
-            text = "전화번호",
+            text = "전화번호(선택)",
             fontSize = 12.sp,
             fontFamily = CustomFont.medium
         )

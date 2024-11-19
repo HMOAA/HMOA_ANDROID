@@ -141,7 +141,7 @@ fun NoteContent(
                         textAlign = TextAlign.Start
                     )
                     Text(
-                        "향료 1개당 900원",
+                        "개별구매 불가 SET 로만 구성 (향료 1개당 900원)",
                         modifier = Modifier.padding(bottom = 28.dp),
                         style = TextStyle(
                             color = CustomColor.gray5,

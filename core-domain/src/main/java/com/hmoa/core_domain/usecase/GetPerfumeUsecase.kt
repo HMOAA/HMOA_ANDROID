@@ -2,9 +2,9 @@ package com.hmoa.core_domain.usecase
 
 import ResultResponse
 import com.hmoa.core_domain.emitOrThrow
+import com.hmoa.core_domain.entity.data.Perfume
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_domain.entity.data.Perfume
 import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 import com.hmoa.core_model.response.PerfumeDetailResponseDto
@@ -25,7 +25,6 @@ class GetPerfumeUsecase @Inject constructor(
                 brandEnglishName = perfumeInfo1.data?.brandEnglishName ?: "",
                 brandKoreanName = perfumeInfo1.data?.brandName ?: "",
                 brandId = perfumeInfo1.data?.brandId.toString(),
-                brandImgUrl = perfumeInfo1.data?.brandImgUrl ?: "",
                 perfumeEnglishName = perfumeInfo1.data?.englishName ?: "",
                 perfumeKoreanName = perfumeInfo1.data?.koreanName ?: "",
                 baseNote = perfumeInfo1.data?.baseNote ?: "",

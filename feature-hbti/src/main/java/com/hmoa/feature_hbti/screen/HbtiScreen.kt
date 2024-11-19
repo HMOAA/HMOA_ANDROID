@@ -206,7 +206,6 @@ private fun HbtiHomeContent(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
             ) {
                 item {
                     Column {
@@ -218,169 +217,173 @@ private fun HbtiHomeContent(
                             onNavClick = onBackClick,
                             navIconColor = Color.White
                         )
-                        Text(
-                            "당신의 향BTI는 무엇일까요?",
-                            style = TextStyle(
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = pretendard,
-                                fontSize = 20.sp
-                            ),
-                            modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
-                        )
-                        Text(
-                            "검사를 통해 좋아하는 향료와\n향수까지 알아보세요!",
-                            style = TextStyle(
-                                color = Color.White,
-                                fontWeight = FontWeight.Normal,
-                                fontFamily = pretendard,
-                                fontSize = 14.sp
-                            )
-                        )
-                        Row(modifier = Modifier.padding(top = 20.dp, bottom = 32.dp)) {
-                            Box(
-                                Modifier
-                                    .padding(end = 15.dp)
-                                    .fillMaxWidth(0.5f)
-                                    .height(107.dp)
-                                    .clickable { onHbtiSurveyClick() }
-                                    .background(
-                                        color = Color.Transparent,
-                                        shape = RoundedCornerShape(5.dp)
-                                    )) {
-                                ImageView(
-                                    imageUrl = metadata?.firstImageUrl,
-                                    width = 1f,
-                                    height = 1f,
-                                    backgroundColor = Color.Transparent,
-                                    contentScale = ContentScale.FillBounds
-                                )
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth(1f)
-                                        .height(107.dp)
-                                ) {
-                                    Text(
-                                        "향BTI\n검사하러 가기",
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.Bold,
-                                            fontFamily = pretendard,
-                                            fontSize = 16.sp
-                                        ),
-                                        modifier = Modifier.padding(20.dp)
-                                    )
-                                }
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(1f)
-                                    .height(107.dp)
-                                    .background(
-                                        color = Color.Transparent,
-                                        shape = RoundedCornerShape(5.dp)
-                                    )
-                                    .clickable { onAfterOrderClick() }
-                                    .background(
-                                        color = Color.Transparent,
-                                        shape = RoundedCornerShape(5.dp)
-                                    )
-                            ) {
-                                ImageView(
-                                    imageUrl = metadata?.secondImageUrl,
-                                    width = 1f,
-                                    height = 1f,
-                                    backgroundColor = Color.Transparent,
-                                    contentScale = ContentScale.FillBounds
-                                )
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth(1f)
-                                        .height(107.dp)
-                                ) {
-                                    Text(
-                                        "향료 입력하기\n(주문 후)",
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.Bold,
-                                            fontFamily = pretendard,
-                                            fontSize = 16.sp
-                                        ),
-                                        modifier = Modifier.padding(20.dp)
-                                    )
-                                }
-                            }
-                        }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .height(30.dp)
-                                .background(
-                                    color = Color.Transparent,
-                                    shape = RoundedCornerShape(5.dp)
-                                )
-                        ) {
-                            ImageView(
-                                imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/eb5499d5-25e4-4141-af66-353daa76f2a2",
-                                width = 0.1f,
-                                height = 1f,
-                                backgroundColor = Color.Transparent,
-                                contentScale = ContentScale.FillHeight
-                            )
-                            Spacer(Modifier.width(9.dp))
+                        Column(Modifier.padding(horizontal = 16.dp)) {
                             Text(
-                                "향BTI 후기",
+                                "당신의 향BTI는 무엇일까요?",
                                 style = TextStyle(
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold,
                                     fontFamily = pretendard,
                                     fontSize = 20.sp
+                                ),
+                                modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
+                            )
+                            Text(
+                                "검사를 통해 좋아하는 향료와\n향수까지 알아보세요!",
+                                style = TextStyle(
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Normal,
+                                    fontFamily = pretendard,
+                                    fontSize = 14.sp
                                 )
                             )
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 12.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            TextButton(
-                                onClick = onReviewItemClick
+                            Row(modifier = Modifier.padding(top = 20.dp, bottom = 32.dp)) {
+                                Box(
+                                    Modifier
+                                        .padding(end = 15.dp)
+                                        .fillMaxWidth(0.5f)
+                                        .height(107.dp)
+                                        .clickable { onHbtiSurveyClick() }
+                                        .background(
+                                            color = Color.Transparent,
+                                            shape = RoundedCornerShape(5.dp)
+                                        )) {
+                                    ImageView(
+                                        imageUrl = metadata?.firstImageUrl,
+                                        width = 1f,
+                                        height = 1f,
+                                        backgroundColor = Color.Transparent,
+                                        contentScale = ContentScale.FillBounds
+                                    )
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth(1f)
+                                            .height(107.dp)
+                                    ) {
+                                        Text(
+                                            "향BTI\n검사하러 가기",
+                                            style = TextStyle(
+                                                color = Color.Black,
+                                                fontWeight = FontWeight.Bold,
+                                                fontFamily = pretendard,
+                                                fontSize = 16.sp
+                                            ),
+                                            modifier = Modifier.padding(20.dp)
+                                        )
+                                    }
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(1f)
+                                        .height(107.dp)
+                                        .background(
+                                            color = Color.Transparent,
+                                            shape = RoundedCornerShape(5.dp)
+                                        )
+                                        .clickable { onAfterOrderClick() }
+                                        .background(
+                                            color = Color.Transparent,
+                                            shape = RoundedCornerShape(5.dp)
+                                        )
+                                ) {
+                                    ImageView(
+                                        imageUrl = metadata?.secondImageUrl,
+                                        width = 1f,
+                                        height = 1f,
+                                        backgroundColor = Color.Transparent,
+                                        contentScale = ContentScale.FillBounds
+                                    )
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth(1f)
+                                            .height(107.dp)
+                                    ) {
+                                        Text(
+                                            "향료 입력하기\n(주문 후)",
+                                            style = TextStyle(
+                                                color = Color.Black,
+                                                fontWeight = FontWeight.Bold,
+                                                fontFamily = pretendard,
+                                                fontSize = 16.sp
+                                            ),
+                                            modifier = Modifier.padding(20.dp)
+                                        )
+                                    }
+                                }
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .height(30.dp)
+                                    .background(
+                                        color = Color.Transparent,
+                                        shape = RoundedCornerShape(5.dp)
+                                    )
                             ) {
+                                ImageView(
+                                    imageUrl = "https://github.com/HMOAA/HMOA_ANDROID/assets/67788699/eb5499d5-25e4-4141-af66-353daa76f2a2",
+                                    width = 0.1f,
+                                    height = 1f,
+                                    backgroundColor = Color.Transparent,
+                                    contentScale = ContentScale.FillHeight
+                                )
+                                Spacer(Modifier.width(9.dp))
                                 Text(
-                                    "전체보기",
+                                    "향BTI 후기",
                                     style = TextStyle(
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = pretendard,
-                                        fontSize = 12.sp
-                                    ),
+                                        fontSize = 20.sp
+                                    )
                                 )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 12.dp),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(
+                                    onClick = onReviewItemClick
+                                ) {
+                                    Text(
+                                        "전체보기",
+                                        style = TextStyle(
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            fontFamily = pretendard,
+                                            fontSize = 12.sp
+                                        ),
+                                    )
+                                }
                             }
                         }
                     }
                 }
                 items(reviews) { review ->
                     val images = remember(review.hbtiPhotos) { review.hbtiPhotos.map { it.photoUrl } }
-                    ReviewItem(
-                        isItemClickable = true,
-                        reviewId = review.hbtiReviewId,
-                        profileImg = review.profileImgUrl,
-                        nickname = review.author,
-                        writtenAt = review.createdAt,
-                        isLiked = review.isLiked,
-                        heartNumber = review.heartCount,
-                        content = review.content,
-                        images = images,
-                        category = review.orderTitle,
-                        onHeartClick = onHeartClick,
-                        onMenuClick = {
-                            selectedReview = review
-                            dialogOpen()
-                        },
-                        onItemClick = onReviewItemClick
-                    )
-                    Spacer(Modifier.height(12.dp))
+                    Column(Modifier.padding(horizontal = 16.dp)) {
+                        ReviewItem(
+                            isItemClickable = true,
+                            reviewId = review.hbtiReviewId,
+                            profileImg = review.profileImgUrl,
+                            nickname = review.author,
+                            writtenAt = review.createdAt,
+                            isLiked = review.isLiked,
+                            heartNumber = review.heartCount,
+                            content = review.content,
+                            images = images,
+                            category = review.orderTitle,
+                            onHeartClick = onHeartClick,
+                            onMenuClick = {
+                                selectedReview = review
+                                dialogOpen()
+                            },
+                            onItemClick = onReviewItemClick
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
                 }
             }
         }

@@ -143,7 +143,11 @@ class NotePickViewmodelTest : TestCase() {
             )
         }
         launch { viewmodel.getNoteProducts() }.join()
-        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        launch {
+            viewmodel.initializeIsNoteSelectedList(
+                viewmodel.noteProductState.value,
+                onUpdateProducts = {})
+        }.join()
         Assert.assertEquals(expectedNoteSelectData, viewmodel.isNoteSelectDataState.value)
     }
 
@@ -151,7 +155,7 @@ class NotePickViewmodelTest : TestCase() {
     fun `test_1NoteSelect_reflectsInNoteSelectData`() = coroutineRule.runTest {
         viewmodel.getTopRecommendedNote()
         launch { viewmodel.getNoteProducts() }.join()
-        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value, {}) }.join()
         val targetNode = noteProducts.data!!.data[0]
         viewmodel.handleNoteSelectData(
             index = 0,
@@ -258,7 +262,7 @@ class NotePickViewmodelTest : TestCase() {
         //Given: 초기화
         viewmodel.getTopRecommendedNote()
         launch { viewmodel.getNoteProducts() }.join()
-        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value, {}) }.join()
         //Then: 버튼의 사용가능여부 = false이다
         Assert.assertEquals(false, viewmodel.isNextButtonAvailableState.value)
     }
@@ -268,7 +272,7 @@ class NotePickViewmodelTest : TestCase() {
         //Given: 초기화
         viewmodel.getTopRecommendedNote()
         launch { viewmodel.getNoteProducts() }.join()
-        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value, {}) }.join()
         val targetNode = noteProducts.data!!.data[0]
         //When:targetNode만 선택한다
         viewmodel.handleNoteSelectData(
@@ -290,7 +294,7 @@ class NotePickViewmodelTest : TestCase() {
         //Given: 초기화 후 targetNode만 선택한다
         viewmodel.getTopRecommendedNote()
         launch { viewmodel.getNoteProducts() }.join()
-        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value) }.join()
+        launch { viewmodel.initializeIsNoteSelectedList(viewmodel.noteProductState.value, {}) }.join()
         val targetNode = noteProducts.data!!.data[0]
         viewmodel.handleNoteSelectData(
             index = 0,

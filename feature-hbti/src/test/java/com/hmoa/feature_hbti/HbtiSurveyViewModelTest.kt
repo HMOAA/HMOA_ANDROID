@@ -2,10 +2,10 @@ package com.hmoa.feature_hbti
 
 import ResultResponse
 import com.hmoa.core_common.ErrorMessageType
-import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_domain.entity.data.HbtiQuestionItem
 import com.hmoa.core_domain.entity.data.HbtiQuestionItems
+import com.hmoa.core_domain.repository.SurveyRepository
+import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.SurveyOptionResponseDto
 import com.hmoa.core_model.response.SurveyQuestionResponseDto
 import com.hmoa.core_model.response.SurveyQuestionsResponseDto
@@ -89,7 +89,8 @@ class HbtiSurveyViewModelTest : TestCase() {
             hbtiQuestions = mutableMapOf(
                 0 to hbtiQuestionItem_singleChoice,
                 1 to hbtiQuestionItem_multiChoice
-            )
+            ),
+            questionCounts = 2
         )
         launch { viewModel.getSurveyQuestions() }.join()
         assertEquals(expectedValue, viewModel.hbtiQuestionItemsState.value)
@@ -244,7 +245,10 @@ class HbtiSurveyViewModelTest : TestCase() {
                 )
             )
             val expectedValue =
-                HbtiQuestionItems(hbtiQuestions = mutableMapOf(0 to hbtiQuestionItem_singleChoice, 1 to updatedItem))
+                HbtiQuestionItems(
+                    hbtiQuestions = mutableMapOf(0 to hbtiQuestionItem_singleChoice, 1 to updatedItem),
+                    questionCounts = 2
+                )
 
             viewModel.getSurveyQuestions()
             val result = viewModel.getUpdatedHbtiQuestionItems(page = 1, newHbtiQuestionItem = updatedItem)
@@ -267,7 +271,8 @@ class HbtiSurveyViewModelTest : TestCase() {
                         hbtiQuestionItem_multiChoice.optionIds[1]
                     )
                 )
-            )
+            ),
+            questionCounts = 2
         )
         viewModel.getSurveyQuestions()
         viewModel.modifyAnswersToOptionId(

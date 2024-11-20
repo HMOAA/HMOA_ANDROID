@@ -232,7 +232,7 @@ private fun Buttons(
                 modifier = Modifier.weight(1f)
             ){
                 OutlinedButton(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(3.dp),
                     onClick = onReviewWriteClick,
                     enabled = shippingStatus != OrderStatus.SHIPPING_PROGRESS && (!isReviewed),
@@ -253,6 +253,7 @@ private fun Buttons(
                     lineHeight = 12.sp,
                     fontFamily = CustomFont.regular,
                     color = Color.Black,
+                    textAlign = TextAlign.Center
                 )
             }
         }

@@ -75,6 +75,7 @@ import com.hmoa.core_model.response.PostNoteSelectedResponseDto
 import com.hmoa.feature_hbti.BuildConfig
 import com.hmoa.feature_hbti.viewmodel.OrderUiState
 import com.hmoa.feature_hbti.viewmodel.OrderViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -133,11 +134,12 @@ fun OrderScreen(
     when (uiState) {
         OrderUiState.Loading -> AppLoadingScreen()
         is OrderUiState.Success -> {
+            val buyerInfo by uiState.buyerInfo.collectAsStateWithLifecycle()
             OrderScreenMainContent(
                 isSaveBuyerInfo = isSaveBuyerInfo,
                 orderInfo = uiState.orderInfo,
                 addressInfo = uiState.addressInfo,
-                buyerInfo = uiState.buyerInfo,
+                buyerInfo = buyerInfo,
                 deleteNote = deleteNote,
                 saveBuyerInfo = saveBuyerInfo,
                 onPaymentClick = onPaymentClick,
@@ -968,7 +970,7 @@ private fun UITest() {
     )
     OrderScreen(
         uiState = OrderUiState.Success(
-            buyerInfo = DefaultOrderInfoDto(name, phoneNumber),
+            buyerInfo = MutableStateFlow(DefaultOrderInfoDto(name, phoneNumber)),
             addressInfo = null,
             orderInfo = FinalOrderResponseDto(15000, testData, 3000, 15000)
         ),

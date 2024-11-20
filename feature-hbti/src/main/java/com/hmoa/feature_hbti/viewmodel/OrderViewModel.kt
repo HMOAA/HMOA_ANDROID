@@ -149,7 +149,7 @@ class OrderViewModel @Inject constructor(
                         if(errorUiState.value !is ErrorUiState.ErrorData || !(errorUiState.value as ErrorUiState.ErrorData).isValidate()){generalErrorState.update{ Pair(true, result.exception.message) }}
                         OrderUiState.Error
                     }
-                    is Result.Success -> OrderUiState.Success(MutableStateFlow(result.data.first), result.data.second, result.data.third)
+                    is Result.Success -> OrderUiState.Success(result.data.first, result.data.second, result.data.third)
                 }
             }.collect{_uiState.value = it}
         }
@@ -194,9 +194,15 @@ class OrderViewModel @Inject constructor(
                 }
                 return@launch
             }
-            if(uiState.value is OrderUiState.Success){
-                (uiState as OrderUiState.Success).updateBuyerInfo(DefaultOrderInfoDto(name, phoneNumber))
-            } else {return@launch}
+            _uiState.update{
+                if(uiState.value is OrderUiState.Success){
+                    OrderUiState.Success(
+                        buyerInfo = DefaultOrderInfoDto(name, phoneNumber),
+                        addressInfo = (uiState.value as OrderUiState.Success).addressInfo,
+                        orderInfo = (uiState.value as OrderUiState.Success).orderInfo
+                    )
+                } else {return@launch}
+            }
             isSavedBuyerInfo.update{true}
         }
     }
@@ -315,12 +321,8 @@ sealed interface OrderUiState{
     data object Loading: OrderUiState
     data object Error: OrderUiState
     data class Success(
-        var buyerInfo: MutableStateFlow<DefaultOrderInfoDto?>,
+        var buyerInfo: DefaultOrderInfoDto?,
         val addressInfo: DefaultAddressDto?,
         val orderInfo: FinalOrderResponseDto
-    ): OrderUiState {
-        fun updateBuyerInfo(newBuyerInfo: DefaultOrderInfoDto){
-            this.buyerInfo.update{newBuyerInfo}
-        }
-    }
+    ): OrderUiState
 }

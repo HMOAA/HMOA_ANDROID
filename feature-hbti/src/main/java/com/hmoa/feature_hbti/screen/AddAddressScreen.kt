@@ -256,7 +256,7 @@ private fun AddAddressMainContent(
                 },
                 radious = 5
             )
-            if(isEnabled.value){
+            if(!isEnabled.value){
                 Spacer(Modifier.height(13.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),

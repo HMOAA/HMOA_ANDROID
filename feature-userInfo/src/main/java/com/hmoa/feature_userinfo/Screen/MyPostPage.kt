@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -28,16 +29,17 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_userinfo.viewModel.PostUiState
 import com.hmoa.feature_userinfo.viewModel.PostViewModel
 
+//내 게시글 화면
 @Composable
 fun MyPostRoute(
     navBack: () -> Unit,
     navEditPost: (Int) -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MyPostPage(
-        uiState = uiState.value,
+        uiState = uiState,
         navBack = navBack,
         navEditPost = navEditPost,
     )
@@ -59,10 +61,7 @@ fun MyPostPage(
                 navEditPost = navEditPost
             )
         }
-        PostUiState.Error -> {
-
-        }
-        else -> {}
+        PostUiState.Error -> {}
     }
 }
 
@@ -83,7 +82,8 @@ private fun MyPostContent(
             onNavClick = navBack
         )
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
         ){
@@ -93,7 +93,10 @@ private fun MyPostContent(
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    items(posts) { post ->
+                    items(
+                        items = posts,
+                        key = {item -> item?.communityId!!}
+                    ) { post ->
                         if (post != null){
                             PostListItem(
                                 modifier = Modifier

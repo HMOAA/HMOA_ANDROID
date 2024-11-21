@@ -28,9 +28,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 
 //인증이 안되어 있는 My Page
 @Composable
-fun NoAuthMyPage(
-    navLogin: () -> Unit,
-) {
+fun NoAuthMyPage(navLogin: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()

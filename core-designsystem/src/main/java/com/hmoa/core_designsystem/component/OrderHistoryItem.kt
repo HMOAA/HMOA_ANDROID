@@ -212,7 +212,6 @@ private fun Buttons(
         ){
             val buttonEnabled = shippingStatus == OrderStatus.SHIPPING_PROGRESS
                     || shippingStatus == OrderStatus.SHIPPING_COMPLETE
-
             OutlinedButton(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(3.dp),
@@ -229,19 +228,32 @@ private fun Buttons(
                 )
             }
             Spacer(Modifier.width(20.dp))
-            OutlinedButton(
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(3.dp),
-                onClick = onReviewWriteClick,
-                enabled = shippingStatus != OrderStatus.SHIPPING_PROGRESS && (!isReviewed),
-                border = BorderStroke(width = 1.dp, color = if(!isReviewed) Color.Black else CustomColor.gray3),
-                contentPadding = PaddingValues(vertical = 10.dp),
-            ) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ){
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(3.dp),
+                    onClick = onReviewWriteClick,
+                    enabled = shippingStatus != OrderStatus.SHIPPING_PROGRESS && (!isReviewed),
+                    border = BorderStroke(width = 1.dp, color = if(!isReviewed) Color.Black else CustomColor.gray3),
+                    contentPadding = PaddingValues(vertical = 10.dp),
+                ) {
+                    Text(
+                        text = "후기 작성(이벤트 자동 응모)",
+                        fontSize = 12.sp,
+                        color = if(!isReviewed) Color.Black else CustomColor.gray3,
+                        fontFamily = CustomFont.semiBold
+                    )
+                }
                 Text(
-                    text = "후기 작성",
-                    fontSize = 12.sp,
-                    color = if(!isReviewed) Color.Black else CustomColor.gray3,
-                    fontFamily = CustomFont.semiBold
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                    text = "(5만원 상당 향수 증정 이벤트 응모)\n자세한 내용은 향모아 인스타그램에서 확인하세요.",
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
+                    fontFamily = CustomFont.regular,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
                 )
             }
         }

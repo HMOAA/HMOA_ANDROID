@@ -7,6 +7,13 @@ import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_model.request.SexRequestDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,25 +44,23 @@ class MyGenderViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ErrorUiState.Loading
     )
-    val uiState: StateFlow<MyGenderUiState> = errorUiState.map { errState ->
+    val uiState: StateFlow<MyGenderUiState> = errorUiState.map {errState ->
         if (errState is ErrorUiState.ErrorData && errState.isValidate()) throw Exception("")
         val result = getMyUserInfoUseCase()
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage!!.message)
-        }
+        if (result.errorMessage != null) {throw Exception(result.errorMessage!!.message)}
         result.data
     }.asResult().map { result ->
         when (result) {
             Result.Loading -> MyGenderUiState.Loading
             is Result.Success -> MyGenderUiState.Success(result.data!!.gender)
             is Result.Error -> {
-                if (result.exception.message != "") {
+                if (result.exception.message != ""){
                     handleErrorType(
                         error = result.exception,
                         onExpiredTokenError = { expiredTokenErrorState.update { true } },
-                        onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
-                        onUnknownError = { unLoginedErrorState.update { true } },
-                        onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                        onWrongTypeTokenError = { wrongTypeTokenErrorState.update{true}},
+                        onUnknownError = {unLoginedErrorState.update{true}},
+                        onGeneralError = {generalErrorState.update{Pair(true, result.exception.message)}}
                     )
                 }
                 MyGenderUiState.Error
@@ -72,12 +77,12 @@ class MyGenderViewModel @Inject constructor(
         val requestDto = SexRequestDto(gender == "남성")
         viewModelScope.launch {
             val result = memberRepository.updateSex(requestDto)
-            if (result.errorMessage != null) {
-                when (result.errorMessage!!.message) {
-                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update { true }
-                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update { true }
-                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update { true }
-                    else -> generalErrorState.update { Pair(true, result.errorMessage!!.message) }
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
+                    else -> generalErrorState.update{Pair(true, result.errorMessage!!.message)}
                 }
                 return@launch
             }

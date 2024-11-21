@@ -18,7 +18,11 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.OrderRecordItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_model.response.OrderRecordDto
 import com.hmoa.feature_userinfo.viewModel.OrderRecordUiState
 import com.hmoa.feature_userinfo.viewModel.OrderRecordViewModel
@@ -100,7 +104,10 @@ fun OrderRecordContent(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(data) { order ->
+                    items(
+                        items = data,
+                        key = {item -> item!!.orderId}
+                    ) { order ->
                         if (order != null) {
                             OrderRecordItem(
                                 shippingType = order.orderStatus,

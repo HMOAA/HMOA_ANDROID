@@ -1,12 +1,7 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -31,12 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.Spinner
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.YearPickerDialog
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_userinfo.viewModel.MyBirthUiState
 import com.hmoa.feature_userinfo.viewModel.MyBirthViewModel
@@ -111,13 +101,6 @@ private fun SelectBirthContent(
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
         sheetContent = {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .background(CustomColor.gray4),
-//                verticalArrangement = Arrangement.Bottom
-//            ) {
-//            }
             YearPickerDialog(
                 yearList = availableYearRange,
                 initialValue = initBirth,

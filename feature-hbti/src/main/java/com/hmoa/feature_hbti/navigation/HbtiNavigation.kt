@@ -10,13 +10,13 @@ import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.HomeRoute
 import com.hmoa.core_model.data.NoteProductIds
 import com.hmoa.feature_hbti.screen.*
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 fun NavController.navigateToHbti() = navigate("${HbtiRoute.Hbti}") {
-    popUpTo(HomeRoute.Home.name) { inclusive = false }
+    popUpTo(HomeRoute.Home.name){inclusive = false}
     launchSingleTop = true
 }
-
 fun NavController.navigateToHbtiSurvey() = navigate("${HbtiRoute.HbtiSurvey}") { launchSingleTop = true }
 fun NavController.navigateToHbtiSurveyResult() =
     navigate("${HbtiRoute.HbtiSurveyResult}") { launchSingleTop = true }
@@ -197,7 +197,6 @@ fun NavGraphBuilder.perfumeRecommendationResultRoute(
         )
     }
 }
-
 fun NavGraphBuilder.order(
     navBack: () -> Unit,
     navAddAddress: (String, String) -> Unit,
@@ -239,8 +238,8 @@ fun NavGraphBuilder.addAddress(
     }
 }
 
-fun NavGraphBuilder.orderResult(navHbti: () -> Unit) {
-    composable(route = HbtiRoute.OrderResultRoute.name) {
+fun NavGraphBuilder.orderResult(navHbti: () -> Unit){
+    composable(route = HbtiRoute.OrderResultRoute.name){
         OrderResultRoute(navHbti = navHbti)
     }
 }

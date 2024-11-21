@@ -8,10 +8,7 @@ import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.response.PerfumeRecommendsResponseDto
-import com.hmoa.core_model.response.PerfumeSurveyResponseDto
-import com.hmoa.core_model.response.RecommendNotesResponseDto
-import com.hmoa.core_model.response.SurveyQuestionsResponseDto
+import com.hmoa.core_model.response.*
 import javax.inject.Inject
 
 class SurveyRepositoryImpl @Inject constructor(
@@ -71,5 +68,9 @@ class SurveyRepositoryImpl @Inject constructor(
 
     override fun getPriceSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto> {
         return surveyLocalDataStore.getPriceSortedPerfumeRecommendsResult()
+    }
+
+    override suspend fun getHbtiHomeMetaDataResult(): ResultResponse<HbtiHomeMetaDataResponse> {
+        return surveyRemoteDataStore.getHbtiHomeMetaDataResult()
     }
 }

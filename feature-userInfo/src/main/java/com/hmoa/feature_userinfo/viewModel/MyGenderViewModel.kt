@@ -2,11 +2,7 @@ package com.hmoa.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hmoa.core_common.ErrorMessageType
-import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.Result
-import com.hmoa.core_common.asResult
-import com.hmoa.core_common.handleErrorType
+import com.hmoa.core_common.*
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.usecase.GetMyUserInfoUseCase
 import com.hmoa.core_model.request.SexRequestDto
@@ -18,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,6 +71,7 @@ class MyGenderViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(3_000),
         initialValue = MyGenderUiState.Loading
     )
+
     //gender 정보 저장
     fun saveGender(gender: String, onSuccess: () -> Unit) {
         val requestDto = SexRequestDto(gender == "남성")
@@ -98,5 +96,6 @@ sealed interface MyGenderUiState {
     data class Success(
         val defaultGender: String
     ) : MyGenderUiState
+
     data object Error : MyGenderUiState
 }

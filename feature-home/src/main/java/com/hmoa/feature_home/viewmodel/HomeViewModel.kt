@@ -34,16 +34,16 @@ class HomeViewModel @Inject constructor(
                     is Result.Success -> {
                         _firstMenuWithBannerState.update { it }
                         _firstMenuWithBannerState.value = BannerWithFirstMenuState.Data(
-                            bannerImg = it.data.data!!.mainImage,
-                            bannerTitle = it.data.data!!.banner,
-                            firstMenu = it.data.data!!.firstMenu
+                            bannerImg = it.data.data?.mainImage,
+                            bannerTitle = it.data.data?.banner,
+                            firstMenu = it.data.data?.firstMenu
                         )
                     }
 
-                    is Result.Error -> {}//TODO()
+                    is Result.Error -> {}
                     is Result.Loading -> {
                         BannerWithFirstMenuState.Loading
-                    }//TODO()
+                    }
                 }
             }
         }

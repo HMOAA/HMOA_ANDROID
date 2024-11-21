@@ -27,8 +27,13 @@ fun calculateProgressStepSize(list: List<Any>?): Float {
     }
 }
 
-fun OrderStatus.toDisplayString(): String{
-    return when(this){
+fun calculateHbtiProgressStepSize(size: Int): Float {
+    val result = 1f.div(size)
+    return result
+}
+
+fun OrderStatus.toDisplayString(): String {
+    return when (this) {
         OrderStatus.CREATED -> "주문 생성"
         OrderStatus.PAY_FAILED -> "결제 실패"
         OrderStatus.PAY_CANCEL -> "환불 완료"

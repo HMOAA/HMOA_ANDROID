@@ -262,6 +262,7 @@ fun SetUpNavGraph(
             onBackClick = navController::navigateToBack,
         )
         hbtiProcessScreen(
+            navLogin = navController::navigateToLogin,
             onBackClick = navController::navigateToBack,
             onNextClick = navController::navigateToNotePick
         )

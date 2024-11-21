@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.calculateProgressStepSize
+import com.hmoa.core_common.calculateHbtiProgressStepSize
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
@@ -112,15 +112,13 @@ fun HbtiSurveyContent(
     var currentProgress by remember { mutableStateOf(0f) }
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
-    val pageContent = hbtiQuestionItems?.hbtiQuestions?.values?.map { it }
-    val additionalProgress = calculateProgressStepSize(pageContent)
     val pagerState =
-        rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
-
+        rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.questionCounts ?: 0 })
+    val additionalProgress = calculateHbtiProgressStepSize(hbtiQuestionItems?.questionCounts ?: 13)
     fun addProgress() {
         targetProgress += additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress <= targetProgress) {
                     currentProgress += progress
                 }
@@ -131,7 +129,7 @@ fun HbtiSurveyContent(
     fun subtractProgress() {
         targetProgress -= additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress >= targetProgress) {
                     currentProgress -= progress
                 }
@@ -139,76 +137,80 @@ fun HbtiSurveyContent(
         }
     }
 
+    fun preventScrollOver2Pages(currentPage: Int, targetPage: Int) {
+        if (kotlin.math.abs(targetPage - currentPage) > 1) {
+            scope.launch { pagerState.animateScrollToPage(currentPage) }
+        }
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.targetPage }
+            .collect { targetPage ->
+                val currentPage = pagerState.currentPage
+                preventScrollOver2Pages(currentPage, targetPage)
+                if (currentPage > targetPage) {
+                    subtractProgress()
+                } else if (currentPage < targetPage) {
+                    addProgress()
+                }
+            }
+    }
+
     Column(modifier = Modifier.fillMaxSize().background(color = Color.White)) {
         TopBar(
             title = "향BTI",
             titleColor = Color.Black,
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-            onNavClick = {
-                if (pagerState.currentPage == 0) {
-                    onBackClick()
-                } else {
-                    subtractProgress()
-                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                }
-            }
+            onNavClick = onBackClick
         )
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(1f).background(color = Color.White)
+                .padding(top = 12.dp).padding(horizontal = 16.dp)
+                .semantics { testTag = "HbtiSurveyForm" }
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(1f).background(color = Color.White)
-                    .padding(top = 12.dp)
-                    .semantics { testTag = "HbtiSurveyForm" }
-            ) {
-                Column {
-                    ProgressBar(percentage = currentProgress)
-                    HorizontalPager(
-                        userScrollEnabled = false,
-                        modifier = Modifier.fillMaxWidth().background(color = Color.White),
-                        state = pagerState,
-                        verticalAlignment = Alignment.Top
-                    ) { page ->
-                        Column(verticalArrangement = Arrangement.SpaceBetween) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                Text(
-                                    "Q. ${hbtiQuestionItems?.hbtiQuestions?.get(page)?.questionContent}",
-                                    modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
-                                    style = TextStyle(
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontFamily = CustomFont.regular
-                                    )
-                                )
-                                SurveyOptionList(
-                                    isMutipleAnswerAvailable = hbtiQuestionItems?.hbtiQuestions?.get(page)?.isMultipleChoice!!,
-                                    answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
-                                    surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents
-                                        ?: listOf(),
-                                    surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds
-                                        ?: listOf(),
-                                    onButtonClick = { optionIndex, isGoToSelectedState ->
-                                        onClickOption(
-                                            hbtiQuestionItems?.hbtiQuestions?.get(page)!!.optionIds[optionIndex],
-                                            page,
-                                            hbtiQuestionItems?.hbtiQuestions?.get(page)!!,
-                                            isGoToSelectedState
-                                        )
-                                    }
-                                )
-                            }
-
+            ProgressBar(percentage = currentProgress)
+            HorizontalPager(
+                userScrollEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
+                modifier = Modifier.fillMaxWidth().background(color = Color.White).fillMaxHeight(0.85f),
+                state = pagerState,
+                verticalAlignment = Alignment.Top,
+            ) { page ->
+                Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        "Q. ${hbtiQuestionItems?.hbtiQuestions?.get(page)?.questionContent}",
+                        modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = CustomFont.regular
+                        )
+                    )
+                    SurveyOptionList(
+                        isMutipleAnswerAvailable = hbtiQuestionItems?.hbtiQuestions?.get(page)?.isMultipleChoice!!,
+                        answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
+                        surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents
+                            ?: listOf(),
+                        surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds
+                            ?: listOf(),
+                        onButtonClick = { optionIndex, isGoToSelectedState ->
+                            onClickOption(
+                                hbtiQuestionItems?.hbtiQuestions?.get(page)!!.optionIds[optionIndex],
+                                page,
+                                hbtiQuestionItems?.hbtiQuestions?.get(page)!!,
+                                isGoToSelectedState
+                            )
                         }
-                    }
+                    )
                 }
+            }
+            Column(modifier = Modifier.padding(bottom = 40.dp)) {
                 if (pagerState.currentPage < pagerState.pageCount - 1) {
                     Button(
                         isEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
                         btnText = "다음",
                         onClick = {
-                            addProgress()
                             scope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }

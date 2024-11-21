@@ -1,17 +1,8 @@
 package com.hmoa.feature_brand.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeWithCountItemView
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -147,7 +136,7 @@ fun BrandContent(
 }
 
 @Composable
-fun BrandView(koreanTitle: String, englishTitle: String, imageUrl: String) {
+fun BrandView(koreanTitle: String, englishTitle: String) {
     Column(
         modifier = Modifier.height(200.dp).background(Color.Black).padding(16.dp).fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
@@ -156,33 +145,23 @@ fun BrandView(koreanTitle: String, englishTitle: String, imageUrl: String) {
             Text(
                 text = englishTitle,
                 modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.White, fontFamily = CustomFont.regular)
+                style = TextStyle(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = Color.White,
+                    fontFamily = CustomFont.regular
+                )
             )
             Text(
                 text = koreanTitle,
                 modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Color.White, fontFamily = CustomFont.regular)
-            )
-        }
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier.fillMaxWidth().background(Color.Black)
-        ) {
-            Column(
-                modifier = Modifier.border(BorderStroke(width = 2.dp, color = CustomColor.gray3))
-                    .width(100.dp).height(100.dp).background(Color.White),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom,
-            ) {
-                ImageView(
-                    imageUrl,
-                    width = 0.9f,
-                    height = 1f,
-                    backgroundColor = Color.White,
-                    contentScale = ContentScale.FillWidth,
+                style = TextStyle(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = Color.White,
+                    fontFamily = CustomFont.regular
                 )
-            }
+            )
         }
     }
 }
@@ -208,7 +187,6 @@ fun PerfumeGridView(
                 BrandView(
                     koreanTitle = brandData?.brandName ?: "",
                     englishTitle = brandData?.englishName ?: "",
-                    imageUrl = brandData?.brandImageUrl ?: ""
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -217,13 +195,21 @@ fun PerfumeGridView(
                 ) {
                     Text(
                         "좋아요순",
-                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light, fontFamily = CustomFont.regular),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Light,
+                            fontFamily = CustomFont.regular
+                        ),
                         modifier = Modifier.padding(end = 4.dp).clickable { onSortLikeClick() },
                         color = likeColor
                     )
                     Text(
                         "최신순",
-                        style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Light, fontFamily = CustomFont.regular),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Light,
+                            fontFamily = CustomFont.regular
+                        ),
                         modifier = Modifier.clickable { onSortLatestClick() },
                         color = latestColor
                     )
@@ -253,7 +239,7 @@ fun PerfumeGridView(
 @Preview
 fun BrandContentPreview() {
     Column {
-        BrandView("조말론 런던", "JO MALONE LONDON", "")
+        BrandView("조말론 런던", "JO MALONE LONDON")
         Row {
             PerfumeWithCountItemView(
                 imageUrl = "",

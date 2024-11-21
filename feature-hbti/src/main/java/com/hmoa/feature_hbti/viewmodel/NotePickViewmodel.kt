@@ -21,11 +21,11 @@ class NotePickViewmodel @Inject constructor(
 ) : ViewModel() {
     private var _topRecommendedNoteState = MutableStateFlow<String>("")
     private var _noteProductsState = MutableStateFlow<ProductListResponseDto?>(null)
-    private var _noteSelectDataState = MutableStateFlow<List<NoteSelect>>(listOf())
+    private var _isNoteSelectDataState = MutableStateFlow<List<NoteSelect>>(listOf())
     private var _isNextButtonAvailableState = MutableStateFlow<Boolean>(false)
     val topRecommendedNoteState: StateFlow<String> = _topRecommendedNoteState
     val noteProductState: StateFlow<ProductListResponseDto?> = _noteProductsState
-    val noteSelectDataState: StateFlow<List<NoteSelect>> = _noteSelectDataState
+    val isNoteSelectDataState: StateFlow<List<NoteSelect>> = _isNoteSelectDataState
     val isNextButtonAvailableState: StateFlow<Boolean> = _isNextButtonAvailableState
     val selectedIds = MutableStateFlow<List<Int>>(emptyList())
     private var _noteOrderIndex = MutableStateFlow<Int>(1)
@@ -38,7 +38,7 @@ class NotePickViewmodel @Inject constructor(
         combine(
             _topRecommendedNoteState,
             _noteProductsState,
-            _noteSelectDataState,
+            _isNoteSelectDataState,
             _noteOrderIndex
         ) { topRecommendedNote, notes, noteSelectData, noteOrderIndex ->
             NotePickUiState.NotePickData(
@@ -73,12 +73,11 @@ class NotePickViewmodel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getTopRecommendedNote()
-            launch { getNoteProducts() }.join()
-            initializeIsNoteSelectedList(_noteProductsState.value)
+            getNoteProducts()
         }
     }
 
-    fun initializeIsNoteSelectedList(noteList: ProductListResponseDto?) {
+    fun initializeIsNoteSelectedList(noteList: ProductListResponseDto?, onUpdateProducts: () -> Unit) {
         var initializedList =
             MutableList(noteList?.data?.size ?: 0) {
                 NoteSelect(
@@ -99,7 +98,8 @@ class NotePickViewmodel @Inject constructor(
                 )
             )
         }
-        _noteSelectDataState.update { initializedList }
+        _isNoteSelectDataState.update { initializedList }
+        onUpdateProducts()
     }
 
     suspend fun getTopRecommendedNote() {
@@ -115,7 +115,9 @@ class NotePickViewmodel @Inject constructor(
             when (result) {
                 is com.hmoa.core_common.Result.Success -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        _noteProductsState.update { result.data.data }
+                        initializeIsNoteSelectedList(
+                            result.data.data,
+                            onUpdateProducts = { _noteProductsState.update { result.data.data } })
                     }
                 }
 
@@ -137,7 +139,7 @@ class NotePickViewmodel @Inject constructor(
     }
 
     fun postNoteSelected(onSuccess: () -> Unit) {
-        val requestDto = _noteSelectDataState.value.filter { it.isSelected }.map { it.productId }
+        val requestDto = _isNoteSelectDataState.value.filter { it.isSelected }.map { it.productId }
         selectedIds.update { requestDto }
         viewModelScope.launch(Dispatchers.IO) {
             flow {
@@ -171,10 +173,10 @@ class NotePickViewmodel @Inject constructor(
         value: Boolean,
         data: NoteSelect,
     ) {
-        var noteSelectData = makeDeepCopyOfNoteSelectData(_noteSelectDataState.value)
+        var noteSelectData = makeDeepCopyOfNoteSelectData(_isNoteSelectDataState.value)
         noteSelectData = changeNoteSelectData(index, value, data, noteSelectData)
         noteSelectData = reorderNoteFaceIndex(noteSelectData)
-        _noteSelectDataState.update { noteSelectData }
+        _isNoteSelectDataState.update { noteSelectData }
         _noteOrderIndex.update { countSelectedNote(noteSelectData) }
         handleIsNextButtonAvailableState(noteSelectData = noteSelectData)
     }

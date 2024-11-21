@@ -121,7 +121,7 @@ fun PerfumeRecommendationScreen(
     fun addProgress() {
         targetProgress += additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress <= targetProgress) {
                     currentProgress += progress
                 }
@@ -132,7 +132,7 @@ fun PerfumeRecommendationScreen(
     fun subtractProgress() {
         targetProgress -= additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress >= targetProgress) {
                     currentProgress -= progress
                 }

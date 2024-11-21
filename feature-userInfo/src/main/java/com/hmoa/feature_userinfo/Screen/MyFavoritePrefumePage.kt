@@ -1,4 +1,4 @@
-package com.hmoa.feature_like.Screen
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

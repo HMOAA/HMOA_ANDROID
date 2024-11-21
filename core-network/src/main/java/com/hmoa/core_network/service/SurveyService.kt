@@ -38,4 +38,7 @@ interface SurveyService {
         @Body dto: PerfumeSurveyAnswerRequestDto,
         @Query("recommendType") recommendType: String
     ): ApiResponse<PerfumeRecommendsResponseDto>
+
+    @GET("/survey/home")
+    suspend fun getHbtiHomeMetaData(): ApiResponse<HbtiHomeMetaDataResponse>
 }

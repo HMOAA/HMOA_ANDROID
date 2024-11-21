@@ -5,10 +5,7 @@ import com.hmoa.core_model.PerfumeRecommendType
 import com.hmoa.core_model.request.NoteResponseDto
 import com.hmoa.core_model.request.PerfumeSurveyAnswerRequestDto
 import com.hmoa.core_model.request.SurveyRespondRequestDto
-import com.hmoa.core_model.response.PerfumeRecommendsResponseDto
-import com.hmoa.core_model.response.PerfumeSurveyResponseDto
-import com.hmoa.core_model.response.RecommendNotesResponseDto
-import com.hmoa.core_model.response.SurveyQuestionsResponseDto
+import com.hmoa.core_model.response.*
 
 interface SurveyRepository {
     suspend fun getSurveyQuestions(): ResultResponse<SurveyQuestionsResponseDto>
@@ -32,4 +29,5 @@ interface SurveyRepository {
 
     fun savePriceSortedPerfumeRecommendsResult(dto: PerfumeRecommendsResponseDto)
     fun getPriceSortedPerfumeRecommendsResult(): ResultResponse<PerfumeRecommendsResponseDto>
+    suspend fun getHbtiHomeMetaDataResult(): ResultResponse<HbtiHomeMetaDataResponse>
 }

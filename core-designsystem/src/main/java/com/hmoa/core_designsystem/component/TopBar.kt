@@ -22,7 +22,7 @@ import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun TopBar(
-    color: Color = Color.White,
+    color: Color = Color.Transparent,
     iconSize: Dp = 20.dp, //icon 크기
     navIcon: Painter? = null, //navigation 버튼
     onNavClick: () -> Unit = {}, //navigation click 이벤트

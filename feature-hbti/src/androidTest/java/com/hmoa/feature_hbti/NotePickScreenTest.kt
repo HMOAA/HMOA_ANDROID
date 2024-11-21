@@ -5,9 +5,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_model.response.ProductListResponseDto
 import com.hmoa.core_model.response.ProductResponseDto
 import com.hmoa.feature_hbti.screen.NotePickGridWindow
@@ -38,42 +38,48 @@ class NotePickScreenTest : TestCase() {
                     productName = "우드",
                     productDetails = "나무 어쩌고저쩌고",
                     productPhotoUrl = "나무사진",
-                    isRecommended = true
+                    isRecommended = true,
+                    price = 1000
                 ),
                 ProductResponseDto(
                     productId = 1,
                     productName = "프루트",
                     productDetails = "피치,블루베리,블랙체리",
                     productPhotoUrl = "과일사진",
-                    isRecommended = true
+                    isRecommended = true,
+                    price = 1000
                 ),
                 ProductResponseDto(
                     productId = 2,
                     productName = "아쿠아",
                     productDetails = "씨 솔트",
                     productPhotoUrl = "바다사진",
-                    isRecommended = true
+                    isRecommended = true,
+                    price = 1000
                 ),
                 ProductResponseDto(
                     productId = 3,
                     productName = "스위트",
                     productDetails = "허니, 바닐라, 프랄린",
                     productPhotoUrl = "꿀사진",
-                    isRecommended = false
+                    isRecommended = false,
+                    price = 1000
                 ),
                 ProductResponseDto(
                     productId = 4,
                     productName = "스파이스",
                     productDetails = "넛맥, 블랙페퍼",
                     productPhotoUrl = "후추사진",
-                    isRecommended = false
+                    isRecommended = false,
+                    price = 1000
                 ),
                 ProductResponseDto(
                     productId = 5,
                     productName = "머스크",
                     productDetails = "화이트 머스크, 코튼, 엠버, 벤조인",
                     productPhotoUrl = "카펫사진",
-                    isRecommended = false
+                    isRecommended = false,
+                    price = 1000
                 )
             )
         )
@@ -105,10 +111,8 @@ class NotePickScreenTest : TestCase() {
         composeTestRule.setContent {
             NotePickGridWindow(
                 notes = notes,
-                noteOrderQuantity = 5,
-                selectedNotesOrderQuantity = 3,
                 isNoteSelectedList = isNoteSelectedList,
-                onClickItem = { index, value, data, noteOrderQuantity, selectedNotesOrderQuantity -> }
+                onClickItem = { index: Int, value: Boolean, data: NoteSelect -> {} }
             )
         }
         composeTestRule.onAllNodesWithText("Best!")[0].assertIsDisplayed()

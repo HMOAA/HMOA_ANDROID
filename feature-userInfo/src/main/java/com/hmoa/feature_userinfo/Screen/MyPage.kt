@@ -141,7 +141,7 @@ internal fun MyPageRoute(
             navEditProfile = navEditProfile,
             navMyActivity = navMyActivity,
             navManageMyInfo = navManageMyInfo,
-            navOrderRecord = navOrderRecord,
+            navOrderRecord = { navOrderRecord(UserInfoRoute.MyPage) },
             navRefundRecord = navRefundRecord,
             onErrorHandleLoginAgain = navLogin,
             onBackClick = navBack

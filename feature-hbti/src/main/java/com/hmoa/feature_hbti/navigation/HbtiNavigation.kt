@@ -129,9 +129,10 @@ fun NavGraphBuilder.hbtiSurveyResultScreen(
     }
 }
 
-fun NavGraphBuilder.hbtiProcessScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
+fun NavGraphBuilder.hbtiProcessScreen(navLogin: () -> Unit, onBackClick: () -> Unit, onNextClick: () -> Unit) {
     composable(route = "${HbtiRoute.HbtiProcess}") {
         HbtiProcessRoute(
+            navLogin = navLogin,
             onBackClick = { onBackClick() },
             onNextClick = { onNextClick() })
     }
@@ -246,13 +247,13 @@ fun NavGraphBuilder.orderResult(navHbti: () -> Unit){
 fun NavGraphBuilder.writeReview(
     navBack: () -> Unit,
     navReview: (befRoute: HbtiRoute) -> Unit
-){
+) {
     composable(
         route = "${HbtiRoute.WriteReviewRoute.name}/{orderId}",
         arguments = listOf(
-            navArgument("orderId"){type = NavType.IntType}
+            navArgument("orderId") { type = NavType.IntType }
         )
-    ){
+    ) {
         val orderId = it.arguments?.getInt("orderId")
         WriteReviewRoute(
             orderId = orderId,
@@ -267,10 +268,10 @@ fun NavGraphBuilder.review(
     navEditReview: (Int) -> Unit,
     navLogin: () -> Unit,
     navWriteReview: (reviewId: Int) -> Unit
-){
+) {
     composable(
         route = "${HbtiRoute.ReviewRoute.name}"
-    ){
+    ) {
         ReviewRoute(
             navBack = navBack,
             navEditReview = navEditReview,
@@ -280,11 +281,11 @@ fun NavGraphBuilder.review(
     }
 }
 
-fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit, navLogin: () -> Unit){
+fun NavGraphBuilder.editReview(navReview: (befRoute: HbtiRoute) -> Unit, navLogin: () -> Unit) {
     composable(
         route = "${HbtiRoute.EditReviewRoute.name}/{reviewId}",
-        arguments = listOf(navArgument("reviewId"){type = NavType.IntType})
-    ){
+        arguments = listOf(navArgument("reviewId") { type = NavType.IntType })
+    ) {
         val reviewId = it.arguments?.getInt("reviewId")
         EditReviewRoute(
             reviewId = reviewId,

@@ -5,15 +5,36 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +55,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.concatWithComma
 import com.hmoa.core_common.formatWon
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.Button
+import com.hmoa.core_designsystem.component.CircleImageView
+import com.hmoa.core_designsystem.component.CustomOutlinedTextField
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.TagBadge
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_domain.entity.data.WebviewType
@@ -547,11 +574,25 @@ private fun ProductInfo(
             .fillMaxWidth()
             .padding(top = 24.dp)
     ) {
-        Text(
-            text = "상품 정보",
-            fontSize = 18.sp,
-            fontFamily = CustomFont.bold
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(
+                text = "상품 정보",
+                fontSize = 18.sp,
+                fontFamily = CustomFont.bold
+            )
+            Text(
+                text = "11시 이전 결제 건까지 당일 발송",
+                fontSize = 11.sp,
+                lineHeight = 20.sp,
+                letterSpacing = (-0.4).sp,
+                fontFamily = CustomFont.regular,
+                color = CustomColor.gray4
+            )
+        }
         notes.forEach { note ->
             NoteItem(note = note, deleteNote = deleteNote)
             if (notes.lastIndex != notes.indexOf(note)) {

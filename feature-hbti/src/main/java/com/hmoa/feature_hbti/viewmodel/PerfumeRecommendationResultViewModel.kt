@@ -14,8 +14,11 @@ class PerfumeRecommendationResultViewModel @Inject constructor(
     private val surveyRepository: SurveyRepository,
 ) : ViewModel() {
     private var _perfumesState = MutableStateFlow<List<PerfumeRecommendResponseDto>>(listOf())
+    val perfumesState: StateFlow<List<PerfumeRecommendResponseDto>> = _perfumesState
     private var _isPriceSortedSelectedState = MutableStateFlow<Boolean>(true)
     private var _isNoteSortedSelectedState = MutableStateFlow<Boolean>(false)
+    private var _isEmptyPriceContentNeedState = MutableStateFlow<Boolean>(true)
+    val isEmptyPriceContentNeedState: StateFlow<Boolean> = _isEmptyPriceContentNeedState
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -42,10 +45,11 @@ class PerfumeRecommendationResultViewModel @Inject constructor(
         combine(
             _perfumesState,
             _isPriceSortedSelectedState,
-            _isNoteSortedSelectedState
-        ) { perfumes, isPriceSortedSelected, isNoteSortedSelected ->
+            _isNoteSortedSelectedState,
+            _isEmptyPriceContentNeedState
+        ) { perfumes, isPriceSortedSelected, isNoteSortedSelected, isEmptyPriceContentNeedState ->
             PerfumeResultUiState.Success(
-                perfumes, isPriceSortedSelected, isNoteSortedSelected
+                perfumes, isPriceSortedSelected, isNoteSortedSelected, isEmptyPriceContentNeedState
             )
         }.stateIn(
             scope = viewModelScope,
@@ -60,6 +64,7 @@ class PerfumeRecommendationResultViewModel @Inject constructor(
     fun insertPriceSortedPerfumes() {
         _isPriceSortedSelectedState.update { true }
         _isNoteSortedSelectedState.update { false }
+        validatePricePerfumeRecommendation(surveyRepository.getPriceSortedPerfumeRecommendsResult().data?.recommendPerfumes)
         _perfumesState.update {
             surveyRepository.getPriceSortedPerfumeRecommendsResult().data?.recommendPerfumes ?: listOf()
         }
@@ -68,8 +73,17 @@ class PerfumeRecommendationResultViewModel @Inject constructor(
     fun insertNoteSortedPerfumes() {
         _isPriceSortedSelectedState.update { false }
         _isNoteSortedSelectedState.update { true }
+        _isEmptyPriceContentNeedState.update { false }
         _perfumesState.update {
             surveyRepository.getNoteSortedPerfumeRecommendsResult().data?.recommendPerfumes ?: listOf()
+        }
+    }
+
+    fun validatePricePerfumeRecommendation(recommendation: List<PerfumeRecommendResponseDto>?) {
+        if (recommendation.isNullOrEmpty()) {
+            _isEmptyPriceContentNeedState.update { true }
+        } else {
+            _isEmptyPriceContentNeedState.update { false }
         }
     }
 }
@@ -79,7 +93,8 @@ sealed interface PerfumeResultUiState {
     data class Success(
         val perfumes: List<PerfumeRecommendResponseDto>?,
         val isPriceSortedSelected: Boolean,
-        val isNoteSortedSelected: Boolean
+        val isNoteSortedSelected: Boolean,
+        val isEmptyPriceContentNeedState: Boolean
     ) : PerfumeResultUiState
 
     data object Error : PerfumeResultUiState

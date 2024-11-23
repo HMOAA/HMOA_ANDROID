@@ -1,6 +1,7 @@
 package com.hmoa.feature_hbti.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -19,8 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.PerfumeRecommendResponseDto
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationResultViewModel
 import com.hmoa.feature_hbti.viewmodel.PerfumeResultUiState
@@ -30,7 +34,7 @@ fun PerfumeRecommendationResultRoute(
     navBack: () -> Unit,
     navPerfume: (Int) -> Unit,
     navHome: () -> Unit,
-    navLogin:()->Unit,
+    navLogin: () -> Unit,
     viewModel: PerfumeRecommendationResultViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -44,6 +48,7 @@ fun PerfumeRecommendationResultRoute(
                 perfumes = (uiState as PerfumeResultUiState.Success).perfumes ?: emptyList(),
                 isPriceSortedSelected = (uiState as PerfumeResultUiState.Success).isPriceSortedSelected,
                 isNoteSortedSelected = (uiState as PerfumeResultUiState.Success).isNoteSortedSelected,
+                isEmptyPriceContentNeedState = (uiState as PerfumeResultUiState.Success).isEmptyPriceContentNeedState,
                 navBack = navBack,
                 navPerfume = navPerfume,
                 onClickButton = navHome,
@@ -64,10 +69,11 @@ fun PerfumeRecommendationResultRoute(
 }
 
 @Composable
-private fun PerfumeCommentResultContent(
+fun PerfumeCommentResultContent(
     perfumes: List<PerfumeRecommendResponseDto>,
     isPriceSortedSelected: Boolean,
     isNoteSortedSelected: Boolean,
+    isEmptyPriceContentNeedState: Boolean,
     onClickButton: () -> Unit,
     onClickPriceSorted: () -> Unit,
     onClickNoteSorted: () -> Unit,
@@ -116,10 +122,10 @@ private fun PerfumeCommentResultContent(
                         modifier = Modifier.clickable { onClickNoteSorted() }.padding(start = 7.dp)
                     )
                 }
-                /** 임시 더미 데이터 */
                 PerfumeResult(
                     perfumes = perfumes,
-                    navPerfume = navPerfume
+                    navPerfume = navPerfume,
+                    isEmptyPriceContentNeedState = isEmptyPriceContentNeedState
                 )
                 Spacer(Modifier.height(30.dp))
             }
@@ -139,10 +145,34 @@ private fun PerfumeCommentResultContent(
     }
 }
 
+@Composable
+fun EmptyPricePerfumeRecommendationScreen() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Image(
+            modifier = Modifier.size(110.dp),
+            painter = painterResource(R.drawable.ic_app_default_1),
+            contentDescription = "App Logo"
+        )
+        Spacer(Modifier.height(24.dp))
+        Text(
+            text = "설정하신 가격대 내에\n해당하는 향수가 없습니다.",
+            fontSize = 20.sp,
+            fontFamily = CustomFont.bold,
+        )
+        Spacer(Modifier.height(17.dp))
+        Text(
+            text = "가격대를 재설정 해주세요.",
+            fontSize = 16.sp,
+            fontFamily = CustomFont.regular,
+        )
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PerfumeResult(
     perfumes: List<PerfumeRecommendResponseDto>,
+    isEmptyPriceContentNeedState: Boolean,
     navPerfume: (Int) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = { perfumes.size })
@@ -151,24 +181,28 @@ private fun PerfumeResult(
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(20.dp))
-        HorizontalPager(
-            modifier = Modifier
-                .padding(horizontal = 25.dp).fillMaxWidth(),
-            state = pagerState,
-            contentPadding = PaddingValues(end = 80.dp)
-        ) { page ->
-            val perfume = perfumes[page]
-            Column(modifier = Modifier.padding(end = 15.dp)) {
-                LikeRowItem(
-                    brand = perfume.brandname ?: "",
-                    itemPicture = perfume.perfumeImageUrl ?: "",
-                    price = perfume.price.toString(),
-                    itemNameKo = perfume.perfumeName ?: "",
-                    itemNameEng = perfume.perfumeEnglishName ?: "",
-                    onClickClose = { /** 아무 이벤트도 실행하지 않음 */ },
-                    navPerfume = { navPerfume(perfume.perfumeId ?: 0) },
-                    isCloseButtonExist = false
-                )
+        if (isEmptyPriceContentNeedState) {
+            EmptyPricePerfumeRecommendationScreen()
+        } else {
+            HorizontalPager(
+                modifier = Modifier
+                    .padding(horizontal = 25.dp).fillMaxWidth(),
+                state = pagerState,
+                contentPadding = PaddingValues(end = 80.dp)
+            ) { page ->
+                val perfume = perfumes[page]
+                Column(modifier = Modifier.padding(end = 15.dp)) {
+                    LikeRowItem(
+                        brand = perfume.brandname ?: "",
+                        itemPicture = perfume.perfumeImageUrl ?: "",
+                        price = perfume.price.toString(),
+                        itemNameKo = perfume.perfumeName ?: "",
+                        itemNameEng = perfume.perfumeEnglishName ?: "",
+                        onClickClose = { /** 아무 이벤트도 실행하지 않음 */ },
+                        navPerfume = { navPerfume(perfume.perfumeId ?: 0) },
+                        isCloseButtonExist = false
+                    )
+                }
             }
         }
     }
@@ -195,6 +229,7 @@ fun PerfumeRecommendationsResultPreview() {
         navPerfume = {},
         onClickButton = {},
         onClickPriceSorted = {},
-        onClickNoteSorted = {}
+        onClickNoteSorted = {},
+        isEmptyPriceContentNeedState = false
     )
 }

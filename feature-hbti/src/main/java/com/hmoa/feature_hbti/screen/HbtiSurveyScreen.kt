@@ -112,15 +112,13 @@ fun HbtiSurveyContent(
     var currentProgress by remember { mutableStateOf(0f) }
     var targetProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
-    val pageContent = hbtiQuestionItems?.hbtiQuestions?.values?.map { it }
-    val additionalProgress = calculateHbtiProgressStepSize(pageContent)
     val pagerState =
-        rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.hbtiQuestions?.values?.size ?: 0 })
-
+        rememberPagerState(initialPage = 0, pageCount = { hbtiQuestionItems?.questionCounts ?: 0 })
+    val additionalProgress = calculateHbtiProgressStepSize(hbtiQuestionItems?.questionCounts ?: 13)
     fun addProgress() {
         targetProgress += additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress <= targetProgress) {
                     currentProgress += progress
                 }
@@ -131,7 +129,7 @@ fun HbtiSurveyContent(
     fun subtractProgress() {
         targetProgress -= additionalProgress
         scope.launch {
-            loadProgress { progress ->
+            loadProgress(additionalProgress) { progress ->
                 if (currentProgress >= targetProgress) {
                     currentProgress -= progress
                 }
@@ -166,61 +164,53 @@ fun HbtiSurveyContent(
             onNavClick = onBackClick
         )
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 40.dp).fillMaxHeight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(1f).background(color = Color.White)
+                .padding(top = 12.dp).padding(horizontal = 16.dp)
+                .semantics { testTag = "HbtiSurveyForm" }
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(1f).background(color = Color.White)
-                    .padding(top = 12.dp)
-                    .semantics { testTag = "HbtiSurveyForm" }
-            ) {
-                Column {
-                    ProgressBar(percentage = currentProgress)
-                    HorizontalPager(
-                        userScrollEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
-                        modifier = Modifier.fillMaxWidth().background(color = Color.White),
-                        state = pagerState,
-                        verticalAlignment = Alignment.Top,
-                    ) { page ->
-                        Column(verticalArrangement = Arrangement.SpaceBetween) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                Text(
-                                    "Q. ${hbtiQuestionItems?.hbtiQuestions?.get(page)?.questionContent}",
-                                    modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
-                                    style = TextStyle(
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontFamily = CustomFont.regular
-                                    )
-                                )
-                                SurveyOptionList(
-                                    isMutipleAnswerAvailable = hbtiQuestionItems?.hbtiQuestions?.get(page)?.isMultipleChoice!!,
-                                    answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
-                                    surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents
-                                        ?: listOf(),
-                                    surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds
-                                        ?: listOf(),
-                                    onButtonClick = { optionIndex, isGoToSelectedState ->
-                                        onClickOption(
-                                            hbtiQuestionItems?.hbtiQuestions?.get(page)!!.optionIds[optionIndex],
-                                            page,
-                                            hbtiQuestionItems?.hbtiQuestions?.get(page)!!,
-                                            isGoToSelectedState
-                                        )
-                                    }
-                                )
-                            }
-
+            ProgressBar(percentage = currentProgress)
+            HorizontalPager(
+                userScrollEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
+                modifier = Modifier.fillMaxWidth().background(color = Color.White).fillMaxHeight(0.85f),
+                state = pagerState,
+                verticalAlignment = Alignment.Top,
+            ) { page ->
+                Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        "Q. ${hbtiQuestionItems?.hbtiQuestions?.get(page)?.questionContent}",
+                        modifier = Modifier.padding(bottom = 32.dp, top = 36.dp),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = CustomFont.regular
+                        )
+                    )
+                    SurveyOptionList(
+                        isMutipleAnswerAvailable = hbtiQuestionItems?.hbtiQuestions?.get(page)?.isMultipleChoice!!,
+                        answerIds = hbtiAnswerIds?.get(page) ?: emptyList(),
+                        surveyOptions = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionContents
+                            ?: listOf(),
+                        surveyOptionIds = hbtiQuestionItems?.hbtiQuestions?.get(page)?.optionIds
+                            ?: listOf(),
+                        onButtonClick = { optionIndex, isGoToSelectedState ->
+                            onClickOption(
+                                hbtiQuestionItems?.hbtiQuestions?.get(page)!!.optionIds[optionIndex],
+                                page,
+                                hbtiQuestionItems?.hbtiQuestions?.get(page)!!,
+                                isGoToSelectedState
+                            )
                         }
-                    }
+                    )
                 }
+            }
+            Column(modifier = Modifier.padding(bottom = 40.dp)) {
                 if (pagerState.currentPage < pagerState.pageCount - 1) {
                     Button(
                         isEnabled = isNextQuestionAvailable?.get(pagerState.currentPage) ?: true,
                         btnText = "다음",
                         onClick = {
-                            addProgress()
                             scope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }

@@ -1,12 +1,21 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,7 +29,11 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.toDisplayString
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.NoteListItem
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_model.response.FinalOrderResponseDto
@@ -35,13 +48,13 @@ fun RefundRecordRoute(
     navLogin: () -> Unit,
     viewModel: RefundRecordViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
     RefundRecordScreen(
         navBack = navBack,
         navLogin = navLogin,
-        uiState = uiState.value,
-        errState = errState.value,
+        uiState = uiState,
+        errState = errState,
     )
 }
 
@@ -94,7 +107,10 @@ private fun RefundRecordContent(
         ) {
             if (data.isNotEmpty()) {
                 LazyColumn {
-                    items(data) { record ->
+                    items(
+                        items = data,
+                        key = {item -> item?.orderId!!}
+                    ) { record ->
                         if (record != null) {
                             ReturnOrRefundRecordItem(
                                 status = record.orderStatus.toDisplayString(),

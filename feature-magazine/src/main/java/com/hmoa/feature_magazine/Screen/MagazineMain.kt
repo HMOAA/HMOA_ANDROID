@@ -1,6 +1,6 @@
 package com.hmoa.feature_magazine.Screen
 
-import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,12 +21,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,11 +43,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
@@ -123,7 +121,7 @@ private fun MagazineFullContent(
     onNavMagazineDesc: (Int) -> Unit
 ){
     if (magazineList.isNotEmpty()){
-        val firstMagazine = magazineList[0]!!
+        val magazines = magazineList.subList(0, 5)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
@@ -131,9 +129,7 @@ private fun MagazineFullContent(
         ){
             item{
                 MagazineTitleBox(
-                    imageUrl = firstMagazine.previewImgUrl,
-                    title = firstMagazine.title,
-                    preview = firstMagazine.preview
+                    magazines = magazines.filterNotNull()
                 )
                 Spacer(Modifier.height(32.dp))
                 ReleasePerfumeList(
@@ -165,73 +161,80 @@ private fun MagazineFullContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MagazineTitleBox(
-    imageUrl : String,
-    title : String,
-    preview : String,
+    magazines: List<MagazineSummaryResponseDto>,
 ){
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(513.dp),
-        contentAlignment = Alignment.Center
+    val state = rememberPagerState(initialPage = 0, pageCount = {magazines.size})
+    HorizontalPager(
+        state = state
     ){
-        ImageView(
-            imageUrl = imageUrl,
-            width = 1f,
-            height = 1f,
-            backgroundColor = Color.Black,
-            contentScale = ContentScale.FillBounds,
-            alpha = 0.4f
-        )
-
-        Column(
+        val imageUrl = magazines[it].previewImgUrl
+        val title = magazines[it].title
+        val preview = magazines[it].preview
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 22.dp)
-                .background(color = Color.Transparent)
+                .fillMaxWidth()
+                .height(513.dp),
+            contentAlignment = Alignment.Center
         ){
-            TopBar(
-                title = "Magazine",
-                titleColor = Color.White
+            ImageView(
+                imageUrl = imageUrl,
+                width = 1f,
+                height = 1f,
+                backgroundColor = Color.Black,
+                contentScale = ContentScale.FillBounds,
+                alpha = 0.4f
             )
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .aspectRatio(1f)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 22.dp)
+                    .background(color = Color.Transparent)
             ){
-                ImageView(
-                    imageUrl = imageUrl,
-                    width = 1f,
-                    height = 1f,
-                    backgroundColor = Color.Transparent,
-                    contentScale = ContentScale.FillBounds
+                TopBar(
+                    color = Color.Transparent,
+                    title = "Magazine",
+                    titleColor = Color.White
                 )
-
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 36.dp)
-                        .padding(horizontal = 24.dp),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .aspectRatio(1f)
                 ){
-                    Text(
-                        text = title,
-                        fontSize = 24.sp,
-                        color = Color.White,
-                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                        fontWeight = FontWeight.Bold
+                    ImageView(
+                        imageUrl = imageUrl,
+                        width = 1f,
+                        height = 1f,
+                        backgroundColor = Color.Transparent,
+                        contentScale = ContentScale.FillBounds
                     )
-                    Spacer(Modifier.height(12.dp))
-                    Text(
-                        text = preview,
-                        fontSize = 14.sp,
-                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                        color = Color.White,
-                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 36.dp)
+                            .padding(horizontal = 24.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        Text(
+                            text = title,
+                            fontSize = 24.sp,
+                            color = Color.White,
+                            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            text = preview,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                            color = Color.White,
+                        )
+                    }
                 }
             }
         }

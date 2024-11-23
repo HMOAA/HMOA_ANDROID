@@ -15,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -99,73 +100,81 @@ private fun HbtiSurveyResultContent(
                     navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
                     onNavClick = { onBackClick() }
                 )
-                Column(modifier = Modifier.padding(start = 16.dp)) {
-                    Text(
-                        "${userName}님에게 딱 맞는 향료는\n'${surveyResult[0].noteName}'입니다",
-                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = pretendard),
-                        modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
-                    )
-                    Text(
-                        "2위 : ${surveyResult[1].noteName}",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = pretendard,
-                            color = CustomColor.gray3
-                        ),
-                        modifier = Modifier.padding(bottom = 5.dp)
-                    )
-                    Text(
-                        "3위 : ${surveyResult[2].noteName}",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            fontFamily = pretendard,
-                            color = CustomColor.gray3
+                Column(modifier = Modifier.padding(start = 16.dp), verticalArrangement = Arrangement.SpaceBetween) {
+                    Column {
+                        Text(
+                            "${userName}님에게 딱 맞는 향료는\n'${surveyResult[0].noteName}'입니다",
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = pretendard),
+                            modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
                         )
-                    )
-                    HorizontalPager(
-                        verticalAlignment = Alignment.Bottom,
-                        state = pagerState,
-                        modifier = Modifier.fillMaxWidth().padding(top = 29.dp),
-                        contentPadding = PaddingValues(end = 80.dp)
-                    ) { page ->
-                        Column(modifier = Modifier.fillMaxWidth(1f).fillMaxHeight(0.8f).padding(end = 15.dp)) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(1f).fillMaxHeight(0.7f)
-                            ) {
-                                ImageView(
-                                    imageUrl = surveyResult[page].notePhotoUrl,
-                                    width = 1f,
-                                    height = 1f,
-                                    contentScale = ContentScale.Crop,
-                                    backgroundColor = Color.White
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .background(color = Color.Black).fillMaxHeight(1f)
-                            ) {
-                                Text(
-                                    "${surveyResult[page].noteName}",
-                                    style = TextStyle(
-                                        fontFamily = pretendard,
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    ),
-                                    modifier = Modifier.padding(bottom = 7.dp, top = 20.dp).padding(horizontal = 20.dp)
-                                )
-                                Text(
-                                    "${surveyResult[page].content}",
-                                    style = TextStyle(
-                                        fontFamily = pretendard,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Light,
-                                        color = Color.White
-                                    ),
-                                    modifier = Modifier.padding(bottom = 20.dp).padding(horizontal = 20.dp)
-                                )
+                        Text(
+                            "2위 : ${surveyResult[1].noteName}",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = pretendard,
+                                color = CustomColor.gray3
+                            ),
+                            modifier = Modifier.padding(bottom = 5.dp)
+                        )
+                        Text(
+                            "3위 : ${surveyResult[2].noteName}",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = pretendard,
+                                color = CustomColor.gray3
+                            )
+                        )
+                    }
+
+                    Column {
+                        HorizontalPager(
+                            verticalAlignment = Alignment.Bottom,
+                            state = pagerState,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                            contentPadding = PaddingValues(end = 80.dp)
+                        ) { page ->
+                            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9f).padding(end = 15.dp)) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)
+                                ) {
+                                    ImageView(
+                                        imageUrl = surveyResult[page].notePhotoUrl,
+                                        width = 1f,
+                                        height = 1f,
+                                        contentScale = ContentScale.Crop,
+                                        backgroundColor = Color.White
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        .background(color = Color.Black).fillMaxHeight()
+                                        .padding(bottom = 20.dp)
+                                ) {
+                                    Text(
+                                        "${surveyResult[page].noteName}",
+                                        style = TextStyle(
+                                            fontFamily = pretendard,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        ),
+                                        modifier = Modifier.padding(bottom = 7.dp, top = 20.dp)
+                                            .padding(horizontal = 20.dp)
+                                    )
+                                    Text(
+                                        "${surveyResult[page].content}",
+                                        style = TextStyle(
+                                            fontFamily = pretendard,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Light,
+                                            color = Color.White
+                                        ),
+                                        modifier = Modifier.padding(horizontal = 20.dp),
+                                        overflow = TextOverflow.Visible
+                                    )
+                                }
                             }
                         }
                     }

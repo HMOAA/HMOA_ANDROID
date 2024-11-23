@@ -193,6 +193,7 @@ fun SetUpNavGraph(
             onBackClick = navController::navigateToBack,
         )
         hbtiProcessScreen(
+            navLogin = navController::navigateToLogin,
             onBackClick = navController::navigateToBack,
             onNextClick = navController::navigateToNotePick
         )
@@ -217,10 +218,7 @@ fun SetUpNavGraph(
             navOrder = navController::navigateToOrder,
             navLogin = navController::navigateToLogin
         )
-        orderResult(
-            navBack = navController::navigateToBack,
-            navHome = navController::navigateToHome
-        )
+        orderResult(navHbti = navController::navigateToHbti)
         perfumeRecommendationRoute(
             onBackClick = navController::navigateToBack,
             onNextClick = navController::navigateToPerfumeRecommendationResult
@@ -231,7 +229,7 @@ fun SetUpNavGraph(
             navHome = navController::navigateToHome,
             navLogin = navController::navigateToLogin
         )
-        writeReview(navBack = navController::navigateToBack)
+        writeReview(navBack = navController::navigateToBack, navReview = navController::navigateToReview)
         review(
             navBack = navController::navigateToBack,
             navWriteReview = navController::navigateToWriteReview,

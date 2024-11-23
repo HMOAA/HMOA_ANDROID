@@ -6,11 +6,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.example.feature_userinfo.EditProfileRoute
 import com.example.userinfo.MyPageRoute
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
-import com.hmoa.feature_like.Screen.MyFavoritePerfumeRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
 import com.hmoa.feature_userinfo.screen.*
 
@@ -52,7 +50,11 @@ fun NavController.navigateToRefund(type: String, orderId: Int) =
     navigate("${UserInfoRoute.RefundRoute.name}/${type}/${orderId}")
 
 //주문 내역
-fun NavController.navigateToOrderRecord() = navigate(UserInfoRoute.OrderRecordRoute.name)
+fun NavController.navigateToOrderRecord(befRoute: UserInfoRoute) = navigate(UserInfoRoute.OrderRecordRoute.name) {
+    if (befRoute == UserInfoRoute.RefundRoute) {
+        popUpTo(route = "${UserInfoRoute.RefundRoute.name}/{type}/{orderId}") { inclusive = true }
+    }
+}
 
 //환불 & 반품 내역
 fun NavController.navigateToRefundRecord() = navigate(UserInfoRoute.RefundRecordRoute.name)
@@ -82,7 +84,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navMyBirth: () -> Unit,
     navMyGender: () -> Unit,
     navPerfume: (Int) -> Unit,
-    navOrderRecord: () -> Unit,
+    navOrderRecord: (befRoute: UserInfoRoute) -> Unit,
     navRefund: (pageType: String, orderId: Int) -> Unit,
     navReviewWrite: (orderId: Int) -> Unit,
     navRefundRecord: () -> Unit,
@@ -105,7 +107,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoRoute.EditProfileRoute.name) {
-            EditProfileRoute(navBack = navBack)
+            EditProfileRoute(navBack = navBack, navLogin = navLogin)
         }
         composable(route = UserInfoRoute.MyPostRoute.name) {
             MyPostRoute(
@@ -126,7 +128,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             MyCommentRoute(
                 navBack = navBack,
                 navCommunity = navCommunity,
-                navPerfume = navPerfume
+                navPerfume = navPerfume,
+                navLogin = navLogin
             )
         }
         composable(route = UserInfoRoute.MyFavoriteCommentRoute.name) {
@@ -144,7 +147,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             )
         }
         composable(route = UserInfoRoute.MyBirthRoute.name) {
-            MyBirthRoute(navBack = navBack)
+            MyBirthRoute(navBack = navBack, navLogin = navLogin)
         }
         composable(route = UserInfoRoute.MyGenderRoute.name) {
             MyGenderRoute(navBack = navBack)
@@ -153,7 +156,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
             MyFavoritePerfumeRoute(
                 navPerfume = navPerfume,
                 navHome = navHome,
-                onErrorHandleLoginAgain = navLogin,
+                navLogin = navLogin,
                 navBack = navBack
             )
         }
@@ -181,7 +184,8 @@ fun NavGraphBuilder.nestedUserInfoGraph(
                 type = type,
                 orderId = orderId,
                 navBack = navBack,
-                navLogin = navLogin
+                navLogin = navLogin,
+                navOrderRecord = navOrderRecord
             )
         }
         composable(route = "${UserInfoRoute.RefundRecordRoute.name}") {

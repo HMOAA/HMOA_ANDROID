@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -25,42 +26,35 @@ import com.hmoa.feature_userinfo.viewModel.FavoriteCommentViewModel
 @Composable
 fun MyFavoriteCommentRoute(
     navBack: () -> Unit,
-    navCommunity: (Int) -> Unit,
-    navPerfume: (Int) -> Unit,
+    navCommunity: (communityId: Int) -> Unit,
+    navPerfume: (perfumeId: Int) -> Unit,
     viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
     //comment list
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
-    val type = viewModel.type.collectAsStateWithLifecycle()
+    val type by viewModel.type.collectAsStateWithLifecycle()
 
     MyFavoriteCommentPage(
         uiState = uiState.value,
         errState = errState.value,
-        commentType = type.value,
-        onTypeChanged = { viewModel.changeType(it) },
+        commentType = type,
+        onTypeChanged = viewModel::changeType,
         navBack = navBack,
-        onNavParent = {
-            if (type.value == MyPageCategory.향수.name) {
-                navPerfume(it)
-                if (type.value == MyPageCategory.향수.name) {
-                    navPerfume(it)
-                } else {
-                    navCommunity(it)
-                }
-            }
-        }
+        navPerfume = navPerfume,
+        navCommunity = navCommunity,
     )
 }
 
 @Composable
 fun MyFavoriteCommentPage(
     navBack: () -> Unit,
-    onNavParent: (Int) -> Unit,
+    navPerfume: (perfumeId: Int) -> Unit,
+    navCommunity: (communityId: Int) -> Unit,
     uiState: FavoriteCommentUiState,
     errState: ErrorUiState,
-    commentType: String,
-    onTypeChanged: (String) -> Unit,
+    commentType: MyPageCategory,
+    onTypeChanged: (type: MyPageCategory) -> Unit,
 ) {
     when (uiState) {
         FavoriteCommentUiState.Loading -> {
@@ -74,7 +68,8 @@ fun MyFavoriteCommentPage(
                 onTypeChanged = onTypeChanged,
                 comments = comments.itemSnapshotList,
                 navBack = navBack,
-                onNavParent = onNavParent
+                navPerfume = navPerfume,
+                navCommunity = navCommunity
             )
         }
 
@@ -85,20 +80,23 @@ fun MyFavoriteCommentPage(
                 onCloseClick = navBack
             )
         }
-
-        else -> {}
     }
 }
 
 @Composable
 fun FavoriteCommentContent(
-    type: String,
-    onTypeChanged: (String) -> Unit,
+    type: MyPageCategory,
+    onTypeChanged: (type: MyPageCategory) -> Unit,
     comments: ItemSnapshotList<CommunityCommentDefaultResponseDto>,
     navBack: () -> Unit,
-    onNavParent: (Int) -> Unit,
+    navPerfume: (perfumeId: Int) -> Unit,
+    navCommunity: (communityId: Int) -> Unit
 ) {
     val commentCount = comments.size
+    val navParent: (id: Int) -> Unit = {
+        if (type == MyPageCategory.향수) { navPerfume(it) }
+        else { navCommunity(it) }
+    }
 
     Column(
         modifier = Modifier
@@ -119,7 +117,10 @@ fun FavoriteCommentContent(
             TypeRow(type = type, onTypeChanged = onTypeChanged)
             if (comments.isNotEmpty()) {
                 LazyColumn {
-                    itemsIndexed(comments) { index, comment ->
+                    itemsIndexed(
+                        items = comments,
+                        key = {_, contact -> contact?.id!!}
+                    ) { index, comment ->
                         if (comment != null) {
                             Comment(
                                 isEditable = false,
@@ -129,7 +130,7 @@ fun FavoriteCommentContent(
                                 comment = comment.content,
                                 isFirst = false,
                                 heartCount = comment.heartCount,
-                                navCommunity = { onNavParent(comment.parentId) },
+                                navCommunity = { navParent(comment.parentId) },
                                 onOpenBottomDialog = { /** 여기도 Bottom Dialog 사용하려면 사용합시다 */ },
                                 isSelected = comment.liked,
                                 onHeartClick = {}
@@ -154,8 +155,8 @@ fun FavoriteCommentContent(
 
 @Composable
 private fun TypeRow(
-    type: String,
-    onTypeChanged: (type: String) -> Unit,
+    type: MyPageCategory,
+    onTypeChanged: (type: MyPageCategory) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -163,21 +164,21 @@ private fun TypeRow(
             .wrapContentHeight(),
     ) {
         TypeBadge(
-            onClickItem = { onTypeChanged("향수") },
+            onClickItem = { onTypeChanged(MyPageCategory.향수) },
             roundedCorner = 20.dp,
-            type = "향수",
+            type = MyPageCategory.향수.name,
             fontSize = 12.sp,
             fontColor = Color.White,
-            selected = type == "향수"
+            selected = type == MyPageCategory.향수
         )
         Spacer(Modifier.width(8.dp))
         TypeBadge(
-            onClickItem = { onTypeChanged("게시글") },
+            onClickItem = { onTypeChanged(MyPageCategory.게시글) },
             roundedCorner = 20.dp,
-            type = "게시글",
+            type = MyPageCategory.게시글.name,
             fontSize = 12.sp,
             fontColor = Color.White,
-            selected = type == "게시글"
+            selected = type == MyPageCategory.게시글
         )
     }
 }

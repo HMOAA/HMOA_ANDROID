@@ -315,9 +315,10 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
         modifier = Modifier
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp).fillMaxWidth()
             .padding(vertical = 12.dp),
-        fontFamily = CustomFont.regular
+        fontFamily = CustomFont.regular,
+        textAlign = TextAlign.Start,
     )
     Row(
         modifier = Modifier

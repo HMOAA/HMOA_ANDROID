@@ -40,7 +40,7 @@ fun SearchTopBar(
     val textFlow = remember { snapshotFlow { searchWord } }
 
     LaunchedEffect(textFlow) {
-        textFlow.debounce(700).filter { it.isNotEmpty() }.collect { onChangeWord(it) }
+        textFlow.debounce(700).filter { it.isNotBlank() }.collect { onChangeWord(it) }
     }
 
     TopAppBar(

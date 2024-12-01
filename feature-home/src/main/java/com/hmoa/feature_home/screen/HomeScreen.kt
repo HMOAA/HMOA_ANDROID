@@ -316,8 +316,9 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         fontWeight = FontWeight.Medium,
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .padding(vertical = 12.dp),
-        fontFamily = CustomFont.regular
+            .padding(vertical = 12.dp).fillMaxWidth(),
+        fontFamily = CustomFont.regular,
+        textAlign = TextAlign.Start
     )
     Row(
         modifier = Modifier
@@ -439,16 +440,19 @@ fun ImageWithTitleView(
     Box(
         modifier = Modifier
             .clickable { onItemClick() }
+            .background(color = CustomColor.gray8)
             .fillMaxWidth(containerWidth)
             .fillMaxHeight(containerHeight), contentAlignment = Alignment.BottomStart
     ) {
-        ImageView(
-            imageUrl,
-            width = width,
-            height = height,
-            backgroundColor = CustomColor.gray8,
-            contentScale = ContentScale.Fit
-        )
+        Column(modifier = Modifier.padding(20.dp).background(color = CustomColor.gray8)) {
+            ImageView(
+                imageUrl,
+                width = width,
+                height = height,
+                backgroundColor = CustomColor.gray8,
+                contentScale = ContentScale.Fit
+            )
+        }
         Text(
             text = title,
             fontWeight = FontWeight.SemiBold,

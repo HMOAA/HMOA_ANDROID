@@ -12,19 +12,19 @@ import com.hmoa.feature_perfume.screen.PerfumeCommentRoute
 import com.hmoa.feature_perfume.screen.PerfumeRoute
 import com.hmoa.feature_perfume.screen.SpecificCommentRoute
 
-fun NavController.navigateToPerfume(perfumeId: Int) = navigate("${PerfumeRoute.Perfume.name}/${perfumeId}")
+fun NavController.navigateToPerfume(perfumeId: Int) = navigate("${com.hmoa.core_domain.entity.navigation.PerfumeRoute.Perfume.name}/${perfumeId}")
 fun NavController.navigateToPerfumeComment(perfumeId: Int) =
-    navigate("${PerfumeRoute.PerfumeComment.name}/${perfumeId}")
+    navigate("${com.hmoa.core_domain.entity.navigation.PerfumeRoute.PerfumeComment.name}/${perfumeId}")
 
 fun NavController.navigateToSpecificPerfumeComment(commentId: Int, isEditable: Boolean) {
     when (isEditable) {
-        true -> navigate("${PerfumeRoute.EditMyPerfumeComment.name}/${commentId}")
-        false -> navigate("${PerfumeRoute.SpecificPerfumeComment.name}/${commentId}")
+        true -> navigate("${com.hmoa.core_domain.entity.navigation.PerfumeRoute.EditMyPerfumeComment.name}/${commentId}")
+        false -> navigate("${com.hmoa.core_domain.entity.navigation.PerfumeRoute.SpecificPerfumeComment.name}/${commentId}")
     }
 }
 
 fun NavController.navigateToCreateNewperfumeComment(perfumeId: Int) =
-    navigate("${PerfumeRoute.CreateNewPerfumeComment.name}/$perfumeId")
+    navigate("${com.hmoa.core_domain.entity.navigation.PerfumeRoute.CreateNewPerfumeComment.name}/$perfumeId")
 
 fun NavGraphBuilder.perfumeScreen(
     onBackClick: () -> Unit,
@@ -37,7 +37,7 @@ fun NavGraphBuilder.perfumeScreen(
     onErrorHandleLoginAgain: () -> Unit
 ) {
     composable(
-        route = "${PerfumeRoute.Perfume.name}/{perfumeId}",
+        route = "${com.hmoa.core_domain.entity.navigation.PerfumeRoute.Perfume.name}/{perfumeId}",
         arguments = listOf(navArgument("perfumeId") { type = NavType.StringType }),
     ) {
         val perfumeId = it.arguments?.getString("perfumeId")
@@ -61,7 +61,7 @@ fun NavGraphBuilder.perfumeComment(
     onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit
 ) {
     composable(
-        route = "${PerfumeRoute.PerfumeComment.name}/{perfumeId}",
+        route = "${com.hmoa.core_domain.entity.navigation.PerfumeRoute.PerfumeComment.name}/{perfumeId}",
         arguments = listOf(navArgument("perfumeId") { type = NavType.IntType }),
         deepLinks = listOf(navDeepLink { uriPattern="hmoa://perfume_comment/{perfumeId}" })
     ) {
@@ -79,7 +79,7 @@ fun NavGraphBuilder.specificComment(
     onBackClick: () -> Unit
 ) {
     composable(
-        route = "${PerfumeRoute.SpecificPerfumeComment.name}/{commentId}",
+        route = "${com.hmoa.core_domain.entity.navigation.PerfumeRoute.SpecificPerfumeComment.name}/{commentId}",
         arguments = listOf(navArgument("commentId") { type = NavType.IntType })
     ) {
         val commentId = it.arguments?.getInt("commentId")
@@ -89,7 +89,7 @@ fun NavGraphBuilder.specificComment(
 
 fun NavGraphBuilder.editMyPerfumeComment(onBackClick: () -> Unit) {
     composable(
-        route = "${PerfumeRoute.EditMyPerfumeComment.name}/{commentId}",
+        route = "${com.hmoa.core_domain.entity.navigation.PerfumeRoute.EditMyPerfumeComment.name}/{commentId}",
         arguments = listOf(navArgument("commentId") { type = NavType.IntType })
     ) {
         val commentId = it.arguments?.getInt("commentId")
@@ -99,7 +99,7 @@ fun NavGraphBuilder.editMyPerfumeComment(onBackClick: () -> Unit) {
 
 fun NavGraphBuilder.createNewPerfumeComment(onBackClick: () -> Unit) {
     composable(
-        route = "${PerfumeRoute.CreateNewPerfumeComment.name}/{perfumeId}",
+        route = "${com.hmoa.core_domain.entity.navigation.PerfumeRoute.CreateNewPerfumeComment.name}/{perfumeId}",
         arguments = listOf(navArgument("perfumeId") { type = NavType.IntType })
     ) {
         val perfumeId = it.arguments?.getInt("perfumeId")

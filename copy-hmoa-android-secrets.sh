@@ -17,6 +17,7 @@ FILE_PATHS=(
   "feature-userInfo/local.properties"
   "core-network/local.properties"
   "feature-authentication/local.properties"
+  "feature-hbti/local.properties"
 )
 DEST_DIRS=(
   "./app"
@@ -24,6 +25,7 @@ DEST_DIRS=(
   "./feature-userInfo"
   "./core-network"
   "./feature-authentication"
+  "./feature-hbti"
 )
 
 # 반복문을 통해 파일을 가져와서 복사

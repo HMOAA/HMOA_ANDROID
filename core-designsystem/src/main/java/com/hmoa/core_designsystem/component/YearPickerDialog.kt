@@ -1,4 +1,4 @@
-package com.hmoa.component
+package com.hmoa.core_designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

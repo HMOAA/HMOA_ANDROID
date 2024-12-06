@@ -1,46 +1,27 @@
 package com.hmoa.feature_brand.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.SearchTopBar
+import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_model.data.Consonant
+import com.hmoa.core_domain.entity.data.Consonant
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import com.hmoa.feature_brand.viewmodel.BrandSearchViewmodel
 
@@ -180,30 +161,19 @@ fun BrandItem(brand: BrandDefaultResponseDto?, onBrandClick: (brandId: Int) -> U
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.border(BorderStroke(width = 2.dp, color = CustomColor.gray9))
-                .width(size).aspectRatio(1f).background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ImageView(
-                imageUrl = brand?.brandImageUrl ?: "",
-                width = 0.9f,
-                height = 1f,
-                backgroundColor = Color.White,
-                contentScale = ContentScale.FillWidth
-            )
-        }
-        Text(
-            text = brand?.brandName ?: "",
-            style = TextStyle(
-                fontWeight = FontWeight.Light,
-                fontSize = 14.sp,
-                color = Color.Black,
-                textAlign = TextAlign.Start
-            ),
-            modifier = Modifier.width(size),
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 2
-        )
+        TagBadge(tag = brand?.brandName ?: "")
+//        Text(
+//            text = brand?.brandName ?: "",
+//            style = TextStyle(
+//                fontWeight = FontWeight.Light,
+//                fontSize = 14.sp,
+//                color = Color.Black,
+//                textAlign = TextAlign.Start,
+//                fontFamily = CustomFont.regular
+//            ),
+//            modifier = Modifier.width(size),
+//            overflow = TextOverflow.Ellipsis,
+//            maxLines = 2
+//        )
     }
 }

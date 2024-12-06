@@ -2,12 +2,11 @@ package com.hmoa.feature_hbti.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hmoa.core_common.ErrorMessageType
-import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.asResult
+import com.hmoa.core_common.*
+import com.hmoa.core_domain.entity.data.NoteSelect
 import com.hmoa.core_domain.repository.HshopRepository
 import com.hmoa.core_domain.repository.SurveyRepository
-import com.hmoa.core_model.data.NoteSelect
+import com.hmoa.core_model.request.ProductListRequestDto
 import com.hmoa.core_model.response.ProductListResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +20,15 @@ class NotePickViewmodel @Inject constructor(
     private val hshopRepository: HshopRepository
 ) : ViewModel() {
     private var _topRecommendedNoteState = MutableStateFlow<String>("")
-    private var _notesState = MutableStateFlow<ProductListResponseDto?>(null)
-    private var _noteSelectDataState = MutableStateFlow<List<NoteSelect>>(listOf())
-    private var _noteOrderIndex = MutableStateFlow<Int>(0)
+    private var _noteProductsState = MutableStateFlow<ProductListResponseDto?>(null)
+    private var _isNoteSelectDataState = MutableStateFlow<List<NoteSelect>>(listOf())
+    private var _isNextButtonAvailableState = MutableStateFlow<Boolean>(false)
+    val topRecommendedNoteState: StateFlow<String> = _topRecommendedNoteState
+    val noteProductState: StateFlow<ProductListResponseDto?> = _noteProductsState
+    val isNoteSelectDataState: StateFlow<List<NoteSelect>> = _isNoteSelectDataState
+    val isNextButtonAvailableState: StateFlow<Boolean> = _isNextButtonAvailableState
+    val selectedIds = MutableStateFlow<List<Int>>(emptyList())
+    private var _noteOrderIndex = MutableStateFlow<Int>(1)
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
     private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
@@ -32,14 +37,15 @@ class NotePickViewmodel @Inject constructor(
     val uiState: StateFlow<NotePickUiState> =
         combine(
             _topRecommendedNoteState,
-            _notesState,
-            _noteSelectDataState,
+            _noteProductsState,
+            _isNoteSelectDataState,
             _noteOrderIndex
         ) { topRecommendedNote, notes, noteSelectData, noteOrderIndex ->
             NotePickUiState.NotePickData(
                 topRecommendedNote = topRecommendedNote,
                 noteProductList = notes,
                 noteSelectData = noteSelectData,
+                noteOrderIndex = noteOrderIndex
             )
         }.stateIn(
             scope = viewModelScope,
@@ -67,28 +73,33 @@ class NotePickViewmodel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getTopRecommendedNote()
-            launch { getNoteProducts() }.join()
-            initializeIsNoteSelectedList(_notesState.value)
+            getNoteProducts()
         }
     }
 
-    fun initializeIsNoteSelectedList(noteList: ProductListResponseDto?) {
+    fun initializeIsNoteSelectedList(noteList: ProductListResponseDto?, onUpdateProducts: () -> Unit) {
         var initializedList =
             MutableList(noteList?.data?.size ?: 0) {
                 NoteSelect(
-                    selectedIndex = 0,
+                    nodeFaceIndex = null,
                     isSelected = false,
-                    isRecommended = false
+                    isRecommended = false,
+                    productId = 0 //초기값
                 )
             }
         noteList?.data?.mapIndexed { index, productResponseDto ->
-            if (productResponseDto.isRecommended) {
-                initializedList.set(index, NoteSelect(selectedIndex = null, isSelected = false, isRecommended = true))
-            } else {
-                initializedList.set(index, NoteSelect(selectedIndex = null, isSelected = false, isRecommended = false))
-            }
+            initializedList.set(
+                index,
+                NoteSelect(
+                    productId = productResponseDto.productId,
+                    nodeFaceIndex = null,
+                    isSelected = false,
+                    isRecommended = productResponseDto.isRecommended
+                )
+            )
         }
-        _noteSelectDataState.update { initializedList }
+        _isNoteSelectDataState.update { initializedList }
+        onUpdateProducts()
     }
 
     suspend fun getTopRecommendedNote() {
@@ -97,32 +108,27 @@ class NotePickViewmodel @Inject constructor(
     }
 
     suspend fun getNoteProducts() {
-        flow { emit(hshopRepository.getNotesProduct()) }.asResult().collectLatest { result ->
+        flow {
+            val result = hshopRepository.getNotesProduct()
+            result.emitOrThrow { emit(it) }
+        }.asResult().collectLatest { result ->
             when (result) {
                 is com.hmoa.core_common.Result.Success -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        _notesState.update { result.data.data }
+                        initializeIsNoteSelectedList(
+                            result.data.data,
+                            onUpdateProducts = { _noteProductsState.update { result.data.data } })
                     }
                 }
 
                 is com.hmoa.core_common.Result.Error -> {
-                    when (result.exception.message) {
-                        ErrorMessageType.EXPIRED_TOKEN.message -> {
-                            expiredTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                            wrongTypeTokenErrorState.update { true }
-                        }
-
-                        ErrorMessageType.UNKNOWN_ERROR.message -> {
-                            unLoginedErrorState.update { true }
-                        }
-
-                        else -> {
-                            generalErrorState.update { Pair(true, result.exception.message) }
-                        }
-                    }
+                    handleErrorType(
+                        error = result.exception,
+                        onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                        onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                        onUnknownError = { unLoginedErrorState.update { true } },
+                        onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                    )
                 }
 
                 is com.hmoa.core_common.Result.Loading -> {
@@ -132,61 +138,126 @@ class NotePickViewmodel @Inject constructor(
         }
     }
 
-    fun changeNoteSelectData(index: Int, value: Boolean, data: NoteSelect) {
-        val selectIndexUpdatedList = modifySelectedIndexBeforeClick()
-        var count = selectIndexUpdatedList.count { it.selectedIndex != null }
-        val clickedNoteUpdatedList = modifyClickedNoteData(
-            updatedList = selectIndexUpdatedList,
-            index = index,
-            value = value,
-            data = data,
-            count = count
-        )
-
-        _noteSelectDataState.update { clickedNoteUpdatedList }
-        _noteOrderIndex.update { count }
-    }
-
-    fun modifySelectedIndexBeforeClick(): MutableList<NoteSelect> {
-        var count = 0
-        val updatedList: MutableList<NoteSelect> = _noteSelectDataState.value.map {
-            if (it.isSelected and it.isRecommended == false) {
-                count += 1
-                NoteSelect(selectedIndex = count, isSelected = it.isSelected, isRecommended = it.isRecommended)
-            } else {
-                NoteSelect(selectedIndex = null, isSelected = it.isSelected, isRecommended = it.isRecommended)
+    fun postNoteSelected(onSuccess: () -> Unit) {
+        val requestDto = _isNoteSelectDataState.value.filter { it.isSelected }.map { it.productId }
+        selectedIds.update { requestDto }
+        viewModelScope.launch(Dispatchers.IO) {
+            flow {
+                val result = hshopRepository.postNotesSelected(ProductListRequestDto(productIds = requestDto))
+                result.emitOrThrow { emit(it) }
             }
-        }.toMutableList()
-        return updatedList
+                .asResult()
+                .collectLatest { result ->
+                    when (result) {
+                        is Result.Error -> {
+                            handleErrorType(
+                                error = result.exception,
+                                onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                                onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                                onUnknownError = { unLoginedErrorState.update { true } },
+                                onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                            )
+                        }
+
+                        Result.Loading -> {}
+                        is Result.Success -> {
+                            viewModelScope.launch(Dispatchers.Main) { onSuccess() }
+                        }
+                    }
+                }
+        }
     }
 
-    fun modifyClickedNoteData(
-        updatedList: MutableList<NoteSelect>,
+    fun handleNoteSelectData(
         index: Int,
         value: Boolean,
         data: NoteSelect,
-        count: Int
-    ): MutableList<NoteSelect> {
-        var count = count
-        if (value && data.isRecommended == false) {
-            count += 1
-            updatedList.set(
-                index,
-                NoteSelect(selectedIndex = count, isSelected = true, isRecommended = data.isRecommended)
-            )
-        } else if (value && data.isRecommended == true) {
-            updatedList.set(
-                index,
-                NoteSelect(selectedIndex = null, isSelected = true, isRecommended = data.isRecommended)
-            )
+    ) {
+        var noteSelectData = makeDeepCopyOfNoteSelectData(_isNoteSelectDataState.value)
+        noteSelectData = changeNoteSelectData(index, value, data, noteSelectData)
+        noteSelectData = reorderNoteFaceIndex(noteSelectData)
+        _isNoteSelectDataState.update { noteSelectData }
+        _noteOrderIndex.update { countSelectedNote(noteSelectData) }
+        handleIsNextButtonAvailableState(noteSelectData = noteSelectData)
+    }
+
+    fun handleIsNextButtonAvailableState(noteSelectData: MutableList<NoteSelect>) {
+        val noteSelectedCount = countSelectedNote(noteSelectData)
+        if (noteSelectedCount == 0) {
+            _isNextButtonAvailableState.update { false }
         } else {
-            updatedList.set(
-                index,
-                NoteSelect(selectedIndex = null, isSelected = false, isRecommended = data.isRecommended)
+            _isNextButtonAvailableState.update { true }
+        }
+    }
+
+    fun cancelNoteSelect(
+        value: Boolean
+    ): Boolean {
+        if (value == false) {
+            return true
+        }
+        return false
+    }
+
+    fun countSelectedNote(noteSelectData: MutableList<NoteSelect>): Int {
+        return noteSelectData.count { it.isSelected == true }
+    }
+
+    fun changeNoteSelectData(
+        index: Int,
+        value: Boolean,
+        data: NoteSelect,
+        noteSelectData: MutableList<NoteSelect>
+    ): MutableList<NoteSelect> {
+        noteSelectData.set(
+            index,
+            NoteSelect(
+                productId = data.productId,
+                isSelected = value,
+                nodeFaceIndex = data.nodeFaceIndex,
+                isRecommended = data.isRecommended
+            )
+        )
+        return noteSelectData
+    }
+
+    fun reorderNoteFaceIndex(noteSelectData: MutableList<NoteSelect>): MutableList<NoteSelect> {
+        var result = mutableListOf<NoteSelect>()
+        val recommendAndSelectedNoteNum = noteSelectData.filter { it.isRecommended and it.isSelected }.size
+        var nodeFaceIndex = recommendAndSelectedNoteNum
+        noteSelectData.map {
+            if (it.isSelected == true && it.isRecommended == false) {
+                nodeFaceIndex += 1
+                result.add(
+                    NoteSelect(
+                        productId = it.productId,
+                        isSelected = it.isSelected,
+                        nodeFaceIndex = nodeFaceIndex,
+                        isRecommended = it.isRecommended
+                    )
+                )
+            } else {
+                result.add(it)
+            }
+        }
+        return result
+    }
+
+    fun makeDeepCopyOfNoteSelectData(noteSelectData: List<NoteSelect>): MutableList<NoteSelect> {
+        var result = mutableListOf<NoteSelect>()
+        noteSelectData.map {
+            result.add(
+                NoteSelect(
+                    productId = it.productId,
+                    isSelected = it.isSelected,
+                    nodeFaceIndex = it.nodeFaceIndex,
+                    isRecommended = it.isRecommended
+                )
             )
         }
-        return updatedList
+        return result
     }
+
 }
 
 sealed interface NotePickUiState {
@@ -195,5 +266,6 @@ sealed interface NotePickUiState {
         val topRecommendedNote: String,
         val noteProductList: ProductListResponseDto?,
         val noteSelectData: List<NoteSelect>,
+        val noteOrderIndex: Int,
     ) : NotePickUiState
 }

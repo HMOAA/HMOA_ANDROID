@@ -3,26 +3,23 @@ package com.hmoa.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.feature_userinfo.*
 import com.hmoa.feature_authentication.navigation.*
 import com.hmoa.feature_brand.navigation.brandScreen
 import com.hmoa.feature_brand.navigation.brandSearchScreen
 import com.hmoa.feature_brand.navigation.navigateToBrand
 import com.hmoa.feature_community.Navigation.*
 import com.hmoa.feature_fcm.alarmRoute
+import com.hmoa.feature_hbti.navigation.*
 import com.hmoa.feature_home.navigation.*
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaDescRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPediaSearchRoute
 import com.hmoa.feature_hpedia.Navigation.nestedHPediaGraph
-import com.hmoa.feature_like.Screen.LIKE_ROUTE
-import com.hmoa.feature_like.Screen.LikeRoute
-import com.hmoa.feature_like.Screen.navigateToLike
 import com.hmoa.feature_magazine.Navigation.magazineDesc
 import com.hmoa.feature_magazine.Navigation.magazineMain
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineDesc
 import com.hmoa.feature_perfume.navigation.*
+import com.hmoa.feature_userinfo.navigation.*
 
 @Composable
 fun SetUpNavGraph(
@@ -41,7 +38,7 @@ fun SetUpNavGraph(
                 navController.navigateToPerfume(perfumeId)
             },
             onAllPerfumeClick = { navController.navigateToAllPerfume(it) },
-            onHbtiClick = { })
+            onHbtiClick = { navController.navigateToHbti() })
         perfumeSearchScreen(onBackClick = navController::navigateToBack)
         allPerfumeScreen(
             onNavLogin = navController::navigateToLogin,
@@ -67,30 +64,29 @@ fun SetUpNavGraph(
             onPickNicknameClick = navController::navigateToPickNickname
         )
 
-        /** like 모듈 */
-        composable(LIKE_ROUTE) {
-            LikeRoute(
-                onNavPerfumeDesc = navController::navigateToPerfume,
-                onNavHome = navController::navigateToHome,
-                onErrorHandleLoginAgain = navController::navigateToLogin
-            )
-        }
-
         /** user info 모듈 */
         this.nestedUserInfoGraph(
-            onNavLogin = navController::navigateToLogin,
-            onNavBack = navController::navigateToBack,
-            onNavCommunity = navController::navigateToCommunityDescriptionRoute,
-            onNavEditProfile = navController::navigateToEditProfilePage,
-            onNavManageMyInfo = navController::navigateToMyInfoPage,
-            onNavMyActivity = navController::navigateToMyActivity,
-            onNavMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
-            onNavMyPost = navController::navigateToMyPostPage,
-            onNavMyComment = navController::navigateToMyCommentPage,
-            onNavMyBirth = navController::navigateToMyBirth,
-            onNavMyGender = navController::navigateToMyGenderPage,
-            onNavMyPerfume = navController::navigateToLike,
-            onNavPerfume = navController::navigateToPerfume,
+            navHome = navController::navigateToHome,
+            navLogin = navController::navigateToLogin,
+            navReview = navController::navigateToReview,
+            navBack = navController::navigateToBack,
+            navCommunity = navController::navigateToCommunityDescriptionRoute,
+            navEditPost = navController::navigateToCommunityEditRoute,
+            navEditProfile = navController::navigateToEditProfilePage,
+            navManageMyInfo = navController::navigateToMyInfoPage,
+            navMyActivity = navController::navigateToMyActivity,
+            navMyFavoriteComment = navController::navigateToMyFavoriteCommentPage,
+            navMyPost = navController::navigateToMyPostPage,
+            navMyComment = navController::navigateToMyCommentPage,
+            navMyReview = navController::navigateToMyReview,
+            navMyBirth = navController::navigateToMyBirth,
+            navMyGender = navController::navigateToMyGenderPage,
+            navMyPerfume = navController::navigateToMyFavoritePerfume,
+            navPerfume = navController::navigateToPerfume,
+            navOrderRecord = navController::navigateToOrderRecord,
+            navReviewWrite = navController::navigateToWriteReview,
+            navRefund = navController::navigateToRefund,
+            navRefundRecord = navController::navigateToRefundRecord,
             appVersion = appVersion
         )
 
@@ -168,9 +164,78 @@ fun SetUpNavGraph(
             onNavMagazineDesc = navController::navigateToMagazineDesc
         )
         magazineDesc(
-            onNavBack = navController::navigateToBack,
-            onNavLogin = navController::navigateToLogin,
-            onNavDesc = navController::navigateToMagazineDesc
+            navBack = navController::navigateToBack,
+            navLogin = navController::navigateToLogin,
+            navDesc = navController::navigateToMagazineDesc
         )
+
+        /** hbti 모듈 */
+        hbtiScreen(
+            navBack = navController::navigateToBack,
+            navHome = navController::navigateToHome,
+            navReview = navController::navigateToReview,
+            onHbtiSurveyClick = navController::navigateToHbtiSurvey,
+            onAfterOrderClick = navController::navigateToPerfumeRecommendation,
+            navLogin = navController::navigateToLogin,
+        )
+        hbtiSurveyScreen(
+            onBackClick = navController::navigateToBack,
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onNextClick = navController::navigateToHbtiSurveyLoading
+        )
+        hbtiSurveyResultScreen(
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onBackClick = navController::navigateToBack,
+            onHbtiProcessClick = navController::navigateToHbtiProcess
+        )
+        hbtiSurveyLoadingScreen(
+            onNextScreen = navController::navigateToHbtiSurveyResult,
+            onBackClick = navController::navigateToBack,
+        )
+        hbtiProcessScreen(
+            navLogin = navController::navigateToLogin,
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToNotePick
+        )
+        notePickScreen(
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToNotePickResult,
+            onErrorHandleLoginAgain = navController::navigateToLogin,
+            onBackToHbtiScreen = navController::navigateToHbti
+        )
+        notePickResult(
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToOrder,
+            onBackToHbtiScreen = navController::navigateToHbti
+        )
+        order(
+            navBack = navController::navigateToBack,
+            navAddAddress = navController::navigateToAddAddress,
+            navOrderResult = navController::navigateToOrderResult,
+            navLogin = navController::navigateToLogin
+        )
+        addAddress(
+            navOrder = navController::navigateToOrder,
+            navLogin = navController::navigateToLogin
+        )
+        orderResult(navHbti = navController::navigateToHbti)
+        perfumeRecommendationRoute(
+            onBackClick = navController::navigateToBack,
+            onNextClick = navController::navigateToPerfumeRecommendationResult
+        )
+        perfumeRecommendationResultRoute(
+            onBackClick = navController::navigateToBack,
+            navPerfumeDescription = { id -> navController.navigateToPerfume(id) },
+            navHome = navController::navigateToHome,
+            navLogin = navController::navigateToLogin
+        )
+        writeReview(navBack = navController::navigateToBack, navReview = navController::navigateToReview)
+        review(
+            navBack = navController::navigateToBack,
+            navWriteReview = navController::navigateToWriteReview,
+            navEditReview = navController::navigateToEditReview,
+            navLogin = navController::navigateToLogin
+        )
+        editReview(navReview = navController::navigateToReview, navLogin = navController::navigateToLogin)
     }
 }

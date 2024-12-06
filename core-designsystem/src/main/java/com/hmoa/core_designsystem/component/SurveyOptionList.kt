@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,30 +22,58 @@ import com.hmoa.core_designsystem.theme.pretendard
 
 @Composable
 fun SurveyOptionList(
-    initValue: String? = null,
+    isMutipleAnswerAvailable: Boolean,
+    answerIds: List<Int>,
     surveyOptions: List<String>,
-    onButtonClick: (optionIndex: Int) -> Unit
+    surveyOptionIds: List<Int>,
+    onButtonClick: (optionIndex: Int, isGoToSelectedState: Boolean) -> Unit
 ) {
-    val surveyOptions = surveyOptions
-    val (selectedOption, onOptionSelected) = remember {
-        val idx = if (initValue == null) 0 else surveyOptions.indexOf(initValue)
-        mutableStateOf(surveyOptions[idx])
+    val selectedStates = surveyOptionIds.mapIndexed { index, it ->
+        if (it in answerIds) {
+            mutableStateOf(true)
+        } else {
+            mutableStateOf(false)
+        }
     }
+
+    fun immediateSelectedStateChange(index: Int) {
+        selectedStates[index].value = !selectedStates[index].value
+    }
+
+    fun cancelAllAnswersExceptIndex(index:Int){
+        if (!isMutipleAnswerAvailable) {
+            selectedStates.mapIndexed { idx, mutableState ->
+                if (mutableState.value && idx != index){
+                    immediateSelectedStateChange(idx)
+                }
+            }
+        }
+    }
+
+    fun handleAnswerSelectedState(index: Int) {
+        val state = selectedStates[index].value
+        immediateSelectedStateChange(index)
+        onButtonClick(index, !state)
+        cancelAllAnswersExceptIndex(index)
+    }
+
     val scrollState = rememberScrollState()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        modifier = Modifier.fillMaxHeight(0.7f).verticalScroll(scrollState).background(color =Color.White)
+        modifier = Modifier.fillMaxHeight(0.92f).verticalScroll(scrollState).background(color = Color.White)
     ) {
         surveyOptions.forEachIndexed { index, it ->
             Column(modifier = Modifier.padding(bottom = 16.dp)) {
                 SurveyOptionItem(
-                    text = it,
-                    onClick = {
-                        onOptionSelected(it)
-                        onButtonClick(index)
-                    },
-                    isSelected = (it == selectedOption)
+                    text = surveyOptions[index],
+                    onClick = { handleAnswerSelectedState(index) },
+                    isSelected = try {
+                        selectedStates[index].value
+                    }catch (e:IndexOutOfBoundsException){
+                        false
+                    }
                 )
             }
         }
@@ -85,9 +114,12 @@ fun SurveyOptionItem(text: String, onClick: () -> Unit, isSelected: Boolean) {
 @Preview
 @Composable
 fun SurveyOptionItemPreview() {
-    val seasons = listOf("싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'")
-    Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight(1f).background(color = Color.Yellow)) {
-        SurveyOptionList(null, seasons, {})
+    val seasons = listOf("싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'","싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'","싱그럽고 활기찬 '봄'", "화창하고 에너지 넘치는 '여름'", "우아하고 고요한 분위기의 '가을'", "차가움과 아늑함이 공존하는 '겨울'")
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxHeight(1f)
+    ) {
+        SurveyOptionList(isMutipleAnswerAvailable = true, answerIds = listOf(), surveyOptions = seasons, surveyOptionIds = listOf(5, 1, 2, 3), onButtonClick = { idx, isGoTo -> })
         Button(
             isEnabled = true,
             btnText = "다음",

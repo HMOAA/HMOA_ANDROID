@@ -63,14 +63,16 @@ fun HPediaScreen(
                 .padding(horizontal = 16.dp)
         ) {
             HPediaScreenTitle("HPedia")
-            SelectSearchType(navHPediaSearch = navHPediaSearch)
+            SelectSearchType(
+                navHPediaSearch = navHPediaSearch
+            )
         }
         Spacer(Modifier.height(27.dp))
         CommunityHomeRoute(
-            onNavCommunityGraph = navCommunityGraph,
-            onNavCommunityDescription = navCommunityDesc,
+            navCommunityGraph = navCommunityGraph,
+            navCommunityDescription = navCommunityDesc,
             onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-            onNavHome = navHome
+            navHome = navHome
         )
     }
 }

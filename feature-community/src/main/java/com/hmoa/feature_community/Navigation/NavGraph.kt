@@ -3,6 +3,7 @@ package com.hmoa.feature_community.Navigation
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.feature_community.Screen.*
 
 //게시글 기본 화면
@@ -59,20 +60,20 @@ fun NavGraphBuilder.nestedCommunityGraph(
     ) {
         composable(route = CommunityRoute.CommunityHomeRoute.name) {
             CommunityHomeRoute(
-                onNavCommunityDescription = navCommunityDescription,
-                onNavCommunityGraph = navCommunityPage,
+                navCommunityDescription = navCommunityDescription,
+                navCommunityGraph = navCommunityPage,
                 onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-                onNavHome = navHome
+                navHome = navHome
             )
         }
         composable(route = CommunityRoute.CommunityPreviewRoute.name) {
             CommunityPreviewRoute(
-                onNavBack = navBack,
-                onNavSearch = navCommunitySearch,
-                onNavCommunityDescription = navCommunityDescription,
-                onNavPost = navCommunityPost,
-                onNavLogin = onErrorHandleLoginAgain,
-                onNavHPedia = navHPedia,
+                navBack = navBack,
+                navSearch = navCommunitySearch,
+                navCommunityDescription = navCommunityDescription,
+                navPost = navCommunityPost,
+                navLogin = onErrorHandleLoginAgain,
+                navHPedia = navHPedia,
             )
         }
         composable(route = "${CommunityRoute.CommunityPostRoute.name}/{type}") {
@@ -80,7 +81,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
 
             CommunityPostRoute(
                 navBack = navBack,
-                _category = type
+                category = type
             )
         }
         composable(route = "${CommunityRoute.CommunityEditRoute.name}/{id}") {

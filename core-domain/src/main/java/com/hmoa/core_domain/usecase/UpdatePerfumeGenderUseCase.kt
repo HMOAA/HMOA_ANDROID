@@ -2,7 +2,7 @@ package com.hmoa.core_domain.usecase
 
 import ResultResponse
 import com.hmoa.core_domain.repository.PerfumeRepository
-import com.hmoa.core_model.PerfumeGender
+import com.hmoa.core_domain.entity.data.PerfumeGender
 import com.hmoa.core_model.request.PerfumeGenderRequestDto
 import com.hmoa.core_model.response.PerfumeGenderResponseDto
 import kotlinx.coroutines.flow.Flow

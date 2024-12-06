@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,9 +28,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 
 //인증이 안되어 있는 My Page
 @Composable
-fun NoAuthMyPage(
-    onNavLogin: () -> Unit,
-) {
+fun NoAuthMyPage(navLogin: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +68,7 @@ fun NoAuthMyPage(
 
             IconButton(
                 modifier = Modifier.size(20.dp),
-                onClick = onNavLogin
+                onClick = navLogin
             ) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -87,6 +85,6 @@ fun NoAuthMyPage(
 @Composable
 fun TestNoAuthMyPage() {
     NoAuthMyPage(
-        onNavLogin = {}
+        navLogin = {}
     )
 }

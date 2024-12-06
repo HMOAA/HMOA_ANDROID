@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.SearchRepository
-import com.hmoa.core_model.data.Consonant
+import com.hmoa.core_domain.entity.data.Consonant
 import com.hmoa.core_model.response.BrandDefaultResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*

@@ -22,12 +22,13 @@ android {
         applicationId = "com.hmoa.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 23
-        versionName = "1.1.2"
+        versionCode = 33
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String
         buildConfigField("String", "NATIVE_APP_KEY", localProperties["NATIVE_APP_KEY"] as String)
+        buildConfigField("String", "BOOTPAY_APPLICATION_ID", localProperties["BOOTPAY_APPLICATION_ID"] as String)
     }
 
     signingConfigs {
@@ -50,10 +51,6 @@ android {
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
         }
-        debug {
-            signingConfig = signingConfigs.getByName("debug")
-            isDebuggable = true
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -73,17 +70,6 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
-
-    applicationVariants.all {
-        this.mergeResourcesProvider.configure {
-            doLast {
-                copy {
-                    from(":HMOA_ANDROID_SECRET")
-                }
-            }
-        }
-    }
-
 }
 
 
@@ -101,14 +87,16 @@ dependencies {
     implementation(project(":feature-perfume"))
     implementation(project(":feature-brand"))
     implementation(project(":feature-hpedia"))
-    implementation(project(":feature-like"))
     implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
+    implementation(project(":feature-hbti"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
     implementation(project(":core-domain"))
     implementation(project(":core-repository"))
     implementation(project(":core-common"))
+
+    implementation("io.github.bootpay:android:4.4.0") //boot pay
 
     implementation("com.kakao.sdk:v2-all:${kakao_version}")// 전체 모듈 설치, 2.11.0 버전부터 지원
     implementation("com.kakao.sdk:v2-user:${kakao_version}") // 카카오 로그인 API 모듈

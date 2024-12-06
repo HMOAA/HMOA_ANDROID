@@ -6,15 +6,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.feature_userinfo.viewModel.PAGE_SIZE
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.feature_userinfo.CommentPagingSource
-import com.hmoa.feature_userinfo.MyPageCategory
+import com.hmoa.feature_userinfo.paging.CommentPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +33,7 @@ class CommentViewModel @Inject constructor(
 ): ViewModel() {
 
     //선택된 type
-    private val _type = MutableStateFlow(MyPageCategory.향수.name)
+    private val _type = MutableStateFlow(MyPageCategory.향수)
     val type get() = _type.asStateFlow()
 
     //comment 리스트
@@ -64,7 +63,7 @@ class CommentViewModel @Inject constructor(
     )
 
     val uiState: StateFlow<CommentUiState> = type.map{
-        commentPagingSource(it)
+        commentPagingSource(it.name)
     }.asResult().map{ result ->
         when(result) {
             Result.Loading -> CommentUiState.Loading
@@ -78,7 +77,7 @@ class CommentViewModel @Inject constructor(
     )
 
     //type 변환
-    fun changeType(newType : String){
+    fun changeType(newType: MyPageCategory){
         _type.update{ newType }
     }
 

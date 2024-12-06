@@ -43,7 +43,7 @@
 ## 멀티 모듈의 관심사 분리 및 아키텍처 적용
 <img width="591" alt="image" src="https://github.com/user-attachments/assets/96590045-3cf8-4c52-b9fd-ea5e3c5d4195">
 
-## MVVM 적용
+## 프레젠테이션 구조
 <img width="380" alt="image" src="https://github.com/user-attachments/assets/979d10ac-d57a-4654-9668-476284c9ef2b">
 
 ### 데이터 전달 및 상태관리 구체화 구조

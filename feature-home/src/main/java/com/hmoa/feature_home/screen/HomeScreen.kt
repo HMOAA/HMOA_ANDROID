@@ -1,11 +1,15 @@
 package com.hmoa.feature_home.screen
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +28,11 @@ import com.hmoa.core_designsystem.component.Button
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_designsystem.theme.CustomFont
+import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
-import com.hmoa.feature_home.AllPerfumeScreenId
 import com.hmoa.feature_home.viewmodel.HomeViewModel
 
 @Composable
@@ -50,89 +56,220 @@ private fun HomeScreen(
 ) {
     val firstMenuWithBannerState by viewModel.firstMenuWithBannerState.collectAsStateWithLifecycle()
     val bottomMenuState by viewModel.bottomMenuState.collectAsStateWithLifecycle()
-    val verticalScrollState = rememberScrollState()
-
-    Column(
+    val listState = rememberLazyListState()
+    LaunchedEffect(true) {
+        listState.animateScrollToItem(index = 0)
+    }
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(state = verticalScrollState, reverseScrolling = true)
             .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        state = listState
     ) {
-        when (firstMenuWithBannerState) {
-            is HomeViewModel.BannerWithFirstMenuState.Loading -> {
-                AppLoadingScreen()
-            }
 
-            is HomeViewModel.BannerWithFirstMenuState.Data -> {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                    FirstMenuWithBannerContent(
-                        onPerfumeClick = { onPerfumeClick(it) },
-                        bannerImgUrl = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerImg,
-                        bannerTitle = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerTitle,
-                        firstMenu = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
-                    )
-                }
-            }
-
-            is HomeViewModel.BannerWithFirstMenuState.Error -> {
-
+        itemsIndexed(
+            listOf("TopMenu", "BottomMenu")
+        ) { idx, item ->
+            when (idx) {
+                0 -> TopMenu(firstMenuWithBannerState, onPerfumeClick, onHbtiClick)
+                1 -> BottomMenu(bottomMenuState, onPerfumeClick, onAllPerfumeClick)
             }
         }
+    }
 
-        when (bottomMenuState) {
-            is HomeViewModel.BottomMenuState.Loading -> {
-                AppLoadingScreen()
-            }
+}
 
-            is HomeViewModel.BottomMenuState.Data -> {
-                BottomMenuContent(
-                    onPerfumeClick = { onPerfumeClick(it) },
-                    onAllPerfumeClick = { onAllPerfumeClick(it) },
-                    (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu!!
+@Composable
+fun TopMenu(
+    firstMenuWithBannerState: HomeViewModel.BannerWithFirstMenuState, onPerfumeClick: (perfumeId: Int) -> Unit,
+    onHbtiClick: () -> Unit,
+) {
+    when (firstMenuWithBannerState) {
+        is HomeViewModel.BannerWithFirstMenuState.Loading -> {
+            AppLoadingScreen()
+        }
+
+        is HomeViewModel.BannerWithFirstMenuState.Data -> {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 17.dp).padding(vertical = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                FirstMenuWithBannerContent(
+                    onHbtiClick = { onHbtiClick() },
+                    bannerImgUrl = (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).bannerImg,
                 )
             }
+            FirstMenuView(
+                (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
+                { onPerfumeClick(it) })
+        }
 
-            is HomeViewModel.BottomMenuState.Error -> {
+        is HomeViewModel.BannerWithFirstMenuState.Error -> {
 
-            }
         }
     }
 }
 
 @Composable
-private fun FirstMenuWithBannerContent(
-    onPerfumeClick: (perfumeId: Int) -> Unit,
-    bannerImgUrl: String?,
-    bannerTitle: String?,
-    firstMenu: HomeMenuDefaultResponseDto,
+fun BottomMenu(
+    bottomMenuState: HomeViewModel.BottomMenuState, onPerfumeClick: (perfumeId: Int) -> Unit,
+    onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
 ) {
+    when (bottomMenuState) {
+        is HomeViewModel.BottomMenuState.Loading -> {
+            AppLoadingScreen()
+        }
+
+        is HomeViewModel.BottomMenuState.Data -> {
+            BottomMenuContent(
+                onPerfumeClick = { onPerfumeClick(it) },
+                onAllPerfumeClick = { onAllPerfumeClick(it) },
+                (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu!!
+            )
+            HmoaCompanyMetaData()
+        }
+
+        is HomeViewModel.BottomMenuState.Error -> {
+
+        }
+    }
+}
+
+@Composable
+private fun HmoaCompanyMetaData() {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.Start,
+        modifier = Modifier.background(color = Color.Black).fillMaxWidth().padding(top = 32.dp, bottom = 36.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        ImageView(
-            imageUrl = bannerImgUrl,
-            width = 2f,
-            height = 1f,
-            backgroundColor = Color.White,
-            ContentScale.FillWidth
+        Text(
+            text = "사업자 번호: 554-20-01858",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = CustomFont.regular,
+            color = Color.White,
+            lineHeight = 16.sp
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(CustomColor.gray7)
-                .padding(vertical = 12.dp)
-                .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
+        Text(
+            text = "향모아 / 대표자 : 박태성",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = CustomFont.regular,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "개인정보보호책임자 : 이종현",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "통신판매업 : 제 2028-화성동탄-0976호",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "주소 : 화성시 동탄지성로11, 714-B03호",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+        Text(
+            text = "고객센터 : 070-8080-3309",
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = pretendard,
+            color = Color.White,
+            lineHeight = 16.sp
+        )
+    }
+}
+
+@Composable
+private fun FirstMenuWithBannerContent(
+    onHbtiClick: () -> Unit,
+    bannerImgUrl: String?,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().background(
+            color = Color.Black,
+            shape = RoundedCornerShape(
+                topStart = 12.dp,
+                topEnd = 12.dp,
+                bottomStart = 12.dp,
+                bottomEnd = 12.dp
+            )
+        ).border(
+            width = 1.dp, color = Color.Black, shape = RoundedCornerShape(
+                topStart = 12.dp,
+                topEnd = 12.dp,
+                bottomStart = 12.dp,
+                bottomEnd = 12.dp
+            )
+        ).padding(bottom = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Column(
+            modifier = Modifier.padding(top = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
-                bannerTitle ?: "글씨가 없습니다",
+                text = "무료 향BTI 검사 후",
                 textAlign = TextAlign.Start,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = CustomFont.regular,
+                color = Color.White
+            )
+            Text(
+                text = "당신만의 향을 찾아보세요",
+                textAlign = TextAlign.Start,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = CustomFont.regular,
+                color = Color.White
             )
         }
-        FirstMenuView(firstMenu, { onPerfumeClick(it) })
+        Column(
+            modifier = Modifier.padding(horizontal = 22.dp).padding(bottom = 10.dp, top = 28.dp).fillMaxWidth(0.8f)
+                .background(Color.Black)
+        ) {
+            ImageView(
+                imageUrl = bannerImgUrl,
+                width = 2f,
+                height = 1f,
+                backgroundColor = Color.White,
+                ContentScale.FillWidth
+            )
+        }
+        Button(
+            isEnabled = true,
+            btnText = "# 향bti 검사하기",
+            onClick = { onHbtiClick() },
+            buttonModifier = Modifier.background(color = CustomColor.gray4).fillMaxWidth(0.9f)
+                .height(47.dp),
+            textColor = Color.White,
+            textSize = 14,
+            radious = 8
+        )
     }
 }
 
@@ -179,7 +316,9 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         fontWeight = FontWeight.Medium,
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .padding(vertical = 12.dp)
+            .padding(vertical = 12.dp).fillMaxWidth(),
+        fontFamily = CustomFont.regular,
+        textAlign = TextAlign.Start
     )
     Row(
         modifier = Modifier
@@ -265,12 +404,14 @@ fun BottomMenuView(
             data?.title ?: "글씨가 없습니다",
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
+            fontFamily = CustomFont.regular
         )
         Text(
             "전체보기",
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.clickable { onAllPerfumeClick() }
+            modifier = Modifier.clickable { onAllPerfumeClick() },
+            fontFamily = CustomFont.regular
         )
     }
     LazyRow() {
@@ -299,17 +440,26 @@ fun ImageWithTitleView(
     Box(
         modifier = Modifier
             .clickable { onItemClick() }
+            .background(color = CustomColor.gray8)
             .fillMaxWidth(containerWidth)
             .fillMaxHeight(containerHeight), contentAlignment = Alignment.BottomStart
     ) {
-        ImageView(
-            imageUrl,
-            width = width,
-            height = height,
-            backgroundColor = CustomColor.gray8,
-            contentScale = ContentScale.Fit
+        Column(modifier = Modifier.padding(20.dp).background(color = CustomColor.gray8)) {
+            ImageView(
+                imageUrl,
+                width = width,
+                height = height,
+                backgroundColor = CustomColor.gray8,
+                contentScale = ContentScale.Fit
+            )
+        }
+        Text(
+            text = title,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 10.sp,
+            modifier = Modifier.padding(8.dp),
+            fontFamily = CustomFont.regular
         )
-        Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 10.sp, modifier = Modifier.padding(8.dp))
     }
 }
 
@@ -318,15 +468,7 @@ fun ImageWithTitleView(
 private fun HomePreview() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-            FirstMenuWithBannerContent(
-                {}, "", "시향지 체험단 모집 ~09.18", HomeMenuDefaultResponseDto(
-                    listOf(
-                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                        HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
-                    ), "겨울 이 향수 어떠세요?"
-                )
-            )
+            FirstMenuWithBannerContent({}, "")
             Button(
                 isEnabled = true,
                 btnText = "향bti 검사하기",

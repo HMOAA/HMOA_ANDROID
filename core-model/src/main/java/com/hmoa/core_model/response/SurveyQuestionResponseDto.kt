@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class SurveyQuestionResponseDto(
     val answers: List<SurveyOptionResponseDto>,
     val content: String,
+    val isMultipleChoice: Boolean,
     val questionId: Int
 )

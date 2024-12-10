@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.hmoa.core_domain.entity.navigation.AuthenticationRoute
 import com.hmoa.feature_authentication.LoginRoute
 import com.hmoa.feature_authentication.PickNicknameRoute
 import com.hmoa.feature_authentication.PickPersonalInfoRoute

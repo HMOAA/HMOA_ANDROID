@@ -18,9 +18,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /** Iterate the progress value */
-suspend fun loadProgress(updateProgress: (Float) -> Unit) {
+suspend fun loadProgress(stepSize: Float, updateProgress: (Float) -> Unit) {
+
     for (i in 1..100) {
-        updateProgress(1f / 100)
+        updateProgress(stepSize)
         delay(5)
     }
 }
@@ -52,7 +53,7 @@ fun ProgressBarPreview() {
         androidx.compose.material3.Button(onClick = {
             targetProgress += additionalProgress
             scope.launch {
-                loadProgress { progress ->
+                loadProgress(additionalProgress) { progress ->
                     if (currentProgress <= targetProgress) {
                         currentProgress += progress
                     }
@@ -67,7 +68,7 @@ fun ProgressBarPreview() {
         androidx.compose.material3.Button(onClick = {
             targetProgress -= additionalProgress
             scope.launch {
-                loadProgress { progress ->
+                loadProgress(additionalProgress) { progress ->
                     if (currentProgress >= targetProgress) {
                         currentProgress -= progress
                     }

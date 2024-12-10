@@ -1,4 +1,4 @@
-package com.hmoa.feature_userinfo
+package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -19,34 +20,36 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.feature_userinfo.viewModel.PostUiState
-import com.example.feature_userinfo.viewModel.PostViewModel
 import com.hmoa.component.PostListItem
-import com.hmoa.component.TopBar
 import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
+import com.hmoa.feature_userinfo.viewModel.PostUiState
+import com.hmoa.feature_userinfo.viewModel.PostViewModel
 
+//내 게시글 화면
 @Composable
 fun MyPostRoute(
-    onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit,
+    navBack: () -> Unit,
+    navEditPost: (Int) -> Unit,
     viewModel : PostViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MyPostPage(
-        uiState = uiState.value,
-        onNavBack = onNavBack,
-        onNavCommunity = onNavCommunity,
+        uiState = uiState,
+        navBack = navBack,
+        navEditPost = navEditPost,
     )
 }
 
 @Composable
 fun MyPostPage(
     uiState : PostUiState,
-    onNavBack: () -> Unit,
-    onNavCommunity: (Int) -> Unit
+    navBack: () -> Unit,
+    navEditPost: (Int) -> Unit
 ) {
     when(uiState) {
         PostUiState.Loading -> AppLoadingScreen()
@@ -54,22 +57,19 @@ fun MyPostPage(
             val posts = uiState.posts.collectAsLazyPagingItems().itemSnapshotList
             MyPostContent(
                 posts = posts,
-                onNavBack = onNavBack,
-                onNavCommunity = onNavCommunity
+                navBack = navBack,
+                navEditPost = navEditPost
             )
         }
-        PostUiState.Error -> {
-
-        }
-        else -> {}
+        PostUiState.Error -> {}
     }
 }
 
 @Composable
 private fun MyPostContent(
     posts : ItemSnapshotList<CommunityByCategoryResponseDto>,
-    onNavBack: () -> Unit,
-    onNavCommunity: (communityId : Int) -> Unit
+    navBack: () -> Unit,
+    navEditPost: (communityId : Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -79,10 +79,11 @@ private fun MyPostContent(
         TopBar(
             navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
             title = "작성한 게시글",
-            onNavClick = onNavBack
+            onNavClick = navBack
         )
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
         ){
@@ -92,7 +93,10 @@ private fun MyPostContent(
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    items(posts) { post ->
+                    items(
+                        items = posts,
+                        key = {item -> item?.communityId!!}
+                    ) { post ->
                         if (post != null){
                             PostListItem(
                                 modifier = Modifier
@@ -103,7 +107,7 @@ private fun MyPostContent(
                                         color = CustomColor.gray2,
                                         shape = RoundedCornerShape(10.dp)
                                     ),
-                                onPostClick = { onNavCommunity(post.communityId) },
+                                onPostClick = { navEditPost(post.communityId) },
                                 postType = post.category,
                                 postTitle = post.title,
                                 heartCount = post.heartCount,
@@ -113,10 +117,7 @@ private fun MyPostContent(
                     }
                 }
             } else {
-                NoDataPage(
-                    mainMsg = "작성한 게시글이\n없습니다.",
-                    subMsg = "게시글을 작성해주세요"
-                )
+                EmptyDataPage(mainText = "작성한 게시글이\n없습니다.")
             }
         }
     }

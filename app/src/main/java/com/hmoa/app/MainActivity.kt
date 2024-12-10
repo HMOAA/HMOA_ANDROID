@@ -17,7 +17,9 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -30,36 +32,36 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.feature_userinfo.UserInfoGraph
-import com.example.feature_userinfo.navigateToUserInfoGraph
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.navigation.SetUpNavGraph
-import com.hmoa.core_common.PERMISSION_REQUEST_CODE
 import com.hmoa.core_common.permissions
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
-import com.hmoa.feature_authentication.navigation.AuthenticationRoute
+import com.hmoa.core_domain.entity.navigation.AuthenticationRoute
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
+import com.hmoa.core_domain.entity.navigation.HPediaRoute
+import com.hmoa.core_domain.entity.navigation.HomeRoute
+import com.hmoa.core_domain.entity.navigation.MagazineRoute
+import com.hmoa.core_domain.entity.navigation.PerfumeRoute
+import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
-import com.hmoa.feature_community.Navigation.CommunityRoute
 import com.hmoa.feature_fcm.navigateToAlarmScreen
-import com.hmoa.feature_home.navigation.HomeRoute
 import com.hmoa.feature_home.navigation.navigateToHome
 import com.hmoa.feature_home.navigation.navigateToPerfumeSearch
-import com.hmoa.feature_hpedia.Navigation.HPediaRoute
 import com.hmoa.feature_hpedia.Navigation.navigateToHPedia
-import com.hmoa.feature_like.Screen.LIKE_ROUTE
-import com.hmoa.feature_magazine.Navigation.MagazineRoute
 import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
-import com.hmoa.feature_perfume.navigation.PerfumeRoute
+import com.hmoa.feature_userinfo.navigation.navigateToUserInfoGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kr.co.bootpay.android.BootpayAnalytics
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
     private var initialRoute = AuthenticationRoute.Login.name
+    private val PERMISSION_REQUEST_CODE = 1001
     private val needBottomBarScreens = listOf(
         HomeRoute.Home.name,
         CommunityRoute.CommunityHomeRoute.name,
@@ -67,29 +69,29 @@ class MainActivity : AppCompatActivity() {
         HPediaRoute.HPedia.name,
         "${HPediaRoute.HPediaSearchRoute.name}/{type}",
         "${HPediaRoute.HPediaDescRoute.name}/{id}/{type}",
-        UserInfoGraph.MyPage.name,
-        UserInfoGraph.MyInfoRoute.name,
-        UserInfoGraph.MyFavoriteCommentRoute.name,
-        UserInfoGraph.MyActivityRoute.name,
-        UserInfoGraph.MyCommentRoute.name,
-        UserInfoGraph.MyPostRoute.name,
-        LIKE_ROUTE,
+        UserInfoRoute.MyPage.name,
+        UserInfoRoute.MyInfoRoute.name,
+        UserInfoRoute.MyFavoriteCommentRoute.name,
+        UserInfoRoute.MyActivityRoute.name,
+        UserInfoRoute.MyCommentRoute.name,
+        UserInfoRoute.MyPostRoute.name,
+        UserInfoRoute.MyFavoritePerfumeRoute.name,
         MagazineRoute.Magazine.name
     )
+
+    private val needTopBarScreens = HomeRoute.Home.name
     private val bottomNav = listOf(
         BottomScreen.Home.name,
         BottomScreen.HPedia.name,
         BottomScreen.Magazine.name,
         BottomScreen.MyPage.name
     )
-
-    private val needTopBarScreens = HomeRoute.Home.name
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         requestNotificationPermission()
+        BootpayAnalytics.init(this, BuildConfig.BOOTPAY_APPLICATION_ID)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -110,21 +112,8 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val navHostController = rememberNavController()
-            var currentScreen by remember { mutableStateOf(BottomScreen.Home.name) }
-            var isBottomBarVisible = true
-            var isTopBarVisible = true
 
-            val navBackStackEntry = navHostController.currentBackStackEntryAsState()
-            navBackStackEntry.value?.destination?.route?.let { route ->
-                if (route in bottomNav) {
-                    currentScreen = route
-                }
-                isBottomBarVisible = route in needBottomBarScreens
-                isTopBarVisible = route in needTopBarScreens
-            } ?: run {
-                isBottomBarVisible = false
-                isTopBarVisible = false
-            }
+            val navBackStackEntry by navHostController.currentBackStackEntryAsState()
             val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
             val deeplink = remember { handleDeeplink(intent) }
 
@@ -132,28 +121,26 @@ class MainActivity : AppCompatActivity() {
                 modifier = Modifier.systemBarsPadding(),
                 backgroundColor = Color.White,
                 bottomBar = {
-                    if (isBottomBarVisible) {
-                        MainBottomBar(
-                            initValue = currentScreen,
-                            onClickHome = navHostController::navigateToHome,
-                            onClickHPedia = navHostController::navigateToHPedia,
-                            onClickLike = navHostController::navigateToMagazineHome,
-                            onClickMyPage = navHostController::navigateToUserInfoGraph
-                        )
-                    }
+                    MainBottomBar(
+                        navController = navHostController,
+                        needBottomBarScreen = needBottomBarScreens,
+                        onClickHome = navHostController::navigateToHome,
+                        onClickHPedia = navHostController::navigateToHPedia,
+                        onClickLike = navHostController::navigateToMagazineHome,
+                        onClickMyPage = navHostController::navigateToUserInfoGraph
+                    )
                 },
                 scaffoldState = scaffoldState,
                 topBar = {
-                    if (isTopBarVisible) {
-                        HomeTopBar(
-                            onDrawerClick = { navHostController.navigateToBrandSearch() },
-                            onSearchClick = { navHostController.navigateToPerfumeSearch() },
-                            onNotificationClick = { navHostController.navigateToAlarmScreen() },
-                            drawerIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_drawer),
-                            searchIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
-                            notificationIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_bell)
-                        )
-                    }
+                    HomeTopBar(
+                        navBackStackEntry = navBackStackEntry,
+                        onDrawerClick = { navHostController.navigateToBrandSearch() },
+                        onSearchClick = { navHostController.navigateToPerfumeSearch() },
+                        onNotificationClick = { navHostController.navigateToAlarmScreen() },
+                        drawerIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_drawer),
+                        searchIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
+                        notificationIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_bell)
+                    )
                 },
             ) {
                 Box(

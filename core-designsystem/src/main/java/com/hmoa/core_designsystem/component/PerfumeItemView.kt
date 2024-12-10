@@ -13,7 +13,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun PerfumeItemView(
@@ -29,8 +29,9 @@ fun PerfumeItemView(
 ) {
     Column(modifier = Modifier.width(containerWidth.dp)) {
         Column(
-            modifier = Modifier.width(containerWidth.dp).height(containerHeight.dp)
-                .background(imageBackgroundColor).border(border = imageBorderStroke?: BorderStroke(width = 0.dp, color = Color.Transparent)),
+            modifier = Modifier.width(containerWidth.dp).height(containerHeight.dp).padding(end = 8.dp)
+                .background(imageBackgroundColor)
+                .border(border = imageBorderStroke ?: BorderStroke(width = 0.dp, color = Color.Transparent)),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -43,14 +44,17 @@ fun PerfumeItemView(
             )
         }
         Text(
-            text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal,
-                fontFamily = pretendard
+            text = brandName, style = TextStyle(
+                fontSize = 14.sp, fontWeight = FontWeight.Normal,
+                fontFamily = CustomFont.regular
             ),
             modifier = Modifier.padding(end = 4.dp, top = 8.dp, bottom = 6.dp)
         )
         Text(
-            text = perfumeName, style = TextStyle(fontSize = 12.sp,fontWeight = FontWeight.Normal,
-                fontFamily = pretendard),
+            text = perfumeName, style = TextStyle(
+                fontSize = 12.sp, fontWeight = FontWeight.Normal,
+                fontFamily = CustomFont.regular
+            ),
             modifier = Modifier.padding(end = 4.dp), softWrap = true
         )
     }

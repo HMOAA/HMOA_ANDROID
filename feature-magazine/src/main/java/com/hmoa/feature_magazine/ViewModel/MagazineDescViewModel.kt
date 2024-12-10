@@ -14,7 +14,7 @@ import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.MagazineRepository
 import com.hmoa.core_domain.usecase.GetMagazineDescription
 import com.hmoa.core_model.data.ErrorMessage
-import com.hmoa.core_model.data.MagazineSuccessItem
+import com.hmoa.core_domain.entity.data.MagazineSuccessItem
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.feature_magazine.MagazinePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel

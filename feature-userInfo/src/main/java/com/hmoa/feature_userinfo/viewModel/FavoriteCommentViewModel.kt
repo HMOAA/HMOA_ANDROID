@@ -1,4 +1,4 @@
-package com.example.feature_userinfo.viewModel
+package com.hmoa.feature_userinfo.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,10 +9,11 @@ import androidx.paging.cachedIn
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.entity.data.MyPageCategory
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
-import com.hmoa.feature_userinfo.FavoriteCommentPagingSource
+import com.hmoa.feature_userinfo.paging.FavoriteCommentPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,7 @@ class FavoriteCommentViewModel @Inject constructor(
 ) : ViewModel() {
 
     //선택된 type
-    private val _type = MutableStateFlow("향수")
+    private val _type = MutableStateFlow(MyPageCategory.향수)
     val type get() = _type.asStateFlow()
 
     //comment 리스트
@@ -63,18 +64,12 @@ class FavoriteCommentViewModel @Inject constructor(
     )
 
     val uiState: StateFlow<FavoriteCommentUiState> = type.map{
-        commentPagingSource(it)
+        commentPagingSource(it.name)
     }.asResult().map{ result ->
         when(result){
-            Result.Loading -> {
-                FavoriteCommentUiState.Loading
-            }
-            is Result.Success -> {
-                FavoriteCommentUiState.Comments(result.data)
-            }
-            is Result.Error -> {
-                FavoriteCommentUiState.Error
-            }
+            Result.Loading -> FavoriteCommentUiState.Loading
+            is Result.Success -> FavoriteCommentUiState.Comments(result.data)
+            is Result.Error -> FavoriteCommentUiState.Error
         }
     }.stateIn(
         scope = viewModelScope,
@@ -83,10 +78,8 @@ class FavoriteCommentViewModel @Inject constructor(
     )
 
     //type 변환
-    fun changeType(newType : String){
-        if (_type.value != newType) {
-            _type.update{newType}
-        }
+    fun changeType(newType : MyPageCategory){
+        if (_type.value != newType) { _type.update{newType} }
     }
 
     //댓글 Paging

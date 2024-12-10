@@ -27,7 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.component.TopBar
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_model.response.NoteDefaultResponseDto
@@ -100,7 +100,7 @@ fun HPediaSearchScreen(
             termResult = termResult,
             noteResult = noteResult,
             perfumerResult = perfumerResult,
-            onNavHPediaDesc = navHPediaDesc
+            navHPediaDesc = navHPediaDesc
         )
     }
 }
@@ -143,7 +143,7 @@ fun HPediaSearchResult(
     termResult : LazyPagingItems<TermDefaultResponseDto>? = null,
     noteResult : LazyPagingItems<NoteDefaultResponseDto>? = null,
     perfumerResult : LazyPagingItems<PerfumerDefaultResponseDto>? = null,
-    onNavHPediaDesc: (Int, String) -> Unit
+    navHPediaDesc: (Int, String) -> Unit
 ){
     LazyColumn(
         modifier = Modifier.fillMaxSize()
@@ -156,7 +156,7 @@ fun HPediaSearchResult(
                         id = it.termId,
                         koTitle = it.termTitle,
                         engTitle = it.termEnglishTitle,
-                        onNavHPediaDesc = onNavHPediaDesc
+                        navHPediaDesc = navHPediaDesc
                     )
                 }
             }
@@ -169,7 +169,7 @@ fun HPediaSearchResult(
                         id = it.noteId,
                         koTitle = it.noteTitle,
                         engTitle = it.noteSubtitle,
-                        onNavHPediaDesc = onNavHPediaDesc
+                        navHPediaDesc = navHPediaDesc
                     )
                 }
             }
@@ -183,7 +183,7 @@ fun HPediaSearchResult(
                         id = it.perfumerId,
                         koTitle = it.perfumerTitle,
                         engTitle = it.perfumerSubTitle,
-                        onNavHPediaDesc = onNavHPediaDesc
+                        navHPediaDesc = navHPediaDesc
                     )
                 }
             }
@@ -197,14 +197,14 @@ fun HPediaResultItem(
     id : Int,
     koTitle : String,
     engTitle : String,
-    onNavHPediaDesc: (Int, String) -> Unit
+    navHPediaDesc: (Int, String) -> Unit
 ){
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
             .clickable {
-                onNavHPediaDesc(id, type)
+                navHPediaDesc(id, type)
             }
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,

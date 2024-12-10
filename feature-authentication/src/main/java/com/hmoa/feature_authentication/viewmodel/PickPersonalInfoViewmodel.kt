@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.LoginRepository
-import com.hmoa.core_domain.usecase.GetNicknameUseCase
+import com.hmoa.core_domain.repository.SignupRepository
 import com.hmoa.core_domain.usecase.PostSignupUseCase
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_model.Provider
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PickPersonalInfoViewmodel @Inject constructor(
-    private val getNickname: GetNicknameUseCase,
+    private val signupRepository: SignupRepository,
     private val postSignupInfo: PostSignupUseCase,
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
@@ -58,7 +58,7 @@ class PickPersonalInfoViewmodel @Inject constructor(
     }
 
     private suspend fun getSavedNickname(): String? {
-        return getNickname()
+        return signupRepository.getNickname()
     }
 
     fun saveBirthYear(value: Int) {

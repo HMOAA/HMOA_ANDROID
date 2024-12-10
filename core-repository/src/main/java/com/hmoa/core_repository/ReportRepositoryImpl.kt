@@ -8,16 +8,19 @@ import com.hmoa.core_model.response.DataResponseDto
 import javax.inject.Inject
 
 class ReportRepositoryImpl @Inject constructor(private val reportDataStore: ReportDataStore) : ReportRepository {
-    override suspend fun reportCommunity(dto: TargetRequestDto): DataResponseDto<Any?> {
+    override suspend fun reportCommunity(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any>> {
         return reportDataStore.reportCommunity(dto)
     }
 
-    override suspend fun reportCommunityComment(dto: TargetRequestDto): DataResponseDto<Any> {
+    override suspend fun reportCommunityComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any>> {
         return reportDataStore.reportCommunityComment(dto)
     }
 
-    suspend override fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {
+    override suspend fun reportPerfumeComment(dto: TargetRequestDto): ResultResponse<DataResponseDto<Any?>> {
         return reportDataStore.reportPerfumeComment(dto)
     }
 
+    override suspend fun reportReview(reviewId: Int): ResultResponse<DataResponseDto<Any>> {
+        return reportDataStore.reportReview(reviewId)
+    }
 }

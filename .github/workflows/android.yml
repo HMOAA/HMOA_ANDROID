@@ -52,9 +52,5 @@ jobs:
       - name: Build for debug with Gradle
         run: ./gradlew assembleDebug
 
-      - name: Upload APK
-        if: github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v4
-        with:
-          name: app
-          path: app/build/outputs/apk/release
+#      - name: unit test
+#        run: ./gradlew test

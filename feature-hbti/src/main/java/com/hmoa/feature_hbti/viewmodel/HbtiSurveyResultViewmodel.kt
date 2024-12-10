@@ -2,10 +2,7 @@ package com.hmoa.feature_hbti.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hmoa.core_common.ErrorMessageType
-import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_common.Result
-import com.hmoa.core_common.asResult
+import com.hmoa.core_common.*
 import com.hmoa.core_domain.repository.MemberRepository
 import com.hmoa.core_domain.repository.SurveyRepository
 import com.hmoa.core_model.request.NoteResponseDto
@@ -62,7 +59,10 @@ class HbtiSurveyResultViewmodel @Inject constructor(
     }
 
     suspend fun getUserName() {
-        flow { emit(memberRepository.getMember()) }.asResult().collectLatest { result ->
+        flow {
+            val result = memberRepository.getMember()
+            result.emitOrThrow { emit(it) }
+        }.asResult().collectLatest { result ->
             when (result) {
                 is Result.Success -> {
                     if (result.data.data?.nickname != null) {
@@ -70,22 +70,14 @@ class HbtiSurveyResultViewmodel @Inject constructor(
                     }
                 }
 
-                is Result.Error -> when (result.exception.message) {
-                    ErrorMessageType.EXPIRED_TOKEN.message -> {
-                        expiredTokenErrorState.update { true }
-                    }
-
-                    ErrorMessageType.WRONG_TYPE_TOKEN.message -> {
-                        wrongTypeTokenErrorState.update { true }
-                    }
-
-                    ErrorMessageType.UNKNOWN_ERROR.message -> {
-                        unLoginedErrorState.update { true }
-                    }
-
-                    else -> {
-                        generalErrorState.update { Pair(true, result.exception.message) }
-                    }
+                is Result.Error -> {
+                    handleErrorType(
+                        error = result.exception,
+                        onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                        onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                        onUnknownError = { unLoginedErrorState.update { true } },
+                        onGeneralError = { generalErrorState.update { Pair(true, result.exception.message) } }
+                    )
                 }
 
                 Result.Loading -> HbtiSurveyResultUiState.Loading

@@ -2,6 +2,8 @@ package com.hmoa.core_repository
 
 import ResultResponse
 import com.hmoa.core_datastore.Member.MemberDataStore
+import com.hmoa.core_model.data.DefaultAddressDto
+import com.hmoa.core_model.data.DefaultOrderInfoDto
 import com.hmoa.core_model.request.AgeRequestDto
 import com.hmoa.core_model.request.JoinUpdateRequestDto
 import com.hmoa.core_model.request.NickNameRequestDto
@@ -9,7 +11,10 @@ import com.hmoa.core_model.request.SexRequestDto
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.core_model.response.DataResponseDto
+import com.hmoa.core_model.response.GetRefundRecordResponseDto
 import com.hmoa.core_model.response.MemberResponseDto
+import com.hmoa.core_model.response.OrderRecordDto
+import com.hmoa.core_model.response.PagingData
 import java.io.File
 import javax.inject.Inject
 
@@ -21,7 +26,15 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.getMember()
     }
 
-    override suspend fun updateAge(request: AgeRequestDto): DataResponseDto<Any> {
+    override suspend fun getAddress(): ResultResponse<DefaultAddressDto> {
+        return memberDataStore.getAddress()
+    }
+
+    override suspend fun postAddress(request: DefaultAddressDto): ResultResponse<DataResponseDto<Any>> {
+        return memberDataStore.postAddress(request)
+    }
+
+    override suspend fun updateAge(request: AgeRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateAge(request)
     }
 
@@ -57,6 +70,22 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.updateNickname(request)
     }
 
+    override suspend fun getOrder(cursor: Int): ResultResponse<PagingData<OrderRecordDto>> {
+        return memberDataStore.getOrder(cursor)
+    }
+
+    override suspend fun getRefundRecord(cursor: Int): ResultResponse<PagingData<GetRefundRecordResponseDto>> {
+        return memberDataStore.getRefundRecord(cursor)
+    }
+
+    override suspend fun getOrderInfo(): ResultResponse<DefaultOrderInfoDto> {
+        return memberDataStore.getOrderInfo()
+    }
+
+    override suspend fun postOrderInfo(request: DefaultOrderInfoDto): ResultResponse<DataResponseDto<Any>> {
+        return memberDataStore.postOrderInfo(request)
+    }
+
     override suspend fun getPerfumeComments(page: Int): ResultResponse<List<CommunityCommentDefaultResponseDto>> {
         return memberDataStore.getPerfumeComments(page)
     }
@@ -69,7 +98,7 @@ class MemberRepositoryImpl @Inject constructor(
         return memberDataStore.deleteProfilePhoto()
     }
 
-    override suspend fun updateSex(request: SexRequestDto): DataResponseDto<Any> {
+    override suspend fun updateSex(request: SexRequestDto): ResultResponse<DataResponseDto<Any>> {
         return memberDataStore.updateSex(request)
     }
 }

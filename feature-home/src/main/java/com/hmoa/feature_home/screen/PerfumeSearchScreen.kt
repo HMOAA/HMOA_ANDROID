@@ -33,9 +33,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_designsystem.component.PerfumeItemView
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.data.PerfumeSearchViewType
 import com.hmoa.core_model.response.PerfumeNameSearchResponseDto
 import com.hmoa.core_model.response.PerfumeSearchResponseDto
-import com.hmoa.feature_home.PerfumeSearchViewType
 import com.hmoa.feature_home.viewmodel.PerfumeSearchViewmodel
 import kotlinx.coroutines.flow.flowOf
 

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
-import com.hmoa.core_model.data.ErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,33 +25,19 @@ class CommunityPostViewModel @Inject constructor(
     private val application: Application,
     private val repository: CommunityRepository
 ) : ViewModel() {
+
     val context = application.applicationContext
+    val isDone = MutableStateFlow<Boolean>(false)
 
-    //게시글 타입
-    private val _category = MutableStateFlow(Category.추천)
-    val category get() = _category.asStateFlow()
-
-    //게시글 제목
-    private val _title = MutableStateFlow("")
-    val title get() = _title.asStateFlow()
-
-    //게시글 내용
-    private val _content = MutableStateFlow("")
-    val content get() = _content.asStateFlow()
-
-    //사진 배열
-    private val _pictures = MutableStateFlow<List<Uri>>(listOf())
-    val pictures get() = _pictures.asStateFlow()
-
-    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
-    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
-    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
-    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    private var _expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var _wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var _unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var _generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
     val errorUiState: StateFlow<ErrorUiState> = combine(
-        expiredTokenErrorState,
-        wrongTypeTokenErrorState,
-        unLoginedErrorState,
-        generalErrorState
+        _expiredTokenErrorState,
+        _wrongTypeTokenErrorState,
+        _unLoginedErrorState,
+        _generalErrorState
     ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
         ErrorUiState.ErrorData(
             expiredTokenError = expiredTokenError,
@@ -62,58 +47,52 @@ class CommunityPostViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(5000L),
         initialValue = ErrorUiState.Loading
     )
 
-    //category 설정
-    fun setCategory(newCategory: String) {
-        when (newCategory) {
-            "시향기" -> _category.update { Category.시향기 }
-            "추천" -> _category.update { Category.추천 }
-            "자유" -> _category.update { Category.자유 }
-        }
-    }
-    //title update
-    fun updateTitle(title: String) = _title.update { title }
-    //content update
-    fun updateContent(content: String) = _content.update { content }
+    //사진 배열
+    private val _pictures = MutableStateFlow<List<Uri>>(listOf())
+    val pictures get() = _pictures.asStateFlow()
+
     //사진 update
     fun updatePictures(newPictures: List<Uri>) {
         _pictures.update {
             val result = arrayListOf<Uri>()
-            newPictures.forEach {result.add(it)}
+            newPictures.forEach {
+                result.add(it)
+            }
             result
         }
     }
 
     //사진 삭제
     fun deletePicture(idx: Int) {
-        _pictures.update {picture ->picture.minus(picture[idx])}
+        _pictures.update {
+            val data = it
+            data.minus(it[idx])
+        }
     }
 
     //게시글 게시
-    fun postCommunity() {
+    fun postCommunity(title: String, content: String, category: Category) {
         val images = arrayListOf<File>()
         pictures.value.map { picture ->
-            val path = absolutePath(picture)
-            if(path == null) {
-                generalErrorState.update { Pair(true, "file path is NULL") }
-                return
-            }
+            val path = absolutePath(picture) ?: throw NullPointerException("file path is NULL")
             images.add(File(path))
         }
         viewModelScope.launch {
             val result = repository.postCommunitySave(
                 images = images.map { it.absoluteFile }.toTypedArray(),
-                category = category.value.name,
-                title = title.value,
-                content = content.value
+                category = category.name,
+                title = title,
+                content = content
             )
-            if (result.errorMessage is ErrorMessage) {
-                generalErrorState.update { Pair(true, result.errorMessage!!.message) }
+            if (result.errorMessage != null) {
+                _generalErrorState.update { Pair(true, result.errorMessage!!.message) }
                 return@launch
             }
+            isDone.update{true}
         }
     }
 

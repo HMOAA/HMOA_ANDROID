@@ -7,7 +7,11 @@ sealed interface ErrorUiState {
         val unknownError: Boolean,
         val memberNotFoundError: Boolean? = null,
         val generalError: Pair<Boolean, String?>
-    ) : ErrorUiState
+    ) : ErrorUiState {
+        fun isValidate(): Boolean{
+            return expiredTokenError || wrongTypeTokenError || unknownError || generalError.first
+        }
+    }
 
     data object Loading : ErrorUiState
 }

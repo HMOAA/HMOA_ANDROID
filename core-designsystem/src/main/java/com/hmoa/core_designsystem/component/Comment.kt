@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,17 +30,19 @@ fun Comment(
     comment: String,
     isFirst: Boolean,
     isSelected: Boolean,
-    onChangeSelect: () -> Unit,
     heartCount: Int,
+    onHeartClick: (Boolean) -> Unit,
     onOpenBottomDialog: () -> Unit,
-    onNavCommunity: () -> Unit,
+    navCommunity: () -> Unit,
 ) {
+    var isLiked by remember { mutableStateOf(isSelected) }
+    var heartCount by remember { mutableStateOf(heartCount) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White)
             .clickable {
-                onNavCommunity()
+                navCommunity()
             }
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
@@ -48,6 +50,7 @@ fun Comment(
         Spacer(Modifier.height(11.dp))
 
         Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircleImageView(imgUrl = profile, width = 28, height = 28)
@@ -90,12 +93,16 @@ fun Comment(
             ) {
                 if (isEditable) {
                     IconButton(
-                        onClick = onChangeSelect
+                        onClick = {
+                            if (isLiked) heartCount-- else heartCount++
+                            onHeartClick(isLiked)
+                            isLiked = !isLiked
+                        }
                     ) {
                         Icon(
                             modifier = Modifier.size(22.dp),
                             painter = painterResource(R.drawable.ic_heart_selectable_not_selected),
-                            tint = if (isSelected) CustomColor.red else CustomColor.gray2,
+                            tint = if (isLiked) CustomColor.red else CustomColor.gray2,
                             contentDescription = "Comment Like Button"
                         )
                     }
@@ -153,9 +160,9 @@ fun TestComment() {
         comment = "아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ",
         isFirst = true,
         isSelected = true,
-        onChangeSelect = {},
+        onHeartClick = {},
         heartCount = 10,
         onOpenBottomDialog = {},
-        onNavCommunity = {},
+        navCommunity = {},
     )
 }

@@ -4,7 +4,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
-import com.hmoa.core_designsystem.theme.pretendard
+import com.hmoa.core_designsystem.theme.CustomFont
 
 @Composable
 fun PerfumeWithCountItemView(
@@ -64,7 +69,7 @@ fun PerfumeWithCountItemView(
         ) {
             Text(
                 text = brandName, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal,
-                    fontFamily = pretendard),
+                    fontFamily = CustomFont.regular),
             )
             TypeBadge(
                 roundedCorner = 20.dp,
@@ -83,7 +88,7 @@ fun PerfumeWithCountItemView(
             text = perfumeName,
             style = TextStyle(
                 fontSize = 12.sp, fontWeight = FontWeight.Normal,
-                fontFamily = pretendard, textAlign = TextAlign.Start
+                fontFamily = CustomFont.regular, textAlign = TextAlign.Start
             ),
             modifier = Modifier.width(containerWidth.dp).padding(end = 4.dp).padding(bottom = 2.dp),
             softWrap = true

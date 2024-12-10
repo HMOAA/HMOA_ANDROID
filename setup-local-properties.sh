@@ -6,6 +6,7 @@ if [ -z "$CI" ]; then
 else
   # CI 환경의 경우, 환경 변수에서 값을 가져옵니다.
   NATIVE_APP_KEY=${{ secrets.NATIVE_APP_KEY }}
+  REDIRECTION_PATH=${{ secrets.REDIRECTION_PATH }}
   KEY_ALIAS=${{ secrets.KEY_ALIAS }}
   KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
   STORE_FILE="./app/release.keystore"
@@ -33,6 +34,7 @@ mkdir -p ./feature-userInfo
 # app/local.properties 파일 생성
 cat <<EOF > ./app/local.properties
 NATIVE_APP_KEY="$NATIVE_APP_KEY"
+REDIRECTION_PATH="$REDIRECTION_PATH"
 #release.keystore
 KEY_ALIAS="$KEY_ALIAS"
 KEY_PASSWORD="$KEY_PASSWORD"

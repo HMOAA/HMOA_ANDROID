@@ -9,7 +9,7 @@ import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.NoteRepository
 import com.hmoa.core_domain.repository.PerfumerRepository
 import com.hmoa.core_domain.repository.TermRepository
-import com.hmoa.core_model.data.HpediaType
+import com.hmoa.core_domain.entity.data.HpediaType
 import com.hmoa.core_model.response.NoteDescResponseDto
 import com.hmoa.core_model.response.PerfumerDescResponseDto
 import com.hmoa.core_model.response.TermDescResponseDto

@@ -9,7 +9,7 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MainRepository
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
-import com.hmoa.feature_home.AllPerfumeScreenId
+import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

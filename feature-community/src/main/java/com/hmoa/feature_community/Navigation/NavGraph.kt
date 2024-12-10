@@ -1,10 +1,20 @@
 package com.hmoa.feature_community.Navigation
 
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.hmoa.core_domain.entity.navigation.CommunityRoute
-import com.hmoa.feature_community.Screen.*
+import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
+import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
+import com.hmoa.feature_community.Screen.CommunityEditRoute
+import com.hmoa.feature_community.Screen.CommunityHomeRoute
+import com.hmoa.feature_community.Screen.CommunityPostRoute
+import com.hmoa.feature_community.Screen.CommunityPreviewRoute
+import com.hmoa.feature_community.Screen.CommunitySearchRoute
 
 //게시글 기본 화면
 fun NavController.navigateToCommunityRoute() = navigate(CommunityRoute.CommunityGraphRoute.name)
@@ -120,7 +130,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
             val id = it.arguments?.getString("commentId")?.toInt()
             CommunityCommentEditRoute(
                 _commentId = id,
-                navBack = navBack
+                navBack = navBack,
+                navLogin = navLogin
             )
         }
     }

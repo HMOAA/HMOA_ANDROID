@@ -100,7 +100,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
             CommunityEditRoute(
                 id = id?.toInt(),
                 navBack = navBack,
-                navCommunityDesc = navCommunityDescription
+                navCommunityDesc = navCommunityDescription,
+                navLogin = navLogin
             )
         }
         composable(

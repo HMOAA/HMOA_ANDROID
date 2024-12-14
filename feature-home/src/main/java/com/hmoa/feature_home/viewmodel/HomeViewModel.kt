@@ -7,8 +7,6 @@ import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MainRepository
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
-import com.hmoa.feature_home.model.HomePerfumes
-import com.hmoa.feature_home.model.PerfumeInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -55,27 +53,13 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    fun mapDataToHomePerfumes(result: List<HomeMenuDefaultResponseDto>?): ImmutableList<HomePerfumes>? {
-        return result?.map {
-            val perfumeList = it.perfumeList.map {
-                PerfumeInfo(
-                    brandName = it.brandName,
-                    imgUrl = it.imgUrl,
-                    perfumeId = it.perfumeId,
-                    perfumeName = it.perfumeName
-                )
-            }
-            HomePerfumes(perfumeList = perfumeList, title = it.title)
-        }?.toImmutableList()
-    }
-
     fun getSecondMenu() {
         viewModelScope.launch {
             flow { emit(mainRepository.getSecond()) }.asResult().collectLatest {
                 when (it) {
                     is Result.Success -> {
                         _bottomMenuState.value =
-                            BottomMenuState.Data(mapDataToHomePerfumes(it.data.data))
+                            BottomMenuState.Data(it.data.data?.toImmutableList())
                     }
 
                     is Result.Error -> {
@@ -107,10 +91,9 @@ class HomeViewModel @Inject constructor(
         data object Loading : BottomMenuState
         data class Data(
             //모델 패키지로 분리해서 분해해서 사용하자. 외부 모듈이니까 unstable인 건 어쩔 수 없음
-            val bottomMenu: ImmutableList<HomePerfumes>?,
+            val bottomMenu: ImmutableList<HomeMenuDefaultResponseDto>?,
         ) : BottomMenuState
 
         data object Error : BottomMenuState
     }
-
 }

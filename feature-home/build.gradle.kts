@@ -56,6 +56,7 @@ dependencies {
     val hilt_version = "2.44"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
+    val kotlinx_collections_immutable_version = "0.3.8"
 
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
@@ -75,6 +76,7 @@ dependencies {
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
     implementation("androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version")
     kapt("androidx.hilt:hilt-compiler:$hilt_viewmodel_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:$kotlinx_collections_immutable_version")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

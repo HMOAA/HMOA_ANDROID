@@ -1,12 +1,17 @@
 package com.hmoa.feature_home.viewmodel
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
 import com.hmoa.core_domain.repository.MainRepository
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
+import com.hmoa.feature_home.model.HomePerfumes
+import com.hmoa.feature_home.model.PerfumeInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,26 +55,42 @@ class HomeViewModel @Inject constructor(
 
     }
 
+    fun mapDataToHomePerfumes(result: List<HomeMenuDefaultResponseDto>?): ImmutableList<HomePerfumes>? {
+        return result?.map {
+            val perfumeList = it.perfumeList.map {
+                PerfumeInfo(
+                    brandName = it.brandName,
+                    imgUrl = it.imgUrl,
+                    perfumeId = it.perfumeId,
+                    perfumeName = it.perfumeName
+                )
+            }
+            HomePerfumes(perfumeList = perfumeList, title = it.title)
+        }?.toImmutableList()
+    }
+
     fun getSecondMenu() {
         viewModelScope.launch {
             flow { emit(mainRepository.getSecond()) }.asResult().collectLatest {
                 when (it) {
                     is Result.Success -> {
                         _bottomMenuState.value =
-                            BottomMenuState.Data(it.data.data)
+                            BottomMenuState.Data(mapDataToHomePerfumes(it.data.data))
                     }
 
                     is Result.Error -> {
 
-                    }//TODO()
+                    }
+
                     is Result.Loading -> {
                         BottomMenuState.Loading
-                    }//TODO()
+                    }
                 }
             }
         }
     }
 
+    @Stable
     sealed interface BannerWithFirstMenuState {
         data object Loading : BannerWithFirstMenuState
         data class Data(
@@ -81,10 +102,12 @@ class HomeViewModel @Inject constructor(
         data object Error : BannerWithFirstMenuState
     }
 
+    @Stable
     sealed interface BottomMenuState {
         data object Loading : BottomMenuState
         data class Data(
-            val bottomMenu: List<HomeMenuDefaultResponseDto>?,
+            //모델 패키지로 분리해서 분해해서 사용하자. 외부 모듈이니까 unstable인 건 어쩔 수 없음
+            val bottomMenu: ImmutableList<HomePerfumes>?,
         ) : BottomMenuState
 
         data object Error : BottomMenuState

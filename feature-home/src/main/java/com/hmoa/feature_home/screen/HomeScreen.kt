@@ -32,8 +32,11 @@ import com.hmoa.core_designsystem.theme.CustomFont
 import com.hmoa.core_designsystem.theme.pretendard
 import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
-import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
+import com.hmoa.feature_home.model.HomePerfumes
+import com.hmoa.feature_home.model.PerfumeInfo
 import com.hmoa.feature_home.viewmodel.HomeViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HomeRoute(
@@ -287,7 +290,7 @@ private fun mapIndexToAllPerfumeScreenId(index: Int): AllPerfumeScreenId {
 private fun BottomMenuContent(
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
-    bottomMenu: List<HomeMenuDefaultResponseDto>,
+    bottomMenu: ImmutableList<HomePerfumes>,
 ) {
     Column(
         modifier = Modifier
@@ -387,7 +390,7 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
 
 @Composable
 fun BottomMenuView(
-    data: HomeMenuDefaultResponseDto?,
+    data: HomePerfumes?,
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onAllPerfumeClick: () -> Unit
 ) {
@@ -480,22 +483,22 @@ private fun HomePreview() {
     }
     BottomMenuContent(
         {}, {}, listOf(
-            HomeMenuDefaultResponseDto(
+            HomePerfumes(
                 title = "이 제품 어떠세요? 향모아가 추천하는", perfumeList = listOf(
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
                 )
             ),
-            HomeMenuDefaultResponseDto(
+            HomePerfumes(
                 title = "변함없이 사랑받는, 스테디 셀러", perfumeList = listOf(
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
-                    HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
+                    PerfumeInfo("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
                 )
             )
-        )
+        ).toImmutableList()
     )
 }

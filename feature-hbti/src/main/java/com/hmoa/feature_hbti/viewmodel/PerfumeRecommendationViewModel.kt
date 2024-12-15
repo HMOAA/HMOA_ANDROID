@@ -85,13 +85,15 @@ class PerfumeRecommendationViewModel @Inject constructor(
                     _perfumeSurveyContentsState.update { result.data.data }
                     _noteCategoryTagsState.update { result.data.data?.noteCategoryTags }
                     _isNextButtonAvailableState.update { List(2) { false } } //price, note 2페이지에 대한 버튼 상태 초기화
+                    println("isNextButtonAvailableState: ${_isNextButtonAvailableState.value}")
                 }
 
                 is Result.Error -> {
-
+                    println("Error:${result.exception.message}")
                 }
 
                 is Result.Loading -> {
+                    println("Loading")
                     PerfumeRecommendationUiState.Loading
                 }
             }

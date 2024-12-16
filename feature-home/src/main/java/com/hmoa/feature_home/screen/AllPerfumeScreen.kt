@@ -26,6 +26,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
 import com.hmoa.feature_home.viewmodel.AllPerfumeViewModel
+import kotlinx.collections.immutable.ImmutableList
 
 fun String?.mapToAllPerfumeScreenId(): AllPerfumeScreenId {
     var result: AllPerfumeScreenId? = null
@@ -98,7 +99,7 @@ fun AllPerfumeScreen(
 @Composable
 fun AllPerfumeContent(
     onNavBack: () -> Unit,
-    perfumeList: List<HomeMenuAllResponseDto>?,
+    perfumeList: ImmutableList<HomeMenuAllResponseDto>?,
     onPerfumeClick: (perfumeId: Int) -> Unit
 ) {
     Column(
@@ -123,7 +124,7 @@ fun AllPerfumeContent(
 
 @Composable
 fun PerfumeAllList(
-    perfumeList: List<HomeMenuAllResponseDto>?,
+    perfumeList: ImmutableList<HomeMenuAllResponseDto>?,
     onClickPerfume: (perfumeId: Int) -> Unit
 ) {
     LazyVerticalGrid(

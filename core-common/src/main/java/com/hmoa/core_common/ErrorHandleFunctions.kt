@@ -3,10 +3,6 @@ package com.hmoa.core_common
 import ResultResponse
 
 suspend fun <T> ResultResponse<T>.emitOrThrow(emit: suspend (ResultResponse<T>) -> Unit) {
-    android.util.Log.d(
-        "core-common/ErrorHandleFunctions",
-        "emitOrThrow --- data: ${data}, errorMessage: ${errorMessage?.message}"
-    )
     if (this.data != null) {
         emit(this)
     } else if (this.errorMessage != null) {

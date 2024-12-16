@@ -7,10 +7,12 @@ import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_domain.repository.MainRepository
 import com.hmoa.core_model.response.HomeMenuAllResponseDto
-import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -58,7 +60,7 @@ class AllPerfumeViewModel @Inject constructor(private val mainRepository: MainRe
             perfumes.asResult().collectLatest { result ->
                 when (result) {
                     is Result.Success -> {
-                        _uiState.update { AllPerfumeUiState.Data(perfumeList = result.data.data) }
+                        _uiState.update { AllPerfumeUiState.Data(perfumeList = result.data.data?.toImmutableList()) }
                     }
 
                     is Result.Error -> {
@@ -94,7 +96,7 @@ class AllPerfumeViewModel @Inject constructor(private val mainRepository: MainRe
     sealed interface AllPerfumeUiState {
         data object Loading : AllPerfumeUiState
         data class Data(
-            val perfumeList: List<HomeMenuAllResponseDto>?,
+            val perfumeList: ImmutableList<HomeMenuAllResponseDto>?,
         ) : AllPerfumeUiState
 
         data object Error : AllPerfumeUiState

@@ -1,6 +1,5 @@
 package com.hmoa.feature_community.Navigation
 
-import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -41,7 +40,6 @@ fun NavController.navigateToCommunityEditRoute(id: Int) =
 //게시글 상세 화면
 fun NavController.navigateToCommunityDescriptionRoute(befScreen: CommunityRoute, id: Int) {
     navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}") {
-        Log.d("TAG TEST", "befRoute : ${befScreen}")
         if (befScreen == CommunityRoute.CommunityEditRoute) {
             popUpTo("${CommunityRoute.CommunityEditRoute.name}/{id}"){inclusive = true}
         } else if (befScreen == CommunityRoute.CommunityPostRoute) {

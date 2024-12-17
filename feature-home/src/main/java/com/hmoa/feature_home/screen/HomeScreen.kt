@@ -34,6 +34,8 @@ import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
 import com.hmoa.feature_home.viewmodel.HomeViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HomeRoute(
@@ -287,7 +289,7 @@ private fun mapIndexToAllPerfumeScreenId(index: Int): AllPerfumeScreenId {
 private fun BottomMenuContent(
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
-    bottomMenu: List<HomeMenuDefaultResponseDto>,
+    bottomMenu: ImmutableList<HomeMenuDefaultResponseDto>,
 ) {
     Column(
         modifier = Modifier
@@ -315,9 +317,10 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
         modifier = Modifier
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp).fillMaxWidth()
             .padding(vertical = 12.dp),
-        fontFamily = CustomFont.regular
+        fontFamily = CustomFont.regular,
+        textAlign = TextAlign.Start,
     )
     Row(
         modifier = Modifier
@@ -485,7 +488,7 @@ private fun HomePreview() {
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
-                )
+                ).toImmutableList()
             ),
             HomeMenuDefaultResponseDto(
                 title = "변함없이 사랑받는, 스테디 셀러", perfumeList = listOf(
@@ -493,8 +496,8 @@ private fun HomePreview() {
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
-                )
+                ).toImmutableList()
             )
-        )
+        ).toImmutableList()
     )
 }

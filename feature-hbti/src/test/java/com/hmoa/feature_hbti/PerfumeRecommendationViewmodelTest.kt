@@ -12,6 +12,7 @@ import com.hmoa.core_model.response.PerfumeRecommendResponseDto
 import com.hmoa.core_model.response.PerfumeRecommendsResponseDto
 import com.hmoa.feature_hbti.viewmodel.PerfumeRecommendationViewModel
 import junit.framework.TestCase
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -100,7 +101,8 @@ class PerfumeRecommendationViewmodelTest : TestCase() {
 
     @Test
     fun `test_getSurveyQuestions_checkIfInitializedStates`() = coroutineRule.runTest {
-        viewmodel.getSurveyResult()
+        launch { viewmodel.getSurveyResult() }.join()
+        println("기다림 완료")
         assertEquals(perfumeSurveyQuestions.data, viewmodel.perfumeSurveyContentsState.value)
         assertEquals(perfumeSurveyQuestions.data?.noteCategoryTags, viewmodel.noteCategoryTagsState.value)
         assertEquals(listOf(false, false), viewmodel.isNextButtonAvailableState.value)

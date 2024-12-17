@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("com.android.library")
@@ -24,7 +24,11 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         buildConfigField("String", "PRIVACY_CONSENT_URL", localProperties.getProperty("PRIVACY_CONSENT_URL"))
         buildConfigField("String", "ADDRESS_SEARCH_URL", localProperties.getProperty("ADDRESS_SEARCH_URL"))
-        buildConfigField("String", "BOOTPAY_APPLICATION_ID", localProperties.getProperty("BOOTPAY_APPLICATION_ID") as String)
+        buildConfigField(
+            "String",
+            "BOOTPAY_APPLICATION_ID",
+            localProperties.getProperty("BOOTPAY_APPLICATION_ID") as String
+        )
         buildConfigField("String", "SHIPPING_REFUND_URL", localProperties.getProperty("SHIPPING_REFUND_URL") as String)
     }
 
@@ -42,7 +46,7 @@ android {
         jvmTarget = "1.8"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.0"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     buildFeatures {
         compose = true

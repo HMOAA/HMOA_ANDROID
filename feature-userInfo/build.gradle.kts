@@ -42,7 +42,7 @@ android {
         jvmTarget = "17"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.0"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     buildFeatures {
         compose = true
@@ -105,5 +105,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
+    testImplementation("junit:junit:4.13.2")
+    implementation("androidx.test.ext:junit-ktx:1.2.1")
 
 }

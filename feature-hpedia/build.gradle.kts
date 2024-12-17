@@ -32,10 +32,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    composeOptions{
-        kotlinCompilerExtensionVersion = "1.5.0"
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
-    buildFeatures{
+    buildFeatures {
         compose = true
     }
 }

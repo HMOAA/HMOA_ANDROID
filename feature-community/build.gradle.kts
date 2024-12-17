@@ -44,11 +44,15 @@ dependencies {
     val hilt_version = "2.48.1"
     val hilt_viewmodel_version = "1.0.0-alpha03"
     val hilt_nav_compose_version = "1.0.0"
+    val kotlinx_collections_immutable_version = "0.3.8"
 
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
+
+    //immutable list
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:$kotlinx_collections_immutable_version")
 
     //material3
     implementation("androidx.compose.material3:material3:1.2.0")

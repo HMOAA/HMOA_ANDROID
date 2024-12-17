@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunitySearchUiState
 import com.hmoa.feature_community.ViewModel.CommunitySearchViewModel
@@ -27,12 +29,13 @@ import com.hmoa.feature_community.ViewModel.CommunitySearchViewModel
 @Composable
 fun CommunitySearchRoute(
     navBack : () -> Unit,
-    navCommunityDesc: (Int) -> Unit,
+    navCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     viewModel : CommunitySearchViewModel = hiltViewModel()
 ){
     val searchWord = viewModel.searchWord.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val onPostClick = remember<(Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunitySearchRoute, it)}}
 
     CommunitySearchPage(
         uiState = uiState.value,
@@ -42,7 +45,7 @@ fun CommunitySearchRoute(
         onClearSearchWord = { viewModel.clearSearchWord() },
         onClickSearch = { viewModel.updateFlag() },
         navBack = navBack,
-        navCommunityDesc = navCommunityDesc
+        navCommunityDesc = onPostClick
     )
 }
 

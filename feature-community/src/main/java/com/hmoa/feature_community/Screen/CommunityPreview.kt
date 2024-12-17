@@ -24,6 +24,7 @@ import com.hmoa.component.PostListItem
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityMainUiState
@@ -34,7 +35,7 @@ import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
 fun CommunityPreviewRoute(
     navBack: () -> Unit,
     navSearch: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navPost: (String) -> Unit,
     navLogin: () -> Unit,
     navHPedia: () -> Unit,
@@ -44,6 +45,7 @@ fun CommunityPreviewRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val type by viewModel.type.collectAsStateWithLifecycle()
+    val onPostClick = remember<(Int) -> Unit>{{navCommunityDescription(CommunityRoute.CommunityPreviewRoute, it)}}
 
     CommunityPage(
         uiState = uiState.value,
@@ -53,7 +55,7 @@ fun CommunityPreviewRoute(
         onTypeChanged = { viewModel.updateCategory(it) },
         navBack = navBack,
         navSearch = navSearch,
-        navCommunityDescription = navCommunityDescription,
+        navCommunityDescription = onPostClick,
         navPost = {
             if (viewModel.hasToken()) {
                 navPost(it)

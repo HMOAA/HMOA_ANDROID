@@ -24,12 +24,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.feature_community.Screen.CommunityHomeRoute
 
 @Composable
 fun HPediaRoute(
     navHPediaSearch: (String) -> Unit,
-    navCommunityDesc: (Int) -> Unit,
+    navCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunityGraph: () -> Unit,
     navLogin: () -> Unit,
     navHome : () -> Unit,
@@ -47,7 +48,7 @@ fun HPediaRoute(
 @Composable
 fun HPediaScreen(
     navHPediaSearch: (String) -> Unit,
-    navCommunityDesc: (Int) -> Unit,
+    navCommunityDesc: (communityRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunityGraph: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     navHome : () -> Unit

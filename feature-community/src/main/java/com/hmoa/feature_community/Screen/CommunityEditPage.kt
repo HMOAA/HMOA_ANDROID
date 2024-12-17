@@ -45,6 +45,7 @@ import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.TopBarWithEvent
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.Category
 import com.hmoa.feature_community.ViewModel.CommunityEditUiState
 import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
@@ -53,7 +54,7 @@ import com.hmoa.feature_community.ViewModel.CommunityEditViewModel
 fun CommunityEditRoute(
     id: Int?,
     navBack: () -> Unit,
-    navCommunityDesc: (Int) -> Unit,
+    navCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navLogin: () -> Unit,
     viewModel: CommunityEditViewModel = hiltViewModel()
 ) {
@@ -63,7 +64,7 @@ fun CommunityEditRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errState by viewModel.errorUiState.collectAsStateWithLifecycle()
     val pictures = viewModel.newPictures.collectAsStateWithLifecycle()
-    val navCommunityDesc = remember{ { navCommunityDesc(id!!) }}
+    val onPostClick = remember{ { navCommunityDesc(CommunityRoute.CommunityEditRoute, id!!) }}
 
     CommunityEditPage(
         uiState = uiState,
@@ -73,7 +74,7 @@ fun CommunityEditRoute(
         onDeletePictures = viewModel::deletePicture,
         onPostCommunity = viewModel::updateCommunity,
         navBack = navBack,
-        navCommunityDesc = navCommunityDesc,
+        navCommunityDesc = onPostClick,
         navLogin = navLogin
     )
 }

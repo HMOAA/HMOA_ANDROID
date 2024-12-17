@@ -1,5 +1,6 @@
 package com.hmoa.feature_community.Navigation
 
+import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -38,11 +39,17 @@ fun NavController.navigateToCommunityEditRoute(id: Int) =
     }
 
 //게시글 상세 화면
-fun NavController.navigateToCommunityDescriptionRoute(id: Int) =
+fun NavController.navigateToCommunityDescriptionRoute(befScreen: CommunityRoute, id: Int) {
     navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}") {
-        popUpTo("${CommunityRoute.CommunityDescriptionRoute.name}/{id}") { inclusive = true }
+        Log.d("TAG TEST", "befRoute : ${befScreen}")
+        if (befScreen == CommunityRoute.CommunityEditRoute) {
+            popUpTo("${CommunityRoute.CommunityEditRoute.name}/{id}"){inclusive = true}
+        } else if (befScreen == CommunityRoute.CommunityPostRoute) {
+            popUpTo("${CommunityRoute.CommunityCommentEditRoute.name}/{type}"){inclusive = true}
+        }
+        launchSingleTop = true
     }
-
+}
 //게시글 검색 화면
 fun NavController.navigateToCommunitySearchRoute() = navigate(CommunityRoute.CommunitySearchRoute.name)
 
@@ -55,7 +62,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
     navCommunityPage: () -> Unit,
     navCommunityPost: (String) -> Unit,
     navCommunityEdit: (Int) -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunitySearch: () -> Unit,
     navCommunityCommentEdit: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,

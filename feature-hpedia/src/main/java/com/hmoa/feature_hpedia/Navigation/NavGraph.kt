@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.feature_hpedia.Screen.HPediaDescRoute
 import com.hmoa.feature_hpedia.Screen.HPediaRoute
 import com.hmoa.feature_hpedia.Screen.HPediaSearchRoute
@@ -21,7 +22,7 @@ fun NavController.navigateToHPediaSearchRoute(type: String) = navigate("${com.hm
 
 fun NavGraphBuilder.nestedHPediaGraph(
     navBack: () -> Unit,
-    navCommunityDesc: (Int) -> Unit,
+    navCommunityDesc: (befRoute: CommunityRoute, community: Int) -> Unit,
     navCommunityGraph: () -> Unit,
     navHPediaSearch: (String) -> Unit,
     navHPediaDesc: (Int, String) -> Unit,

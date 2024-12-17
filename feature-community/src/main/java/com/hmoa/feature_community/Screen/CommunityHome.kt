@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +26,7 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityHomeUiState
 import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
@@ -32,7 +34,7 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 @Composable
 fun CommunityHomeRoute(
     navCommunityGraph: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     navHome: () -> Unit,
     viewModel: CommunityHomeViewModel = hiltViewModel(),
@@ -41,12 +43,13 @@ fun CommunityHomeRoute(
     //ui state를 전달 >> 여기에 community list를 가지고 이를 통해 LazyColumn 이용
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
+    val onPostClick = remember<(Int) -> Unit>{{navCommunityDescription(CommunityRoute.CommunityHomeRoute, it)}}
 
     CommunityHome(
         errorUiState = errorUiState,
         uiState = uiState,
         onNavCommunityGraph = navCommunityGraph,
-        onNavCommunityDescription = navCommunityDescription,
+        onNavCommunityDescription = onPostClick,
         onErrorHandleLoginAgain = {
             onErrorHandleLoginAgain()
         },

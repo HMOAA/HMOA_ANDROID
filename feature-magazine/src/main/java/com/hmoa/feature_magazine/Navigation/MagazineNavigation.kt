@@ -3,6 +3,7 @@ package com.hmoa.feature_magazine.Navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_domain.entity.navigation.MagazineRoute
 import com.hmoa.feature_magazine.Screen.MagazineDescRoute
 import com.hmoa.feature_magazine.Screen.MagazineMainRoute
@@ -14,7 +15,7 @@ fun NavHostController.navigateToMagazineDesc(magazineId : Int) = navigate("${Mag
 fun NavGraphBuilder.magazineMain(
     onNavHome : () -> Unit,
     onNavPerfumeDesc : (Int) -> Unit,
-    onNavCommunityDesc : (Int) -> Unit,
+    onNavCommunityDesc : (befRoute: CommunityRoute, communityId: Int) -> Unit,
     onNavMagazineDesc : (Int) -> Unit,
 ){
     composable(MagazineRoute.Magazine.name){

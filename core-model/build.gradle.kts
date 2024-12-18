@@ -21,7 +21,6 @@ tasks {
 
 dependencies {
     val kotlinx_version = "1.5.0"
-    val kotlinx_collections_immutable_version = "0.3.8"
 
     implementation("io.ktor:ktor-client-serialization:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")

@@ -208,7 +208,8 @@ fun PerfumeContent(
                 onMenuClick = { onHomeClick() }
             )
             Column(
-                modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2),
+                modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2)
+                    .padding(vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {

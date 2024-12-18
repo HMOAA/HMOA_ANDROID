@@ -36,6 +36,18 @@ android {
     buildFeatures {
         compose = true
     }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics",
+        )
+    }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_reports",
+        )
+    }
 }
 
 dependencies {
@@ -62,7 +74,6 @@ dependencies {
     testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
     implementation("androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version")
     kapt("androidx.hilt:hilt-compiler:$hilt_viewmodel_version")
-
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

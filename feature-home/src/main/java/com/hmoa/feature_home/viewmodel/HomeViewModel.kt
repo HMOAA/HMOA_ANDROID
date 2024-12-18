@@ -59,7 +59,10 @@ class HomeViewModel @Inject constructor(
                 when (it) {
                     is Result.Success -> {
                         _bottomMenuState.value =
-                            BottomMenuState.Data(it.data.data?.toImmutableList())
+                            BottomMenuState.Data(
+                                it.data.data?.toImmutableList()
+                                    ?: emptyList<HomeMenuDefaultResponseDto>().toImmutableList()
+                            )
                     }
 
                     is Result.Error -> {
@@ -91,7 +94,7 @@ class HomeViewModel @Inject constructor(
         data object Loading : BottomMenuState
         data class Data(
             //모델 패키지로 분리해서 분해해서 사용하자. 외부 모듈이니까 unstable인 건 어쩔 수 없음
-            val bottomMenu: ImmutableList<HomeMenuDefaultResponseDto>?,
+            val bottomMenu: ImmutableList<HomeMenuDefaultResponseDto>,
         ) : BottomMenuState
 
         data object Error : BottomMenuState

@@ -35,6 +35,8 @@ kotlin-reflect-version = "1.5.30"
 hilt-test-version = "2.44"
 junit-version = "4.13.2"
 junit-ktx-version = "1.2.1"
+sandwich-version = "1.3.5"
+kotlinx-version = "1.5.0"
 
 [libraries]
 bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay"}
@@ -72,7 +74,9 @@ mockito-core = {group = "org.mockito", name = "mockito-core", version.ref = "moc
 mockito-inline = {group = "org.mockito", name = "mockito-inline", version.ref = "mockito-version"}
 coroutine-test = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutine-test-version"}
 reflect = {group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin-reflect-version"}
-hilt-android-test = {group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-version"}
+hilt-android-test = {group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-test-version"}
+sandwich = {group = "com.github.skydoves", name="sandwich", version.ref = "sandwich-version"}
+kotlinx-serialization-json = {group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-version"}
 
 [plugins]
 android-application = {id = "com.android.application", version.ref = "android-application"}

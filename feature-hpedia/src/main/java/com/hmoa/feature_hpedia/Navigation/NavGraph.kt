@@ -65,7 +65,6 @@ fun NavGraphBuilder.nestedHPediaGraph(
                 navCommunityDesc = navCommunityDesc,
                 navCommunityGraph = navCommunityGraph,
                 navLogin = navLogin,
-                navHome = navHome,
             )
         }
     }

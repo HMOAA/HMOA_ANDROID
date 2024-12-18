@@ -32,15 +32,13 @@ fun HPediaRoute(
     navHPediaSearch: (String) -> Unit,
     navCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunityGraph: () -> Unit,
-    navLogin: () -> Unit,
-    navHome : () -> Unit,
+    navLogin: () -> Unit
 ) {
     HPediaScreen(
         navHPediaSearch = navHPediaSearch,
         navCommunityDesc = navCommunityDesc,
         navCommunityGraph = navCommunityGraph,
-        onErrorHandleLoginAgain = navLogin,
-        navHome = navHome
+        onErrorHandleLoginAgain = navLogin
     )
 
 }
@@ -51,7 +49,6 @@ fun HPediaScreen(
     navCommunityDesc: (communityRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunityGraph: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    navHome : () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -73,7 +70,6 @@ fun HPediaScreen(
             navCommunityGraph = navCommunityGraph,
             navCommunityDescription = navCommunityDesc,
             onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-            navHome = navHome
         )
     }
 }

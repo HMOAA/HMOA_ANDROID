@@ -27,6 +27,14 @@ firebase-analytics = "21.6.2"
 play-service-auth = "21.0.0"
 google-services = "4.4.1"
 play-service-oss-licenses = "17.0.0"
+room-version = "2.6.1"
+datastore-version = "1.0.0"
+mockito-version = "4.8.0"
+coroutine-test-version = "1.5.2"
+kotlin-reflect-version = "1.5.30"
+hilt-test-version = "2.44"
+junit-version = "4.13.2"
+junit-ktx-version = "1.2.1"
 
 [libraries]
 bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay"}
@@ -55,6 +63,16 @@ firebase-analytics = {group = "com.google.firebase", name = "firebase-analytics"
 play-service-auth = {group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-service-auth"}
 google-services = {group = "com.google.gms", name = "google-services", version.ref = "google-services"}
 open-licenses = {group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "play-service-oss-licenses"}
+room-ktx = {group = "androidx.room", name = "room-ktx", version.ref = "room-version"}
+room-compiler = {group = "androidx.room", name = "room-compiler", version.ref = "room-version"}
+datastore = {group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-version"}
+junit = {group = "junit", name = "junit", version.ref = "junit-version"}
+junit-ktx = {group = "androidx.test.ext", name = "junit-ktx", version.ref = "junit-ktx-version"}
+mockito-core = {group = "org.mockito", name = "mockito-core", version.ref = "mockito-version"}
+mockito-inline = {group = "org.mockito", name = "mockito-inline", version.ref = "mockito-version"}
+coroutine-test = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutine-test-version"}
+reflect = {group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin-reflect-version"}
+hilt-android-test = {group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-version"}
 
 [plugins]
 android-application = {id = "com.android.application", version.ref = "android-application"}
@@ -72,3 +90,4 @@ ui = ["ui-tooling", "ui", "material3", "material"]
 basic = ["core-ktx", "appcompat"]
 firebase = ["firebase-messaging", "firebase-analytics"]
 google-login = ["play-service-auth", "google-services"]
+unit-test = ["junit", "mockito-core", "mockito-inline", "coroutine-test", "reflect"]

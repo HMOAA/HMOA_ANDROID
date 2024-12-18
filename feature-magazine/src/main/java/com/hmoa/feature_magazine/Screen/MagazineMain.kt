@@ -4,20 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -43,11 +30,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.CircleImageView
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.ImageView
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
@@ -87,8 +70,8 @@ fun MagazineMainScreen(
     onNavPerfumeDesc: (Int) -> Unit,
     onNavCommunityDesc: (Int) -> Unit,
     onNavMagazineDesc: (Int) -> Unit
-){
-    when(uiState){
+) {
+    when (uiState) {
         MagazineMainUiState.Loading -> AppLoadingScreen()
         is MagazineMainUiState.MagazineMain -> {
             MagazineFullContent(
@@ -113,21 +96,21 @@ fun MagazineMainScreen(
 
 @Composable
 private fun MagazineFullContent(
-    magazineList : ItemSnapshotList<MagazineSummaryResponseDto>,
-    perfumeList : RecentPerfumeResponseDto,
-    reviewList : MagazineTastingCommentResponseDto,
+    magazineList: ItemSnapshotList<MagazineSummaryResponseDto>,
+    perfumeList: RecentPerfumeResponseDto,
+    reviewList: MagazineTastingCommentResponseDto,
     onNavPerfumeDesc: (Int) -> Unit,
     onNavCommunityDesc: (Int) -> Unit,
     onNavMagazineDesc: (Int) -> Unit
-){
-    if (magazineList.isNotEmpty()){
+) {
+    if (magazineList.isNotEmpty()) {
         val magazines = magazineList.subList(0, 5)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(56.dp)
-        ){
-            item{
+        ) {
+            item {
                 MagazineTitleBox(
                     magazines = magazines.filterNotNull()
                 )
@@ -145,8 +128,8 @@ private fun MagazineFullContent(
                 MagazineHeader()
                 Spacer(Modifier.height(24.dp))
             }
-            items(magazineList){magazine ->
-                if (magazine != null){
+            items(magazineList) { magazine ->
+                if (magazine != null) {
                     MagazineContent(
                         imageUrl = magazine.previewImgUrl,
                         title = magazine.title,
@@ -165,11 +148,11 @@ private fun MagazineFullContent(
 @Composable
 private fun MagazineTitleBox(
     magazines: List<MagazineSummaryResponseDto>,
-){
-    val state = rememberPagerState(initialPage = 0, pageCount = {magazines.size})
+) {
+    val state = rememberPagerState(initialPage = 0, pageCount = { magazines.size })
     HorizontalPager(
         state = state
-    ){
+    ) {
         val imageUrl = magazines[it].previewImgUrl
         val title = magazines[it].title
         val preview = magazines[it].preview
@@ -178,7 +161,7 @@ private fun MagazineTitleBox(
                 .fillMaxWidth()
                 .height(513.dp),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             ImageView(
                 imageUrl = imageUrl,
                 width = 1f,
@@ -193,7 +176,7 @@ private fun MagazineTitleBox(
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 22.dp)
                     .background(color = Color.Transparent)
-            ){
+            ) {
                 TopBar(
                     color = Color.Transparent,
                     title = "Magazine",
@@ -203,7 +186,7 @@ private fun MagazineTitleBox(
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(1f)
-                ){
+                ) {
                     ImageView(
                         imageUrl = imageUrl,
                         width = 1f,
@@ -219,7 +202,7 @@ private fun MagazineTitleBox(
                             .padding(horizontal = 24.dp),
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
-                    ){
+                    ) {
                         Text(
                             text = title,
                             fontSize = 24.sp,
@@ -243,14 +226,14 @@ private fun MagazineTitleBox(
 
 @Composable
 private fun ReleasePerfumeList(
-    perfumeList : RecentPerfumeResponseDto,
+    perfumeList: RecentPerfumeResponseDto?,
     onNavPerfumeDesc: (Int) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-    ){
+    ) {
         Text(
             modifier = Modifier.padding(16.dp),
             text = "출시 향수",
@@ -270,13 +253,13 @@ private fun ReleasePerfumeList(
         LazyRow(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            items(perfumeList){perfume ->
+        ) {
+            items(perfumeList ?: emptyList()) { perfume ->
                 PerfumeDescItem(
                     imageUrl = perfume.perfumeImgUrl,
                     brandName = perfume.brandName,
                     perfumeName = perfume.perfumeName,
-                    releaseDate = perfume.relaseDate,
+                    releaseDate = perfume.releaseDate,
                     onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) }
                 )
             }
@@ -286,10 +269,10 @@ private fun ReleasePerfumeList(
 
 @Composable
 private fun Top10Reviews(
-    reviews : MagazineTastingCommentResponseDto,
+    reviews: MagazineTastingCommentResponseDto,
     onNavCommunityDesc: (Int) -> Unit
-){
-    Column{
+) {
+    Column {
         Text(
             modifier = Modifier.padding(start = 16.dp),
             text = "TOP 10 시향기",
@@ -309,8 +292,8 @@ private fun Top10Reviews(
         LazyRow(
             modifier = Modifier.padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            items(reviews){review ->
+        ) {
+            items(reviews) { review ->
                 ReviewContent(
                     title = review.title,
                     profileImg = review.profileImg,
@@ -324,13 +307,13 @@ private fun Top10Reviews(
 }
 
 @Composable
-private fun MagazineHeader(){
+private fun MagazineHeader() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(start = 16.dp)
-    ){
+    ) {
         Text(
             text = "HMOA\nNEWS / 매거진",
             fontSize = 20.sp,
@@ -339,31 +322,32 @@ private fun MagazineHeader(){
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text="향모아가 전하는 향수 트렌드 이슈",
-            fontSize=14.sp,
+            text = "향모아가 전하는 향수 트렌드 이슈",
+            fontSize = 14.sp,
             fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = Color.Black
         )
     }
 }
+
 @Composable
 private fun MagazineContent(
-    imageUrl : String,
-    title : String,
-    preview : String,
+    imageUrl: String,
+    title: String,
+    preview: String,
     onNavMagazineDesc: () -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onNavMagazineDesc() }
             .padding(horizontal = 16.dp)
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-        ){
+        ) {
             ImageView(
                 imageUrl = imageUrl,
                 width = 1f,
@@ -391,20 +375,20 @@ private fun MagazineContent(
 
 @Composable
 private fun PerfumeDescItem(
-    imageUrl : String,
-    brandName : String,
-    perfumeName : String,
-    releaseDate : String,
+    imageUrl: String,
+    brandName: String,
+    perfumeName: String,
+    releaseDate: String?,
     onNavPerfumeDesc: () -> Unit
-){
+) {
     Column(
-        modifier = Modifier.clickable{
+        modifier = Modifier.clickable {
             onNavPerfumeDesc()
         }
     ) {
         Box(
             modifier = Modifier.size(155.dp)
-        ){
+        ) {
             ImageView(
                 imageUrl = imageUrl,
                 width = 1f,
@@ -429,7 +413,7 @@ private fun PerfumeDescItem(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = releaseDate,
+            text = releaseDate ?: "",
             fontSize = 10.sp,
             fontFamily = FontFamily(Font(R.font.pretendard_regular)),
             color = CustomColor.gray3
@@ -439,12 +423,12 @@ private fun PerfumeDescItem(
 
 @Composable
 private fun ReviewContent(
-    title : String,
-    profileImg : String,
-    nickname : String,
-    content : String,
+    title: String,
+    profileImg: String,
+    nickname: String,
+    content: String,
     onNavCommunityDesc: () -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .width(296.dp)
@@ -456,7 +440,7 @@ private fun ReviewContent(
             }
             .padding(horizontal = 20.dp)
             .padding(bottom = 20.dp, top = 24.dp)
-    ){
+    ) {
         Text(
             text = title,
             fontSize = 16.sp,
@@ -469,7 +453,7 @@ private fun ReviewContent(
         Row(
             modifier = Modifier.wrapContentSize(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             CircleImageView(
                 imgUrl = profileImg,
                 width = 20,

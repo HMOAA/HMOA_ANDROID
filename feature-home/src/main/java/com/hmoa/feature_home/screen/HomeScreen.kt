@@ -34,7 +34,6 @@ import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
 import com.hmoa.feature_home.viewmodel.HomeViewModel
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -104,7 +103,11 @@ fun TopMenu(
                 )
             }
             FirstMenuView(
-                (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
+                (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu
+                    ?: HomeMenuDefaultResponseDto(
+                        perfumeList = emptyList<HomeMenuPerfumeResponseDto>().toImmutableList(),
+                        title = ""
+                    ),
                 { onPerfumeClick(it) })
         }
 
@@ -128,7 +131,7 @@ fun BottomMenu(
             BottomMenuContent(
                 onPerfumeClick = { onPerfumeClick(it) },
                 onAllPerfumeClick = { onAllPerfumeClick(it) },
-                (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu!!
+                (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu
             )
             HmoaCompanyMetaData()
         }
@@ -289,7 +292,7 @@ private fun mapIndexToAllPerfumeScreenId(index: Int): AllPerfumeScreenId {
 private fun BottomMenuContent(
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onAllPerfumeClick: (screenId: AllPerfumeScreenId) -> Unit,
-    bottomMenu: ImmutableList<HomeMenuDefaultResponseDto>,
+    bottomMenu: List<HomeMenuDefaultResponseDto>,
 ) {
     Column(
         modifier = Modifier
@@ -417,7 +420,7 @@ fun BottomMenuView(
         )
     }
     LazyRow() {
-        items(data!!.perfumeList) {
+        items(data?.perfumeList ?: emptyList()) {
             Column(modifier = Modifier.clickable { onPerfumeClick(it.perfumeId) }) {
                 PerfumeItemView(
                     it.imgUrl, it.perfumeName, it.brandName, 126, 126, 0.9f, 0.9f, CustomColor.gray1,

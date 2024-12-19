@@ -22,7 +22,7 @@ core-ktx = "1.9.0"
 appcompat = "1.6.1"
 google-material = "1.8.0"
 splash-screen = "1.2.0-alpha01"
-firebase-messaging = "21.1.0"
+firebase-messaging = "23.4.1"
 firebase-analytics = "21.6.2"
 play-service-auth = "21.0.0"
 google-services = "4.4.1"
@@ -30,7 +30,7 @@ play-service-oss-licenses = "17.0.0"
 room-version = "2.6.1"
 datastore-version = "1.0.0"
 mockito-version = "4.8.0"
-coroutine-test-version = "1.5.2"
+coroutine-test-version = "1.8.1-Beta"
 kotlin-reflect-version = "1.5.30"
 hilt-test-version = "2.44"
 junit-version = "4.13.2"
@@ -45,6 +45,9 @@ bumptech-glide-version = "4.16.0"
 paging-version = "0.20.0"
 retrofit-version = "2.9.0"
 okhttp3-version = "4.12.0"
+lifecycle-version = "2.5.1"
+constraintlayout-version = "2.1.4"
+junit-jupiter-version = "5.3.1"
 
 [libraries]
 bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay"}
@@ -57,8 +60,8 @@ kakao-cert = {group = "com.kakao.sdk", name = "v2-cert", version.ref = "kakao-ve
 hilt-android = {group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-version"}
 hilt-compiler = {group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt-version"}
 hilt-android-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-version"}
-hilt-navigation-compose = {group = "androidx.hilt", name = "hilt-navigation", version.ref = "hilt-nav-compose-version"}
-hilt-viewmodel-version = {group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-viewmodel-version"}
+hilt-navigation-compose = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-nav-compose-version"}
+hilt-viewmodel = {group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-viewmodel-version"}
 ui-tooling = {group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui"}
 ui = {group = "androidx.compose.ui", name = "ui", version.ref = "ui"}
 navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose"}
@@ -95,6 +98,13 @@ accommpanist-pager = {group = "com.google.accompanist", name = "accompanist-page
 retrofit = {group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit-version"}
 retrofit-gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit-version"}
 logging-interceptor = {group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3-version"}
+lifecycle-viewmodel-ktx = {group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle-version"}
+lifecycle-viewmodel-compose = {group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle-version"}
+lifecycle-runtime = {group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-version"}
+constraintlayout = {group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout-version"}
+junit-jupiter-api = {group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit-jupiter-version"}
+junit-jupiter-engine = {group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit-jupiter-version"}
+
 
 [plugins]
 android-application = {id = "com.android.application", version.ref = "android-application"}
@@ -116,3 +126,4 @@ unit-test = ["junit", "mockito-core", "mockito-inline", "coroutine-test", "refle
 coil = ["coil-gif", "coil-compose"]
 glide = ["landscapist-glide", "bumptech-glide"]
 retrofit = ["retrofit", "retrofit-gson"]
+lifecycle = ["lifecycle-runtime", "lifecycle-viewmodel-compose", "lifecycle-viewmodel-ktx"]

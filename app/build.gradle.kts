@@ -95,7 +95,7 @@ dependencies {
     implementation(libs.bundles.hilt) // hilt
     kapt(libs.hilt.android.compiler)
     testAnnotationProcessor(libs.hilt.compiler)
-    kapt(libs.hilt.viewmodel.version)
+    kapt(libs.hilt.viewmodel)
     implementation(libs.bundles.ui)
     implementation(libs.navigation.compose)
     implementation(libs.bundles.basic)

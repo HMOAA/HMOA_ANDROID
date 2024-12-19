@@ -43,6 +43,8 @@ coil-version = "2.6.0"
 landscapist-glide-version = "1.4.7"
 bumptech-glide-version = "4.16.0"
 paging-version = "0.20.0"
+retrofit-version = "2.9.0"
+okhttp3-version = "4.12.0"
 
 [libraries]
 bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay"}
@@ -90,6 +92,9 @@ coil-compose = {group = "io.coil-kt", name = "coil-compose", version.ref = "coil
 landscapist-glide = {group = "com.github.skydoves", name = "landscapist-glide", version.ref = "landscapist-glide-version"}
 bumptech-glide = {group = "com.github.bumptech.glide", name = "glide", version.ref = "bumptech-glide-version"}
 accommpanist-pager = {group = "com.google.accompanist", name = "accompanist-pager", version.ref = "paging-version"}
+retrofit = {group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit-version"}
+retrofit-gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit-version"}
+logging-interceptor = {group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3-version"}
 
 [plugins]
 android-application = {id = "com.android.application", version.ref = "android-application"}
@@ -110,3 +115,4 @@ google-login = ["play-service-auth", "google-services"]
 unit-test = ["junit", "mockito-core", "mockito-inline", "coroutine-test", "reflect"]
 coil = ["coil-gif", "coil-compose"]
 glide = ["landscapist-glide", "bumptech-glide"]
+retrofit = ["retrofit", "retrofit-gson"]

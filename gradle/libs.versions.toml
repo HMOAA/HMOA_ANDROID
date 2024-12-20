@@ -115,9 +115,9 @@ constraintlayout = {group = "androidx.constraintlayout", name = "constraintlayou
 junit-jupiter-api = {group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit-jupiter-version"}
 junit-jupiter-engine = {group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit-jupiter-version"}
 paging-compose = {group = "androidx.paging", name = "paging-compose", version.ref = "paging-compose-version"}
-core-gson = {group = "com.google.core.gson", name = "gson", version.ref = "gson-version"}
+core-gson = {group = "com.google.code.gson", name = "gson", version.ref = "gson-version"}
 ui-test-junit4 = {group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junit4-version"}
-ui-test-manifest = {group = "androidx.compose.ui", name = "ui-test-menifest", version.ref = "junit4-version"}
+ui-test-manifest = {group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "junit4-version"}
 kotlinx-collections-immutable = {group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable-version"}
 testing = {group = "org.testing", name = "testing", version.ref = "testing-version"}
 

@@ -69,12 +69,12 @@ dependencies {
     implementation(libs.bootpay)
     implementation(libs.paging.compose)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.core.gson)
     implementation(libs.bundles.ui)
     implementation(libs.navigation.compose)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.basic)
     implementation(libs.google.material)
+    implementation(libs.core.gson)
 
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
@@ -89,11 +89,16 @@ dependencies {
 
     //androidTest
     androidTestImplementation(libs.ui.test.junit4)
+//    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
     debugImplementation(libs.ui.test.manifest)
     // AndroidX Test 라이브러리 - Android 기기에서 실행되는 테스트를 위한 라이브러리
     androidTestImplementation(libs.junit.ext)
     androidTestImplementation(libs.espresso)
-    androidTestImplementation(libs.bundles.android.test.mockito) //Mockito androidTest
+    testImplementation(libs.bundles.android.test.mockito) //Mockito androidTest
     androidTestImplementation(libs.hilt.android.test) //Hilt androidTest
     kaptAndroidTest(libs.hilt.android.compiler) // ...with Kotlin.
+    debugImplementation(libs.ui.tooling)
+
+    //androidTest
+    androidTestImplementation(libs.bundles.android.test.mockito) //Mockito androidTest
 }

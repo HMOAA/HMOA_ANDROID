@@ -29,7 +29,8 @@ google-services = "4.4.1"
 play-service-oss-licenses = "17.0.0"
 room-version = "2.6.1"
 datastore-version = "1.0.0"
-mockito-version = "4.8.0"
+mockito-version = "5.3.1"
+mockito-kotlin-version = "5.0.0"
 coroutine-test-version = "1.8.1-Beta"
 kotlin-reflect-version = "1.5.30"
 hilt-test-version = "2.44"
@@ -43,11 +44,17 @@ coil-version = "2.6.0"
 landscapist-glide-version = "1.4.7"
 bumptech-glide-version = "4.16.0"
 paging-version = "0.20.0"
+paging-compose-version = "3.2.0"
 retrofit-version = "2.9.0"
 okhttp3-version = "4.12.0"
 lifecycle-version = "2.5.1"
 constraintlayout-version = "2.1.4"
 junit-jupiter-version = "5.3.1"
+gson-version = "2.9.0"
+junit4-version = "1.6.8"
+kotlinx-collections-immutable-version = "0.3.8"
+ui-tooling-version = "1.6.0"
+testing-version = "6.9.6"
 
 [libraries]
 bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay"}
@@ -62,7 +69,8 @@ hilt-compiler = {group = "com.google.dagger", name = "hilt-compiler", version.re
 hilt-android-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-version"}
 hilt-navigation-compose = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-nav-compose-version"}
 hilt-viewmodel = {group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-viewmodel-version"}
-ui-tooling = {group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui"}
+ui-tooling-preview = {group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui"}
+ui-tooling = {group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling-version"}
 ui = {group = "androidx.compose.ui", name = "ui", version.ref = "ui"}
 navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose"}
 core-ktx = {group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
@@ -84,6 +92,8 @@ junit-ktx = {group = "androidx.test.ext", name = "junit-ktx", version.ref = "jun
 junit-ext = {group = "androidx.test.ext", name = "junit", version.ref = "junit-ext-version"}
 mockito-core = {group = "org.mockito", name = "mockito-core", version.ref = "mockito-version"}
 mockito-inline = {group = "org.mockito", name = "mockito-inline", version.ref = "mockito-version"}
+mockito-android = {group = "org.mockito", name = "mockito-android", version.ref = "mockito-version"}
+mockito-kotlin = {group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin-version"}
 espresso = {group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-version"}
 coroutine-test = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutine-test-version"}
 reflect = {group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin-reflect-version"}
@@ -104,7 +114,12 @@ lifecycle-runtime = {group = "androidx.lifecycle", name = "lifecycle-runtime-com
 constraintlayout = {group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout-version"}
 junit-jupiter-api = {group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit-jupiter-version"}
 junit-jupiter-engine = {group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit-jupiter-version"}
-
+paging-compose = {group = "androidx.paging", name = "paging-compose", version.ref = "paging-compose-version"}
+core-gson = {group = "com.google.core.gson", name = "gson", version.ref = "gson-version"}
+ui-test-junit4 = {group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junit4-version"}
+ui-test-manifest = {group = "androidx.compose.ui", name = "ui-test-menifest", version.ref = "junit4-version"}
+kotlinx-collections-immutable = {group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable-version"}
+testing = {group = "org.testing", name = "testing", version.ref = "testing-version"}
 
 [plugins]
 android-application = {id = "com.android.application", version.ref = "android-application"}
@@ -118,7 +133,7 @@ google-services = {id = "com.google.gms.google-services", version.ref = "plugin-
 [bundles]
 kakao-login = ["kakao-all", "kakao-user", "kakao-talk", "kakao-cert", "kakao-share", "kakao-freind"]
 hilt = ["hilt-android", "hilt-compiler", "hilt-navigation-compose"]
-ui = ["ui-tooling", "ui", "material3", "material"]
+ui = ["ui-tooling-preview", "ui", "material3", "material"]
 basic = ["core-ktx", "appcompat"]
 firebase = ["firebase-messaging", "firebase-analytics"]
 google-login = ["play-service-auth", "google-services"]
@@ -127,3 +142,4 @@ coil = ["coil-gif", "coil-compose"]
 glide = ["landscapist-glide", "bumptech-glide"]
 retrofit = ["retrofit", "retrofit-gson"]
 lifecycle = ["lifecycle-runtime", "lifecycle-viewmodel-compose", "lifecycle-viewmodel-ktx"]
+android-test-mockito = ["mockito-core", "mockito-android", "mockito-kotlin"]

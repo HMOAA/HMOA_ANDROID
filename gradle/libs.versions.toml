@@ -12,52 +12,55 @@ plugin-google-services = "4.4.1"
 hilt-version = "2.48.1"
 hilt-viewmodel-version = "1.0.0-alpha03"
 hilt-nav-compose-version = "1.0.0"
+
+firebase-messaging-version = "23.4.1"
+firebase-analytics-version = "21.6.2"
+play-service-auth-version = "21.0.0"
+google-services-version = "4.4.1"
+oss-licenses-version = "17.0.0"
 kakao-version = "2.20.5"
-bootpay = "4.4.0"
-material = "1.2.0-beta02"
-metarial3 = "1.2.0"
-ui = "1.1.0"
-navigation-compose = "2.7.0"
-core-ktx = "1.9.0"
-appcompat = "1.6.1"
-google-material = "1.8.0"
-splash-screen = "1.2.0-alpha01"
-firebase-messaging = "23.4.1"
-firebase-analytics = "21.6.2"
-play-service-auth = "21.0.0"
-google-services = "4.4.1"
-play-service-oss-licenses = "17.0.0"
-room-version = "2.6.1"
-datastore-version = "1.0.0"
-mockito-version = "5.3.1"
-mockito-kotlin-version = "5.0.0"
-coroutine-test-version = "1.8.1-Beta"
-kotlin-reflect-version = "1.5.30"
-hilt-test-version = "2.44"
-junit-version = "4.13.2"
-junit-ktx-version = "1.2.1"
-junit-ext-version = "1.1.5"
-espresso-version = "3.5.1"
-sandwich-version = "1.3.5"
-kotlinx-version = "1.5.0"
+bootpay-version = "4.4.0"
+kotlinx-collections-immutable-version = "0.3.8"
+material-version = "1.2.0-beta02"
+metarial3-version = "1.2.0"
+google-material-version = "1.8.0"
+navigation-compose-version = "2.7.0"
+ui-version = "1.1.0"
 coil-version = "2.6.0"
 landscapist-glide-version = "1.4.7"
 bumptech-glide-version = "4.16.0"
 paging-version = "0.20.0"
 paging-compose-version = "3.2.0"
+core-ktx-version = "1.9.0"
+appcompat-version = "1.6.1"
+splash-screen-version = "1.2.0-alpha01"
+constraintlayout-version = "2.1.4"
+lifecycle-version = "2.5.1"
+
+room-version = "2.6.1"
+datastore-version = "1.0.0"
+sandwich-version = "1.3.5"
+kotlinx-version = "1.5.0"
 retrofit-version = "2.9.0"
 okhttp3-version = "4.12.0"
-lifecycle-version = "2.5.1"
-constraintlayout-version = "2.1.4"
-junit-jupiter-version = "5.3.1"
 gson-version = "2.9.0"
+
+mockito-version = "5.3.1"
+mockito-kotlin-version = "5.0.0"
+coroutine-test-version = "1.8.1-Beta"
+kotlin-reflect-version = "1.5.30"
+junit-version = "4.13.2"
+junit-ktx-version = "1.2.1"
+junit-ext-version = "1.1.5"
+espresso-version = "3.5.1"
 junit4-version = "1.6.8"
-kotlinx-collections-immutable-version = "0.3.8"
 ui-tooling-version = "1.6.0"
 testing-version = "6.9.6"
+hilt-test-version = "2.44"
+junit-jupiter-version = "5.3.1"
 
 [libraries]
-bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay"}
+bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay-version"}
 kakao-all = {group = "com.kakao.sdk", name = "v2-all", version.ref = "kakao-version"}
 kakao-user = {group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao-version"}
 kakao-talk = {group = "com.kakao.sdk", name = "v2-talk", version.ref = "kakao-version"}
@@ -69,21 +72,21 @@ hilt-compiler = {group = "com.google.dagger", name = "hilt-compiler", version.re
 hilt-android-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-version"}
 hilt-navigation-compose = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-nav-compose-version"}
 hilt-viewmodel = {group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-viewmodel-version"}
-ui-tooling-preview = {group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui"}
+ui-tooling-preview = {group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui-version"}
 ui-tooling = {group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling-version"}
-ui = {group = "androidx.compose.ui", name = "ui", version.ref = "ui"}
-navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose"}
-core-ktx = {group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
-appcompat = {group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat"}
-google-material = {group = "com.google.android.material", name = "material", version.ref = "google-material"}
-splash-screen = {group = "androidx.core", name = "core-splashscreen", version.ref = "splash-screen"}
-material = {group = "androidx.compose.material", name = "material", version.ref = "material"}
-material3 = {group = "androidx.compose.material3", name = "material3", version.ref = "metarial3"}
-firebase-messaging = {group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebase-messaging"}
-firebase-analytics = {group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebase-analytics"}
-play-service-auth = {group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-service-auth"}
-google-services = {group = "com.google.gms", name = "google-services", version.ref = "google-services"}
-open-licenses = {group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "play-service-oss-licenses"}
+ui = {group = "androidx.compose.ui", name = "ui", version.ref = "ui-version"}
+navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose-version"}
+core-ktx = {group = "androidx.core", name = "core-ktx", version.ref = "core-ktx-version"}
+appcompat = {group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat-version"}
+splash-screen = {group = "androidx.core", name = "core-splashscreen", version.ref = "splash-screen-version"}
+google-material = {group = "com.google.android.material", name = "material", version.ref = "google-material-version"}
+material = {group = "androidx.compose.material", name = "material", version.ref = "material-version"}
+material3 = {group = "androidx.compose.material3", name = "material3", version.ref = "metarial3-version"}
+firebase-messaging = {group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebase-messaging-version"}
+firebase-analytics = {group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebase-analytics-version"}
+play-service-auth = {group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-service-auth-version"}
+google-services = {group = "com.google.gms", name = "google-services", version.ref = "google-services-version"}
+open-licenses = {group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "oss-licenses-version"}
 room-ktx = {group = "androidx.room", name = "room-ktx", version.ref = "room-version"}
 room-compiler = {group = "androidx.room", name = "room-compiler", version.ref = "room-version"}
 datastore = {group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-version"}

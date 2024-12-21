@@ -1,8 +1,7 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
     kotlin("kapt")
 }
 
@@ -33,22 +32,21 @@ android {
 }
 
 dependencies {
-    val hilt_version = "2.48.1"
-    val kotlinx_version = "1.5.0"
-    val room_version = "2.6.1"
-
-    implementation("androidx.room:room-ktx:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
-
     implementation(project(":core-model"))
     implementation(project(":core-network"))
     implementation(project(":core-database"))
 
+    val hilt_version = "2.48.1"
+    val kotlinx_version = "1.5.0"
+
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
+
     implementation("com.github.skydoves:sandwich:1.3.5")
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    implementation("com.google.dagger:hilt-compiler:$hilt_version")
-    testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.sandwich)
+    implementation(libs.bundles.hilt)
+    testAnnotationProcessor(libs.hilt.compiler)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.datastore)
 }

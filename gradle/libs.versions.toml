@@ -36,6 +36,7 @@ appcompat-version = "1.6.1"
 splash-screen-version = "1.2.0-alpha01"
 constraintlayout-version = "2.1.4"
 lifecycle-version = "2.5.1"
+app-update-version = "2.1.0"
 
 room-version = "2.6.1"
 datastore-version = "1.0.0"
@@ -60,78 +61,79 @@ hilt-test-version = "2.44"
 junit-jupiter-version = "5.3.1"
 
 [libraries]
-bootpay = {group = "io.github.bootpay", name = "android", version.ref = "bootpay-version"}
-kakao-all = {group = "com.kakao.sdk", name = "v2-all", version.ref = "kakao-version"}
-kakao-user = {group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao-version"}
-kakao-talk = {group = "com.kakao.sdk", name = "v2-talk", version.ref = "kakao-version"}
-kakao-share = {group = "com.kakao.sdk", name = "v2-share", version.ref = "kakao-version"}
-kakao-freind = {group = "com.kakao.sdk", name = "v2-friend", version.ref = "kakao-version"}
-kakao-cert = {group = "com.kakao.sdk", name = "v2-cert", version.ref = "kakao-version"}
-hilt-android = {group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-version"}
-hilt-compiler = {group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt-version"}
-hilt-android-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-version"}
-hilt-navigation-compose = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-nav-compose-version"}
-hilt-viewmodel = {group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-viewmodel-version"}
-ui-tooling-preview = {group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui-version"}
-ui-tooling = {group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling-version"}
-ui = {group = "androidx.compose.ui", name = "ui", version.ref = "ui-version"}
-navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose-version"}
-core-ktx = {group = "androidx.core", name = "core-ktx", version.ref = "core-ktx-version"}
-appcompat = {group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat-version"}
-splash-screen = {group = "androidx.core", name = "core-splashscreen", version.ref = "splash-screen-version"}
-google-material = {group = "com.google.android.material", name = "material", version.ref = "google-material-version"}
-material = {group = "androidx.compose.material", name = "material", version.ref = "material-version"}
-material3 = {group = "androidx.compose.material3", name = "material3", version.ref = "metarial3-version"}
-firebase-messaging = {group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebase-messaging-version"}
-firebase-analytics = {group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebase-analytics-version"}
-play-service-auth = {group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-service-auth-version"}
-google-services = {group = "com.google.gms", name = "google-services", version.ref = "google-services-version"}
-open-licenses = {group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "oss-licenses-version"}
-room-ktx = {group = "androidx.room", name = "room-ktx", version.ref = "room-version"}
-room-compiler = {group = "androidx.room", name = "room-compiler", version.ref = "room-version"}
-datastore = {group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-version"}
-junit = {group = "junit", name = "junit", version.ref = "junit-version"}
-junit-ktx = {group = "androidx.test.ext", name = "junit-ktx", version.ref = "junit-ktx-version"}
-junit-ext = {group = "androidx.test.ext", name = "junit", version.ref = "junit-ext-version"}
-mockito-core = {group = "org.mockito", name = "mockito-core", version.ref = "mockito-version"}
-mockito-inline = {group = "org.mockito", name = "mockito-inline", version.ref = "mockito-version"}
-mockito-android = {group = "org.mockito", name = "mockito-android", version.ref = "mockito-version"}
-mockito-kotlin = {group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin-version"}
-espresso = {group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-version"}
-coroutine-test = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutine-test-version"}
-reflect = {group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin-reflect-version"}
-hilt-android-test = {group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-test-version"}
-sandwich = {group = "com.github.skydoves", name="sandwich", version.ref = "sandwich-version"}
-kotlinx-serialization-json = {group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-version"}
-coil-gif = {group = "io.coil-kt", name = "coil-gif", version.ref = "coil-version"}
-coil-compose = {group = "io.coil-kt", name = "coil-compose", version.ref = "coil-version"}
-landscapist-glide = {group = "com.github.skydoves", name = "landscapist-glide", version.ref = "landscapist-glide-version"}
-bumptech-glide = {group = "com.github.bumptech.glide", name = "glide", version.ref = "bumptech-glide-version"}
-accommpanist-pager = {group = "com.google.accompanist", name = "accompanist-pager", version.ref = "paging-version"}
-retrofit = {group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit-version"}
-retrofit-gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit-version"}
-logging-interceptor = {group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3-version"}
-lifecycle-viewmodel-ktx = {group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle-version"}
-lifecycle-viewmodel-compose = {group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle-version"}
-lifecycle-runtime = {group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-version"}
-constraintlayout = {group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout-version"}
-junit-jupiter-api = {group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit-jupiter-version"}
-junit-jupiter-engine = {group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit-jupiter-version"}
-paging-compose = {group = "androidx.paging", name = "paging-compose", version.ref = "paging-compose-version"}
-core-gson = {group = "com.google.code.gson", name = "gson", version.ref = "gson-version"}
-ui-test-junit4 = {group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junit4-version"}
-ui-test-manifest = {group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "junit4-version"}
-kotlinx-collections-immutable = {group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable-version"}
-testing = {group = "org.testing", name = "testing", version.ref = "testing-version"}
+app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "app-update-version" }
+bootpay = { group = "io.github.bootpay", name = "android", version.ref = "bootpay-version" }
+kakao-all = { group = "com.kakao.sdk", name = "v2-all", version.ref = "kakao-version" }
+kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao-version" }
+kakao-talk = { group = "com.kakao.sdk", name = "v2-talk", version.ref = "kakao-version" }
+kakao-share = { group = "com.kakao.sdk", name = "v2-share", version.ref = "kakao-version" }
+kakao-freind = { group = "com.kakao.sdk", name = "v2-friend", version.ref = "kakao-version" }
+kakao-cert = { group = "com.kakao.sdk", name = "v2-cert", version.ref = "kakao-version" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-version" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt-version" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-version" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-nav-compose-version" }
+hilt-viewmodel = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-viewmodel-version" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui-version" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling-version" }
+ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui-version" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose-version" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx-version" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat-version" }
+splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splash-screen-version" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "google-material-version" }
+material = { group = "androidx.compose.material", name = "material", version.ref = "material-version" }
+material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "metarial3-version" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebase-messaging-version" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebase-analytics-version" }
+play-service-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-service-auth-version" }
+google-services = { group = "com.google.gms", name = "google-services", version.ref = "google-services-version" }
+open-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "oss-licenses-version" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room-version" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room-version" }
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-version" }
+junit = { group = "junit", name = "junit", version.ref = "junit-version" }
+junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junit-ktx-version" }
+junit-ext = { group = "androidx.test.ext", name = "junit", version.ref = "junit-ext-version" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito-version" }
+mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito-version" }
+mockito-android = { group = "org.mockito", name = "mockito-android", version.ref = "mockito-version" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin-version" }
+espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-version" }
+coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutine-test-version" }
+reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin-reflect-version" }
+hilt-android-test = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-test-version" }
+sandwich = { group = "com.github.skydoves", name = "sandwich", version.ref = "sandwich-version" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-version" }
+coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil-version" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-version" }
+landscapist-glide = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "landscapist-glide-version" }
+bumptech-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "bumptech-glide-version" }
+accommpanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "paging-version" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit-version" }
+retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit-version" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3-version" }
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle-version" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle-version" }
+lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-version" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout-version" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit-jupiter-version" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit-jupiter-version" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging-compose-version" }
+core-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson-version" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junit4-version" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "junit4-version" }
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable-version" }
+testing = { group = "org.testing", name = "testing", version.ref = "testing-version" }
 
 [plugins]
-android-application = {id = "com.android.application", version.ref = "android-application"}
-kotlin-android = {id = "org.jetbrains.kotlin.android", version.ref = "kotlin-android"}
-kotlin-jvm = {id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm"}
-android-library = {id = "com.android.library", version.ref = "android-library"}
-hilt-android = {id = "com.google.dagger.hilt.android", version.ref = "hilt-android"}
-kotlin-plugin-serialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-serialization"}
-google-services = {id = "com.google.gms.google-services", version.ref = "plugin-google-services"}
+android-application = { id = "com.android.application", version.ref = "android-application" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-android" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
+android-library = { id = "com.android.library", version.ref = "android-library" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android" }
+kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-serialization" }
+google-services = { id = "com.google.gms.google-services", version.ref = "plugin-google-services" }
 
 [bundles]
 kakao-login = ["kakao-all", "kakao-user", "kakao-talk", "kakao-cert", "kakao-share", "kakao-freind"]

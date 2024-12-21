@@ -1,4 +1,4 @@
-package com.hmoa.app
+package com.hmoa.app.view
 
 import android.Manifest
 import android.content.Intent
@@ -33,18 +33,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.messaging.FirebaseMessaging
+import com.hmoa.app.BuildConfig
 import com.hmoa.app.navigation.SetUpNavGraph
+import com.hmoa.app.viewmodel.AppViewModel
 import com.hmoa.core_common.permissions
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
-import com.hmoa.core_domain.entity.navigation.AuthenticationRoute
-import com.hmoa.core_domain.entity.navigation.CommunityRoute
-import com.hmoa.core_domain.entity.navigation.HPediaRoute
-import com.hmoa.core_domain.entity.navigation.HomeRoute
-import com.hmoa.core_domain.entity.navigation.MagazineRoute
-import com.hmoa.core_domain.entity.navigation.PerfumeRoute
-import com.hmoa.core_domain.entity.navigation.UserInfoRoute
+import com.hmoa.core_domain.entity.navigation.*
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
 import com.hmoa.feature_fcm.navigateToAlarmScreen
 import com.hmoa.feature_home.navigation.navigateToHome
@@ -86,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         BottomScreen.Magazine.name,
         BottomScreen.MyPage.name
     )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()

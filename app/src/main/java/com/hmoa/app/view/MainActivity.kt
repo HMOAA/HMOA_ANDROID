@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
@@ -32,6 +34,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.BuildConfig
 import com.hmoa.app.navigation.SetUpNavGraph
@@ -82,11 +92,94 @@ class MainActivity : AppCompatActivity() {
         BottomScreen.Magazine.name,
         BottomScreen.MyPage.name
     )
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+            handleUpdateResult(result)
+        }
+
+    // Displays the snackbar notification and call to action.
+    fun popupSnackbarForCompleteUpdate() {
+        Snackbar.make(
+            findViewById(com.hmoa.core_designsystem.R.drawable.ic_fab),
+            "새로운 업데이트 다운로드가 완료되었습니다.",
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction("재시작") { appUpdateManager.completeUpdate() }
+            show()
+        }
+    }
+
+    private fun checkImmediateUpdateAvailability() {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (shouldTriggerImmediateUpdate(appUpdateInfo)) {
+                Log.d("checkUpdateAvailability", "ImemediateUpdate")
+                startImmediateUpdate(appUpdateInfo)
+            }
+        }.addOnFailureListener { e ->
+            Log.e("UpdateFlow", "Failed to check update availability", e)
+        }
+    }
+
+    private fun checkFlexibleUpdateAvailability() {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (shouldTriggerFlexibleUpdate(appUpdateInfo)) {
+                Log.d("checkUpdateAvailability", "ImemediateUpdate")
+                startFlexibleUpdate(appUpdateInfo)
+                if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                    popupSnackbarForCompleteUpdate()
+                }
+            }
+        }.addOnFailureListener { e ->
+            Log.e("UpdateFlow", "Failed to check update availability", e)
+        }
+    }
+
+
+    private fun shouldTriggerImmediateUpdate(appUpdateInfo: AppUpdateInfo): Boolean {
+        return appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+    }
+
+    private fun shouldTriggerFlexibleUpdate(appUpdateInfo: AppUpdateInfo): Boolean {
+        return appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+    }
+
+
+    private fun startImmediateUpdate(appUpdateInfo: AppUpdateInfo) {
+        appUpdateManager.startUpdateFlowForResult(
+            appUpdateInfo,
+            activityResultLauncher,
+            AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+        )
+    }
+
+    private fun startFlexibleUpdate(appUpdateInfo: AppUpdateInfo) {
+        appUpdateManager.startUpdateFlowForResult(
+            appUpdateInfo,
+            activityResultLauncher,
+            AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+        )
+    }
+
+    private fun handleUpdateResult(result: ActivityResult) {
+        if (result.resultCode == RESULT_OK) {
+            Log.d("UpdateFlow", "Update flow completed successfully!")
+        } else {
+            Log.e("UpdateFlow", "Update flow failed! Result code: ${result.resultCode}")
+            // 필요시 재시도 로직 추가 가능
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        checkImmediateUpdateAvailability()
+
         requestNotificationPermission()
         BootpayAnalytics.init(this, BuildConfig.BOOTPAY_APPLICATION_ID)
 
@@ -157,6 +250,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkFlexibleUpdateAvailability()
     }
 
     //firebase 초기 토큰 처리

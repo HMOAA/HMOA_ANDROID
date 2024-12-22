@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     alias(libs.plugins.android.application)
@@ -21,7 +21,7 @@ android {
         applicationId = "com.hmoa.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 33
+        versionCode = 35
         versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -90,6 +90,7 @@ dependencies {
     implementation(project(":core-repository"))
     implementation(project(":core-common"))
 
+    implementation(libs.app.update.ktx)
     implementation(libs.bootpay) //부트페이
     implementation(libs.bundles.kakao.login) // kakao
     implementation(libs.bundles.hilt) // hilt

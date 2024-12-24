@@ -65,9 +65,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
     navCommunityCommentEdit: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     navLogin: () -> Unit,
-    navHome: () -> Unit,
     navHPedia: () -> Unit,
-    popStack: () -> Unit,
 ) {
     navigation(
         startDestination = CommunityRoute.CommunityPreviewRoute.name,
@@ -120,9 +118,7 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 onNavCommunityEdit = navCommunityEdit,
                 onNavCommentEdit = navCommunityCommentEdit,
                 onNavLogin = navLogin,
-                onNavBack = navBack,
-                onNavHPedia = navHPedia,
-                onNavPopStack = popStack
+                onNavBack = navBack
             )
         }
         composable(route = CommunityRoute.CommunitySearchRoute.name) {

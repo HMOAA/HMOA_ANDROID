@@ -7,15 +7,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.hmoa.core_domain.entity.data.SortType
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.PerfumeCommentRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_domain.usecase.UpdateLikePerfumeCommentUseCase
-import com.hmoa.core_domain.entity.data.SortType
 import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
-import com.hmoa.feature_perfume.PerfumeCommentLatestPagingSource
-import com.hmoa.feature_perfume.PerfumeCommentLikePagingSource
+import com.hmoa.feature_perfume.PerfumeCommentPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -77,15 +76,21 @@ class PerfumeCommentViewmodel @Inject constructor(
         _unLoginedErrorState.update { true }
     }
 
-    fun latestPerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentLatestPagingSource(
-        perfumeId = perfumeId,
-        perfumeCommentRepository = perfumeCommentRepository
-    )
+    fun latestPerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentPagingSource(fetcher = { pageNumber, cursor ->
+        perfumeCommentRepository.getPerfumeCommentsLatest(
+            pageNumber,
+            cursor = cursor,
+            perfumeId = perfumeId
+        )
+    })
 
-    fun likePerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentLikePagingSource(
-        perfumeId = perfumeId,
-        perfumeCommentRepository = perfumeCommentRepository
-    )
+    fun likePerfumeCommentPagingSource(perfumeId: Int) = PerfumeCommentPagingSource(fetcher = { pageNumber, cursor ->
+        perfumeCommentRepository.getPerfumeCommentsLikest(
+            pageNumber.toString(),
+            perfumeId = perfumeId.toString()
+        )
+    })
+
 
     fun getPagingLatestPerfumeComments(perfumeId: Int?): Flow<PagingData<PerfumeCommentResponseDto>>? {
         if (perfumeId != null) {

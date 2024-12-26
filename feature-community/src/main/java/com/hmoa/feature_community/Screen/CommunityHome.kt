@@ -40,7 +40,7 @@ fun CommunityHomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
-    val onPostClick = remember<(Int) -> Unit>{{navCommunityDescription(CommunityRoute.CommunityHomeRoute, it)}}
+    val onPostClick = remember<(communityId: Int) -> Unit>{{navCommunityDescription(CommunityRoute.CommunityHomeRoute, it)}}
 
     CommunityHome(
         errorUiState = errorUiState,
@@ -56,7 +56,7 @@ fun CommunityHome(
     errorUiState: ErrorUiState,
     uiState: CommunityHomeUiState,
     navCommunityGraph: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (communityId: Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
     when (uiState) {
@@ -81,7 +81,7 @@ fun CommunityHome(
 @Composable
 fun CommunityHomeContent(
     communities: List<CommunityByCategoryResponseDto>,
-    navCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (communityId: Int) -> Unit,
     navCommunityByCategory: () -> Unit,
 ) {
     Column(
@@ -128,7 +128,7 @@ fun CommunityTitleBar(
 @Composable
 fun PostList(
     communities: List<CommunityByCategoryResponseDto>,
-    navCommunityDescription: (Int) -> Unit
+    navCommunityDescription: (communityId: Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier

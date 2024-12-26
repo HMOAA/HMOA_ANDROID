@@ -138,7 +138,7 @@ fun PerfumeNameSearchResultList(
     LazyColumn(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
         items(perfumeNameList?.itemSnapshotList?.items ?: emptyList()) {
             Text(
-                text = it!!.perfumeName ?: "",
+                text = it.perfumeName,
                 modifier = Modifier.clickable { onPerfumeSearchResultClick(it.perfumeName) }
                     .padding(vertical = 10.dp).fillMaxWidth(),
                 style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp)
@@ -156,14 +156,14 @@ fun PerfumeSearchResultList(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.Center
     ) {
-        items(perfumeList?.itemSnapshotList?.items ?: emptyList()) {
+        items(perfumeList?.itemSnapshotList?.items ?: emptyList(), key = { it.perfumeId }) {
             Column(modifier = Modifier.clickable { onPerfumeSearchResultClick(it.perfumeName) }
                 .padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 PerfumeItemView(
-                    imageUrl = it?.perfumeImageUrl ?: "",
-                    perfumeName = it?.perfumeName ?: "",
-                    brandName = it?.brandName ?: "",
+                    imageUrl = it.perfumeImageUrl,
+                    perfumeName = it.perfumeName,
+                    brandName = it.brandName,
                     containerWidth = 160,
                     containerHeight = 160,
                     imageWidth = 0.7f,

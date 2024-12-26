@@ -67,7 +67,7 @@ fun CommunityPostRoute(
     }
     val pictures = viewModel.pictures.collectAsStateWithLifecycle()
     val postCommunity = remember<(title: String, content: String) -> Unit>{{ title, content ->
-        viewModel.postCommunity(title, content, category, navBack())
+        viewModel.postCommunity(title, content, category, navBack)
     }}
 
     PostCommunityPage(

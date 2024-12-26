@@ -1,10 +1,17 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,9 +28,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.feature_userinfo.viewModel.CommentUiState
 import com.hmoa.feature_userinfo.viewModel.CommentViewModel
@@ -31,7 +44,7 @@ import com.hmoa.feature_userinfo.viewModel.CommentViewModel
 @Composable
 fun MyCommentRoute(
     navBack: () -> Unit,
-    navCommunity: (communityId: Int) -> Unit,
+    navCommunity: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navPerfume : (perfumeId: Int) -> Unit,
     navLogin: () -> Unit,
     viewModel: CommentViewModel = hiltViewModel()
@@ -39,13 +52,14 @@ fun MyCommentRoute(
     //comment list
     val commentUiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val onCommentClick = remember<(Int) -> Unit>{{navCommunity(CommunityRoute.CommunityHomeRoute, it)}}
 
     MyCommentPage(
         uiState = commentUiState.value,
         errState = errState.value,
         navBack = navBack,
         navPerfume = navPerfume,
-        navCommunity = navCommunity,
+        navCommunity = onCommentClick,
         onTypeChanged = viewModel::changeType,
         navLogin = navLogin
     )

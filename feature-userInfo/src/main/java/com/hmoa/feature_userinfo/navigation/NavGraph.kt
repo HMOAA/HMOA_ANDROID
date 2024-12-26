@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.example.userinfo.MyPageRoute
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_domain.entity.navigation.HbtiRoute
 import com.hmoa.core_domain.entity.navigation.UserInfoRoute
 import com.hmoa.feature_userinfo.MyFavoriteCommentRoute
@@ -72,7 +73,7 @@ fun NavGraphBuilder.nestedUserInfoGraph(
     navLogin: () -> Unit,
     navReview: (befRoute: HbtiRoute) -> Unit,
     navBack: () -> Unit,
-    navCommunity: (Int) -> Unit,
+    navCommunity: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navEditPost: (Int) -> Unit,
     navEditProfile: () -> Unit,
     navManageMyInfo: () -> Unit,

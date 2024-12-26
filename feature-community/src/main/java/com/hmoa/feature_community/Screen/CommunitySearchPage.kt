@@ -35,15 +35,15 @@ fun CommunitySearchRoute(
     val searchWord = viewModel.searchWord.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
-    val onPostClick = remember<(Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunitySearchRoute, it)}}
+    val onPostClick = remember<(communityId: Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunitySearchRoute, it)}}
 
     CommunitySearchPage(
         uiState = uiState.value,
         errState = errState.value,
         searchWord = searchWord.value,
-        onSearchWordChanged = { viewModel.updateSearchWord(it) },
-        onClearSearchWord = { viewModel.clearSearchWord() },
-        onClickSearch = { viewModel.updateFlag() },
+        onSearchWordChanged = viewModel::updateSearchWord,
+        onClearSearchWord = viewModel::clearSearchWord,
+        onClickSearch = viewModel::updateFlag,
         navBack = navBack,
         navCommunityDesc = onPostClick
     )
@@ -54,7 +54,7 @@ fun CommunitySearchPage(
     uiState : CommunitySearchUiState,
     errState: ErrorUiState,
     searchWord : String,
-    onSearchWordChanged : (String) -> Unit,
+    onSearchWordChanged : (newWord: String) -> Unit,
     onClearSearchWord : () -> Unit,
     onClickSearch : () -> Unit,
     navBack : () -> Unit,
@@ -87,11 +87,11 @@ fun CommunitySearchPage(
 private fun SearchContent(
     communities: List<CommunityByCategoryResponseDto>,
     searchWord: String,
-    onSearchWordChanged: (String) -> Unit,
+    onSearchWordChanged: (newWord: String) -> Unit,
     onClearSearchWord: () -> Unit,
     onClickSearch: () -> Unit,
     navBack: () -> Unit,
-    navCommunityDesc: (Int) -> Unit
+    navCommunityDesc: (communityId: Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -109,7 +109,10 @@ private fun SearchContent(
         LazyColumn(
             modifier = Modifier.weight(1f),
         ){
-            items(communities){community ->
+            items(
+                items = communities,
+                key = {it.communityId}
+            ){community ->
                 PostListItem(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -120,9 +123,7 @@ private fun SearchContent(
                     heartCount = community.heartCount,
                     commentCount = community.commentCount
                 )
-                if (communities.indexOf(community) != communities.lastIndex){
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                }
+                if (communities.indexOf(community) != communities.lastIndex){ HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2) }
             }
         }
     }

@@ -8,29 +8,30 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.CommunityRepository
-import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.CommunityPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 const val PAGE_SIZE = 10
 
 @HiltViewModel
 class CommunityMainViewModel @Inject constructor(
-    private val communityRepository: CommunityRepository,
-    private val loginRepository: LoginRepository
+    private val communityRepository: CommunityRepository
 ) : ViewModel() {
-    private val authToken = MutableStateFlow<String?>(null)
-
     //type 정보
     private val _type = MutableStateFlow(Category.추천)
     val type get() = _type.asStateFlow()
     private var _communities = MutableStateFlow<PagingData<CommunityByCategoryResponseDto>?>(null)
-    val _enableLoginErrorDialog = MutableStateFlow<Boolean>(false)
 
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
@@ -67,15 +68,9 @@ class CommunityMainViewModel @Inject constructor(
         initialValue = CommunityMainUiState.Loading
     )
 
-    init {
-        getAuthToken()
-    }
-
     fun communityPagingSource(): Flow<PagingData<CommunityByCategoryResponseDto>> = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
-        pagingSourceFactory = {
-            getCommunityPaging(type.value.name)
-        }
+        pagingSourceFactory = { getCommunityPaging(type.value.name) }
     ).flow.cachedIn(viewModelScope)
 
     //category 정보 변경
@@ -88,20 +83,6 @@ class CommunityMainViewModel @Inject constructor(
         communityRepository = communityRepository,
         category = category
     )
-
-    //err state update
-    fun updateLoginError() {
-        unLoginedErrorState.update { true }
-    }
-
-    fun hasToken() = authToken.value != null
-
-    //get token
-    private fun getAuthToken() {
-        viewModelScope.launch {
-            loginRepository.getAuthToken().onEmpty { }.collectLatest { authToken.value = it }
-        }
-    }
 }
 
 sealed interface CommunityMainUiState {

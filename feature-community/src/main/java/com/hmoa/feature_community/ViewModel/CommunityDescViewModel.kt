@@ -10,15 +10,18 @@ import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.CommunityCommentRepository
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_domain.repository.ReportRepository
 import com.hmoa.core_model.request.CommunityCommentDefaultRequestDto
 import com.hmoa.core_model.request.TargetRequestDto
 import com.hmoa.core_model.response.CommunityCommentWithLikedResponseDto
-import com.hmoa.core_model.response.CommunityDefaultResponseDto
 import com.hmoa.feature_community.CommunityCommentPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,16 +42,11 @@ class CommunityDescViewModel @Inject constructor(
     private val reportRepository: ReportRepository,
 ) : ViewModel() {
     //community id
-    private val _id = MutableStateFlow(-1)
-    val id get() = _id.asStateFlow()
+    private val id = MutableStateFlow(-1)
 
     //like 여부
     private val _isLiked = MutableStateFlow(false)
     val isLiked get() = _isLiked.asStateFlow()
-    private val _reportState = MutableStateFlow<Boolean>(false)
-    val reportState get() = _reportState.asStateFlow()
-
-    private val flag = MutableStateFlow<Boolean>(false)
 
     private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
     private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
@@ -71,25 +70,41 @@ class CommunityDescViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
     //ui state
-    val uiState: StateFlow<CommunityDescUiState> = combine(errorUiState, _id) { errState, id ->
-        if (errState is ErrorUiState.ErrorData &&
-            (errState.expiredTokenError || errState.wrongTypeTokenError || errState.unknownError || errState.generalError.first)){
-            throw Exception("")
-        }
-        val result = communityRepository.getCommunity(id)
-        result
-    }.asResult().map{ communityResult ->
-        when(communityResult) {
+    val uiState: StateFlow<CommunityDescUiState> = combine(errorUiState, id) { errState, id ->
+        if (errState is ErrorUiState.ErrorData && errState.isValidate()){ throw Exception("") }
+        val response = communityRepository.getCommunity(id)
+        if (response.errorMessage != null) throw Exception(response.errorMessage!!.message)
+        response.data!!
+    }.asResult().map{ result ->
+        when(result) {
             is Result.Loading -> CommunityDescUiState.Loading
-            is Result.Success -> CommunityDescUiState.CommunityDesc((communityResult).data.data!!)
+            is Result.Success -> {
+                val data = result.data
+                val communityPhotos = data.communityPhotos.map{it.photoUrl}
+                CommunityDescUiState.CommunityDesc(
+                    author = data.author,
+                    category = data.category,
+                    communityPhotos = communityPhotos.toImmutableList(),
+                    content = data.content,
+                    heartCount = data.heartCount,
+                    imagesCount = data.imagesCount,
+                    liked = data.liked,
+                    myProfileImgUrl = data.myProfileImgUrl,
+                    profileImgUrl = data.profileImgUrl,
+                    time = data.time,
+                    title = data.title,
+                    writed = data.writed
+                )
+            }
             is Result.Error -> {
-                if(communityResult.exception.message != "") {
-                    when (communityResult.exception.message) {
-                        ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
-                        ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
-                        ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
-                        else -> generalErrorState.update {Pair(true,communityResult.exception.message)}
-                    }
+                if(result.exception.message != "") {
+                    handleErrorType(
+                        error = result.exception,
+                        onExpiredTokenError = {expiredTokenErrorState.update{true}},
+                        onWrongTypeTokenError = {wrongTypeTokenErrorState.update { true }},
+                        onUnknownError = {unLoginedErrorState.update { true }},
+                        onGeneralError = {generalErrorState.update {Pair(true,result.exception.message)}}
+                    )
                 }
                 CommunityDescUiState.Error
             }
@@ -101,17 +116,23 @@ class CommunityDescViewModel @Inject constructor(
     )
 
     //커뮤니티 삭제
-    fun delCommunity() {
+    fun delCommunity(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            try {
-                communityRepository.deleteCommunity(id.value)
-            } catch (e: Exception) {
-                generalErrorState.update { Pair(true, e.message) }
+            val result = communityRepository.deleteCommunity(id.value)
+            if (result.errorMessage != null){
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> {unLoginedErrorState.update { true }}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update { true }}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> {wrongTypeTokenErrorState.update { true }}
+                    else -> {generalErrorState.update { Pair(true, result.errorMessage!!.message) }}
+                }
+                return@launch
             }
+            withContext(Dispatchers.Main){ onSuccess() }
         }
     }
     //커뮤니티 신고하기
-    fun reportCommunity() {
+    fun reportCommunity(onSuccess: () -> Unit) {
         viewModelScope.launch {
             val requestDto = TargetRequestDto(targetId = id.value.toString())
             val result = reportRepository.reportCommunity(requestDto)
@@ -122,6 +143,10 @@ class CommunityDescViewModel @Inject constructor(
                     ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
                     else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
+                return@launch
+            }
+            withContext(Dispatchers.Main){
+                onSuccess()
             }
         }
     }
@@ -160,11 +185,10 @@ class CommunityDescViewModel @Inject constructor(
                 }
                 return@launch
             }
-            flag.update{!flag.value}
         }
     }
     //댓글 삭제
-    fun delComment(id: Int) {
+    fun delComment(id: Int, onSuccess: () -> Unit) {
         viewModelScope.launch {
             val result = communityCommentRepository.deleteCommunityComment(id)
             if (result.errorMessage != null){
@@ -176,11 +200,11 @@ class CommunityDescViewModel @Inject constructor(
                 }
                 return@launch
             }
-            flag.update{!flag.value}
+            withContext(Dispatchers.Main){ onSuccess() }
         }
     }
     //댓글 신고하기
-    fun reportComment(id: Int) {
+    fun reportComment(id: Int, onSuccess: () -> Unit) {
         viewModelScope.launch {
             val requestDto = TargetRequestDto(id.toString())
             val result = reportRepository.reportCommunityComment(requestDto)
@@ -191,7 +215,9 @@ class CommunityDescViewModel @Inject constructor(
                     ErrorMessageType.EXPIRED_TOKEN.name -> {expiredTokenErrorState.update{true}}
                     else -> {generalErrorState.update{Pair(true, result.errorMessage!!.message)}}
                 }
+                return@launch
             }
+            withContext(Dispatchers.Main){ onSuccess() }
         }
     }
     //댓글 좋아요
@@ -212,15 +238,12 @@ class CommunityDescViewModel @Inject constructor(
         }
     }
     //id 설정
-    fun setId(id: Int?) {
-        if (id == null) {
+    fun setId(newId: Int?) {
+        if (newId == null) {
             generalErrorState.update { Pair(true, "해당 글을 찾을 수 없습니다.") }
             return
-        } else if (id == -1) {
-            generalErrorState.update { Pair(true, "이미 삭제된 게시글 입니다.") }
-            return
         }
-        _id.update { id }
+        id.update { newId }
     }
     private fun getCommentPaging(id: Int) : CommunityCommentPagingSource {
         return CommunityCommentPagingSource(
@@ -233,9 +256,18 @@ class CommunityDescViewModel @Inject constructor(
 sealed interface CommunityDescUiState {
     data object Loading : CommunityDescUiState
     data class CommunityDesc(
-        val community: CommunityDefaultResponseDto,
-    ) : CommunityDescUiState {
-        val photoList = community.communityPhotos.map {it.photoUrl}
-    }
+        val author: String,
+        val category: String,
+        val communityPhotos: ImmutableList<String>,
+        val content: String,
+        val heartCount: Int,
+        val imagesCount: Int,
+        val liked: Boolean,
+        val myProfileImgUrl: String?,
+        val profileImgUrl: String?,
+        val time: String,
+        val title: String,
+        val writed: Boolean,
+    ) : CommunityDescUiState
     data object Error : CommunityDescUiState
 }

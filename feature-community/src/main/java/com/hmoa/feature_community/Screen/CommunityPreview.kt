@@ -38,7 +38,6 @@ fun CommunityPreviewRoute(
     navCommunityDescription: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navPost: (String) -> Unit,
     navLogin: () -> Unit,
-    navHPedia: () -> Unit,
     viewModel: CommunityMainViewModel = hiltViewModel()
 ) {
     //view model의 ui state에서 type, list 를 받아서 사용하는 방식
@@ -46,30 +45,19 @@ fun CommunityPreviewRoute(
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val type by viewModel.type.collectAsStateWithLifecycle()
     val onPostClick = remember<(Int) -> Unit>{{navCommunityDescription(CommunityRoute.CommunityPreviewRoute, it)}}
+    val communities = viewModel.communityPagingSource().collectAsLazyPagingItems()
 
     CommunityPage(
         uiState = uiState.value,
         errState = errState.value,
-        communities = viewModel.communityPagingSource().collectAsLazyPagingItems(),
+        communities = communities,
         type = type,
-        onTypeChanged = { viewModel.updateCategory(it) },
+        onTypeChanged = viewModel::updateCategory,
         navBack = navBack,
         navSearch = navSearch,
         navCommunityDescription = onPostClick,
-        navPost = {
-            if (viewModel.hasToken()) {
-                navPost(it)
-            } else {
-                viewModel.updateLoginError()
-            }
-        },
-        onErrorHandleLoginAgain = {
-            if (viewModel.hasToken()) {
-                navHPedia()
-            } else {
-                navLogin()
-            }
-        }
+        navPost = navPost,
+        onErrorHandleLoginAgain = navLogin
     )
 }
 
@@ -86,71 +74,19 @@ fun CommunityPage(
     navPost: (String) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-    var isFabOpen by remember { mutableStateOf(false) }
-    val animatedAlpha by animateFloatAsState(
-        targetValue = if (isFabOpen) 0.8f else 0f, label = "fab alpha animation"
-    )
-
     when (uiState) {
         is CommunityMainUiState.Loading -> AppLoadingScreen()
         is CommunityMainUiState.Community -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    TopBar(
-                        title = "Community",
-                        navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                        onNavClick = navBack,
-                        menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
-                        onMenuClick = navSearch
-                    )
-                    ContentDivider()
-                    CommunityMainTypes(
-                        type = type,
-                        onTypeChanged = onTypeChanged,
-                    )
-                    ContentDivider()
-                    CommunityPagePostList(
-                        communities = communities.itemSnapshotList,
-                        navCommunityDescription = navCommunityDescription
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(end = 8.dp),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    FloatingActionBtn(
-                        width = 135.dp,
-                        fontSize = 16.sp,
-                        options = listOf(
-                            Category.추천.name,
-                            Category.시향기.name,
-                            Category.자유.name,
-                        ),
-                        events = listOf(
-                            { navPost(Category.추천.name) },
-                            { navPost(Category.시향기.name) },
-                            { navPost(Category.자유.name) }
-                        ),
-                        isAvailable = true,
-                        isFabOpen = isFabOpen,
-                        onFabClick = { isFabOpen = it }
-                    )
-                }
-            }
-
-            //fab 선택 시 화면 필터
-            Box(modifier = Modifier.fillMaxSize().alpha(animatedAlpha).background(Color.Black))
+            PreviewContent(
+                communities = communities,
+                type = type,
+                navBack = navBack,
+                navSearch = navSearch,
+                onTypeChanged = onTypeChanged,
+                navCommunityDescription = navCommunityDescription,
+                navPost = navPost
+            )
         }
-
         is CommunityMainUiState.Error -> {
             ErrorUiSetView(
                 onLoginClick = onErrorHandleLoginAgain,
@@ -159,6 +95,78 @@ fun CommunityPage(
             )
         }
     }
+}
+
+@Composable
+fun PreviewContent(
+    communities: LazyPagingItems<CommunityByCategoryResponseDto>,
+    type: Category,
+    onTypeChanged: (type: Category) -> Unit,
+    navBack: () -> Unit,
+    navSearch: () -> Unit,
+    navCommunityDescription: (communityId: Int) -> Unit,
+    navPost: (type: String) -> Unit,
+){
+    var isFabOpen by remember { mutableStateOf(false) }
+    val animatedAlpha by animateFloatAsState( targetValue = if (isFabOpen) 0.8f else 0f, label = "fab alpha animation" )
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            TopBar(
+                title = "Community",
+                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                onNavClick = navBack,
+                menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_search),
+                onMenuClick = navSearch
+            )
+            ContentDivider()
+            CommunityMainTypes(
+                type = type,
+                onTypeChanged = onTypeChanged,
+            )
+            ContentDivider()
+            CommunityPagePostList(
+                communities = communities.itemSnapshotList,
+                navCommunityDescription = navCommunityDescription
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(end = 8.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            FloatingActionBtn(
+                width = 135.dp,
+                fontSize = 16.sp,
+                options = listOf(
+                    Category.추천.name,
+                    Category.시향기.name,
+                    Category.자유.name,
+                ),
+                events = listOf(
+                    { navPost(Category.추천.name) },
+                    { navPost(Category.시향기.name) },
+                    { navPost(Category.자유.name) }
+                ),
+                isAvailable = true,
+                isFabOpen = isFabOpen,
+                onFabClick = { isFabOpen = it }
+            )
+        }
+    }
+
+    //fab 선택 시 화면 필터
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .alpha(animatedAlpha)
+        .background(Color.Black))
 }
 
 @Composable

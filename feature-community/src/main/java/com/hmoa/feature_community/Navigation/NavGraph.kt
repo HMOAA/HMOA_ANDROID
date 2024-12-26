@@ -85,7 +85,6 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 navCommunityDescription = navCommunityDescription,
                 navPost = navCommunityPost,
                 navLogin = onErrorHandleLoginAgain,
-                navHPedia = navHPedia,
             )
         }
         composable(route = "${CommunityRoute.CommunityPostRoute.name}/{type}") {

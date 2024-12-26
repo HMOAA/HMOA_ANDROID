@@ -30,7 +30,6 @@ import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityMainUiState
 import com.hmoa.feature_community.ViewModel.CommunityMainViewModel
 
-
 @Composable
 fun CommunityPreviewRoute(
     navBack: () -> Unit,
@@ -67,7 +66,7 @@ fun CommunityPage(
     errState: ErrorUiState,
     communities: LazyPagingItems<CommunityByCategoryResponseDto>,
     type: Category,
-    onTypeChanged: (Category) -> Unit,
+    onTypeChanged: (newCategory: Category) -> Unit,
     navBack: () -> Unit,
     navSearch: () -> Unit,
     navCommunityDescription: (Int) -> Unit,
@@ -75,8 +74,8 @@ fun CommunityPage(
     onErrorHandleLoginAgain: () -> Unit,
 ) {
     when (uiState) {
-        is CommunityMainUiState.Loading -> AppLoadingScreen()
-        is CommunityMainUiState.Community -> {
+        CommunityMainUiState.Loading -> AppLoadingScreen()
+        CommunityMainUiState.Community -> {
             PreviewContent(
                 communities = communities,
                 type = type,
@@ -87,7 +86,7 @@ fun CommunityPage(
                 navPost = navPost
             )
         }
-        is CommunityMainUiState.Error -> {
+        CommunityMainUiState.Error -> {
             ErrorUiSetView(
                 onLoginClick = onErrorHandleLoginAgain,
                 errorUiState = errState,

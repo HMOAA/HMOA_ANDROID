@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -55,13 +56,8 @@ class CommunityMainViewModel @Inject constructor(
         initialValue = ErrorUiState.Loading
     )
 
-    val uiState: StateFlow<CommunityMainUiState> = combine(
-        _communities,
-        _enableLoginErrorDialog
-    ) { communities, isLoginUser ->
-        CommunityMainUiState.Community(
-            communities, isLoginUser
-        )
+    val uiState: StateFlow<CommunityMainUiState> = errorUiState.map{ errState ->
+        CommunityMainUiState.Community
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3_000),
@@ -87,10 +83,6 @@ class CommunityMainViewModel @Inject constructor(
 
 sealed interface CommunityMainUiState {
     data object Loading : CommunityMainUiState
-    data class Community(
-        val communities: PagingData<CommunityByCategoryResponseDto>?,
-        val enableLoginErrorDialog: Boolean
-    ) : CommunityMainUiState
-
+    data object Community : CommunityMainUiState
     data object Error : CommunityMainUiState
 }

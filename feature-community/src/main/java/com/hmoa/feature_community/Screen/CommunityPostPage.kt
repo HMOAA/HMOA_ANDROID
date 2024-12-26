@@ -29,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +59,6 @@ fun CommunityPostRoute(
     navBack : () -> Unit,
     viewModel : CommunityPostViewModel = hiltViewModel()
 ){
-    val isDone = viewModel.isDone.collectAsStateWithLifecycle()
     val category = when(category){
         Category.추천.name -> Category.추천
         Category.자유.name -> Category.자유
@@ -68,29 +66,26 @@ fun CommunityPostRoute(
         else -> Category.자유
     }
     val pictures = viewModel.pictures.collectAsStateWithLifecycle()
+    val postCommunity = remember<(title: String, content: String) -> Unit>{{ title, content ->
+        viewModel.postCommunity(title, content, category, navBack())
+    }}
 
     PostCommunityPage(
         category = category,
         pictures = pictures.value,
-        onUpdatePictures = {viewModel.updatePictures(it)},
-        onDeletePictures = {viewModel.deletePicture(it)},
+        onUpdatePictures = viewModel::updatePictures,
+        onDeletePictures = viewModel::deletePicture,
         navBack = navBack,
-        onPostCommunity = { title, content ->
-            viewModel.postCommunity(title = title, content = content, category = category)
-        }
+        onPostCommunity = postCommunity
     )
-
-    LaunchedEffect(isDone.value){
-        if(isDone.value){navBack()}
-    }
 }
 
 @Composable
 fun PostCommunityPage(
     category : Category,
     pictures : List<Uri>,
-    onUpdatePictures : (List<Uri>) -> Unit,
-    onDeletePictures : (Int) -> Unit,
+    onUpdatePictures : (pictureUris: List<Uri>) -> Unit,
+    onDeletePictures : (delPictureId: Int) -> Unit,
     navBack: () -> Unit,
     onPostCommunity: (title: String, content: String) -> Unit,
 ) {

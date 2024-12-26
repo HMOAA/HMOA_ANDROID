@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
 class PerfumePagingSource<T : Any, R>(
-    private val fetcher: suspend (Int) -> R,
+    private val fetcher: suspend (pageNumber: Int) -> R,
     private val mapper: (R) -> List<T>
 ) : PagingSource<Int, T>() {
 

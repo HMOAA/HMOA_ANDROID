@@ -4,7 +4,20 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,7 +44,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.CircleImageView
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.ImageView
+import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
@@ -42,25 +59,25 @@ import com.hmoa.feature_magazine.ViewModel.MagazineMainViewModel
 
 @Composable
 fun MagazineMainRoute(
-    onNavHome: () -> Unit,
-    onNavPerfumeDesc: (Int) -> Unit,
-    onNavCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
-    onNavMagazineDesc: (Int) -> Unit,
+    navHome: () -> Unit,
+    navPerfumeDesc: (Int) -> Unit,
+    navCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
+    navMagazineDesc: (Int) -> Unit,
     viewModel: MagazineMainViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val magazineList = viewModel.magazinePagingSource().collectAsLazyPagingItems()
-    val onPostClick = remember<(Int) -> Unit>{{onNavCommunityDesc(CommunityRoute.CommunityHomeRoute, it)}}
+    val onPostClick = remember<(Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunityHomeRoute, it)}}
 
     MagazineMainScreen(
         uiState = uiState.value,
         errorState = errorState.value,
         magazineList = magazineList,
-        onNavHome = onNavHome,
-        onNavPerfumeDesc = onNavPerfumeDesc,
-        onNavCommunityDesc = onPostClick,
-        onNavMagazineDesc = onNavMagazineDesc
+        navHome = navHome,
+        onPerfumeClick = navPerfumeDesc,
+        onPostClick = onPostClick,
+        onMagazineClick = navMagazineDesc
     )
 }
 
@@ -69,10 +86,10 @@ fun MagazineMainScreen(
     uiState: MagazineMainUiState,
     errorState: ErrorUiState,
     magazineList: LazyPagingItems<MagazineSummaryResponseDto>,
-    onNavHome: () -> Unit,
-    onNavPerfumeDesc: (Int) -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavMagazineDesc: (Int) -> Unit
+    navHome: () -> Unit,
+    onPerfumeClick: (perfumeId: Int) -> Unit,
+    onPostClick: (communityId: Int) -> Unit,
+    onMagazineClick: (magazineId: Int) -> Unit
 ) {
     when (uiState) {
         MagazineMainUiState.Loading -> AppLoadingScreen()
@@ -81,17 +98,16 @@ fun MagazineMainScreen(
                 magazineList = magazineList.itemSnapshotList,
                 perfumeList = uiState.perfumes,
                 reviewList = uiState.reviews,
-                onNavPerfumeDesc = onNavPerfumeDesc,
-                onNavCommunityDesc = onNavCommunityDesc,
-                onNavMagazineDesc = onNavMagazineDesc
+                onPerfumeClick = onPerfumeClick,
+                onPostClick = onPostClick,
+                onMagazineClick = onMagazineClick
             )
         }
-
-        is MagazineMainUiState.Error -> {
+        MagazineMainUiState.Error -> {
             ErrorUiSetView(
-                onLoginClick = { onNavHome() },
+                onLoginClick = navHome,
                 errorUiState = errorState,
-                onCloseClick = { onNavHome() }
+                onCloseClick = navHome
             )
         }
     }
@@ -102,42 +118,43 @@ private fun MagazineFullContent(
     magazineList: ItemSnapshotList<MagazineSummaryResponseDto>,
     perfumeList: RecentPerfumeResponseDto,
     reviewList: MagazineTastingCommentResponseDto,
-    onNavPerfumeDesc: (Int) -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavMagazineDesc: (Int) -> Unit
+    onPerfumeClick: (perfumeId: Int) -> Unit,
+    onPostClick: (communityId: Int) -> Unit,
+    onMagazineClick: (magazineId: Int) -> Unit
 ) {
     if (magazineList.isNotEmpty()) {
-        val magazines = magazineList.subList(0, 5)
+        val magazines = remember{ magazineList.subList(0, 5) }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(56.dp)
         ) {
             item {
-                MagazineTitleBox(
-                    magazines = magazines.filterNotNull()
-                )
+                MagazineTitleBox(magazines = magazines.filterNotNull())
                 Spacer(Modifier.height(32.dp))
                 ReleasePerfumeList(
                     perfumeList = perfumeList,
-                    onNavPerfumeDesc = onNavPerfumeDesc
+                    onNavPerfumeDesc = onPerfumeClick
                 )
                 Spacer(Modifier.height(52.dp))
                 Top10Reviews(
                     reviews = reviewList,
-                    onNavCommunityDesc = onNavCommunityDesc
+                    onNavCommunityDesc = onPostClick
                 )
                 Spacer(Modifier.height(52.dp))
                 MagazineHeader()
                 Spacer(Modifier.height(24.dp))
             }
-            items(magazineList) { magazine ->
+            items(
+                items = magazineList,
+                key = {it!!.magazineId}
+            ) { magazine ->
                 if (magazine != null) {
                     MagazineContent(
                         imageUrl = magazine.previewImgUrl,
                         title = magazine.title,
                         preview = magazine.preview,
-                        onNavMagazineDesc = { onNavMagazineDesc(magazine.magazineId) }
+                        onNavMagazineDesc = { onMagazineClick(magazine.magazineId) }
                     )
                 }
             }

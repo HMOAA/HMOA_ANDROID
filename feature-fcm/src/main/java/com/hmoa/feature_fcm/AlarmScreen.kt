@@ -3,12 +3,18 @@ package com.hmoa.feature_fcm
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,17 +30,19 @@ import com.hmoa.core_designsystem.component.AlarmItem
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.AlarmResponse
 
 @Composable
 fun AlarmScreenRoute(
     onNavBack: () -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
-    onNavPerfumeComment: (Int) -> Unit,
+    onNavCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
+    onNavPerfumeComment: (perfumeId: Int) -> Unit,
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val onPostClick = remember<(Int) -> Unit>{{onNavCommunityDesc(CommunityRoute.CommunityHomeRoute, it)}}
     AlarmScreen(
         uiState = uiState.value,
         errState = errorState.value,
@@ -42,7 +50,7 @@ fun AlarmScreenRoute(
             val uri = Uri.parse(type)
             val type = uri.host
             when (type) {
-                "community" -> onNavCommunityDesc(id)
+                "community" -> onPostClick(id)
                 "perfume_comment" -> onNavPerfumeComment(id)
                 else -> {
                     Log.d("NAVIGATION TEST", "type : ${type}")

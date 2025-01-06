@@ -12,6 +12,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +33,7 @@ import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
 import com.hmoa.core_model.response.RecentPerfumeResponseDto
@@ -42,13 +44,14 @@ import com.hmoa.feature_magazine.ViewModel.MagazineMainViewModel
 fun MagazineMainRoute(
     onNavHome: () -> Unit,
     onNavPerfumeDesc: (Int) -> Unit,
-    onNavCommunityDesc: (Int) -> Unit,
+    onNavCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     onNavMagazineDesc: (Int) -> Unit,
     viewModel: MagazineMainViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val magazineList = viewModel.magazinePagingSource().collectAsLazyPagingItems()
+    val onPostClick = remember<(Int) -> Unit>{{onNavCommunityDesc(CommunityRoute.CommunityHomeRoute, it)}}
 
     MagazineMainScreen(
         uiState = uiState.value,
@@ -56,7 +59,7 @@ fun MagazineMainRoute(
         magazineList = magazineList,
         onNavHome = onNavHome,
         onNavPerfumeDesc = onNavPerfumeDesc,
-        onNavCommunityDesc = onNavCommunityDesc,
+        onNavCommunityDesc = onPostClick,
         onNavMagazineDesc = onNavMagazineDesc
     )
 }

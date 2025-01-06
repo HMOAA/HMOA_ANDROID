@@ -1,10 +1,9 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
     kotlin("kapt")
 }
 
@@ -42,7 +41,7 @@ android {
         jvmTarget = "17"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.0"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     buildFeatures {
         compose = true
@@ -51,59 +50,27 @@ android {
 }
 
 dependencies {
-
-    val hilt_version = "2.48.1"
-    val hilt_viewmodel_version = "1.0.0-alpha03"
-    val hilt_nav_compose_version = "1.0.0"
-
     implementation(project(":core-designsystem"))
     implementation(project(":core-domain"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
 
-    //material3
-    implementation("androidx.compose.material3:material3:1.2.0")
-    implementation("androidx.compose.material:material:1.2.0-beta02")
+    implementation(libs.bundles.ui)
+    implementation(libs.navigation.compose)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.paging.compose)
+    implementation(libs.open.licenses)
+    implementation(libs.bundles.firebase)
+    implementation(libs.bundles.kakao.login)
+    implementation(libs.bundles.basic)
 
-    //preview
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation(libs.bundles.hilt)
+    kapt(libs.hilt.android.compiler)
+    testAnnotationProcessor(libs.hilt.compiler)
+    kapt(libs.hilt.viewmodel)
 
-    implementation("androidx.compose.ui:ui:1.1.0")
-
-    //bottom navigation
-    implementation("androidx.navigation:navigation-compose:2.7.0")
-
-    //collectAsStateWithLifecycle 함수
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
-
-    //paging
-    implementation("androidx.paging:paging-compose:3.2.0")
-
-    //open licence
-    implementation("com.google.android.gms:play-services-oss-licenses:17.0.0")
-
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.google.firebase:firebase-messaging:21.1.0")
-    implementation("com.google.firebase:firebase-analytics")
-
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    implementation("com.google.dagger:hilt-compiler:$hilt_version")
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
-    testAnnotationProcessor("com.google.dagger:hilt-compiler:$hilt_version")
-    implementation("androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version")
-    kapt("androidx.hilt:hilt-compiler:$hilt_viewmodel_version")
-
-    implementation("com.kakao.sdk:v2-all:2.19.0")// 전체 모듈 설치, 2.11.0 버전부터 지원
-    implementation("com.kakao.sdk:v2-user:2.19.0") // 카카오 로그인 API 모듈
-    implementation("com.kakao.sdk:v2-talk:2.19.0") // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
-    implementation("com.kakao.sdk:v2-share:2.19.0") // 카카오톡 공유 API 모듈
-    implementation("com.kakao.sdk:v2-friend:2.19.0") // 피커 API 모듈
-    implementation("com.kakao.sdk:v2-cert:2.19.0") // 카카오 인증서비스 API 모듈
-
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
+    debugImplementation(libs.ui.tooling)
+    testImplementation(libs.junit)
+    implementation(libs.junit.ext)
 
 }

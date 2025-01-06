@@ -2,12 +2,11 @@ package com.hmoa.feature_perfume
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.hmoa.core_domain.repository.PerfumeCommentRepository
+import com.hmoa.core_model.response.PerfumeCommentGetResponseDto
 import com.hmoa.core_model.response.PerfumeCommentResponseDto
 
-class PerfumeCommentLatestPagingSource(
-    private val perfumeCommentRepository: PerfumeCommentRepository,
-    private val perfumeId: Int,
+class PerfumeCommentPagingSource(
+    private val fetcher: suspend (pageNumber: Int, cursor: Int) -> PerfumeCommentGetResponseDto,
 ) : PagingSource<Int, PerfumeCommentResponseDto>() {
     private var commentCounts = 0
     private var cursor = 0
@@ -15,12 +14,7 @@ class PerfumeCommentLatestPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PerfumeCommentResponseDto> {
         val pageNumber = params.key ?: 0
         try {
-            val response =
-                perfumeCommentRepository.getPerfumeCommentsLatest(
-                    pageNumber,
-                    cursor = cursor,
-                    perfumeId = perfumeId
-                )
+            val response = fetcher(pageNumber, cursor)
             commentCounts = response.commentCount
             cursor = response.comments.get(response.comments.lastIndex).id
             val prevKey = if (pageNumber > 0) pageNumber - 1 else null

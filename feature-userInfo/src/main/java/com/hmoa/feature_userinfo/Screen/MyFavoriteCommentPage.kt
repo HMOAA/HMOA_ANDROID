@@ -1,11 +1,20 @@
 package com.hmoa.feature_userinfo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -16,9 +25,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.*
+import com.hmoa.core_designsystem.component.AppLoadingScreen
+import com.hmoa.core_designsystem.component.Comment
+import com.hmoa.core_designsystem.component.EmptyDataPage
+import com.hmoa.core_designsystem.component.ErrorUiSetView
+import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.TypeBadge
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.MyPageCategory
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.CommunityCommentDefaultResponseDto
 import com.hmoa.feature_userinfo.viewModel.FavoriteCommentUiState
 import com.hmoa.feature_userinfo.viewModel.FavoriteCommentViewModel
@@ -26,7 +41,7 @@ import com.hmoa.feature_userinfo.viewModel.FavoriteCommentViewModel
 @Composable
 fun MyFavoriteCommentRoute(
     navBack: () -> Unit,
-    navCommunity: (communityId: Int) -> Unit,
+    navCommunity: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navPerfume: (perfumeId: Int) -> Unit,
     viewModel: FavoriteCommentViewModel = hiltViewModel()
 ) {
@@ -34,6 +49,7 @@ fun MyFavoriteCommentRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val type by viewModel.type.collectAsStateWithLifecycle()
+    val onCommentClick = remember<(Int) -> Unit>{{navCommunity(CommunityRoute.CommunityHomeRoute, it)}}
 
     MyFavoriteCommentPage(
         uiState = uiState.value,
@@ -42,7 +58,7 @@ fun MyFavoriteCommentRoute(
         onTypeChanged = viewModel::changeType,
         navBack = navBack,
         navPerfume = navPerfume,
-        navCommunity = navCommunity,
+        navCommunity = onCommentClick,
     )
 }
 

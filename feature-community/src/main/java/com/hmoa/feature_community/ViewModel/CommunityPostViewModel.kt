@@ -4,7 +4,9 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
+import com.hmoa.core_common.absolutePath
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +19,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -75,10 +76,10 @@ class CommunityPostViewModel @Inject constructor(
     }
 
     //게시글 게시
-    fun postCommunity(title: String, content: String, category: Category) {
+    fun postCommunity(title: String, content: String, category: Category, onSuccess: () -> Unit,) {
         val images = arrayListOf<File>()
         pictures.value.map { picture ->
-            val path = absolutePath(picture) ?: throw NullPointerException("file path is NULL")
+            val path = absolutePath(context, picture) ?: throw NullPointerException("file path is NULL")
             images.add(File(path))
         }
         viewModelScope.launch {
@@ -89,32 +90,15 @@ class CommunityPostViewModel @Inject constructor(
                 content = content
             )
             if (result.errorMessage != null) {
-                _generalErrorState.update { Pair(true, result.errorMessage!!.message) }
+                when(result.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> _unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> _wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> _expiredTokenErrorState.update{true}
+                    else -> _generalErrorState.update{Pair(true, result.errorMessage!!.message)}
+                }
                 return@launch
             }
-            isDone.update{true}
+            onSuccess()
         }
-    }
-
-    private fun absolutePath(uri: Uri): String? {
-        val contentResolver = context.contentResolver
-
-        val filePath = (context.applicationInfo.dataDir + File.separator + System.currentTimeMillis())
-        val file = File(filePath)
-
-        try {
-            val inputStream = contentResolver.openInputStream(uri) ?: return null
-
-            val outputStream = FileOutputStream(file)
-
-            val buf = ByteArray(1024)
-            var len: Int
-            while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
-            outputStream.close()
-            inputStream.close()
-        } catch (ignore: Exception) {
-            return null
-        }
-        return file.absolutePath
     }
 }

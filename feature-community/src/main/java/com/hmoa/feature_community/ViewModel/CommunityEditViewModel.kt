@@ -1,6 +1,6 @@
 package com.hmoa.feature_community.ViewModel
 
-import android.app.Application
+import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
+import com.hmoa.core_common.absolutePath
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.CommunityRepository
 import com.hmoa.core_model.Category
 import com.hmoa.core_model.data.ErrorMessage
@@ -24,31 +26,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityEditViewModel @Inject constructor(
-    private val application: Application,
     private val repository: CommunityRepository,
 ) : ViewModel() {
-    private val context = application.applicationContext
-
     //가져올 게시글 id
-    private val _id = MutableStateFlow<Int?>(null)
-    val id get() = _id.asStateFlow()
-
-    //title
-    private val _title = MutableStateFlow("")
-    val title get() = _title.asStateFlow()
-
-    //content
-    private val _content = MutableStateFlow("")
-    val content get() = _content.asStateFlow()
-
-    //category
-    private val _category = MutableStateFlow<Category?>(null)
-    val category get() = _category.asStateFlow()
+    private val id = MutableStateFlow<Int>(-1)
 
     //pictures
     private val _pictures = MutableStateFlow<List<CommunityPhotoDefaultResponseDto>>(listOf())
@@ -82,39 +67,37 @@ class CommunityEditViewModel @Inject constructor(
     )
 
     val uiState: StateFlow<CommunityEditUiState> = combine(id, errorUiState) { communityId, errorState ->
+        if (errorState is ErrorUiState.ErrorData && errorState.isValidate()) throw Exception("")
         val result = repository.getCommunity(communityId!!)
-        if (errorState is ErrorUiState.ErrorData && errorState.generalError.first) throw Exception(errorState.generalError.second)
         if (result.errorMessage is ErrorMessage) throw Exception(result.errorMessage!!.message)
         result.data!!
-    }.asResult()
-        .map { result ->
+    }.asResult().map { result ->
             when (result) {
                 Result.Loading -> CommunityEditUiState.Loading
                 is Result.Success -> {
-                    val data = result.data
-                    _title.update { data.title }
-                    _content.update { data.content }
-                    _category.update {
-                        val category = when (data.category) {
-                            "시향기" -> Category.시향기
-                            "추천" -> Category.추천
-                            "자유" -> Category.자유
-                            else -> throw IllegalArgumentException("올바르지 않은 Category")
-                        }
-                        category
+                    val category = when(result.data.category){
+                        "시향기" -> Category.시향기
+                        "추천" -> Category.추천
+                        "자유" -> Category.자유
+                        else -> throw IllegalArgumentException("올바르지 않은 Category")
                     }
-                    _pictures.update { data.communityPhotos }
-                    _newPictures.update { data.communityPhotos.map { it.photoUrl.toUri() } }
-                    CommunityEditUiState.Success
+                    _pictures.update { result.data.communityPhotos }
+                    _newPictures.update { result.data.communityPhotos.map { it.photoUrl.toUri() } }
+                    CommunityEditUiState.Success(
+                        title = result.data.title,
+                        content = result.data.content,
+                        category = category
+                    )
                 }
                 is Result.Error -> {
-                    if (!generalErrorState.value.first) {
-                        when (result.exception.message) {
-                            ErrorMessageType.EXPIRED_TOKEN.message -> expiredTokenErrorState.update { true }
-                            ErrorMessageType.WRONG_TYPE_TOKEN.message -> wrongTypeTokenErrorState.update { true }
-                            ErrorMessageType.UNKNOWN_ERROR.message -> unLoginedErrorState.update { true }
-                            else -> generalErrorState.update { Pair(true, result.exception.message) }
-                        }
+                    if (result.exception.message != "") {
+                        handleErrorType(
+                            error = result.exception,
+                            onExpiredTokenError = { expiredTokenErrorState.update { true } },
+                            onWrongTypeTokenError = { wrongTypeTokenErrorState.update { true } },
+                            onUnknownError = { unLoginedErrorState.update { true } },
+                            onGeneralError = {generalErrorState.update { Pair(true, result.exception.message) }}
+                        )
                     }
                     CommunityEditUiState.Error
                 }
@@ -126,16 +109,14 @@ class CommunityEditViewModel @Inject constructor(
         )
 
     //id setting
-    fun setId(id: Int?) {
-        _id.update {
-            if (id == null) generalErrorState.update{Pair(true, "Not Found ID")}
-            id
+    fun setId(newId: Int?) {
+        if (newId == null) {
+            generalErrorState.update { Pair(true, "해당 게시글을 찾을 수 없습니다.") }
+            return
         }
+        id.update {newId}
     }
-    //title update
-    fun updateTitle(title: String) = _title.update { title }
-    //content update
-    fun updateContent(content: String) = _content.update { content }
+
     //사진 추가
     fun updatePictures(newPictures: List<Uri>) = _newPictures.update { it.plus(newPictures) }
     //사진 삭제
@@ -143,8 +124,9 @@ class CommunityEditViewModel @Inject constructor(
         _newPictures.update { it.minus(uri) }
         delPicture.add(uri)
     }
+
     //게시글 수정 POST
-    fun updateCommunity() {
+    fun updateCommunity(context: Context, title: String, content: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             val pictureUris = _pictures.value.map { it.photoUrl.toUri() }
             val addPictures = mutableListOf<Uri>()
@@ -154,25 +136,32 @@ class CommunityEditViewModel @Inject constructor(
                 }
             }
             val images = addPictures.map {
-                val uri = absolutePath(it)
+                val uri = absolutePath(context, it)
                 if (uri == null) generalErrorState.update { Pair(true, "파일 경로가 NULL 입니다.") }
                 File(uri!!)
             }
             val delPictureId = getDeletePictureId(delPicture)
-            if (id.value != null) {
-                val result = repository.postCommunityUpdate(
-                    images = images.toTypedArray(),
-                    title = title.value,
-                    content = content.value,
-                    communityId = id.value!!,
-                    deleteCommunityPhotoIds = delPictureId.toTypedArray()
-                )
-                if (result.errorMessage is ErrorMessage) {generalErrorState.update { Pair(true, result.errorMessage!!.message) }}
-            } else {
-                generalErrorState.update { Pair(true,"id is null") }
+            val response = repository.postCommunityUpdate(
+                images = images.toTypedArray(),
+                title = title,
+                content = content,
+                communityId = id.value,
+                deleteCommunityPhotoIds = delPictureId.toTypedArray()
+            )
+
+            if (response.errorMessage != null) {
+                when(response.errorMessage!!.message){
+                    ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                    ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                    ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
+                    else -> generalErrorState.update{Pair(true, response.errorMessage!!.message)}
+                }
+                return@launch
             }
+            onSuccess()
         }
     }
+
     //삭제할 사진 id 계산
     private fun getDeletePictureId(pictures: List<Uri>): ArrayList<Int> {
         val ids = arrayListOf<Int>()
@@ -184,27 +173,14 @@ class CommunityEditViewModel @Inject constructor(
         }
         return ids
     }
-    private fun absolutePath(uri: Uri): String? {
-        val contentResolver = context.contentResolver
-        val filePath = (context.applicationInfo.dataDir + File.separator + System.currentTimeMillis())
-        val file = File(filePath)
-        try {
-            val inputStream = contentResolver.openInputStream(uri) ?: return null
-            val outputStream = FileOutputStream(file)
-            val buf = ByteArray(1024)
-            var len: Int
-            while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
-            outputStream.close()
-            inputStream.close()
-        } catch (ignore: Exception) {
-            return null
-        }
-        return file.absolutePath
-    }
 }
 
 sealed interface CommunityEditUiState {
     data object Loading : CommunityEditUiState
-    data object Success : CommunityEditUiState
+    data class Success(
+        val title: String,
+        val content: String,
+        val category: Category
+    ) : CommunityEditUiState
     data object Error : CommunityEditUiState
 }

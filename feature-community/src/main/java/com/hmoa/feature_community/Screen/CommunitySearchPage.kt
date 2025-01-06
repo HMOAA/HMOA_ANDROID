@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunitySearchUiState
 import com.hmoa.feature_community.ViewModel.CommunitySearchViewModel
@@ -27,22 +29,23 @@ import com.hmoa.feature_community.ViewModel.CommunitySearchViewModel
 @Composable
 fun CommunitySearchRoute(
     navBack : () -> Unit,
-    navCommunityDesc: (Int) -> Unit,
+    navCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     viewModel : CommunitySearchViewModel = hiltViewModel()
 ){
     val searchWord = viewModel.searchWord.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errState = viewModel.errorUiState.collectAsStateWithLifecycle()
+    val onPostClick = remember<(communityId: Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunitySearchRoute, it)}}
 
     CommunitySearchPage(
         uiState = uiState.value,
         errState = errState.value,
         searchWord = searchWord.value,
-        onSearchWordChanged = { viewModel.updateSearchWord(it) },
-        onClearSearchWord = { viewModel.clearSearchWord() },
-        onClickSearch = { viewModel.updateFlag() },
+        onSearchWordChanged = viewModel::updateSearchWord,
+        onClearSearchWord = viewModel::clearSearchWord,
+        onClickSearch = viewModel::updateFlag,
         navBack = navBack,
-        navCommunityDesc = navCommunityDesc
+        navCommunityDesc = onPostClick
     )
 }
 
@@ -51,7 +54,7 @@ fun CommunitySearchPage(
     uiState : CommunitySearchUiState,
     errState: ErrorUiState,
     searchWord : String,
-    onSearchWordChanged : (String) -> Unit,
+    onSearchWordChanged : (newWord: String) -> Unit,
     onClearSearchWord : () -> Unit,
     onClickSearch : () -> Unit,
     navBack : () -> Unit,
@@ -84,11 +87,11 @@ fun CommunitySearchPage(
 private fun SearchContent(
     communities: List<CommunityByCategoryResponseDto>,
     searchWord: String,
-    onSearchWordChanged: (String) -> Unit,
+    onSearchWordChanged: (newWord: String) -> Unit,
     onClearSearchWord: () -> Unit,
     onClickSearch: () -> Unit,
     navBack: () -> Unit,
-    navCommunityDesc: (Int) -> Unit
+    navCommunityDesc: (communityId: Int) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -106,7 +109,10 @@ private fun SearchContent(
         LazyColumn(
             modifier = Modifier.weight(1f),
         ){
-            items(communities){community ->
+            items(
+                items = communities,
+                key = {it.communityId}
+            ){community ->
                 PostListItem(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -117,9 +123,7 @@ private fun SearchContent(
                     heartCount = community.heartCount,
                     commentCount = community.commentCount
                 )
-                if (communities.indexOf(community) != communities.lastIndex){
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                }
+                if (communities.indexOf(community) != communities.lastIndex){ HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2) }
             }
         }
     }

@@ -94,9 +94,7 @@ fun MyActivityPage(
                         tint = CustomColor.gray2
                     )
                 }
-                if (idx != columnData.lastIndex){
-                    HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2)
-                }
+                if (idx != columnData.lastIndex){ HorizontalDivider(thickness = 1.dp, color = CustomColor.gray2) }
             }
         }
     }

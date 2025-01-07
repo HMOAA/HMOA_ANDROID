@@ -60,6 +60,7 @@ import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import com.hmoa.feature_userinfo.navigation.navigateToUserInfoGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kr.co.bootpay.android.BootpayAnalytics
 
@@ -185,17 +186,23 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.fcmTokenFlow().collectLatest { fcmToken ->
-                    viewModel.getNotificationEnabled().collectLatest { isEnabled ->
-                        Log.d("POST PERMISSION", "is granted : ${isEnabled}")
+                viewModel.fcmTokenFlow()
+                    .combine(viewModel.getNotificationEnabled()) { fcmToken, isNotificationsEnabled ->
+                        Pair(
+                            fcmToken,
+                            isNotificationsEnabled
+                        )
+                    }.collectLatest {
+                        val fcmToken = it.first
+                        val isNotificationsEnabled = it.second
+                        Log.d("POST PERMISSION", "is granted : ${isNotificationsEnabled}")
                         Log.d("FCM TEST", "fcm token : ${fcmToken}")
                         initializeFirebaseSetting(
                             fcmToken = fcmToken,
                             onSaveFcmToken = { token -> viewModel.saveFcmToken(token) })
                         initializeRoute(
-                            onRouteToLogin = { checkFcmToken(fcmToken, isEnabled) })
+                            onRouteToLogin = { checkFcmToken(fcmToken, isNotificationsEnabled) })
                     }
-                }
             }
         }
 
@@ -292,10 +299,10 @@ class MainActivity : AppCompatActivity() {
         Log.d("FCM TEST", "checkFcmToken의 fcmToken 값: ${fcmToken}")
     }
 
-    private suspend fun handleFcmToken(
-        fcmToken: String, isEnabled: Boolean
+    private fun handleFcmToken(
+        fcmToken: String, isNotificationEnabled: Boolean
     ) {
-        if (isEnabled) {
+        if (isNotificationEnabled) {
             Log.d("FCM TEST", "post fcm token")
             viewModel.postFcmToken(fcmToken)
         } else {

@@ -3,8 +3,8 @@ package com.hmoa.feature_brand.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -68,15 +68,14 @@ fun BrandSearchScreen(
 @Composable
 fun BrandSearchContent(
     searchWord: String,
-    consonantBrands: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
-    searchResult: MutableMap<Consonant?, List<BrandDefaultResponseDto>?>?,
+    consonantBrands: Map<Consonant?, List<BrandDefaultResponseDto>?>?,
+    searchResult: Map<Consonant?, List<BrandDefaultResponseDto>?>?,
     onBrandClick: (brandId: Int) -> Unit,
     onBackClick: () -> Unit,
     onChangedWord: (word: String) -> Unit,
     onClearWord: () -> Unit,
     onClickSearch: (word: String) -> Unit
 ) {
-    var scrollState = rememberScrollState()
     Column {
         Row(modifier = Modifier.padding(start = 16.dp)) {
             SearchTopBar(
@@ -93,23 +92,27 @@ fun BrandSearchContent(
         )
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
-                .padding(top = 16.dp).verticalScroll(scrollState)
+                .padding(top = 16.dp)
         ) {
             if (searchWord == "") {
-                Consonant.entries.forEach { consonant ->
-                    BrandGridView(
-                        brands = consonantBrands?.get(consonant),
-                        onBrandClick = { onBrandClick(it) },
-                        consonant = consonant
-                    )
+                LazyColumn {
+                    items(Consonant.entries.toList()) { consonant ->
+                        BrandGridView(
+                            brands = consonantBrands?.get(consonant),
+                            onBrandClick = { onBrandClick(it) },
+                            consonant = consonant
+                        )
+                    }
                 }
             } else {
-                Consonant.entries.forEach { consonant ->
-                    BrandGridView(
-                        brands = searchResult?.get(consonant),
-                        onBrandClick = { onBrandClick(it) },
-                        consonant = consonant
-                    )
+                LazyColumn {
+                    items(Consonant.entries.toList()) { consonant ->
+                        BrandGridView(
+                            brands = searchResult?.get(consonant),
+                            onBrandClick = { onBrandClick(it) },
+                            consonant = consonant
+                        )
+                    }
                 }
             }
         }

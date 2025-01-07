@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -36,7 +37,7 @@ fun SearchTopBar(
     onClickSearch: () -> Unit,
     navBack: () -> Unit,
 ) {
-    var searchWord by remember { mutableStateOf("") }
+    var searchWord by remember { mutableStateOf(searchWord) }
     val textFlow = remember { snapshotFlow { searchWord } }
 
     LaunchedEffect(textFlow) {
@@ -51,7 +52,7 @@ fun SearchTopBar(
                     .padding(start = 13.dp),
                 value = searchWord,
                 onValueChange = {
-                    if (it == "") {
+                    if (it.length == 0) {
                         onClearWord()
                     }
                     searchWord = it
@@ -104,7 +105,10 @@ fun SearchTopBar(
                     modifier = Modifier.size(20.dp)
                         .background(color = CustomColor.gray2, shape = CircleShape)
                         .clip(CircleShape),
-                    onClick = onClearWord
+                    onClick = {
+                        onClearWord()
+                        searchWord = ""
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,

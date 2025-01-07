@@ -225,10 +225,10 @@ fun SetUpNavGraph(
 
         /** magazine 모듈 */
         magazineMain(
-            onNavHome = navController::navigateToHome,
-            onNavPerfumeDesc = navController::navigateToPerfume,
-            onNavCommunityDesc = navController::navigateToCommunityDescriptionRoute,
-            onNavMagazineDesc = navController::navigateToMagazineDesc
+            navHome = navController::navigateToHome,
+            navPerfumeDesc = navController::navigateToPerfume,
+            navCommunityDesc = navController::navigateToCommunityDescriptionRoute,
+            navMagazineDesc = navController::navigateToMagazineDesc
         )
         magazineDesc(
             navBack = navController::navigateToBack,

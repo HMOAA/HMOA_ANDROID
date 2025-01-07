@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.basic)
+    implementation(libs.kotlinx.collections.immutable)
 
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)

@@ -1,5 +1,6 @@
 package com.hmoa.feature_magazine.ViewModel
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -13,10 +14,12 @@ import com.hmoa.core_domain.repository.MagazineRepository
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
-import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
-import com.hmoa.core_model.response.RecentPerfumeResponseDto
+import com.hmoa.core_model.response.MagazineTastingCommentResponseDtoItem
+import com.hmoa.core_model.response.RecentPerfumeResponseDtoItem
 import com.hmoa.feature_magazine.MagazinePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -87,8 +90,8 @@ class MagazineMainViewModel @Inject constructor(
             val perfumeList = (perfumes as Result.Success).data
             val communityList = (communities as Result.Success).data
             MagazineMainUiState.MagazineMain(
-                perfumes = perfumeList,
-                reviews = communityList
+                perfumes = perfumeList.toImmutableList(),
+                reviews = communityList.toImmutableList()
             )
         }
     }.stateIn(
@@ -108,8 +111,8 @@ class MagazineMainViewModel @Inject constructor(
 sealed interface MagazineMainUiState{
     data object Loading : MagazineMainUiState
     data class MagazineMain (
-        val perfumes : RecentPerfumeResponseDto,
-        val reviews : MagazineTastingCommentResponseDto
+        @Stable val perfumes : ImmutableList<RecentPerfumeResponseDtoItem>,
+        @Stable val reviews : ImmutableList<MagazineTastingCommentResponseDtoItem>
     ) : MagazineMainUiState
     data object Error : MagazineMainUiState
 }

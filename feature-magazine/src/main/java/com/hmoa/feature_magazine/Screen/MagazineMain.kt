@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.ItemSnapshotList
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_common.ErrorUiState
@@ -52,10 +51,11 @@ import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
-import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
-import com.hmoa.core_model.response.RecentPerfumeResponseDto
+import com.hmoa.core_model.response.MagazineTastingCommentResponseDtoItem
+import com.hmoa.core_model.response.RecentPerfumeResponseDtoItem
 import com.hmoa.feature_magazine.ViewModel.MagazineMainUiState
 import com.hmoa.feature_magazine.ViewModel.MagazineMainViewModel
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun MagazineMainRoute(
@@ -68,7 +68,7 @@ fun MagazineMainRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
     val magazineList = viewModel.magazinePagingSource().collectAsLazyPagingItems()
-    val onPostClick = remember<(Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunityHomeRoute, it)}}
+    val onCommunityClick = remember<(Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunityHomeRoute, it)}}
 
     MagazineMainScreen(
         uiState = uiState.value,
@@ -76,7 +76,7 @@ fun MagazineMainRoute(
         magazineList = magazineList,
         navHome = navHome,
         onPerfumeClick = navPerfumeDesc,
-        onPostClick = onPostClick,
+        onCommunityClick = onCommunityClick,
         onMagazineClick = navMagazineDesc
     )
 }
@@ -88,18 +88,18 @@ fun MagazineMainScreen(
     magazineList: LazyPagingItems<MagazineSummaryResponseDto>,
     navHome: () -> Unit,
     onPerfumeClick: (perfumeId: Int) -> Unit,
-    onPostClick: (communityId: Int) -> Unit,
+    onCommunityClick: (communityId: Int) -> Unit,
     onMagazineClick: (magazineId: Int) -> Unit
 ) {
     when (uiState) {
         MagazineMainUiState.Loading -> AppLoadingScreen()
         is MagazineMainUiState.MagazineMain -> {
-            MagazineFullContent(
-                magazineList = magazineList.itemSnapshotList,
+            MagazineContent(
+                magazineList = magazineList,
                 perfumeList = uiState.perfumes,
                 reviewList = uiState.reviews,
                 onPerfumeClick = onPerfumeClick,
-                onPostClick = onPostClick,
+                onCommunityClick = onCommunityClick,
                 onMagazineClick = onMagazineClick
             )
         }
@@ -114,16 +114,19 @@ fun MagazineMainScreen(
 }
 
 @Composable
-private fun MagazineFullContent(
-    magazineList: ItemSnapshotList<MagazineSummaryResponseDto>,
-    perfumeList: RecentPerfumeResponseDto,
-    reviewList: MagazineTastingCommentResponseDto,
+private fun MagazineContent(
+    magazineList: LazyPagingItems<MagazineSummaryResponseDto>,
+    perfumeList: ImmutableList<RecentPerfumeResponseDtoItem>,
+    reviewList: ImmutableList<MagazineTastingCommentResponseDtoItem>,
     onPerfumeClick: (perfumeId: Int) -> Unit,
-    onPostClick: (communityId: Int) -> Unit,
+    onCommunityClick: (communityId: Int) -> Unit,
     onMagazineClick: (magazineId: Int) -> Unit
 ) {
-    if (magazineList.isNotEmpty()) {
-        val magazines = remember{ magazineList.subList(0, 5) }
+    if (magazineList.itemSnapshotList.isNotEmpty()) {
+        val magazines = remember{
+            if (magazineList.itemSnapshotList.size > 5) { magazineList.itemSnapshotList.subList(0, 5) }
+            else { magazineList.itemSnapshotList }
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
@@ -134,19 +137,19 @@ private fun MagazineFullContent(
                 Spacer(Modifier.height(32.dp))
                 ReleasePerfumeList(
                     perfumeList = perfumeList,
-                    onNavPerfumeDesc = onPerfumeClick
+                    onPerfumeClick = onPerfumeClick
                 )
                 Spacer(Modifier.height(52.dp))
                 Top10Reviews(
                     reviews = reviewList,
-                    onNavCommunityDesc = onPostClick
+                    onCommunityClick = onCommunityClick
                 )
                 Spacer(Modifier.height(52.dp))
                 MagazineHeader()
                 Spacer(Modifier.height(24.dp))
             }
             items(
-                items = magazineList,
+                items = magazines,
                 key = {it!!.magazineId}
             ) { magazine ->
                 if (magazine != null) {
@@ -246,8 +249,8 @@ private fun MagazineTitleBox(
 
 @Composable
 private fun ReleasePerfumeList(
-    perfumeList: RecentPerfumeResponseDto?,
-    onNavPerfumeDesc: (Int) -> Unit
+    perfumeList: ImmutableList<RecentPerfumeResponseDtoItem>,
+    onPerfumeClick: (perfumeId: Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -274,13 +277,16 @@ private fun ReleasePerfumeList(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(perfumeList ?: emptyList()) { perfume ->
+            items(
+                items = perfumeList,
+                key = {it.perfumeId}
+            ) { perfume ->
                 PerfumeDescItem(
                     imageUrl = perfume.perfumeImgUrl,
                     brandName = perfume.brandName,
                     perfumeName = perfume.perfumeName,
                     releaseDate = perfume.releaseDate,
-                    onNavPerfumeDesc = { onNavPerfumeDesc(perfume.perfumeId) }
+                    onNavPerfumeDesc = { onPerfumeClick(perfume.perfumeId) }
                 )
             }
         }
@@ -289,8 +295,8 @@ private fun ReleasePerfumeList(
 
 @Composable
 private fun Top10Reviews(
-    reviews: MagazineTastingCommentResponseDto,
-    onNavCommunityDesc: (Int) -> Unit
+    reviews: ImmutableList<MagazineTastingCommentResponseDtoItem>,
+    onCommunityClick: (communityId: Int) -> Unit
 ) {
     Column {
         Text(
@@ -313,13 +319,16 @@ private fun Top10Reviews(
             modifier = Modifier.padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(reviews) { review ->
+            items(
+                items = reviews,
+                key = {it.communityId}
+            ) { review ->
                 ReviewContent(
                     title = review.title,
                     profileImg = review.profileImg,
                     nickname = review.nickname,
                     content = review.content,
-                    onNavCommunityDesc = { onNavCommunityDesc(review.communityId) }
+                    onNavCommunityDesc = { onCommunityClick(review.communityId) }
                 )
             }
         }
@@ -402,9 +411,7 @@ private fun PerfumeDescItem(
     onNavPerfumeDesc: () -> Unit
 ) {
     Column(
-        modifier = Modifier.clickable {
-            onNavPerfumeDesc()
-        }
+        modifier = Modifier.clickable {onNavPerfumeDesc()}
     ) {
         Box(
             modifier = Modifier.size(155.dp)
@@ -455,9 +462,7 @@ private fun ReviewContent(
             .height(206.dp)
             .background(color = Color.White)
             .border(width = 1.dp, color = CustomColor.gray2, shape = RectangleShape)
-            .clickable {
-                onNavCommunityDesc()
-            }
+            .clickable { onNavCommunityDesc() }
             .padding(horizontal = 20.dp)
             .padding(bottom = 20.dp, top = 24.dp)
     ) {

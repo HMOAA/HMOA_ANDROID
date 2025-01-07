@@ -13,17 +13,17 @@ fun NavHostController.navigateToMagazineHome() = navigate(MagazineRoute.Magazine
 }
 fun NavHostController.navigateToMagazineDesc(magazineId : Int) = navigate("${MagazineRoute.MagazineDescRoute.name}/${magazineId}")
 fun NavGraphBuilder.magazineMain(
-    onNavHome : () -> Unit,
-    onNavPerfumeDesc : (Int) -> Unit,
-    onNavCommunityDesc : (befRoute: CommunityRoute, communityId: Int) -> Unit,
-    onNavMagazineDesc : (Int) -> Unit,
+    navHome : () -> Unit,
+    navPerfumeDesc : (perfumeId: Int) -> Unit,
+    navCommunityDesc : (befRoute: CommunityRoute, communityId: Int) -> Unit,
+    navMagazineDesc : (magazineId: Int) -> Unit,
 ){
     composable(MagazineRoute.Magazine.name){
         MagazineMainRoute(
-            onNavHome = onNavHome,
-            onNavPerfumeDesc = onNavPerfumeDesc,
-            onNavCommunityDesc = onNavCommunityDesc,
-            onNavMagazineDesc = onNavMagazineDesc
+            navHome = navHome,
+            navPerfumeDesc = navPerfumeDesc,
+            navCommunityDesc = navCommunityDesc,
+            navMagazineDesc = navMagazineDesc
         )
     }
 }

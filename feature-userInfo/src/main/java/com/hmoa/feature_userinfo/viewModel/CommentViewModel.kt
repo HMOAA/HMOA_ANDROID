@@ -77,9 +77,7 @@ class CommentViewModel @Inject constructor(
     )
 
     //type 변환
-    fun changeType(newType: MyPageCategory){
-        _type.update{ newType }
-    }
+    fun changeType(newType: MyPageCategory){ _type.update{ newType } }
 
     //댓글 Paging
     private fun commentPagingSource(type : String) : Flow<PagingData<CommunityCommentDefaultResponseDto>> = Pager(

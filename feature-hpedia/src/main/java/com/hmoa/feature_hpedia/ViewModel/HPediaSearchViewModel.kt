@@ -6,13 +6,18 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_domain.repository.SearchRepository
 import com.hmoa.feature_community.ViewModel.PAGE_SIZE
 import com.hmoa.feature_hpedia.SearchResultPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -33,29 +38,42 @@ class HPediaSearchViewModel @Inject constructor(
     private val _topBarState = MutableStateFlow(false)
     val topBarState get() = _topBarState.asStateFlow()
 
-    //err 상태
-    private val _errState = MutableStateFlow<String?>(null)
-    val errState get() = _errState.asStateFlow()
-
+    private var expiredTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var wrongTypeTokenErrorState = MutableStateFlow<Boolean>(false)
+    private var unLoginedErrorState = MutableStateFlow<Boolean>(false)
+    private var generalErrorState = MutableStateFlow<Pair<Boolean, String?>>(Pair(false, null))
+    val errorUiState: StateFlow<ErrorUiState> = combine(
+        expiredTokenErrorState,
+        wrongTypeTokenErrorState,
+        unLoginedErrorState,
+        generalErrorState
+    ) { expiredTokenError, wrongTypeTokenError, unknownError, generalError ->
+        ErrorUiState.ErrorData(
+            expiredTokenError = expiredTokenError,
+            wrongTypeTokenError = wrongTypeTokenError,
+            unknownError = unknownError,
+            generalError = generalError
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ErrorUiState.Loading
+    )
 
     //type 설정
     fun setType(newType : String?){
         if (newType == null) {
-            _errState.update{ "Type is NULL" }
-        } else {
-            _type.update{ newType }
+            generalErrorState.update{ Pair(true, "해당 글에 오류가 발생했습니다") }
+            return
         }
+        _type.update{ newType }
     }
 
     //상단바 상태 수정
-    fun updateTopBarState(state : Boolean) {
-        _topBarState.update{ state }
-    }
+    fun updateTopBarState(state : Boolean) { _topBarState.update{ state } }
 
     //검색어 변경
-    fun updateSearchWord(newSearchWord : String){
-        _searchWord.update{ newSearchWord }
-    }
+    fun updateSearchWord(newSearchWord : String){ _searchWord.update{ newSearchWord } }
 
     //paging데이터 외부 노출
     fun communityPagingSource() : Flow<PagingData<Any>> = Pager(

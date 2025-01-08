@@ -29,7 +29,7 @@ import com.hmoa.feature_community.Screen.CommunityHomeRoute
 
 @Composable
 fun HPediaRoute(
-    navHPediaSearch: (String) -> Unit,
+    navHPediaSearch: (keyword: String) -> Unit,
     navCommunityDesc: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunityGraph: () -> Unit,
     navLogin: () -> Unit
@@ -45,7 +45,7 @@ fun HPediaRoute(
 
 @Composable
 fun HPediaScreen(
-    navHPediaSearch: (String) -> Unit,
+    navHPediaSearch: (keyword: String) -> Unit,
     navCommunityDesc: (communityRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunityGraph: () -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
@@ -61,9 +61,7 @@ fun HPediaScreen(
                 .padding(horizontal = 16.dp)
         ) {
             HPediaScreenTitle("HPedia")
-            SelectSearchType(
-                navHPediaSearch = navHPediaSearch
-            )
+            SelectSearchType(navHPediaSearch = navHPediaSearch)
         }
         Spacer(Modifier.height(27.dp))
         CommunityHomeRoute(
@@ -91,9 +89,7 @@ fun HPediaScreenTitle(title: String) {
 }
 
 @Composable
-fun SelectSearchType(
-    navHPediaSearch: (String) -> Unit
-) {
+fun SelectSearchType(navHPediaSearch: (keyword: String) -> Unit) {
     val data = listOf(
         listOf("용어", "Top notes\n탑노트란?"),
         listOf("노트", "woody\n우디"),
@@ -117,9 +113,7 @@ fun SelectSearchType(
                     .fillMaxHeight()
                     .weight(1f)
                     .background(color = Color.Black, shape = RectangleShape)
-                    .clickable {
-                        navHPediaSearch(data[0])
-                    }
+                    .clickable {navHPediaSearch(data[0])}
                     .padding(16.dp)
             ) {
                 Text(
@@ -134,9 +128,7 @@ fun SelectSearchType(
                     style = textStyle
                 )
             }
-            if (idx != 2) {
-                Spacer(Modifier.width(8.dp))
-            }
+            if (idx != 2) {Spacer(Modifier.width(8.dp))}
         }
     }
 }

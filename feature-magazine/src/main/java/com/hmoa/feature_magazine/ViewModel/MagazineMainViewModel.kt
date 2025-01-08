@@ -1,10 +1,12 @@
 package com.hmoa.feature_magazine.ViewModel
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.hmoa.core_common.ErrorMessageType
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
@@ -12,10 +14,12 @@ import com.hmoa.core_domain.repository.MagazineRepository
 import com.hmoa.core_domain.repository.PerfumeRepository
 import com.hmoa.core_model.data.ErrorMessage
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
-import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
-import com.hmoa.core_model.response.RecentPerfumeResponseDto
+import com.hmoa.core_model.response.MagazineTastingCommentResponseDtoItem
+import com.hmoa.core_model.response.RecentPerfumeResponseDtoItem
 import com.hmoa.feature_magazine.MagazinePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,8 +35,7 @@ class MagazineMainViewModel @Inject constructor(
     private val perfumeRepository: PerfumeRepository,
     private val magazineRepository : MagazineRepository
 ) : ViewModel() {
-    private val PAGE_SIZE = 5
-
+    private val MAGAZINE_PAGE_SIZE = 5
     private val perfumeFlow = flow{
         val result = perfumeRepository.getRecentPerfumes()
         if (result.errorMessage is ErrorMessage) throw Exception(result.errorMessage!!.message)
@@ -71,20 +74,24 @@ class MagazineMainViewModel @Inject constructor(
         perfumeFlow,
         communityFlow
     ){ perfumes, communities ->
-        if (perfumes is Result.Loading || communities is Result.Loading){
-            MagazineMainUiState.Loading
-        } else if (perfumes is Result.Error || communities is Result.Error){
+        if (perfumes is Result.Loading || communities is Result.Loading){ MagazineMainUiState.Loading}
+        else if (perfumes is Result.Error || communities is Result.Error){
             val errMsg = if (perfumes is Result.Error) perfumes.exception.message
                 else (communities as Result.Error).exception.message
-            generalErrorState.update{ Pair(true, errMsg) }
-            MagazineMainUiState.Error(errMsg ?: "Error Message is NULL")
+            when(errMsg){
+                ErrorMessageType.UNKNOWN_ERROR.name -> unLoginedErrorState.update{true}
+                ErrorMessageType.WRONG_TYPE_TOKEN.name -> wrongTypeTokenErrorState.update{true}
+                ErrorMessageType.EXPIRED_TOKEN.name -> expiredTokenErrorState.update{true}
+                else -> generalErrorState.update{ Pair(true, errMsg) }
+            }
+            MagazineMainUiState.Error
         }
         else {
             val perfumeList = (perfumes as Result.Success).data
             val communityList = (communities as Result.Success).data
             MagazineMainUiState.MagazineMain(
-                perfumes = perfumeList,
-                reviews = communityList
+                perfumes = perfumeList.toImmutableList(),
+                reviews = communityList.toImmutableList()
             )
         }
     }.stateIn(
@@ -94,24 +101,18 @@ class MagazineMainViewModel @Inject constructor(
     )
 
     fun magazinePagingSource(): Flow<androidx.paging.PagingData<MagazineSummaryResponseDto>> = Pager(
-        config = PagingConfig(pageSize = PAGE_SIZE),
-        pagingSourceFactory = {
-            getMagazinePaging()
-        }
+        config = PagingConfig(pageSize = MAGAZINE_PAGE_SIZE),
+        pagingSourceFactory = {getMagazinePaging()}
     ).flow.cachedIn(viewModelScope)
 
-    private fun getMagazinePaging() = MagazinePagingSource(
-        magazineRepository = magazineRepository,
-    )
+    private fun getMagazinePaging() = MagazinePagingSource(magazineRepository = magazineRepository)
 }
 
 sealed interface MagazineMainUiState{
     data object Loading : MagazineMainUiState
     data class MagazineMain (
-        val perfumes : RecentPerfumeResponseDto,
-        val reviews : MagazineTastingCommentResponseDto
+        @Stable val perfumes : ImmutableList<RecentPerfumeResponseDtoItem>,
+        @Stable val reviews : ImmutableList<MagazineTastingCommentResponseDtoItem>
     ) : MagazineMainUiState
-    data class Error(
-        val message : String
-    ) : MagazineMainUiState
+    data object Error : MagazineMainUiState
 }

@@ -1,4 +1,4 @@
-package com.hmoa.app
+package com.hmoa.app.view
 
 import android.Manifest
 import android.content.Intent
@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
@@ -32,19 +34,23 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import com.hmoa.app.BuildConfig
 import com.hmoa.app.navigation.SetUpNavGraph
+import com.hmoa.app.viewmodel.AppViewModel
 import com.hmoa.core_common.permissions
 import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
-import com.hmoa.core_domain.entity.navigation.AuthenticationRoute
-import com.hmoa.core_domain.entity.navigation.CommunityRoute
-import com.hmoa.core_domain.entity.navigation.HPediaRoute
-import com.hmoa.core_domain.entity.navigation.HomeRoute
-import com.hmoa.core_domain.entity.navigation.MagazineRoute
-import com.hmoa.core_domain.entity.navigation.PerfumeRoute
-import com.hmoa.core_domain.entity.navigation.UserInfoRoute
+import com.hmoa.core_domain.entity.navigation.*
 import com.hmoa.feature_brand.navigation.navigateToBrandSearch
 import com.hmoa.feature_fcm.navigateToAlarmScreen
 import com.hmoa.feature_home.navigation.navigateToHome
@@ -54,6 +60,7 @@ import com.hmoa.feature_magazine.Navigation.navigateToMagazineHome
 import com.hmoa.feature_userinfo.navigation.navigateToUserInfoGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kr.co.bootpay.android.BootpayAnalytics
 
@@ -86,26 +93,116 @@ class MainActivity : AppCompatActivity() {
         BottomScreen.Magazine.name,
         BottomScreen.MyPage.name
     )
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+            handleUpdateResult(result)
+        }
+
+    // Displays the snackbar notification and call to action.
+    fun popupSnackbarForCompleteUpdate() {
+        Snackbar.make(
+            findViewById(com.hmoa.core_designsystem.R.drawable.ic_fab),
+            "새로운 업데이트 다운로드가 완료되었습니다.",
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction("재시작") { appUpdateManager.completeUpdate() }
+            show()
+        }
+    }
+
+    private fun checkImmediateUpdateAvailability() {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (shouldTriggerImmediateUpdate(appUpdateInfo)) {
+                Log.d("checkUpdateAvailability", "ImemediateUpdate")
+                startImmediateUpdate(appUpdateInfo)
+            }
+        }.addOnFailureListener { e ->
+            Log.e("UpdateFlow", "Failed to check update availability", e)
+        }
+    }
+
+    private fun checkFlexibleUpdateAvailability() {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (shouldTriggerFlexibleUpdate(appUpdateInfo)) {
+                Log.d("checkUpdateAvailability", "ImemediateUpdate")
+                startFlexibleUpdate(appUpdateInfo)
+                if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                    popupSnackbarForCompleteUpdate()
+                }
+            }
+        }.addOnFailureListener { e ->
+            Log.e("UpdateFlow", "Failed to check update availability", e)
+        }
+    }
+
+
+    private fun shouldTriggerImmediateUpdate(appUpdateInfo: AppUpdateInfo): Boolean {
+        return appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+    }
+
+    private fun shouldTriggerFlexibleUpdate(appUpdateInfo: AppUpdateInfo): Boolean {
+        return appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+    }
+
+
+    private fun startImmediateUpdate(appUpdateInfo: AppUpdateInfo) {
+        appUpdateManager.startUpdateFlowForResult(
+            appUpdateInfo,
+            activityResultLauncher,
+            AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+        )
+    }
+
+    private fun startFlexibleUpdate(appUpdateInfo: AppUpdateInfo) {
+        appUpdateManager.startUpdateFlowForResult(
+            appUpdateInfo,
+            activityResultLauncher,
+            AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+        )
+    }
+
+    private fun handleUpdateResult(result: ActivityResult) {
+        if (result.resultCode == RESULT_OK) {
+            Log.d("UpdateFlow", "Update flow completed successfully!")
+        } else {
+            Log.e("UpdateFlow", "Update flow failed! Result code: ${result.resultCode}")
+            // 필요시 재시도 로직 추가 가능
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        checkImmediateUpdateAvailability()
+
         requestNotificationPermission()
         BootpayAnalytics.init(this, BuildConfig.BOOTPAY_APPLICATION_ID)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.fcmTokenFlow().collectLatest { fcmToken ->
-                    viewModel.getNotificationEnabled().collectLatest { isEnabled ->
-                        Log.d("POST PERMISSION", "is granted : ${isEnabled}")
+                viewModel.fcmTokenFlow()
+                    .combine(viewModel.getNotificationEnabled()) { fcmToken, isNotificationsEnabled ->
+                        Pair(
+                            fcmToken,
+                            isNotificationsEnabled
+                        )
+                    }.collectLatest {
+                        val fcmToken = it.first
+                        val isNotificationsEnabled = it.second
+                        Log.d("POST PERMISSION", "is granted : ${isNotificationsEnabled}")
                         Log.d("FCM TEST", "fcm token : ${fcmToken}")
                         initializeFirebaseSetting(
                             fcmToken = fcmToken,
                             onSaveFcmToken = { token -> viewModel.saveFcmToken(token) })
                         initializeRoute(
-                            onRouteToLogin = { checkFcmToken(fcmToken, isEnabled) })
+                            onRouteToLogin = { checkFcmToken(fcmToken, isNotificationsEnabled) })
                     }
-                }
             }
         }
 
@@ -162,6 +259,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkFlexibleUpdateAvailability()
+    }
+
     //firebase 초기 토큰 처리
     private fun initializeFirebaseSetting(fcmToken: String?, onSaveFcmToken: (token: String) -> Unit) {
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
@@ -197,10 +299,10 @@ class MainActivity : AppCompatActivity() {
         Log.d("FCM TEST", "checkFcmToken의 fcmToken 값: ${fcmToken}")
     }
 
-    private suspend fun handleFcmToken(
-        fcmToken: String, isEnabled: Boolean
+    private fun handleFcmToken(
+        fcmToken: String, isNotificationEnabled: Boolean
     ) {
-        if (isEnabled) {
+        if (isNotificationEnabled) {
             Log.d("FCM TEST", "post fcm token")
             viewModel.postFcmToken(fcmToken)
         } else {

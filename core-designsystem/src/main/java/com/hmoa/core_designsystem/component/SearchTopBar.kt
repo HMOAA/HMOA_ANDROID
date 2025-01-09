@@ -1,31 +1,16 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,8 +24,11 @@ import androidx.compose.ui.unit.sp
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 fun SearchTopBar(
     searchWord: String,
@@ -49,6 +37,12 @@ fun SearchTopBar(
     onClickSearch: () -> Unit,
     navBack: () -> Unit,
 ) {
+    var searchWord by remember { mutableStateOf(searchWord) }
+    val textFlow = remember { snapshotFlow { searchWord } }
+
+    LaunchedEffect(textFlow) {
+        textFlow.debounce(700).filter { it.isNotBlank() }.collect { onChangeWord(it) }
+    }
 
     TopAppBar(
         title = {
@@ -58,17 +52,21 @@ fun SearchTopBar(
                     .padding(start = 13.dp),
                 value = searchWord,
                 onValueChange = {
-                    if(it == ""){
+                    if (it.length == 0) {
                         onClearWord()
                     }
-                    onChangeWord(it)
+                    searchWord = it
                 },
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,fontFamily = pretendard
+                    fontWeight = FontWeight.Normal, fontFamily = pretendard
                 ),
-                keyboardActions = KeyboardActions(onDone = {onClickSearch()}, onGo = {onClickSearch()}, onSend = {onClickSearch()}, onSearch = {onClickSearch()})
+                keyboardActions = KeyboardActions(
+                    onDone = { onClickSearch() },
+                    onGo = { onClickSearch() },
+                    onSend = { onClickSearch() },
+                    onSearch = { onClickSearch() })
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -77,7 +75,7 @@ fun SearchTopBar(
                         Text(
                             text = "키워드를 검색해보세요",
                             fontSize = 16.sp,
-                            style = TextStyle(fontWeight = FontWeight.Normal,fontFamily = pretendard),
+                            style = TextStyle(fontWeight = FontWeight.Normal, fontFamily = pretendard),
                             color = CustomColor.gray3
                         )
                     } else {
@@ -107,7 +105,10 @@ fun SearchTopBar(
                     modifier = Modifier.size(20.dp)
                         .background(color = CustomColor.gray2, shape = CircleShape)
                         .clip(CircleShape),
-                    onClick = onClearWord
+                    onClick = {
+                        onClearWord()
+                        searchWord = ""
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,

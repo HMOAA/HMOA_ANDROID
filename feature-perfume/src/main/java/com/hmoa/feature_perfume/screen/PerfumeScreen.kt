@@ -1,7 +1,11 @@
 package com.hmoa.feature_perfume.screen
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -169,7 +173,6 @@ fun PerfumeContent(
     perfumeCommentsCount: Int,
     updatePerfumeCommentIdToReport: (commentId: Int) -> Unit
 ) {
-    val verticalScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -195,120 +198,191 @@ fun PerfumeContent(
         sheetBackgroundColor = CustomColor.gray2,
         sheetContentColor = Color.Transparent,
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().verticalScroll(verticalScrollState)
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
                 .background(color = Color.White)
         ) {
-            TopBar(
-                title = data.brandKoreanName,
-                iconSize = 25.dp,
-                navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
-                onNavClick = { onBackClick() },
-                menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_home),
-                onMenuClick = { onHomeClick() }
-            )
-            Column(
-                modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2)
-                    .padding(vertical = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                ImageView(
-                    data.perfumeImageUrl,
-                    width = 0.6f,
-                    height = 0.6f,
-                    backgroundColor = CustomColor.gray2,
-                    contentScale = ContentScale.FillWidth
-                )
-            }
-            Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
-                PerfumeInfo(
-                    isLikedPerfume = data.liked,
-                    heartCount = data.likedCount,
-                    perfumeKoreanName = data.perfumeKoreanName,
-                    perfumeEnglishName = data.perfumeEnglishName,
-                    perfumeVolume = data.perfumeVolume,
-                    perfumeVolumes = data.perfumeVolumeList,
-                    price = data.price
-                )
-                Spacer(
-                    modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+            item {
+                TopBar(
+                    title = data.brandKoreanName,
+                    iconSize = 25.dp,
+                    navIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_back),
+                    onNavClick = { onBackClick() },
+                    menuIcon = painterResource(com.hmoa.core_designsystem.R.drawable.ic_home),
+                    onMenuClick = { onHomeClick() }
                 )
                 Column(
-                    modifier = Modifier.clickable { onBrandClick(data.brandId) }.padding(horizontal = 16.dp)
-                        .padding(top = 48.dp)
+                    modifier = Modifier.fillMaxWidth().heightIn(360.dp).background(color = CustomColor.gray2)
+                        .padding(vertical = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    BrandCard(data.brandEnglishName, data.brandKoreanName)
+                    ImageView(
+                        data.perfumeImageUrl,
+                        width = 0.6f,
+                        height = 0.6f,
+                        backgroundColor = CustomColor.gray2,
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
-                TastingNoteView(
-                    notes = arrayOf(data.topNote ?: "", data.heartNote ?: "", data.baseNote ?: ""),
-                    imageUrls = data.notePhotos,
-                    noteTitle = listOf("TOP", "HEART", "BASE")
-                )
-                PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
-                PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
-                PerfumeAgeView(
-                    onAgeDragFinish = { onAgeDragFinish(it) },
-                    onInitializeAgeClick = { onInitializeAgeClick() },
-                    age
-                )
-                CommentView(
-                    commentCount = perfumeCommentsCount,
-                    perfumeComments = perfumeComments ?: emptyList(),
-                    onViewCommentAllClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
-                    onSpecificCommentClick = { commentId, isEditable ->
-                        onSpecificCommentClick(
-                            commentId,
-                            isEditable
+            }
+            item {
+                Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
+                    PerfumeInfo(
+                        isLikedPerfume = data.liked,
+                        heartCount = data.likedCount,
+                        perfumeKoreanName = data.perfumeKoreanName,
+                        perfumeEnglishName = data.perfumeEnglishName,
+                        perfumeVolume = data.perfumeVolume,
+                        perfumeVolumes = data.perfumeVolumeList,
+                        price = data.price
+                    )
+                    Spacer(
+                        modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                    )
+                    Column(
+                        modifier = Modifier.clickable { onBrandClick(data.brandId) }.padding(horizontal = 16.dp)
+                            .padding(top = 48.dp)
+                    ) {
+                        BrandCard(data.brandEnglishName, data.brandKoreanName)
+                    }
+                    TastingNoteView(
+                        notes = arrayOf(data.topNote ?: "", data.heartNote ?: "", data.baseNote ?: ""),
+                        imageUrls = data.notePhotos,
+                        noteTitle = listOf("TOP", "HEART", "BASE")
+                    )
+                    PerfumeWeathernessView(onWeatherClick = { onWeatherClick(it) }, weather)
+                    PerfumeGenderView(onGenderClick = { onGenderClick(it) }, gender)
+                    PerfumeAgeView(
+                        onAgeDragFinish = { onAgeDragFinish(it) },
+                        onInitializeAgeClick = { onInitializeAgeClick() },
+                        age
+                    )
+                }
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp).padding(horizontal = 16.dp)
+                        .background(color = Color.White)
+                ) {
+                    Text(
+                        "댓글",
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = CustomFont.regular
+                        ),
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                    Text(
+                        "${perfumeCommentsCount}",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Light,
+                            fontFamily = CustomFont.regular
                         )
-                    },
-                    onSpecificCommentLikeClick = { commentId, isLike, index ->
-                        onSpecificCommentLikeClick(
-                            commentId,
-                            isLike,
-                            index
-                        )
-                    },
-                    onPerfumeCommentReportClick = {
-                        updatePerfumeCommentIdToReport(it)
-                        scope.launch { modalSheetState.show() }
-                    },
-                )
-                Text(
-                    "같은 브랜드의 제품",
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = CustomFont.regular
-                    ),
-                    modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
-                )
-                Spacer(
-                    modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp).fillMaxWidth().height(1.dp)
-                        .background(color = CustomColor.gray2)
-                )
-                LazyRow {
-                    itemsIndexed(data.similarPerfumes) { index, it ->
-                        Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
-                            PerfumeItemView(
-                                it.perfumeImgUrl,
-                                it.perfumeName,
-                                it.brandName,
-                                88,
-                                88,
-                                1f,
-                                1f,
-                                Color.White,
-                                BorderStroke(width = 0.dp, color = Color.Transparent)
-                            )
-                        }
-                        Spacer(
-                            modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                    )
+                }
+            }
+            if (perfumeCommentsCount == 0) {
+                item {
+                    Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
+                        Text(
+                            "해당 제품에 대한 의견을 남겨주세요",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = CustomColor.gray3,
+                                fontFamily = CustomFont.regular
+                            ),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
+            } else {
+                itemsIndexed(
+                    items = perfumeComments ?: emptyList(),
+                    key = { index, item -> item.id }) { index, it ->
+                    Column(modifier = Modifier.padding(horizontal = 16.dp).background(color = Color.White)) {
+                        CommentItem(
+                            count = it.heartCount,
+                            isCommentLiked = it.liked,
+                            userImgUrl = it.profileImg ?: "",
+                            userName = it.nickname,
+                            content = it.content,
+                            createdDate = it.createdAt ?: "",
+                            onReportClick = { onPerfumeCommentReportClick() },
+                            onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
+                            onCommentLikedClick = { onSpecificCommentLikeClick(it.id, !it.liked, index) }
+                        )
+                        if (index < perfumeCommentsCount - 1) {
+                            Spacer(
+                                modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
+                            )
+                        }
+                    }
+                }
+
             }
-            BottomToolBar(data.liked, onLikeClick = { onLikeClick(it) }, onCommentAddClick = { onCommentAddClick() })
+            item {
+                Column(modifier = Modifier.padding(top = 8.dp).padding(horizontal = 16.dp)) {
+                    Button(
+                        isEnabled = true,
+                        btnText = "모두 보기",
+                        onClick = { onViewCommentAllClick(data.perfumeId.toInt()) },
+                        buttonModifier = Modifier.fillMaxWidth().height(32.dp).background(color = CustomColor.gray4),
+                        textColor = Color.White,
+                        textSize = 14
+                    )
+
+                }
+            }
+            item {
+                Column(modifier = Modifier.padding(16.dp).background(color = Color.White)) {
+                    Text(
+                        "같은 브랜드의 제품",
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = CustomFont.regular
+                        ),
+                        modifier = Modifier.padding(end = 4.dp).padding(top = 40.dp)
+                    )
+                    Spacer(
+                        modifier = Modifier.padding(top = 14.dp).padding(bottom = 12.dp).fillMaxWidth().height(1.dp)
+                            .background(color = CustomColor.gray2)
+                    )
+                    LazyRow {
+                        itemsIndexed(data.similarPerfumes) { index, it ->
+                            Column(modifier = Modifier.clickable { onSimilarPerfumeClick(it.perfumeId) }) {
+                                PerfumeItemView(
+                                    it.perfumeImgUrl,
+                                    it.perfumeName,
+                                    it.brandName,
+                                    88,
+                                    88,
+                                    1f,
+                                    1f,
+                                    Color.White,
+                                    BorderStroke(width = 0.dp, color = Color.Transparent)
+                                )
+                            }
+                            if (index < perfumeCommentsCount - 1) {
+                                Spacer(
+                                    modifier = Modifier.fillMaxWidth().height(1.dp)
+                                        .background(color = CustomColor.gray2)
+                                )
+                            }
+                        }
+                    }
+                }
+                BottomToolBar(
+                    data.liked,
+                    onLikeClick = { onLikeClick(it) },
+                    onCommentAddClick = { onCommentAddClick() })
+            }
         }
     }
 }
@@ -577,76 +651,6 @@ fun PerfumeAgeView(
                 "50대 이상",
                 style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, fontFamily = CustomFont.regular)
             )
-        }
-    }
-}
-
-@Composable
-fun CommentView(
-    commentCount: Int,
-    perfumeComments: List<PerfumeCommentResponseDto>,
-    onViewCommentAllClick: () -> Unit,
-    onSpecificCommentClick: (commentId: String, isEditable: Boolean) -> Unit,
-    onSpecificCommentLikeClick: (commentId: Int, isLike: Boolean, index: Int) -> Unit,
-    onPerfumeCommentReportClick: (commentId: Int) -> Unit
-) {
-    Row(
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier.padding(bottom = 4.dp).padding(top = 48.dp)
-    ) {
-        Text(
-            "댓글",
-            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium, fontFamily = CustomFont.regular),
-            modifier = Modifier.padding(end = 4.dp)
-        )
-        Text(
-            "${commentCount}",
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light, fontFamily = CustomFont.regular)
-        )
-    }
-    if (commentCount == 0) {
-        Text(
-            "해당 제품에 대한 의견을 남겨주세요",
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = CustomColor.gray3,
-                fontFamily = CustomFont.regular
-            ),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 52.dp),
-            textAlign = TextAlign.Center
-        )
-    } else {
-        perfumeComments.forEachIndexed { index, it ->
-            key(it.id) {
-                CommentItem(
-                    count = it.heartCount,
-                    isCommentLiked = it.liked,
-                    userImgUrl = it.profileImg ?: "",
-                    userName = it.nickname,
-                    content = it.content,
-                    createdDate = it.createdAt ?: "",
-                    onReportClick = { onPerfumeCommentReportClick(it.id) },
-                    onCommentItemClick = { onSpecificCommentClick(it.id.toString(), it.writed) },
-                    onCommentLikedClick = { onSpecificCommentLikeClick(it.id, !it.liked, index) }
-                )
-                if (index < commentCount - 1) {
-                    Spacer(
-                        modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2)
-                    )
-                }
-            }
-        }
-        Column(modifier = Modifier.padding(top = 8.dp)) {
-            Button(
-                isEnabled = true,
-                btnText = "모두 보기",
-                onClick = { onViewCommentAllClick() },
-                buttonModifier = Modifier.fillMaxWidth().height(32.dp).background(color = CustomColor.gray4),
-                textColor = Color.White,
-                textSize = 14
-            )
-
         }
     }
 }

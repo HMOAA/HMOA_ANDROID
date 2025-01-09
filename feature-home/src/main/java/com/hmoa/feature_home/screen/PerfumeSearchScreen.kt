@@ -3,13 +3,7 @@ package com.hmoa.feature_home.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -61,11 +55,7 @@ fun PerfumeSearchScreen(
         perfumeNameSearchResult = perfumeNameSearchResult,
         perfumeSearchResult = perfumeSearchResult,
         viewType = viewType.value,
-        onChangedWord = {
-            viewModel.updatePerfumeNameSearchWord(it)
-            viewModel.updatePerfumeSearchWord(it)
-            perfumeNameSearchResult?.refresh()
-        },
+        onChangedWord = { viewModel.handlePerfumeNameChange(it) },
         onClearWord = {
             viewModel.updatePerfumeNameSearchWord(word = "")
             viewModel.changeViewType(PerfumeSearchViewType.List)
@@ -109,22 +99,32 @@ fun PerfumeSearchContent(
             )
         }
         Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(color = CustomColor.gray2))
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp).background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            when (viewType) {
-                PerfumeSearchViewType.List -> {
-                    PerfumeNameSearchResultList(
-                        perfumeNameList = perfumeNameSearchResult,
-                        onPerfumeSearchResultClick = { onPerfumeSearchResultClick(it) })
-                }
+        PerfumeSearchView(viewType, perfumeNameSearchResult, perfumeSearchResult, onPerfumeSearchResultClick)
+    }
+}
 
-                PerfumeSearchViewType.Grid -> {
-                    PerfumeSearchResultList(
-                        perfumeList = perfumeSearchResult,
-                        onPerfumeSearchResultClick = { onPerfumeSearchResultClick(it) })
-                }
+@Composable
+fun PerfumeSearchView(
+    viewType: PerfumeSearchViewType,
+    perfumeNameSearchResult: LazyPagingItems<PerfumeNameSearchResponseDto>?,
+    perfumeSearchResult: LazyPagingItems<PerfumeSearchResponseDto>?,
+    onPerfumeSearchResultClick: (searchWord: String) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp).background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        when (viewType) {
+            PerfumeSearchViewType.List -> {
+                PerfumeNameSearchResultList(
+                    perfumeNameList = perfumeNameSearchResult,
+                    onPerfumeSearchResultClick = { onPerfumeSearchResultClick(it) })
+            }
+
+            PerfumeSearchViewType.Grid -> {
+                PerfumeSearchResultList(
+                    perfumeList = perfumeSearchResult,
+                    onPerfumeSearchResultClick = { onPerfumeSearchResultClick(it) })
             }
         }
     }
@@ -138,7 +138,7 @@ fun PerfumeNameSearchResultList(
     LazyColumn(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
         items(perfumeNameList?.itemSnapshotList?.items ?: emptyList()) {
             Text(
-                text = it!!.perfumeName ?: "",
+                text = it.perfumeName,
                 modifier = Modifier.clickable { onPerfumeSearchResultClick(it.perfumeName) }
                     .padding(vertical = 10.dp).fillMaxWidth(),
                 style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp)
@@ -156,14 +156,14 @@ fun PerfumeSearchResultList(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.Center
     ) {
-        items(perfumeList?.itemSnapshotList?.items ?: emptyList()) {
+        items(perfumeList?.itemSnapshotList?.items ?: emptyList(), key = { it.perfumeId }) {
             Column(modifier = Modifier.clickable { onPerfumeSearchResultClick(it.perfumeName) }
                 .padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 PerfumeItemView(
-                    imageUrl = it?.perfumeImageUrl ?: "",
-                    perfumeName = it?.perfumeName ?: "",
-                    brandName = it?.brandName ?: "",
+                    imageUrl = it.perfumeImageUrl,
+                    perfumeName = it.perfumeName,
+                    brandName = it.brandName,
                     containerWidth = 160,
                     containerHeight = 160,
                     imageWidth = 0.7f,

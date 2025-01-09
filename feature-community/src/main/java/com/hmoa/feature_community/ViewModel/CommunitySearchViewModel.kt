@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.handleErrorType
 import com.hmoa.core_domain.repository.SearchRepository
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -56,20 +58,22 @@ class CommunitySearchViewModel @Inject constructor(
         _searchWord,
         _flag
     ) { word, flag ->
-        if (_searchWord.value.isEmpty()) {
-            return@combine emptyList()
-        }
+        if (_searchWord.value.isEmpty()) { return@combine emptyList() }
         val result = searchRepository.getCommunity(0, word)
-        if (result.errorMessage != null) {
-            throw Exception(result.errorMessage!!.message)
-        }
+        if (result.errorMessage != null) { throw Exception(result.errorMessage!!.message) }
         result.data!!
-    }.asResult().map { result ->
+    }.debounce(500).asResult().map { result ->
         when (result) {
             is Result.Loading -> CommunitySearchUiState.Loading
             is Result.Success -> CommunitySearchUiState.SearchResult(result.data)
             is Result.Error -> {
-                generalErrorState.update{ Pair(true, result.exception.message)}
+                handleErrorType(
+                    error = result.exception,
+                    onExpiredTokenError = {expiredTokenErrorState.update{true}},
+                    onUnknownError = {unLoginedErrorState.update{true}},
+                    onWrongTypeTokenError = {wrongTypeTokenErrorState.update{true}},
+                    onGeneralError = {generalErrorState.update{Pair(true, result.exception.message)}},
+                )
                 CommunitySearchUiState.Error
             }
         }

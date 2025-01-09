@@ -1,5 +1,6 @@
 package com.hmoa.core_designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,6 +58,7 @@ fun MainBottomBar(
         if (navBackStackEntry != null && navBackStackEntry!!.destination.route != null){
             currentScreen = navBackStackEntry!!.destination.route!!
         }
+        Log.d("TAG TEST", "current route: ${currentScreen}")
     }
     val bottomNavItems = listOf(
         BottomNavItem(

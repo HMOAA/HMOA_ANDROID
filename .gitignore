@@ -17,3 +17,4 @@ deploymentTargetDropDown.xml
 /config.json
 /.idea/other.xml
 /.idea/deploymentTargetSelector.xml
+.kotlin/

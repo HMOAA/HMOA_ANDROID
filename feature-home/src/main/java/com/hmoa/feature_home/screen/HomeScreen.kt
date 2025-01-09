@@ -34,6 +34,7 @@ import com.hmoa.core_domain.entity.data.AllPerfumeScreenId
 import com.hmoa.core_model.response.HomeMenuDefaultResponseDto
 import com.hmoa.core_model.response.HomeMenuPerfumeResponseDto
 import com.hmoa.feature_home.viewmodel.HomeViewModel
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HomeRoute(
@@ -102,7 +103,11 @@ fun TopMenu(
                 )
             }
             FirstMenuView(
-                (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu!!,
+                (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu
+                    ?: HomeMenuDefaultResponseDto(
+                        perfumeList = emptyList<HomeMenuPerfumeResponseDto>().toImmutableList(),
+                        title = ""
+                    ),
                 { onPerfumeClick(it) })
         }
 
@@ -126,7 +131,7 @@ fun BottomMenu(
             BottomMenuContent(
                 onPerfumeClick = { onPerfumeClick(it) },
                 onAllPerfumeClick = { onAllPerfumeClick(it) },
-                (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu!!
+                (bottomMenuState as HomeViewModel.BottomMenuState.Data).bottomMenu
             )
             HmoaCompanyMetaData()
         }
@@ -315,10 +320,10 @@ private fun FirstMenuView(firstMenu: HomeMenuDefaultResponseDto, onPerfumeClick:
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
         modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(vertical = 12.dp).fillMaxWidth(),
+            .padding(horizontal = 16.dp).fillMaxWidth()
+            .padding(vertical = 12.dp),
         fontFamily = CustomFont.regular,
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
     Row(
         modifier = Modifier
@@ -415,7 +420,7 @@ fun BottomMenuView(
         )
     }
     LazyRow() {
-        items(data!!.perfumeList) {
+        items(data?.perfumeList ?: emptyList()) {
             Column(modifier = Modifier.clickable { onPerfumeClick(it.perfumeId) }) {
                 PerfumeItemView(
                     it.imgUrl, it.perfumeName, it.brandName, 126, 126, 0.9f, 0.9f, CustomColor.gray1,
@@ -440,19 +445,16 @@ fun ImageWithTitleView(
     Box(
         modifier = Modifier
             .clickable { onItemClick() }
-            .background(color = CustomColor.gray8)
             .fillMaxWidth(containerWidth)
             .fillMaxHeight(containerHeight), contentAlignment = Alignment.BottomStart
     ) {
-        Column(modifier = Modifier.padding(20.dp).background(color = CustomColor.gray8)) {
-            ImageView(
-                imageUrl,
-                width = width,
-                height = height,
-                backgroundColor = CustomColor.gray8,
-                contentScale = ContentScale.Fit
-            )
-        }
+        ImageView(
+            imageUrl,
+            width = width,
+            height = height,
+            backgroundColor = CustomColor.gray8,
+            contentScale = ContentScale.Fit
+        )
         Text(
             text = title,
             fontWeight = FontWeight.SemiBold,
@@ -489,7 +491,7 @@ private fun HomePreview() {
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
-                )
+                ).toImmutableList()
             ),
             HomeMenuDefaultResponseDto(
                 title = "변함없이 사랑받는, 스테디 셀러", perfumeList = listOf(
@@ -497,8 +499,8 @@ private fun HomePreview() {
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml"),
                     HomeMenuPerfumeResponseDto("딥디크", "", 1, "오 로즈 오 드 뚜왈렛 50ml")
-                )
+                ).toImmutableList()
             )
-        )
+        ).toImmutableList()
     )
 }

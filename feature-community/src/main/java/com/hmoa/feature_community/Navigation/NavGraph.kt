@@ -1,10 +1,20 @@
 package com.hmoa.feature_community.Navigation
 
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.hmoa.core_domain.entity.navigation.CommunityRoute
-import com.hmoa.feature_community.Screen.*
+import com.hmoa.feature_community.Screen.CommunityCommentEditRoute
+import com.hmoa.feature_community.Screen.CommunityDescriptionRoute
+import com.hmoa.feature_community.Screen.CommunityEditRoute
+import com.hmoa.feature_community.Screen.CommunityHomeRoute
+import com.hmoa.feature_community.Screen.CommunityPostRoute
+import com.hmoa.feature_community.Screen.CommunityPreviewRoute
+import com.hmoa.feature_community.Screen.CommunitySearchRoute
 
 //게시글 기본 화면
 fun NavController.navigateToCommunityRoute() = navigate(CommunityRoute.CommunityGraphRoute.name)
@@ -28,11 +38,16 @@ fun NavController.navigateToCommunityEditRoute(id: Int) =
     }
 
 //게시글 상세 화면
-fun NavController.navigateToCommunityDescriptionRoute(id: Int) =
+fun NavController.navigateToCommunityDescriptionRoute(befScreen: CommunityRoute, id: Int) {
     navigate("${CommunityRoute.CommunityDescriptionRoute.name}/${id}") {
-        popUpTo("${CommunityRoute.CommunityDescriptionRoute.name}/{id}") { inclusive = true }
+        if (befScreen == CommunityRoute.CommunityEditRoute) {
+            popUpTo("${CommunityRoute.CommunityEditRoute.name}/{id}"){inclusive = true}
+        } else if (befScreen == CommunityRoute.CommunityPostRoute) {
+            popUpTo("${CommunityRoute.CommunityCommentEditRoute.name}/{type}"){inclusive = true}
+        }
+        launchSingleTop = true
     }
-
+}
 //게시글 검색 화면
 fun NavController.navigateToCommunitySearchRoute() = navigate(CommunityRoute.CommunitySearchRoute.name)
 
@@ -45,14 +60,12 @@ fun NavGraphBuilder.nestedCommunityGraph(
     navCommunityPage: () -> Unit,
     navCommunityPost: (String) -> Unit,
     navCommunityEdit: (Int) -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     navCommunitySearch: () -> Unit,
     navCommunityCommentEdit: (Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
     navLogin: () -> Unit,
-    navHome: () -> Unit,
     navHPedia: () -> Unit,
-    popStack: () -> Unit,
 ) {
     navigation(
         startDestination = CommunityRoute.CommunityPreviewRoute.name,
@@ -63,7 +76,6 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 navCommunityDescription = navCommunityDescription,
                 navCommunityGraph = navCommunityPage,
                 onErrorHandleLoginAgain = onErrorHandleLoginAgain,
-                navHome = navHome
             )
         }
         composable(route = CommunityRoute.CommunityPreviewRoute.name) {
@@ -73,7 +85,6 @@ fun NavGraphBuilder.nestedCommunityGraph(
                 navCommunityDescription = navCommunityDescription,
                 navPost = navCommunityPost,
                 navLogin = onErrorHandleLoginAgain,
-                navHPedia = navHPedia,
             )
         }
         composable(route = "${CommunityRoute.CommunityPostRoute.name}/{type}") {
@@ -90,7 +101,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
             CommunityEditRoute(
                 id = id?.toInt(),
                 navBack = navBack,
-                navCommunityDesc = navCommunityDescription
+                navCommunityDesc = navCommunityDescription,
+                navLogin = navLogin
             )
         }
         composable(
@@ -102,12 +114,10 @@ fun NavGraphBuilder.nestedCommunityGraph(
 
             CommunityDescriptionRoute(
                 id = id,
-                onNavCommunityEdit = navCommunityEdit,
-                onNavCommentEdit = navCommunityCommentEdit,
-                onNavLogin = navLogin,
-                onNavBack = navBack,
-                onNavHPedia = navHPedia,
-                onNavPopStack = popStack
+                navCommunityEdit = navCommunityEdit,
+                navCommentEdit = navCommunityCommentEdit,
+                navLogin = navLogin,
+                navBack = navBack
             )
         }
         composable(route = CommunityRoute.CommunitySearchRoute.name) {
@@ -120,7 +130,8 @@ fun NavGraphBuilder.nestedCommunityGraph(
             val id = it.arguments?.getString("commentId")?.toInt()
             CommunityCommentEditRoute(
                 _commentId = id,
-                navBack = navBack
+                navBack = navBack,
+                navLogin = navLogin
             )
         }
     }

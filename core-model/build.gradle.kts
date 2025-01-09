@@ -21,12 +21,12 @@ tasks {
 
 dependencies {
     val kotlinx_version = "1.5.0"
-    
+
+    implementation(libs.kotlinx.collections.immutable)
     implementation("io.ktor:ktor-client-serialization:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_version")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
     implementation(kotlin("stdlib"))
-
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +26,7 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.CommunityByCategoryResponseDto
 import com.hmoa.feature_community.ViewModel.CommunityHomeUiState
 import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
@@ -32,24 +34,20 @@ import com.hmoa.feature_community.ViewModel.CommunityHomeViewModel
 @Composable
 fun CommunityHomeRoute(
     navCommunityGraph: () -> Unit,
-    navCommunityDescription: (Int) -> Unit,
+    navCommunityDescription: (befRoute: CommunityRoute, communityId: Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
-    navHome: () -> Unit,
     viewModel: CommunityHomeViewModel = hiltViewModel(),
 ) {
-
-    //ui state를 전달 >> 여기에 community list를 가지고 이를 통해 LazyColumn 이용
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val errorUiState by viewModel.errorUiState.collectAsStateWithLifecycle()
+    val onPostClick = remember<(communityId: Int) -> Unit>{{navCommunityDescription(CommunityRoute.CommunityHomeRoute, it)}}
 
     CommunityHome(
         errorUiState = errorUiState,
         uiState = uiState,
-        onNavCommunityGraph = navCommunityGraph,
-        onNavCommunityDescription = navCommunityDescription,
-        onErrorHandleLoginAgain = {
-            onErrorHandleLoginAgain()
-        },
+        navCommunityGraph = navCommunityGraph,
+        navCommunityDescription = onPostClick,
+        onErrorHandleLoginAgain = onErrorHandleLoginAgain,
     )
 }
 
@@ -57,40 +55,50 @@ fun CommunityHomeRoute(
 fun CommunityHome(
     errorUiState: ErrorUiState,
     uiState: CommunityHomeUiState,
-    onNavCommunityGraph: () -> Unit,
-    onNavCommunityDescription: (Int) -> Unit,
+    navCommunityGraph: () -> Unit,
+    navCommunityDescription: (communityId: Int) -> Unit,
     onErrorHandleLoginAgain: () -> Unit,
+) {
+    when (uiState) {
+        is CommunityHomeUiState.Loading -> AppLoadingScreen()
+        is CommunityHomeUiState.Community -> {
+            CommunityHomeContent(
+                communities = uiState.communities,
+                navCommunityDescription = navCommunityDescription,
+                navCommunityByCategory = navCommunityGraph
+            )
+        }
+
+        is CommunityHomeUiState.Error -> {
+            ErrorUiSetView(
+                onLoginClick = onErrorHandleLoginAgain,
+                errorUiState = errorUiState,
+                onCloseClick = onErrorHandleLoginAgain
+            )
+        }
+    }
+}
+@Composable
+fun CommunityHomeContent(
+    communities: List<CommunityByCategoryResponseDto>,
+    navCommunityDescription: (communityId: Int) -> Unit,
+    navCommunityByCategory: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxSize()
     ) {
-        CommunityTitleBar(onNavCommunityByCategory = onNavCommunityGraph)
-
-        when (uiState) {
-            is CommunityHomeUiState.Loading -> AppLoadingScreen()
-            is CommunityHomeUiState.Community -> {
-                CommunityHomeContent(
-                    communities = uiState.communities,
-                    onNavCommunityDescription = onNavCommunityDescription
-                )
-            }
-
-            is CommunityHomeUiState.Error -> {
-                ErrorUiSetView(
-                    onLoginClick = onErrorHandleLoginAgain,
-                    errorUiState = errorUiState,
-                    onCloseClick = onErrorHandleLoginAgain
-                )
-            }
-        }
+        CommunityTitleBar(navCommunityByCategory = navCommunityByCategory)
+        PostList(
+            communities = communities,
+            navCommunityDescription = navCommunityDescription
+        )
     }
 }
-
 @Composable
 fun CommunityTitleBar(
-    onNavCommunityByCategory: () -> Unit,
+    navCommunityByCategory: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -107,7 +115,7 @@ fun CommunityTitleBar(
         )
 
         Text(
-            modifier = Modifier.clickable { onNavCommunityByCategory() },
+            modifier = Modifier.clickable { navCommunityByCategory() },
             text = "전체보기",
             fontSize = 12.sp,
             fontFamily = FontFamily(Font(R.font.pretendard_regular)),
@@ -118,20 +126,9 @@ fun CommunityTitleBar(
 }
 
 @Composable
-fun CommunityHomeContent(
-    communities: List<CommunityByCategoryResponseDto>,
-    onNavCommunityDescription: (Int) -> Unit,
-) {
-    PostList(
-        communities = communities,
-        onNavCommunityDescription = onNavCommunityDescription
-    )
-}
-
-@Composable
 fun PostList(
     communities: List<CommunityByCategoryResponseDto>,
-    onNavCommunityDescription: (Int) -> Unit
+    navCommunityDescription: (communityId: Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -149,9 +146,7 @@ fun PostList(
                         color = CustomColor.gray2,
                         shape = RoundedCornerShape(10.dp)
                     ),
-                onPostClick = {
-                    onNavCommunityDescription(community.communityId)
-                },
+                onPostClick = {navCommunityDescription(community.communityId)},
                 postType = community.category,
                 postTitle = community.title,
                 heartCount = community.heartCount,

@@ -16,6 +16,13 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -23,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.7"
@@ -65,7 +72,7 @@ dependencies {
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
     testAnnotationProcessor(libs.hilt.compiler)
-    kapt(libs.hilt.compiler)
+    kapt(libs.hilt.viewmodel)
 
     androidTestImplementation(libs.junit.ext)
     androidTestImplementation(libs.espresso)

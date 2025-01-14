@@ -190,15 +190,6 @@ class NotePickViewmodel @Inject constructor(
         }
     }
 
-    fun cancelNoteSelect(
-        value: Boolean
-    ): Boolean {
-        if (value == false) {
-            return true
-        }
-        return false
-    }
-
     fun countSelectedNote(noteSelectData: MutableList<NoteSelect>): Int {
         return noteSelectData.count { it.isSelected == true }
     }

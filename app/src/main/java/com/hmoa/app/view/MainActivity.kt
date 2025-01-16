@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,6 +45,7 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.BuildConfig
+import com.hmoa.app.R
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.app.viewmodel.AppViewModel
 import com.hmoa.core_common.permissions
@@ -102,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     // Displays the snackbar notification and call to action.
     fun popupSnackbarForCompleteUpdate() {
         Snackbar.make(
-            findViewById(com.hmoa.core_designsystem.R.drawable.ic_fab),
+            findViewById<ImageView>(R.id.snackbar),
             "새로운 업데이트 다운로드가 완료되었습니다.",
             Snackbar.LENGTH_INDEFINITE
         ).apply {
@@ -180,7 +182,6 @@ class MainActivity : AppCompatActivity() {
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
         checkImmediateUpdateAvailability()
-
         requestNotificationPermission()
         BootpayAnalytics.init(this, BuildConfig.BOOTPAY_APPLICATION_ID)
 

@@ -68,7 +68,12 @@ android {
             "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_reports",
         )
     }
-
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+        )
+    }
 }
 
 dependencies {
@@ -81,6 +86,7 @@ dependencies {
     implementation(libs.bootpay)
     implementation(libs.paging.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.bundles.ui)
     implementation(libs.navigation.compose)
     implementation(libs.bundles.lifecycle)

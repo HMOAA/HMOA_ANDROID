@@ -1,4 +1,4 @@
-package com.hmoa.feature_authentication
+package com.hmoa.feature_authentication.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text

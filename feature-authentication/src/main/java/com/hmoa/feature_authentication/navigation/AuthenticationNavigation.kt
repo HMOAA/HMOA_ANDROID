@@ -6,10 +6,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.hmoa.core_domain.entity.navigation.AuthenticationRoute
-import com.hmoa.feature_authentication.LoginRoute
-import com.hmoa.feature_authentication.PickNicknameRoute
-import com.hmoa.feature_authentication.PickPersonalInfoRoute
-import com.hmoa.feature_authentication.SignupRoute
+import com.hmoa.feature_authentication.view.LoginRoute
+import com.hmoa.feature_authentication.view.PickNicknameRoute
+import com.hmoa.feature_authentication.view.PickPersonalInfoRoute
+import com.hmoa.feature_authentication.view.SignupRoute
 
 fun NavController.navigateToLogin() = navigate("${AuthenticationRoute.Login}")
 fun NavController.navigateToSignup(loginProvider: String) =

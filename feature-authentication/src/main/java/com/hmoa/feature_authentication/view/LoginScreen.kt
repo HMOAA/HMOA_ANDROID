@@ -1,4 +1,4 @@
-package com.hmoa.feature_authentication
+package com.hmoa.feature_authentication.view
 
 import android.app.Activity
 import android.content.Context
@@ -32,6 +32,7 @@ import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.OAuthLoginButton
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_model.Provider
+import com.hmoa.feature_authentication.BuildConfig
 import com.hmoa.feature_authentication.viewmodel.LoginUiState
 import com.hmoa.feature_authentication.viewmodel.LoginViewModel
 

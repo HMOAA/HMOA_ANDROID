@@ -1,4 +1,4 @@
-package com.hmoa.feature_authentication
+package com.hmoa.feature_authentication.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,12 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hmoa.core_designsystem.component.Spinner
-import com.hmoa.core_designsystem.component.TopBar
-import com.hmoa.core_designsystem.component.YearPickerDialog
 import com.hmoa.core_designsystem.R
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.RadioButtonList
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_authentication.viewmodel.PickPersonalInfoViewmodel
 import kotlinx.coroutines.launch

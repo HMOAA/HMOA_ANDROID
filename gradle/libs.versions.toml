@@ -126,7 +126,7 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", versi
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "junit4-version" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable-version" }
 testing = { group = "org.testing", name = "testing", version.ref = "testing-version" }
-
+constraintLayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "ui-version" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-application" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-android" }

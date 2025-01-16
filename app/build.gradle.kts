@@ -109,9 +109,9 @@ dependencies {
     implementation(project(":core-repository"))
     implementation(project(":core-common"))
 
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
     implementation(libs.app.update.ktx)
     implementation(libs.bootpay) //부트페이
+    implementation(libs.constraintlayout)
     implementation(libs.bundles.kakao.login) // kakao
     implementation(libs.bundles.hilt) // hilt
     kapt(libs.hilt.android.compiler)

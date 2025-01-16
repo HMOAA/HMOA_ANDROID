@@ -176,6 +176,7 @@ fun HbtiSurveyContent(
                 modifier = Modifier.fillMaxWidth().background(color = Color.White).fillMaxHeight(0.85f),
                 state = pagerState,
                 verticalAlignment = Alignment.Top,
+                key = { page -> hbtiQuestionItems?.hbtiQuestions?.get(page)!!.questionId }
             ) { page ->
                 Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceBetween) {
                     Text(

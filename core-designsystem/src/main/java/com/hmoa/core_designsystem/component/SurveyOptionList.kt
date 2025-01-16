@@ -3,6 +3,9 @@ package com.hmoa.core_designsystem.component
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,24 +60,24 @@ fun SurveyOptionList(
         cancelAllAnswersExceptIndex(index)
     }
 
-    val scrollState = rememberScrollState()
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        modifier = Modifier.fillMaxHeight(0.92f).verticalScroll(scrollState).background(color = Color.White)
+        modifier = Modifier.fillMaxHeight(0.92f).background(color = Color.White)
     ) {
-        surveyOptions.forEachIndexed { index, it ->
-            Column(modifier = Modifier.padding(bottom = 16.dp)) {
-                SurveyOptionItem(
-                    text = surveyOptions[index],
-                    onClick = { handleAnswerSelectedState(index) },
-                    isSelected = try {
-                        selectedStates[index].value
-                    }catch (e:IndexOutOfBoundsException){
-                        false
-                    }
-                )
+        LazyColumn {
+            itemsIndexed(surveyOptions, key = {index, item ->  item}){ index, it ->
+                Column(modifier = Modifier.padding(bottom = 16.dp)) {
+                    SurveyOptionItem(
+                        text = surveyOptions[index],
+                        onClick = { handleAnswerSelectedState(index) },
+                        isSelected = try {
+                            selectedStates[index].value
+                        }catch (e:IndexOutOfBoundsException){
+                            false
+                        }
+                    )
+                }
             }
         }
     }

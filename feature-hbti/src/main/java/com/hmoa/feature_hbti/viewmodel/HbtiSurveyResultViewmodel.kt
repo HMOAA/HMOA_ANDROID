@@ -1,5 +1,6 @@
 package com.hmoa.feature_hbti.viewmodel
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
@@ -91,6 +92,7 @@ class HbtiSurveyResultViewmodel @Inject constructor(
     }
 }
 
+@Stable
 sealed interface HbtiSurveyResultUiState {
     data object Loading : HbtiSurveyResultUiState
     data class HbtiSurveyResultData(

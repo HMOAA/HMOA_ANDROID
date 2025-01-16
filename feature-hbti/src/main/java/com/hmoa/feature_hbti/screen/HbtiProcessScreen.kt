@@ -20,6 +20,8 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.feature_hbti.viewmodel.HbtiProcessUiState
 import com.hmoa.feature_hbti.viewmodel.HbtiProcessViewmodel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HbtiProcessRoute(navLogin: () -> Unit, onBackClick: () -> Unit, onNextClick: () -> Unit) {
@@ -55,8 +57,8 @@ private fun HbtiProcessScreen(
             HbtiProcessContent(
                 onBackClick,
                 onNextClick,
-                (uiState as HbtiProcessUiState.Success).titles,
-                (uiState as HbtiProcessUiState.Success).contents,
+                (uiState as HbtiProcessUiState.Success).titles.toImmutableList(),
+                (uiState as HbtiProcessUiState.Success).contents.toImmutableList(),
                 (uiState as HbtiProcessUiState.Success).descriptionUrl
             )
         }
@@ -69,8 +71,8 @@ private fun HbtiProcessScreen(
 private fun HbtiProcessContent(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
-    titles: List<String>,
-    contents: List<String>,
+    titles: ImmutableList<String>,
+    contents: ImmutableList<String>,
     imgUrl: String,
 ) {
     Box(

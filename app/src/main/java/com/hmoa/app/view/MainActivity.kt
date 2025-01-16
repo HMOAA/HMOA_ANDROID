@@ -49,7 +49,6 @@ import com.hmoa.app.R
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.app.viewmodel.AppViewModel
 import com.hmoa.core_common.permissions
-import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_domain.entity.navigation.*
@@ -88,13 +87,6 @@ class MainActivity : AppCompatActivity() {
         MagazineRoute.Magazine.name
     )
 
-    private val needTopBarScreens = HomeRoute.Home.name
-    private val bottomNav = listOf(
-        BottomScreen.Home.name,
-        BottomScreen.HPedia.name,
-        BottomScreen.Magazine.name,
-        BottomScreen.MyPage.name
-    )
     private lateinit var appUpdateManager: AppUpdateManager
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->

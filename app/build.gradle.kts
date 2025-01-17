@@ -46,7 +46,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
         }
@@ -69,11 +72,26 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
+
+    applicationVariants.all {
+        this.mergeResourcesProvider.configure {
+            doLast {
+                copy {
+                    from(":HMOA_ANDROID_SECRET")
+                }
+            }
+        }
+    }
+
 }
 
 
 
 dependencies {
+    val hilt_version = "2.48.1"
+    val hilt_viewmodel_version = "1.0.0-alpha03"
+    val hilt_nav_compose_version = "1.0.0"
+
     implementation(project(":feature-home"))
     implementation(project(":feature-authentication"))
     implementation(project(":feature-userInfo"))
@@ -81,6 +99,7 @@ dependencies {
     implementation(project(":feature-perfume"))
     implementation(project(":feature-brand"))
     implementation(project(":feature-hpedia"))
+    implementation(project(":feature-like"))
     implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
     implementation(project(":feature-hbti"))

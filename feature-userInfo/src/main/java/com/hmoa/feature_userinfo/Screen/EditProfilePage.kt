@@ -79,7 +79,7 @@ fun EditProfilePage(
     uiState: EditProfileUiState,
     errState: ErrorUiState,
     onChangeInfo : (nickname: String, profileImg: String?) -> Unit,
-    checkDuplication : (String) -> Unit,
+    checkDuplication : (nickname: String) -> Unit,
     resetIsDup: () -> Unit,
     navBack: () -> Unit,
     navLogin: () -> Unit,
@@ -116,9 +116,7 @@ private fun EditProfileContent(
     val isDuplicated by data.isDuplicated.collectAsStateWithLifecycle(false)
     val initNickname by data.nickname.collectAsStateWithLifecycle()
     var profileImg by remember{mutableStateOf(data.profileImg)}
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ){
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){
         if (it != null){ profileImg = it.toString() }
     }
     val isNextEnabled by remember{derivedStateOf{(isDuplicated != null && isDuplicated!!) || profileImg != data.profileImg}}
@@ -182,9 +180,7 @@ private fun EditProfileContent(
 }
 
 @Composable
-private fun EditProfileButton(
-    launcher: ManagedActivityResultLauncher<String, Uri?>
-){
+private fun EditProfileButton(launcher: ManagedActivityResultLauncher<String, Uri?>){
     Box(
         modifier = Modifier
             .size(20.dp)
@@ -193,9 +189,7 @@ private fun EditProfileButton(
     ) {
         IconButton(
             modifier = Modifier.size(16.dp),
-            onClick = {
-                launcher.launch("image/*")
-            }
+            onClick = {launcher.launch("image/*")}
         ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),

@@ -29,8 +29,8 @@ import com.google.android.gms.common.api.ApiException
 import com.hmoa.core_designsystem.component.OAuthLoginButton
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_authentication.BuildConfig
-import com.hmoa.feature_authentication.LoginEffect
-import com.hmoa.feature_authentication.LoginEvent
+import com.hmoa.feature_authentication.contract.LoginEffect
+import com.hmoa.feature_authentication.contract.LoginEvent
 import com.hmoa.feature_authentication.viewmodel.LoginViewModel
 
 fun requestGoogleLogin(context: Context): GoogleSignInClient {

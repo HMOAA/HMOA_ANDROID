@@ -14,9 +14,9 @@ import com.hmoa.core_model.request.GoogleAccessTokenRequestDto
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.feature_authentication.BuildConfig
-import com.hmoa.feature_authentication.LoginEffect
-import com.hmoa.feature_authentication.LoginEvent
-import com.hmoa.feature_authentication.LoginState
+import com.hmoa.feature_authentication.contract.LoginEffect
+import com.hmoa.feature_authentication.contract.LoginEvent
+import com.hmoa.feature_authentication.contract.LoginState
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause

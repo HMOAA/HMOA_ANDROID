@@ -3,10 +3,10 @@ package com.hmoa.feature_authentication.viewmodel
 import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.ui.BaseViewModel
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_model.Provider
@@ -14,43 +14,39 @@ import com.hmoa.core_model.request.GoogleAccessTokenRequestDto
 import com.hmoa.core_model.request.OauthLoginRequestDto
 import com.hmoa.core_model.response.MemberLoginResponseDto
 import com.hmoa.feature_authentication.BuildConfig
+import com.hmoa.feature_authentication.LoginEffect
+import com.hmoa.feature_authentication.LoginEvent
+import com.hmoa.feature_authentication.LoginState
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class NewLoginViewModel @Inject constructor(
     private val application: Application,
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
-) : ViewModel() {
+) : BaseViewModel<LoginEvent, LoginState, LoginEffect>() {
     private val context = application.applicationContext
-    private val _isAbleToGoHome = MutableStateFlow(false)
-    private val _isKakaoTokenReceived = MutableStateFlow(false)
-    private val _isGoogleTokenReceived = MutableStateFlow(false)
+    override fun createInitialState(): LoginState {
+        return LoginState
+    }
 
-    val uiState: StateFlow<LoginUiState> =
-        combine(
-            _isAbleToGoHome,
-            _isKakaoTokenReceived,
-            _isGoogleTokenReceived
-        ) { isAbleToGoHome, isOauthTokenReceived, isGoogleTokenReceived ->
-            LoginUiState.LoginData(
-                isAbleToGoHome = isAbleToGoHome,
-                isKakaoTokenReceived = isOauthTokenReceived,
-                isGoogleTokenReceived = isGoogleTokenReceived
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = LoginUiState.Loading
-        )
+    override fun handleEvent(event: LoginEvent) {
+        when (event) {
+            LoginEvent.ClickKakaoLogin -> handleKakaoLogin()
+            LoginEvent.ClickHome -> setEffect(LoginEffect.NavigateToHome)
+            is LoginEvent.ClickGoogleLogin -> setEffect(LoginEffect.StartGoogleLogin)
+            is LoginEvent.RequestGoogleToken -> getGoogleAccessToken(event.serverAuthCode)
+        }
+    }
 
     suspend fun onKakaoLoginSuccess(token: String) {
         loginRepository.saveKakaoAccessToken(token)
@@ -85,9 +81,7 @@ class LoginViewModel @Inject constructor(
                             }
                         }
 
-                        is Result.Loading -> {
-                            LoginUiState.Loading
-                        }
+                        is Result.Loading -> {}
 
                         is Result.Error -> {}
                     }
@@ -103,11 +97,12 @@ class LoginViewModel @Inject constructor(
     ) {
         if (data.existedMember) {
             saveAuthAndRememberedToken(authToken, rememberedToken)
-            _isAbleToGoHome.update { true }
+            setEffect(LoginEffect.NavigateToHome)
+
         } else {
             when (loginProvider) {
-                Provider.GOOGLE -> _isGoogleTokenReceived.update { true }
-                Provider.KAKAO -> _isKakaoTokenReceived.update { true }
+                Provider.GOOGLE -> setEffect(LoginEffect.NavigateToSignup(Provider.GOOGLE))
+                Provider.KAKAO -> setEffect(LoginEffect.NavigateToSignup(Provider.KAKAO))
             }
             initializeAuthAndRememberToken()
         }
@@ -175,9 +170,7 @@ class LoginViewModel @Inject constructor(
                 }.asResult().collectLatest { result ->
                     when (result) {
                         is Result.Error -> {}
-                        Result.Loading -> {
-                            LoginUiState.Loading
-                        }
+                        Result.Loading -> {}
 
                         is Result.Success -> {
                             val accessToken = result.data.data?.access_token
@@ -190,14 +183,5 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-}
 
-
-sealed interface LoginUiState {
-    data object Loading : LoginUiState
-    data class LoginData(
-        val isAbleToGoHome: Boolean,
-        val isKakaoTokenReceived: Boolean,
-        val isGoogleTokenReceived: Boolean,
-    ) : LoginUiState
 }

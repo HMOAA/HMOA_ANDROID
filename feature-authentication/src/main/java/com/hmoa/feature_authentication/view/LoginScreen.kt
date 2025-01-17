@@ -31,7 +31,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_authentication.BuildConfig
 import com.hmoa.feature_authentication.LoginEffect
 import com.hmoa.feature_authentication.LoginEvent
-import com.hmoa.feature_authentication.viewmodel.NewLoginViewModel
+import com.hmoa.feature_authentication.viewmodel.LoginViewModel
 
 fun requestGoogleLogin(context: Context): GoogleSignInClient {
     val googleSignInOption =
@@ -46,7 +46,7 @@ fun requestGoogleLogin(context: Context): GoogleSignInClient {
 fun LoginRoute(
     onSignup: (loginProvider: String) -> Unit,
     onHome: () -> Unit,
-    nViewModel: NewLoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val googleSignInClient: GoogleSignInClient by lazy { requestGoogleLogin(context) }
@@ -57,7 +57,7 @@ fun LoginRoute(
                 try {
                     val account = task.getResult(ApiException::class.java)
                     val serverAuth = account.serverAuthCode
-                    nViewModel.handleEvent(LoginEvent.RequestGoogleToken(serverAuth))
+                    viewModel.handleEvent(LoginEvent.RequestGoogleToken(serverAuth))
                 } catch (e: Exception) {
                     Log.e("feature-authentication", "googleAuthLauncher error: ${e.stackTraceToString()}")
                 }
@@ -71,7 +71,7 @@ fun LoginRoute(
     }
 
     LaunchedEffect(Unit) {
-        nViewModel.effects.collect { effect ->
+        viewModel.effects.collect { effect ->
             when (effect) {
                 LoginEffect.NavigateToHome -> onHome()
                 is LoginEffect.NavigateToSignup -> onSignup(effect.loginProvider.name)
@@ -81,9 +81,9 @@ fun LoginRoute(
     }
 
     LoginScreen(
-        onClickKakaoLogin = { nViewModel.handleEvent(LoginEvent.ClickKakaoLogin) },
-        onClickGoogleLogin = { nViewModel.handleEvent(LoginEvent.ClickGoogleLogin) },
-        onHome = { nViewModel.handleEvent(LoginEvent.ClickHome) })
+        onClickKakaoLogin = { viewModel.handleEvent(LoginEvent.ClickKakaoLogin) },
+        onClickGoogleLogin = { viewModel.handleEvent(LoginEvent.ClickGoogleLogin) },
+        onHome = { viewModel.handleEvent(LoginEvent.ClickHome) })
 }
 
 @Composable

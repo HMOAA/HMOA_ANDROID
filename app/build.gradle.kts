@@ -85,13 +85,7 @@ android {
 
 }
 
-
-
 dependencies {
-    val hilt_version = "2.48.1"
-    val hilt_viewmodel_version = "1.0.0-alpha03"
-    val hilt_nav_compose_version = "1.0.0"
-
     implementation(project(":feature-home"))
     implementation(project(":feature-authentication"))
     implementation(project(":feature-userInfo"))
@@ -99,7 +93,6 @@ dependencies {
     implementation(project(":feature-perfume"))
     implementation(project(":feature-brand"))
     implementation(project(":feature-hpedia"))
-    implementation(project(":feature-like"))
     implementation(project(":feature-fcm"))
     implementation(project(":feature-magazine"))
     implementation(project(":feature-hbti"))

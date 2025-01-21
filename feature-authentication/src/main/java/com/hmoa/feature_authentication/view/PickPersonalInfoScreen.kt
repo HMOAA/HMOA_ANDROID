@@ -1,5 +1,6 @@
 package com.hmoa.feature_authentication.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
@@ -7,12 +8,14 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +26,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.*
 import com.hmoa.core_designsystem.theme.CustomColor
+import com.hmoa.feature_authentication.contract.PickPersonalInfoEffect
+import com.hmoa.feature_authentication.contract.PickPersonalInfoEvent
 import com.hmoa.feature_authentication.viewmodel.PickPersonalInfoViewmodel
 import kotlinx.coroutines.launch
 
@@ -33,51 +38,47 @@ internal fun PickPersonalInfoRoute(
     loginProvider: String,
     viewModel: PickPersonalInfoViewmodel = hiltViewModel()
 ) {
-    val birthYearState by viewModel.birthYearState.collectAsStateWithLifecycle()
-    val sexState by viewModel.sexState.collectAsStateWithLifecycle()
-    val isPostComplete by viewModel.isPostComplete.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(isPostComplete) {
-        if (isPostComplete) {
-            onHomeClick()
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            Log.d("Effects", "effect:${effect}")
+            when (effect) {
+                PickPersonalInfoEffect.NavigateToHome -> onHomeClick()
+            }
         }
     }
 
-    LaunchedEffect(true) {
-        viewModel.getSocialLoginAccessToken(loginProvider)
-    }
-
     PickPersonalInfoScreen(
-        onHomeClick = {
-            viewModel.signup(loginProvider = loginProvider, birthYear = birthYearState, sex = sexState)
+        onFinishOnBoarding = {
+            viewModel.handleEvent(PickPersonalInfoEvent.FinishOnBoarding(loginProvider))
         },
         onPickNicknameClick = { onPickNicknameClick() },
-        onClickBirthYear = { viewModel.saveBirthYear(it) },
-        onClickSex = { viewModel.saveSex(it) },
-        birthYearState = birthYearState,
+        onClickBirthYear = { viewModel.handleEvent(PickPersonalInfoEvent.SaveBirthYear(it)) },
+        onClickSex = { viewModel.handleEvent(PickPersonalInfoEvent.SaveSex(it)) },
+        birthYearState = uiState.birthYear,
+        isNextButtonEnabled = uiState.isAvailableToSignup,
+        radioOptions = viewModel.SEX
     )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PickPersonalInfoScreen(
-    onHomeClick: () -> Unit,
+    onFinishOnBoarding: () -> Unit,
     onPickNicknameClick: () -> Unit,
     onClickBirthYear: (birthYear: Int) -> Unit,
     onClickSex: (sex: String) -> Unit,
     birthYearState: Int?,
+    isNextButtonEnabled: Boolean,
+    radioOptions: List<String>
 ) {
-    var isAvailableButtonState by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     )
-
-    LaunchedEffect(birthYearState) {
-        isAvailableButtonState = isAvailableNextButton(birthYearState)
-    }
 
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
@@ -137,33 +138,23 @@ fun PickPersonalInfoScreen(
                 }
                 Column(modifier = Modifier.padding(top = 25.dp).padding(start = 5.dp)) {
                     RadioButtonList(
-                        null,
-                        listOf(
-                            stringResource(com.hmoa.feature_authentication.R.string.female),
-                            stringResource(com.hmoa.feature_authentication.R.string.male)
-                        ), onButtonClick = { onClickSex(it) }
+                        radioOptions[0],
+                        radioOptions, onButtonClick = { onClickSex(it) }
                     )
                 }
             }
             Button(
-                isAvailableButtonState, "시작하기", { onHomeClick() },
+                isNextButtonEnabled, "시작하기", { onFinishOnBoarding() },
                 buttonModifier = Modifier.fillMaxWidth().height(80.dp)
             )
         }
     }
 }
 
-fun isAvailableNextButton(birthYear: Int?): Boolean {
-    if (birthYear != null) {
-        return true
-    }
-    return false
-}
-
 
 @Preview
 @Composable
 fun PickPersonalInfoScreenPreview() {
-    PickPersonalInfoScreen({}, {}, {}, {}, 2000)
+    PickPersonalInfoScreen({}, {}, {}, {}, 2000, true, listOf("1", "2"))
 }
 

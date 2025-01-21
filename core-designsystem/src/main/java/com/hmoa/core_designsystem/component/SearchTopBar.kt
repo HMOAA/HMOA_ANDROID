@@ -1,6 +1,5 @@
 package com.hmoa.core_designsystem.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,7 +24,6 @@ import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_designsystem.theme.pretendard
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
@@ -41,7 +39,7 @@ fun SearchTopBar(
     val textFlow = remember { snapshotFlow { searchWord } }
 
     LaunchedEffect(textFlow) {
-        textFlow.debounce(700).filter { it.isNotBlank() }.collect { onChangeWord(it) }
+        textFlow.filter { it.isNotBlank() }.collect { onChangeWord(it) }
     }
 
     TopAppBar(

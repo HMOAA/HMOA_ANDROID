@@ -1,19 +1,8 @@
 package com.hmoa.feature_userinfo.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,11 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hmoa.core_common.ErrorUiState
-import com.hmoa.core_designsystem.component.AppLoadingScreen
-import com.hmoa.core_designsystem.component.Button
-import com.hmoa.core_designsystem.component.ErrorUiSetView
-import com.hmoa.core_designsystem.component.RadioButtonList
-import com.hmoa.core_designsystem.component.TopBar
+import com.hmoa.core_designsystem.component.*
 import com.hmoa.feature_userinfo.viewModel.MyGenderUiState
 import com.hmoa.feature_userinfo.viewModel.MyGenderViewModel
 
@@ -37,7 +22,7 @@ fun MyGenderRoute(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
-    val saveGender = remember<(gender: String)->Unit>{{ viewModel.saveGender(it, navBack)}}
+    val saveGender = remember<(gender: String) -> Unit> { { viewModel.saveGender(it, navBack) } }
 
     MyGenderPage(
         uiState = uiState.value,
@@ -80,8 +65,8 @@ private fun SelectGenderContent(
     saveGender: (gender: String) -> Unit,
     navBack: () -> Unit
 ) {
-    var currentGender by remember{mutableStateOf(initGender)}
-    val isEnabled by remember{derivedStateOf{initGender != currentGender}}
+    var currentGender by remember { mutableStateOf(initGender) }
+    val isEnabled by remember { derivedStateOf { initGender != currentGender } }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,7 +86,7 @@ private fun SelectGenderContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             RadioButtonList(
-                initValue = currentGender,
+                initIndex = currentGender,
                 radioOptions = listOf("남성", "여성"),
                 onButtonClick = { currentGender = it }
             )

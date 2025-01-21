@@ -1,18 +1,23 @@
 package com.hmoa.feature_authentication.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.Result
 import com.hmoa.core_common.asResult
+import com.hmoa.core_common.ui.BaseViewModel
 import com.hmoa.core_domain.repository.LoginRepository
 import com.hmoa.core_domain.repository.SignupRepository
 import com.hmoa.core_domain.usecase.PostSignupUseCase
 import com.hmoa.core_domain.usecase.SaveAuthAndRememberedTokenUseCase
 import com.hmoa.core_model.Provider
 import com.hmoa.core_model.request.OauthLoginRequestDto
+import com.hmoa.feature_authentication.contract.PickPersonalInfoEffect
+import com.hmoa.feature_authentication.contract.PickPersonalInfoEvent
+import com.hmoa.feature_authentication.contract.PickPersonalInfoState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -23,66 +28,91 @@ class PickPersonalInfoViewmodel @Inject constructor(
     private val postSignupInfo: PostSignupUseCase,
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
-) : ViewModel() {
-    private var _birthYearState = MutableStateFlow<Int?>(null)
-    val birthYearState = _birthYearState.asStateFlow()
-    private var _sexState = MutableStateFlow("여성")
-    val sexState = _sexState.asStateFlow()
-    private var _isPostComplete = MutableStateFlow(false)
-    val isPostComplete = _isPostComplete.asStateFlow()
-    private val googleAccessToken = MutableStateFlow<String?>(null)
-    private val kakaoAccessToken = MutableStateFlow<String?>(null)
+) : BaseViewModel<PickPersonalInfoEvent, PickPersonalInfoState, PickPersonalInfoEffect>() {
+    val SEX = listOf("여성", "남성")
 
-    fun getSocialLoginAccessToken(loginProvider: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (loginProvider == Provider.GOOGLE.name) {
-                getGoogleAccessToken()
-            } else if (loginProvider == Provider.KAKAO.name) {
-                getKakaoAccessToken()
+    override fun createInitialState(): PickPersonalInfoState {
+        return PickPersonalInfoState(
+            isAvailableToSignup = false,
+            birthYear = null,
+            sex = SEX[0],
+            token = null
+        )
+    }
+
+    override fun handleEvent(event: PickPersonalInfoEvent) {
+        viewModelScope.launch {
+            when (event) {
+                is PickPersonalInfoEvent.FinishOnBoarding -> {
+                    Log.d("FinishOnBoarding", "???")
+                    signup(
+                        loginProvider = event.loginProvider,
+                        birthYear = uiState.value.birthYear,
+                        sex = uiState.value.sex
+                    )
+                }
+
+                is PickPersonalInfoEvent.SaveBirthYear -> {
+                    setState { copy(birthYear = event.birthYear) }
+                    isAvailableNextButton()
+                }
+
+                is PickPersonalInfoEvent.SaveSex -> {
+                    setState { copy(sex = event.sex) }
+                }
             }
         }
     }
 
-    suspend fun getGoogleAccessToken() {
-        loginRepository.getGoogleAccessToken().onEmpty { }
-            .collectLatest {
-                googleAccessToken.value = it
-            }
+    fun isAvailableNextButton() {
+        if (uiState.value.birthYear != null) {
+            setState { copy(isAvailableToSignup = true) }
+        }
     }
 
-    suspend fun getKakaoAccessToken() {
-        loginRepository.getKakaoAccessToken().onEmpty { }
-            .collectLatest {
-                kakaoAccessToken.value = it
-            }
+    suspend fun getGoogleAccessToken(): String? {
+        var token: String? = null
+        loginRepository.getGoogleAccessToken().onEmpty { }.collectLatest {
+            Log.d("getGoogleAccessTokne PPIViewmodel", "token:${token}")
+            token = it
+        }
+        return token
+    }
+
+    suspend fun getKakaoAccessToken(): String? {
+        var token: String? = null
+        loginRepository.getKakaoAccessToken().onEmpty { }.collectLatest { token = it }
+        return token
     }
 
     private suspend fun getSavedNickname(): String? {
         return signupRepository.getNickname()
     }
 
-    fun saveBirthYear(value: Int) {
-        _birthYearState.update { value }
-    }
-
-    fun saveSex(value: String) {
-        _sexState.update { value }
-    }
-
-    fun signup(loginProvider: String, birthYear: Int?, sex: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            when (loginProvider) {
-                Provider.GOOGLE.name -> {
-                    if (googleAccessToken.value != null) {
-                        postAccessToken(googleAccessToken.value!!, Provider.GOOGLE, birthYear, sex)
-                    }
+    suspend fun signup(loginProvider: String, birthYear: Int?, sex: String?) {
+        Log.d(
+            "signup",
+            "loginProvider:${loginProvider}, 비교값: ${Provider.GOOGLE.name}, sex:${sex}, birthYear:${birthYear}"
+        )
+        when (loginProvider) {
+            Provider.GOOGLE.name -> {
+                val token = getGoogleAccessToken()
+                Log.d("google token", "token:${token}")
+                if (token != null && sex != null) {
+                    postAccessToken(token, Provider.GOOGLE, birthYear, sex)
                 }
+            }
 
-                Provider.KAKAO.name -> {
-                    if (kakaoAccessToken.value != null) {
-                        postAccessToken(kakaoAccessToken.value!!, Provider.KAKAO, birthYear, sex)
-                    }
+            Provider.KAKAO.name -> {
+                val token = getKakaoAccessToken()
+                Log.d("login token", "token:${token}")
+                if (token != null && sex != null) {
+                    postAccessToken(token, Provider.KAKAO, birthYear, sex)
                 }
+            }
+
+            else -> {
+                Log.d("loginProvider", "전달 값: ${loginProvider}, 구글 비교 값: ${Provider.GOOGLE.name}")
             }
         }
     }
@@ -109,7 +139,6 @@ class PickPersonalInfoViewmodel @Inject constructor(
                     }
 
                     is Result.Loading -> {
-                        LoginUiState.Loading
                     }
 
                     is Result.Error -> {}
@@ -133,7 +162,7 @@ class PickPersonalInfoViewmodel @Inject constructor(
                 .collectLatest { result ->
                     when (result) {
                         is Result.Success -> {
-                            _isPostComplete.update { true }
+                            setEffect(PickPersonalInfoEffect.NavigateToHome)
                         }
 
                         is Result.Loading -> {}

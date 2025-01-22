@@ -29,14 +29,16 @@ class PickPersonalInfoViewmodel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val saveAuthAndRememberedToken: SaveAuthAndRememberedTokenUseCase
 ) : BaseViewModel<PickPersonalInfoEvent, PickPersonalInfoState, PickPersonalInfoEffect>() {
-    val SEX = listOf("여성", "남성")
+
+    init {
+        setEffect(PickPersonalInfoEffect.PrepareToken)
+    }
 
     override fun createInitialState(): PickPersonalInfoState {
         return PickPersonalInfoState(
             isAvailableToSignup = false,
             birthYear = null,
-            sex = SEX[0],
-            token = null
+            PrepareSocialToken = null
         )
     }
 
@@ -64,55 +66,30 @@ class PickPersonalInfoViewmodel @Inject constructor(
         }
     }
 
-    fun isAvailableNextButton() {
-        if (uiState.value.birthYear != null) {
-            setState { copy(isAvailableToSignup = true) }
+    suspend fun getSocialAccessToken(loginProvider: String) {
+        when (loginProvider) {
+            Provider.GOOGLE.name -> {
+                getGoogleAccessToken()
+            }
+
+            Provider.KAKAO.name -> {
+                getKakaoAccessToken()
+            }
         }
-    }
-
-    suspend fun getGoogleAccessToken(): String? {
-        var token: String? = null
-        loginRepository.getGoogleAccessToken().onEmpty { }.collectLatest {
-            Log.d("getGoogleAccessTokne PPIViewmodel", "token:${token}")
-            token = it
-        }
-        return token
-    }
-
-    suspend fun getKakaoAccessToken(): String? {
-        var token: String? = null
-        loginRepository.getKakaoAccessToken().onEmpty { }.collectLatest { token = it }
-        return token
-    }
-
-    private suspend fun getSavedNickname(): String? {
-        return signupRepository.getNickname()
     }
 
     suspend fun signup(loginProvider: String, birthYear: Int?, sex: String?) {
-        Log.d(
-            "signup",
-            "loginProvider:${loginProvider}, 비교값: ${Provider.GOOGLE.name}, sex:${sex}, birthYear:${birthYear}"
-        )
         when (loginProvider) {
             Provider.GOOGLE.name -> {
-                val token = getGoogleAccessToken()
-                Log.d("google token", "token:${token}")
-                if (token != null && sex != null) {
-                    postAccessToken(token, Provider.GOOGLE, birthYear, sex)
+                if (uiState.value.PrepareSocialToken != null && sex != null) {
+                    postAccessToken(uiState.value.PrepareSocialToken!!, Provider.GOOGLE, birthYear, sex)
                 }
             }
 
             Provider.KAKAO.name -> {
-                val token = getKakaoAccessToken()
-                Log.d("login token", "token:${token}")
-                if (token != null && sex != null) {
-                    postAccessToken(token, Provider.KAKAO, birthYear, sex)
+                if (uiState.value.PrepareSocialToken != null && sex != null) {
+                    postAccessToken(uiState.value.PrepareSocialToken!!, Provider.KAKAO, birthYear, sex)
                 }
-            }
-
-            else -> {
-                Log.d("loginProvider", "전달 값: ${loginProvider}, 구글 비교 값: ${Provider.GOOGLE.name}")
             }
         }
     }
@@ -172,9 +149,22 @@ class PickPersonalInfoViewmodel @Inject constructor(
         }
     }
 
-    fun isAvailableToSignup(nickname: String?, age: Int): Boolean {
-        if (isNicknameNotNull(nickname) && isAvailableAge(age)) return true
-        return false
+    suspend fun getGoogleAccessToken() {
+        loginRepository.getGoogleAccessToken().onEmpty { }.collectLatest {
+            setState { copy(PrepareSocialToken = it) }
+        }
+    }
+
+    suspend fun getKakaoAccessToken() {
+        loginRepository.getKakaoAccessToken().onEmpty { }.collectLatest {
+            setState { copy(PrepareSocialToken = it) }
+        }
+    }
+
+    fun isAvailableNextButton() {
+        if (uiState.value.birthYear != null) {
+            setState { copy(isAvailableToSignup = true) }
+        }
     }
 
     private fun mapBirthYearToAge(birthYear: Int): Int {
@@ -188,6 +178,11 @@ class PickPersonalInfoViewmodel @Inject constructor(
         return true
     }
 
+    fun isAvailableToSignup(nickname: String?, age: Int): Boolean {
+        if (isNicknameNotNull(nickname) && isAvailableAge(age)) return true
+        return false
+    }
+
     private fun isAvailableAge(age: Int): Boolean {
         if (age > 0) return true
         return false
@@ -197,5 +192,8 @@ class PickPersonalInfoViewmodel @Inject constructor(
         if (sex == "여성") return false
         return true
     }
-}
 
+    private suspend fun getSavedNickname(): String? {
+        return signupRepository.getNickname()
+    }
+}

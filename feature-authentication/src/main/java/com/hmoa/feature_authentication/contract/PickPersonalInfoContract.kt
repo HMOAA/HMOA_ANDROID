@@ -11,12 +11,14 @@ sealed interface PickPersonalInfoEvent : UiEvent {
 }
 
 data class PickPersonalInfoState(
+    val SEX: List<String> = listOf<String>("여성", "남성"),
     val isAvailableToSignup: Boolean = false,
     val birthYear: Int?,
-    val sex: String?,
-    val token: String?
+    val sex: String? = SEX[0],
+    val PrepareSocialToken: String?
 ) : UiState
 
 sealed interface PickPersonalInfoEffect : UiEffect {
+    data object PrepareToken : PickPersonalInfoEffect
     data object NavigateToHome : PickPersonalInfoEffect
 }

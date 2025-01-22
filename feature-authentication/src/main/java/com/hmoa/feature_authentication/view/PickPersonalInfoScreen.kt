@@ -1,6 +1,5 @@
 package com.hmoa.feature_authentication.view
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
@@ -29,6 +28,7 @@ import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.feature_authentication.contract.PickPersonalInfoEffect
 import com.hmoa.feature_authentication.contract.PickPersonalInfoEvent
 import com.hmoa.feature_authentication.viewmodel.PickPersonalInfoViewmodel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,10 +41,10 @@ internal fun PickPersonalInfoRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.effects.collect { effect ->
-            Log.d("Effects", "effect:${effect}")
+        viewModel.effects.collectLatest { effect ->
             when (effect) {
                 PickPersonalInfoEffect.NavigateToHome -> onHomeClick()
+                PickPersonalInfoEffect.PrepareToken -> viewModel.getSocialAccessToken(loginProvider)
             }
         }
     }
@@ -58,7 +58,7 @@ internal fun PickPersonalInfoRoute(
         onClickSex = { viewModel.handleEvent(PickPersonalInfoEvent.SaveSex(it)) },
         birthYearState = uiState.birthYear,
         isNextButtonEnabled = uiState.isAvailableToSignup,
-        radioOptions = viewModel.SEX
+        radioOptions = uiState.SEX
     )
 }
 
@@ -138,7 +138,7 @@ fun PickPersonalInfoScreen(
                 }
                 Column(modifier = Modifier.padding(top = 25.dp).padding(start = 5.dp)) {
                     RadioButtonList(
-                        radioOptions[0],
+                        0,
                         radioOptions, onButtonClick = { onClickSex(it) }
                     )
                 }

@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -21,8 +21,8 @@ android {
         applicationId = "com.hmoa.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 36
-        versionName = "1.3.0"
+        versionCode = 37
+        versionName = "1.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["REDIRECTION_PATH"] = localProperties["REDIRECTION_PATH"] as String
@@ -46,7 +46,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
         }
@@ -69,9 +72,18 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
+
+    applicationVariants.all {
+        this.mergeResourcesProvider.configure {
+            doLast {
+                copy {
+                    from(":HMOA_ANDROID_SECRET")
+                }
+            }
+        }
+    }
+
 }
-
-
 
 dependencies {
     implementation(project(":feature-home"))

@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     alias(libs.plugins.android.library)
@@ -56,7 +56,24 @@ android {
             excludes.add("META-INF/gradle/incremental.annotation.processors")
         }
     }
-
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics",
+        )
+    }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_reports",
+        )
+    }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+        )
+    }
 }
 
 dependencies {
@@ -69,6 +86,7 @@ dependencies {
     implementation(libs.bootpay)
     implementation(libs.paging.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.bundles.ui)
     implementation(libs.navigation.compose)
     implementation(libs.bundles.lifecycle)

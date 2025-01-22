@@ -47,6 +47,12 @@ android {
             "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_reports",
         )
     }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+        )
+    }
 }
 
 dependencies {

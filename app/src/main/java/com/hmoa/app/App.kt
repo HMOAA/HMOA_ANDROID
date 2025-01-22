@@ -11,6 +11,5 @@ class App : Application() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate()
         KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
-
     }
 }

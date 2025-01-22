@@ -16,6 +16,13 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -47,6 +54,12 @@ android {
             "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_reports",
         )
     }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+        )
+    }
 }
 
 dependencies {
@@ -65,7 +78,7 @@ dependencies {
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
     testAnnotationProcessor(libs.hilt.compiler)
-    kapt(libs.hilt.compiler)
+    kapt(libs.hilt.viewmodel)
 
     androidTestImplementation(libs.junit.ext)
     androidTestImplementation(libs.espresso)

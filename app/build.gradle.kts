@@ -69,6 +69,25 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics",
+        )
+    }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_reports",
+        )
+    }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+        compilerOptions.freeCompilerArgs.addAll(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+        )
+    }
 }
 
 
@@ -92,6 +111,7 @@ dependencies {
 
     implementation(libs.app.update.ktx)
     implementation(libs.bootpay) //부트페이
+    implementation(libs.constraintlayout)
     implementation(libs.bundles.kakao.login) // kakao
     implementation(libs.bundles.hilt) // hilt
     kapt(libs.hilt.android.compiler)

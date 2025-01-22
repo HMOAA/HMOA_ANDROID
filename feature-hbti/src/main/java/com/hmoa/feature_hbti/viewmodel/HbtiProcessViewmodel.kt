@@ -1,5 +1,6 @@
 package com.hmoa.feature_hbti.viewmodel
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hmoa.core_common.*
@@ -93,6 +94,7 @@ class HbtiProcessViewmodel @Inject constructor(private val hbtiRepository: Hshop
     }
 }
 
+@Stable
 sealed interface HbtiProcessUiState {
     data object Error : HbtiProcessUiState
     data object Loading : HbtiProcessUiState

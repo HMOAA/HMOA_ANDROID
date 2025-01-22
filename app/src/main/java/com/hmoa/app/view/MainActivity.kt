@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,10 +45,10 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hmoa.app.BuildConfig
+import com.hmoa.app.R
 import com.hmoa.app.navigation.SetUpNavGraph
 import com.hmoa.app.viewmodel.AppViewModel
 import com.hmoa.core_common.permissions
-import com.hmoa.core_designsystem.BottomScreen
 import com.hmoa.core_designsystem.component.HomeTopBar
 import com.hmoa.core_designsystem.component.MainBottomBar
 import com.hmoa.core_domain.entity.navigation.*
@@ -86,13 +87,6 @@ class MainActivity : AppCompatActivity() {
         MagazineRoute.Magazine.name
     )
 
-    private val needTopBarScreens = HomeRoute.Home.name
-    private val bottomNav = listOf(
-        BottomScreen.Home.name,
-        BottomScreen.HPedia.name,
-        BottomScreen.Magazine.name,
-        BottomScreen.MyPage.name
-    )
     private lateinit var appUpdateManager: AppUpdateManager
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
@@ -102,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     // Displays the snackbar notification and call to action.
     fun popupSnackbarForCompleteUpdate() {
         Snackbar.make(
-            findViewById(com.hmoa.core_designsystem.R.drawable.ic_fab),
+            findViewById<ImageView>(R.id.snackbar),
             "새로운 업데이트 다운로드가 완료되었습니다.",
             Snackbar.LENGTH_INDEFINITE
         ).apply {
@@ -180,7 +174,6 @@ class MainActivity : AppCompatActivity() {
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
         checkImmediateUpdateAvailability()
-
         requestNotificationPermission()
         BootpayAnalytics.init(this, BuildConfig.BOOTPAY_APPLICATION_ID)
 

@@ -1,18 +1,8 @@
-package com.hmoa.feature_authentication
+package com.hmoa.feature_authentication.view
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -57,13 +47,13 @@ fun PickNicknameScreen(
     onCheckNicknameDuplication: (nickname: String) -> Unit,
     onSaveNickname: (nickname: String) -> Unit,
 ) {
-    when(uiState){
+    when (uiState) {
         PickNicknameUiState.Loading -> {}
         PickNicknameUiState.Empty -> {}
         is PickNicknameUiState.PickNickname -> {
             val isAvailableNickname by uiState.isExistedNickname.collectAsStateWithLifecycle(initialValue = null)
-            var nickname by remember{mutableStateOf(uiState.initNickname)}
-            val isEnabled by remember{derivedStateOf{isAvailableNickname!=null && isAvailableNickname!! && nickname == uiState.initNickname}}
+            var nickname by remember { mutableStateOf(uiState.initNickname) }
+            val isEnabled by remember { derivedStateOf { isAvailableNickname != null && isAvailableNickname!! && nickname == uiState.initNickname } }
             Column(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.SpaceBetween,

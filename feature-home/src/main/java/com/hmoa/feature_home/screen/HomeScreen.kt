@@ -105,7 +105,7 @@ fun TopMenu(
             FirstMenuView(
                 (firstMenuWithBannerState as HomeViewModel.BannerWithFirstMenuState.Data).firstMenu
                     ?: HomeMenuDefaultResponseDto(
-                        perfumeList = emptyList<HomeMenuPerfumeResponseDto>().toImmutableList(),
+                        perfumeList = emptyList(),
                         title = ""
                     ),
                 { onPerfumeClick(it) })

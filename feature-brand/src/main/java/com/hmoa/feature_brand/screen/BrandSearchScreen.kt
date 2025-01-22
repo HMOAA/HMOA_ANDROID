@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -20,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hmoa.core_designsystem.component.SearchTopBar
 import com.hmoa.core_designsystem.component.TagBadge
 import com.hmoa.core_designsystem.component.TypeBadge
+import com.hmoa.core_designsystem.component.WrapContentView
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.data.Consonant
 import com.hmoa.core_model.response.BrandDefaultResponseDto
@@ -122,11 +122,9 @@ fun BrandSearchContent(
 @Composable
 fun BrandGridView(brands: List<BrandDefaultResponseDto>?, onBrandClick: (brandId: Int) -> Unit, consonant: Consonant) {
     val entriesPerRow = 4
-    val brandChunks = brands?.chunked(entriesPerRow)
-    val brandItemSize = LocalConfiguration.current.screenWidthDp.div(4.7)
     if ((brands?.size ?: 0) > 0) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
@@ -140,14 +138,14 @@ fun BrandGridView(brands: List<BrandDefaultResponseDto>?, onBrandClick: (brandId
                 )
             }
             Column(modifier = Modifier.fillMaxWidth()) {
-                brandChunks?.forEach { chunk ->
-                    Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.Start) {
-                        chunk.forEach { brand ->
+                WrapContentView(
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    brands?.map { brand ->
+                        Column(modifier = Modifier.padding(horizontal = 4.dp).padding(bottom = 10.dp)) {
                             BrandItem(
                                 brand = brand,
-                                onBrandClick = { onBrandClick(it) },
-                                size = brandItemSize.dp
-                            )
+                                onBrandClick = { onBrandClick(brand.brandId) })
                         }
                     }
                 }
@@ -158,25 +156,12 @@ fun BrandGridView(brands: List<BrandDefaultResponseDto>?, onBrandClick: (brandId
 }
 
 @Composable
-fun BrandItem(brand: BrandDefaultResponseDto?, onBrandClick: (brandId: Int) -> Unit, size: Dp) {
+fun BrandItem(brand: BrandDefaultResponseDto?, onBrandClick: (brandId: Int) -> Unit) {
     Column(
-        modifier = Modifier.clickable { onBrandClick(brand!!.brandId) }.padding(horizontal = 4.dp),
+        modifier = Modifier.clickable { onBrandClick(brand!!.brandId) },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TagBadge(tag = brand?.brandName ?: "")
-//        Text(
-//            text = brand?.brandName ?: "",
-//            style = TextStyle(
-//                fontWeight = FontWeight.Light,
-//                fontSize = 14.sp,
-//                color = Color.Black,
-//                textAlign = TextAlign.Start,
-//                fontFamily = CustomFont.regular
-//            ),
-//            modifier = Modifier.width(size),
-//            overflow = TextOverflow.Ellipsis,
-//            maxLines = 2
-//        )
     }
 }

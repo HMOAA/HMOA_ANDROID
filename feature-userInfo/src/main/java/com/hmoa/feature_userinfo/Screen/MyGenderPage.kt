@@ -86,7 +86,7 @@ private fun SelectGenderContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             RadioButtonList(
-                initIndex = currentGender,
+                initIndex = 0,
                 radioOptions = listOf("남성", "여성"),
                 onButtonClick = { currentGender = it }
             )

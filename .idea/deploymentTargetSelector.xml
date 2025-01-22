@@ -25,7 +25,7 @@
       <SelectionState runConfigName="TestDialog">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="MagazineTagTest">
+      <SelectionState runConfigName="PickNicknameScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

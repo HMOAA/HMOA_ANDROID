@@ -25,6 +25,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,21 +42,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.hmoa.core_common.ErrorUiState
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
-import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
 import com.hmoa.core_domain.entity.navigation.CommunityRoute
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
-import com.hmoa.core_model.response.MagazineTastingCommentResponseDtoItem
-import com.hmoa.core_model.response.RecentPerfumeResponseDtoItem
-import com.hmoa.feature_magazine.ViewModel.MagazineMainUiState
+import com.hmoa.core_model.response.MagazineTastingCommentResponseDto
+import com.hmoa.core_model.response.RecentPerfumeResponseDto
 import com.hmoa.feature_magazine.ViewModel.MagazineMainViewModel
-import kotlinx.collections.immutable.ImmutableList
+import com.hmoa.feature_magazine.contract.MagazineHomeEffect
+import com.hmoa.feature_magazine.contract.MagazineHomeEvent
+import com.hmoa.feature_magazine.contract.MagazineHomeState
 
 @Composable
 fun MagazineMainRoute(
@@ -66,58 +66,65 @@ fun MagazineMainRoute(
     viewModel: MagazineMainViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val errorState = viewModel.errorUiState.collectAsStateWithLifecycle()
-    val magazineList = viewModel.magazinePagingSource().collectAsLazyPagingItems()
-    val onCommunityClick = remember<(Int) -> Unit>{{navCommunityDesc(CommunityRoute.CommunityHomeRoute, it)}}
+    val magazines = viewModel.magazines.collectAsLazyPagingItems()
+
+    LaunchedEffect(Unit){
+        viewModel.effects.collect{ effect ->
+            when(effect){
+                is MagazineHomeEffect.NavigateToMagazineDesc -> navMagazineDesc(effect.magazineId)
+                is MagazineHomeEffect.NavigateToPostDest -> navCommunityDesc(CommunityRoute.CommunityHomeRoute, effect.postId)
+                is MagazineHomeEffect.NavigateToPerfumeDesc -> navPerfumeDesc(effect.perfumeId)
+                MagazineHomeEffect.NavigateToBack -> navHome()
+            }
+        }
+    }
 
     MagazineMainScreen(
         uiState = uiState.value,
-        errorState = errorState.value,
-        magazineList = magazineList,
-        navHome = navHome,
-        onPerfumeClick = navPerfumeDesc,
-        onCommunityClick = onCommunityClick,
-        onMagazineClick = navMagazineDesc
+        magazines = magazines,
+        navHome = { viewModel.handleEvent(MagazineHomeEvent.ClickBack) },
+        onPerfumeClick = { viewModel.handleEvent(MagazineHomeEvent.ClickPerfume(it)) },
+        onCommunityClick = { viewModel.handleEvent(MagazineHomeEvent.ClickPost(it)) },
+        onMagazineClick = { viewModel.handleEvent(MagazineHomeEvent.ClickMagazine(it)) }
     )
 }
 
 @Composable
 fun MagazineMainScreen(
-    uiState: MagazineMainUiState,
-    errorState: ErrorUiState,
-    magazineList: LazyPagingItems<MagazineSummaryResponseDto>,
+    uiState: MagazineHomeState,
+    magazines: LazyPagingItems<MagazineSummaryResponseDto>,
     navHome: () -> Unit,
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onCommunityClick: (communityId: Int) -> Unit,
     onMagazineClick: (magazineId: Int) -> Unit
 ) {
-    when (uiState) {
-        MagazineMainUiState.Loading -> AppLoadingScreen()
-        is MagazineMainUiState.MagazineMain -> {
-            MagazineContent(
-                magazineList = magazineList,
-                perfumeList = uiState.perfumes,
-                reviewList = uiState.reviews,
-                onPerfumeClick = onPerfumeClick,
-                onCommunityClick = onCommunityClick,
-                onMagazineClick = onMagazineClick
-            )
-        }
-        MagazineMainUiState.Error -> {
-            ErrorUiSetView(
-                onLoginClick = navHome,
-                errorUiState = errorState,
-                onCloseClick = navHome
-            )
-        }
-    }
+    val perfumes = uiState.perfumes
+    val posts = uiState.posts
+    MagazineContent(
+        magazineList = magazines,
+        perfumeList = perfumes,
+        reviewList = posts,
+        onPerfumeClick = onPerfumeClick,
+        onCommunityClick = onCommunityClick,
+        onMagazineClick = onMagazineClick
+    )
+//    when (uiState) {
+//        MagazineMainUiState.Loading -> AppLoadingScreen()
+//        MagazineMainUiState.Error -> {
+//            ErrorUiSetView(
+//                onLoginClick = navHome,
+//                errorUiState = errorState,
+//                onCloseClick = navHome
+//            )
+//        }
+//    }
 }
 
 @Composable
 private fun MagazineContent(
     magazineList: LazyPagingItems<MagazineSummaryResponseDto>,
-    perfumeList: ImmutableList<RecentPerfumeResponseDtoItem>,
-    reviewList: ImmutableList<MagazineTastingCommentResponseDtoItem>,
+    perfumeList: RecentPerfumeResponseDto,
+    reviewList: MagazineTastingCommentResponseDto,
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onCommunityClick: (communityId: Int) -> Unit,
     onMagazineClick: (magazineId: Int) -> Unit
@@ -249,7 +256,7 @@ private fun MagazineTitleBox(
 
 @Composable
 private fun ReleasePerfumeList(
-    perfumeList: ImmutableList<RecentPerfumeResponseDtoItem>,
+    perfumeList: RecentPerfumeResponseDto,
     onPerfumeClick: (perfumeId: Int) -> Unit
 ) {
     Column(
@@ -295,7 +302,7 @@ private fun ReleasePerfumeList(
 
 @Composable
 private fun Top10Reviews(
-    reviews: ImmutableList<MagazineTastingCommentResponseDtoItem>,
+    reviews: MagazineTastingCommentResponseDto,
     onCommunityClick: (communityId: Int) -> Unit
 ) {
     Column {

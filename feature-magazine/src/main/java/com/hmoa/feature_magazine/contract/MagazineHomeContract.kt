@@ -19,11 +19,24 @@ sealed interface MagazineHomeEvent: UiEvent {
     data object LoadMagazines: MagazineHomeEvent
 }
 
+
+interface MagazineUiState: UiState{
+    data object Loading: MagazineUiState
+    data class Success(
+        val magazines: Flow<PagingData<MagazineSummaryResponseDto>> = emptyFlow(),
+        val perfumes: RecentPerfumeResponseDto = RecentPerfumeResponseDto(),
+        val posts: MagazineTastingCommentResponseDto = MagazineTastingCommentResponseDto()
+    ): MagazineUiState
+    data class Error(
+        val errorState: ErrorUiState
+    ): MagazineUiState
+}
+
 data class MagazineHomeState(
+    val loading: Boolean = true,
     val magazines: Flow<PagingData<MagazineSummaryResponseDto>> = emptyFlow(),
     val perfumes: RecentPerfumeResponseDto = RecentPerfumeResponseDto(),
-    val posts: MagazineTastingCommentResponseDto = MagazineTastingCommentResponseDto(),
-    val errorState: ErrorUiState = ErrorUiState.Loading
+    val posts: MagazineTastingCommentResponseDto = MagazineTastingCommentResponseDto()
 ): UiState
 
 sealed interface MagazineHomeEffect: UiEffect {

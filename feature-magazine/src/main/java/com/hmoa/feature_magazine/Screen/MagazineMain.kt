@@ -45,6 +45,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hmoa.core_designsystem.R
 import com.hmoa.core_designsystem.component.AppLoadingScreen
 import com.hmoa.core_designsystem.component.CircleImageView
+import com.hmoa.core_designsystem.component.ErrorUiSetView
 import com.hmoa.core_designsystem.component.ImageView
 import com.hmoa.core_designsystem.component.TopBar
 import com.hmoa.core_designsystem.theme.CustomColor
@@ -55,7 +56,7 @@ import com.hmoa.core_model.response.RecentPerfumeResponseDto
 import com.hmoa.feature_magazine.ViewModel.MagazineMainViewModel
 import com.hmoa.feature_magazine.contract.MagazineHomeEffect
 import com.hmoa.feature_magazine.contract.MagazineHomeEvent
-import com.hmoa.feature_magazine.contract.MagazineHomeState
+import com.hmoa.feature_magazine.contract.MagazineUiState
 
 @Composable
 fun MagazineMainRoute(
@@ -91,33 +92,35 @@ fun MagazineMainRoute(
 
 @Composable
 fun MagazineMainScreen(
-    uiState: MagazineHomeState,
+    uiState: MagazineUiState,
     magazines: LazyPagingItems<MagazineSummaryResponseDto>,
     navHome: () -> Unit,
     onPerfumeClick: (perfumeId: Int) -> Unit,
     onCommunityClick: (communityId: Int) -> Unit,
     onMagazineClick: (magazineId: Int) -> Unit
 ) {
-    val perfumes = uiState.perfumes
-    val posts = uiState.posts
-    MagazineContent(
-        magazineList = magazines,
-        perfumeList = perfumes,
-        reviewList = posts,
-        onPerfumeClick = onPerfumeClick,
-        onCommunityClick = onCommunityClick,
-        onMagazineClick = onMagazineClick
-    )
-//    when (uiState) {
-//        MagazineMainUiState.Loading -> AppLoadingScreen()
-//        MagazineMainUiState.Error -> {
-//            ErrorUiSetView(
-//                onLoginClick = navHome,
-//                errorUiState = errorState,
-//                onCloseClick = navHome
-//            )
-//        }
-//    }
+    when(uiState){
+        MagazineUiState.Loading -> AppLoadingScreen()
+        is MagazineUiState.Success -> {
+            val perfumes = uiState.perfumes
+            val posts = uiState.posts
+            MagazineContent(
+                magazineList = magazines,
+                perfumeList = perfumes,
+                reviewList = posts,
+                onPerfumeClick = onPerfumeClick,
+                onCommunityClick = onCommunityClick,
+                onMagazineClick = onMagazineClick
+            )
+        }
+        is MagazineUiState.Error -> {
+            ErrorUiSetView(
+                onLoginClick = navHome,
+                errorUiState = uiState.errorState,
+                onCloseClick = navHome
+            )
+        }
+    }
 }
 
 @Composable

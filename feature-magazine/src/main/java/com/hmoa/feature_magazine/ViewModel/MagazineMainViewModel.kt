@@ -11,6 +11,7 @@ import com.hmoa.core_common.asResult
 import com.hmoa.core_common.ui.BaseViewModel
 import com.hmoa.core_domain.repository.MagazineRepository
 import com.hmoa.core_domain.repository.PerfumeRepository
+import com.hmoa.core_domain.usecase.MagazineMainUseCase
 import com.hmoa.core_model.response.MagazineSummaryResponseDto
 import com.hmoa.feature_magazine.MagazinePagingSource
 import com.hmoa.feature_magazine.contract.MagazineHomeEffect
@@ -19,34 +20,18 @@ import com.hmoa.feature_magazine.contract.MagazineUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MagazineMainViewModel @Inject constructor(
     private val perfumeRepository: PerfumeRepository,
-    private val magazineRepository : MagazineRepository
+    private val magazineRepository : MagazineRepository,
+    private val magazineMainUseCase: MagazineMainUseCase,
 ): BaseViewModel<MagazineHomeEvent, MagazineUiState, MagazineHomeEffect>() {
     private val magazinePager = Pager(PagingConfig(5)){ MagazinePagingSource(magazineRepository) }
     var magazines: Flow<PagingData<MagazineSummaryResponseDto>> = emptyFlow()
-    val perfumeFlow = flow{
-        val result = perfumeRepository.getRecentPerfumes()
-        if (result.errorMessage != null){
-            throw Exception(result.errorMessage!!.message)
-        }
-        emit(result.data!!)
-    }.asResult()
-
-    val communityFlow = flow{
-        val result = magazineRepository.getMagazineTastingComment()
-        if (result.errorMessage != null){
-            throw Exception(result.errorMessage!!.message)
-        }
-        emit(result.data!!)
-    }.asResult()
 
     init{handleEvent(MagazineHomeEvent.LoadMagazines)}
 
@@ -67,29 +52,18 @@ class MagazineMainViewModel @Inject constructor(
     private fun loadMagazines(){
         viewModelScope.launch{
             magazines = magazinePager.flow
-            combine(perfumeFlow, communityFlow){perfumes, posts ->
-                Pair(perfumes, posts)
-            }.collectLatest {
-                if (it.first is Result.Error){
-                    setState{
-                        val errState = getErrorState(it.first as Result.Error)
+            magazineMainUseCase.invoke().asResult().collectLatest {
+                when(it){
+                    is Result.Error -> setState{
+                        val errState = getErrorState(it)
                         MagazineUiState.Error(errorState = errState)
                     }
-                } else if (it.second is Result.Error){
-                    setState{
-                        val errState = getErrorState(it.second as Result.Error)
-                        MagazineUiState.Error(errorState = errState)
-                    }
-                } else if (it.first is Result.Loading || it.second is Result.Loading){
-                    setState{
-                        MagazineUiState.Loading
-                    }
-                } else {
-                    setState{
+                    Result.Loading -> setState{ MagazineUiState.Loading }
+                    is Result.Success -> setState{
                         MagazineUiState.Success(
                             magazines = magazines,
-                            perfumes = (it.first as Result.Success).data,
-                            posts = (it.second as Result.Success).data
+                            perfumes = it.data.first,
+                            posts = it.data.second
                         )
                     }
                 }
